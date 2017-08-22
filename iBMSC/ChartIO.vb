@@ -289,7 +289,10 @@ AddExpansion:       xExpansion &= sLine & vbCrLf
 
         For xI1 = 0 To InMeasure(GreatestVPosition) + 1  'For xI1 in each measure
             xStrMeasure(xI1) = vbCrLf
-            If MeasureLength(xI1) <> 192.0R Then xStrMeasure(xI1) &= "#" & Add3Zeros(xI1) & "02:" & (MeasureLength(xI1) / 192.0R) & vbCrLf
+
+            Dim consistentDecimalStr = Decimalify(MeasureLength(xI1) / 192.0R)
+
+            If MeasureLength(xI1) <> 192.0R Then xStrMeasure(xI1) &= "#" & Add3Zeros(xI1) & "02:" & consistentDecimalStr & vbCrLf
 
             For xI2 = 1 To UBound(Notes)  'Collect Ks in the same measure
                 If InMeasure(Notes(xI2).VPosition) >= xI1 Then Exit For 'Lower limit found
@@ -470,6 +473,11 @@ AddExpansion:       xExpansion &= sLine & vbCrLf
         Return xStrAll
     End Function
 
+    Private Function Decimalify(v As Double) As String
+        Static nfi As New System.Globalization.NumberFormatInfo()
+        nfi.NumberDecimalSeparator = "."
+        Return v.ToString(nfi)
+    End Function
 
     Private Function OpenSM(ByVal xStrAll As String) As Boolean
         KMouseOver = -1

@@ -320,7 +320,7 @@ Public Class MainWindow
         'If iCol < niB Then Return col(iCol).Enabled And col(iCol).Visible Else Return col(niB).Enabled And col(niB).Visible
         If iCol < niB Then Return column(iCol).isEnabledAfterAll Else Return column(niB).isEnabledAfterAll
     End Function
-    Private Function nNumericLabel(ByVal iCol As Integer) As Boolean
+    Private Function isColumnNumeric(ByVal iCol As Integer) As Boolean
         If iCol < niB Then Return column(iCol).isNumeric Else Return column(niB).isNumeric
     End Function
     Private Function nIdentifier(ByVal iCol As Integer, ByVal xVal As Integer, ByVal xLong As Boolean, ByVal xHidden As Boolean) As String
@@ -1264,7 +1264,7 @@ Public Class MainWindow
                         If Notes(j).ColumnIndex = Notes(i).ColumnIndex Then Notes(j).HasError = True
                     Next
 
-                    If Notes(i).Value \ 10000 = LnObj AndAlso Not nNumericLabel(Notes(i).ColumnIndex) Then
+                    If Notes(i).Value \ 10000 = LnObj AndAlso Not isColumnNumeric(Notes(i).ColumnIndex) Then
                         For j = i - 1 To 1 Step -1
                             If Notes(j).ColumnIndex <> Notes(i).ColumnIndex Then Continue For
                             If Notes(j).Hidden Then Continue For
@@ -2259,7 +2259,7 @@ StartCount:     If Not NTInput Then
                 FSP3.Text = CInt(xVposMod / xGCD).ToString & " / " & CInt(xMLength / xGCD).ToString & "  "
                 FSP4.Text = Notes(xI1).VPosition.ToString() & "  "
                 FSC.Text = nTitle(Notes(xI1).ColumnIndex)
-                FSW.Text = IIf(nNumericLabel(Notes(xI1).ColumnIndex),
+                FSW.Text = IIf(isColumnNumeric(Notes(xI1).ColumnIndex),
                                Notes(xI1).Value / 10000,
                                C10to36(Notes(xI1).Value \ 10000))
                 FSM.Text = Add3Zeros(xMeasure)
@@ -3139,7 +3139,7 @@ EndOfAdjustment:
 
         Dim xDiag As New OpVisual(vo, column, LWAV.Font)
         xDiag.ShowDialog(Me)
-        UpdateKLeft()
+        UpdateColumnsX()
         RefreshPanelAll()
     End Sub
 
@@ -3475,7 +3475,7 @@ EndOfAdjustment:
     End Sub
 
 
-    Private Sub UpdateKLeft()
+    Private Sub UpdateColumnsX()
         column(0).Left = 0
         'If col(0).Width = 0 Then col(0).Visible = False
 
@@ -3507,7 +3507,7 @@ EndOfAdjustment:
             Notes(xI1).Selected = Notes(xI1).Selected And nEnabled(Notes(xI1).ColumnIndex)
         Next
         'AddUndo(xUndo, xRedo)
-        UpdateKLeft()
+        UpdateColumnsX()
 
         If IsInitializing Then Exit Sub
         RefreshPanelAll()
@@ -3515,7 +3515,7 @@ EndOfAdjustment:
 
     Private Sub CGB_ValueChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles CGB.ValueChanged
         gCol = niB + CGB.Value - 1
-        UpdateKLeft()
+        UpdateColumnsX()
         RefreshPanelAll()
     End Sub
 
@@ -3680,10 +3680,10 @@ EndOfAdjustment:
         Dim xI1 As Integer
 
         For xI1 = 1 To UBound(Notes)
-            If Notes(xI1).Selected AndAlso nNumericLabel(Notes(xI1).ColumnIndex) Then xNum = True : Exit For
+            If Notes(xI1).Selected AndAlso isColumnNumeric(Notes(xI1).ColumnIndex) Then xNum = True : Exit For
         Next
         For xI1 = 1 To UBound(Notes)
-            If Notes(xI1).Selected AndAlso Not nNumericLabel(Notes(xI1).ColumnIndex) Then xLbl = True : Exit For
+            If Notes(xI1).Selected AndAlso Not isColumnNumeric(Notes(xI1).ColumnIndex) Then xLbl = True : Exit For
         Next
         If Not (xNum Or xLbl) Then Exit Sub
 
@@ -3698,7 +3698,7 @@ EndOfAdjustment:
                 Dim xBaseRedo As UndoRedo.LinkedURCmd = xRedo
 
                 For xI1 = 1 To UBound(Notes)
-                    If Not nNumericLabel(Notes(xI1).ColumnIndex) Then Continue For
+                    If Not isColumnNumeric(Notes(xI1).ColumnIndex) Then Continue For
                     If Not Notes(xI1).Selected Then Continue For
 
                     Me.RedoRelabelNote(Notes(xI1), xD1, True, xUndo, xRedo)
@@ -3728,7 +3728,7 @@ EndOfAdjustment:
             Dim xBaseRedo As UndoRedo.LinkedURCmd = xRedo
 
             For xI1 = 1 To UBound(Notes)
-                If nNumericLabel(Notes(xI1).ColumnIndex) Then Continue For
+                If isColumnNumeric(Notes(xI1).ColumnIndex) Then Continue For
                 If Not Notes(xI1).Selected Then Continue For
 
                 Me.RedoRelabelNote(Notes(xI1), xVal, True, xUndo, xRedo)
@@ -3757,7 +3757,7 @@ Jump2:
 
     Private Function fdrCheck(ByVal xNote As Note) As Boolean
         Return xNote.VPosition >= MeasureBottom(fdriMesL) And xNote.VPosition < MeasureBottom(fdriMesU) + MeasureLength(fdriMesU) AndAlso
-               IIf(nNumericLabel(xNote.ColumnIndex),
+               IIf(isColumnNumeric(xNote.ColumnIndex),
                    xNote.Value >= fdriValL And xNote.Value <= fdriValU,
                    xNote.Value >= fdriLblL And xNote.Value <= fdriLblU) AndAlso
                Array.IndexOf(fdriCol, xNote.ColumnIndex) <> -1
@@ -3927,7 +3927,7 @@ Jump2:
         'Main process
         For xI1 As Integer = 1 To UBound(Notes)
             If ((xbSel And Notes(xI1).Selected) Or (xbUnsel And Not Notes(xI1).Selected)) AndAlso
-                    fdrCheck(Notes(xI1)) AndAlso nEnabled(Notes(xI1).ColumnIndex) And Not nNumericLabel(Notes(xI1).ColumnIndex) AndAlso fdrRangeS(xbShort, xbLong, IIf(NTInput, Notes(xI1).Length, Notes(xI1).LongNote)) And fdrRangeS(xbVisible, xbHidden, Notes(xI1).Hidden) Then
+                    fdrCheck(Notes(xI1)) AndAlso nEnabled(Notes(xI1).ColumnIndex) And Not isColumnNumeric(Notes(xI1).ColumnIndex) AndAlso fdrRangeS(xbShort, xbLong, IIf(NTInput, Notes(xI1).Length, Notes(xI1).LongNote)) And fdrRangeS(xbVisible, xbHidden, Notes(xI1).Hidden) Then
                 'xUndo &= sCmdKC(K(xI1).ColumnIndex, K(xI1).VPosition, xxLbl, IIf(NTInput, K(xI1).Length, K(xI1).LongNote), K(xI1).Hidden, 0, 0, K(xI1).Value, IIf(NTInput, K(xI1).Length, K(xI1).LongNote), K(xI1).Hidden, True) & vbCrLf
                 'xRedo &= sCmdKC(K(xI1).ColumnIndex, K(xI1).VPosition, K(xI1).Value, IIf(NTInput, K(xI1).Length, K(xI1).LongNote), K(xI1).Hidden, 0, 0, xxLbl, IIf(NTInput, K(xI1).Length, K(xI1).LongNote), K(xI1).Hidden, True) & vbCrLf
                 Me.RedoRelabelNote(Notes(xI1), xxLbl, True, xUndo, xRedo)
@@ -3968,7 +3968,7 @@ Jump2:
         'Main process
         For xI1 As Integer = 1 To UBound(Notes)
             If ((xbSel And Notes(xI1).Selected) Or (xbUnsel And Not Notes(xI1).Selected)) AndAlso
-                    fdrCheck(Notes(xI1)) AndAlso nEnabled(Notes(xI1).ColumnIndex) And nNumericLabel(Notes(xI1).ColumnIndex) AndAlso fdrRangeS(xbShort, xbLong, IIf(NTInput, Notes(xI1).Length, Notes(xI1).LongNote)) And fdrRangeS(xbVisible, xbHidden, Notes(xI1).Hidden) Then
+                    fdrCheck(Notes(xI1)) AndAlso nEnabled(Notes(xI1).ColumnIndex) And isColumnNumeric(Notes(xI1).ColumnIndex) AndAlso fdrRangeS(xbShort, xbLong, IIf(NTInput, Notes(xI1).Length, Notes(xI1).LongNote)) And fdrRangeS(xbVisible, xbHidden, Notes(xI1).Hidden) Then
                 'xUndo &= sCmdKC(K(xI1).ColumnIndex, K(xI1).VPosition, xReplaceVal, IIf(NTInput, K(xI1).Length, K(xI1).LongNote), K(xI1).Hidden, 0, 0, K(xI1).Value, IIf(NTInput, K(xI1).Length, K(xI1).LongNote), K(xI1).Hidden, True) & vbCrLf
                 'xRedo &= sCmdKC(K(xI1).ColumnIndex, K(xI1).VPosition, K(xI1).Value, IIf(NTInput, K(xI1).Length, K(xI1).LongNote), K(xI1).Hidden, 0, 0, xReplaceVal, IIf(NTInput, K(xI1).Length, K(xI1).LongNote), K(xI1).Hidden, True) & vbCrLf
                 Me.RedoRelabelNote(Notes(xI1), xReplaceVal, True, xUndo, xRedo)
@@ -4160,14 +4160,6 @@ Jump2:
         Next
     End Sub
 
-    Private Sub LoadTheme(ByVal sender As System.Object, ByVal e As System.EventArgs)
-        'If Not File.Exists(My.Application.Info.DirectoryPath & "\Data\" & sender.Text) Then Exit Sub
-        'SaveTheme = True
-        'LoadCFF(My.Computer.FileSystem.ReadAllText(My.Application.Info.DirectoryPath & "\Theme\" & sender.Text, System.Text.Encoding.Unicode))
-        LoadSettings(My.Application.Info.DirectoryPath & "\Data\" & sender.Text)
-        RefreshPanelAll()
-    End Sub
-
     Private Sub TBThemeLoadComptability_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TBThemeLoadComptability.Click
         Dim xDiag As New OpenFileDialog
         xDiag.Filter = Strings.FileType.TH & "|*.th"
@@ -4295,7 +4287,7 @@ Jump2:
                 Dim xL1 As String = C10to36(xI1)
                 Dim xL2 As String = C10to36(xI1 + 1)
                 For xI2 As Integer = 1 To UBound(Notes)
-                    If nNumericLabel(Notes(xI2).ColumnIndex) Then Continue For
+                    If isColumnNumeric(Notes(xI2).ColumnIndex) Then Continue For
 
                     If C10to36(Notes(xI2).Value \ 10000) = xL1 Then
                         Me.RedoRelabelNote(Notes(xI2), xI1 * 10000 + 10000, True, xUndo, xRedo)
@@ -4354,7 +4346,7 @@ Jump2:
                 Dim xL1 As String = C10to36(xI1 + 2)
                 Dim xL2 As String = C10to36(xI1 + 1)
                 For xI2 As Integer = 1 To UBound(Notes)
-                    If nNumericLabel(Notes(xI2).ColumnIndex) Then Continue For
+                    If isColumnNumeric(Notes(xI2).ColumnIndex) Then Continue For
 
                     If C10to36(Notes(xI2).Value \ 10000) = xL1 Then
                         Me.RedoRelabelNote(Notes(xI2), xI1 * 10000 + 10000, True, xUndo, xRedo)
@@ -4595,7 +4587,7 @@ Jump2:
             Notes(xI1).Selected = Notes(xI1).Selected And nEnabled(Notes(xI1).ColumnIndex)
         Next
         'AddUndo(xUndo, xRedo)
-        UpdateKLeft()
+        UpdateColumnsX()
         RefreshPanelAll()
     End Sub
     Private Sub CGSTOP_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles CGSTOP.CheckedChanged
@@ -4611,7 +4603,7 @@ Jump2:
             Notes(xI1).Selected = Notes(xI1).Selected And nEnabled(Notes(xI1).ColumnIndex)
         Next
         'AddUndo(xUndo, xRedo)
-        UpdateKLeft()
+        UpdateColumnsX()
         RefreshPanelAll()
     End Sub
     Private Sub CGBPM_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles CGBPM.CheckedChanged
@@ -4627,7 +4619,7 @@ Jump2:
             Notes(xI1).Selected = Notes(xI1).Selected And nEnabled(Notes(xI1).ColumnIndex)
         Next
         'AddUndo(xUndo, xRedo)
-        UpdateKLeft()
+        UpdateColumnsX()
         RefreshPanelAll()
     End Sub
 

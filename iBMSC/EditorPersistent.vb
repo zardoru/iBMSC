@@ -511,7 +511,7 @@ Partial Public Class MainWindow
         End If
 
 EndOfSub:
-        UpdateKLeft()
+        UpdateColumnsX()
         FileStream.Close()
         'File.Delete(xTempFileName)
     End Sub
@@ -1212,7 +1212,7 @@ EndOfSub:
             MsgBox(ex.Message, MsgBoxStyle.Exclamation, Strings.Messages.Err)
 
         Finally
-            UpdateKLeft()
+            UpdateColumnsX()
 
         End Try
     End Sub
@@ -1249,4 +1249,11 @@ EndOfSub:
         fs.Close()
     End Sub
 
+    Private Sub LoadTheme(ByVal sender As System.Object, ByVal e As System.EventArgs)
+        'If Not File.Exists(My.Application.Info.DirectoryPath & "\Data\" & sender.Text) Then Exit Sub
+        'SaveTheme = True
+        'LoadCFF(My.Computer.FileSystem.ReadAllText(My.Application.Info.DirectoryPath & "\Theme\" & sender.Text, System.Text.Encoding.Unicode))
+        LoadSettings(My.Application.Info.DirectoryPath & "\Data\" & sender.Text)
+        RefreshPanelAll()
+    End Sub
 End Class

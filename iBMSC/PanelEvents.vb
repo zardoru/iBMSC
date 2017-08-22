@@ -375,7 +375,7 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
                 'Play wav
                 If ClickStopPreview Then PreviewNote("", True)
                 'My.Computer.Audio.Stop()
-                If xITemp > 0 And PreviewOnClick AndAlso Not nNumericLabel(Notes(xITemp).ColumnIndex) Then
+                If xITemp > 0 And PreviewOnClick AndAlso Not isColumnNumeric(Notes(xITemp).ColumnIndex) Then
                     Dim xI2 As Integer = Notes(xITemp).Value \ 10000
                     If xI2 <= 0 Then xI2 = 1
                     If xI2 >= 1296 Then xI2 = 1295
@@ -394,7 +394,7 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
                 If TBSelect.Checked Then
 
                     If xITemp >= 0 And e.Clicks = 2 Then
-                        If nNumericLabel(Notes(xITemp).ColumnIndex) Then
+                        If isColumnNumeric(Notes(xITemp).ColumnIndex) Then
                             Dim xMessage As String = Strings.Messages.PromptEnterNumeric
                             If Notes(xITemp).ColumnIndex = niBPM Then xMessage = Strings.Messages.PromptEnterBPM
                             If Notes(xITemp).ColumnIndex = niSTOP Then xMessage = Strings.Messages.PromptEnterSTOP
@@ -544,7 +544,7 @@ Jump2:
                         '            sCmdKL(.ColumnIndex, .VPosition, .Value, .Length, .Hidden, K(xITemp).Length, True, True))
                         'End With
 
-                    ElseIf nNumericLabel(xColumn) Then
+                    ElseIf isColumnNumeric(xColumn) Then
                         Dim xMessage As String = Strings.Messages.PromptEnterNumeric
                         If xColumn = niBPM Then xMessage = Strings.Messages.PromptEnterBPM
                         If xColumn = niSTOP Then xMessage = Strings.Messages.PromptEnterSTOP
@@ -1478,16 +1478,22 @@ EndCtrlOpn:         End If
                     xI1 += 1
                 Loop
             End If
+
             xColumn = EnabledColumnToReal(RealColumnToEnabled(xColumn))  'get the enabled column where mouse is 
 
             If e.Button = Windows.Forms.MouseButtons.Left Then
-                If nNumericLabel(xColumn) Then
+                Dim LongNote As Boolean = My.Computer.Keyboard.ShiftKeyDown
+                Dim HiddenNote As Boolean = My.Computer.Keyboard.CtrlKeyDown
+
+                Dim xUndo As UndoRedo.LinkedURCmd = Nothing
+                Dim xRedo As UndoRedo.LinkedURCmd = New UndoRedo.Void
+                Dim xBaseRedo As UndoRedo.LinkedURCmd = xRedo
+
+                If isColumnNumeric(xColumn) Then
                     Dim xMessage As String = Strings.Messages.PromptEnterNumeric
                     If xColumn = niBPM Then xMessage = Strings.Messages.PromptEnterBPM
                     If xColumn = niSTOP Then xMessage = Strings.Messages.PromptEnterSTOP
 
-                    Dim xBoolean As Boolean = My.Computer.Keyboard.ShiftKeyDown
-                    Dim xBoolean2 As Boolean = My.Computer.Keyboard.CtrlKeyDown
                     Dim xD1 As Double = Val(InputBox(xMessage, Me.Text)) * 10000
 
                     If xD1 = 0 Then GoTo Jump0
@@ -1495,41 +1501,29 @@ EndCtrlOpn:         End If
                     If xD1 <= 0 Then xD1 = 1
                     If xD1 > 655359999 Then xD1 = 655359999
 
-                    Dim xUndo As UndoRedo.LinkedURCmd = Nothing
-                    Dim xRedo As UndoRedo.LinkedURCmd = New UndoRedo.Void
-                    Dim xBaseRedo As UndoRedo.LinkedURCmd = xRedo
-
                     For xI1 = 1 To UBound(Notes)
                         If Notes(xI1).VPosition = xVPosition AndAlso Notes(xI1).ColumnIndex = xColumn Then _
-                            Me.RedoRemoveNote(Notes(xI1), True, xUndo, xRedo)
+                            RedoRemoveNote(Notes(xI1), True, xUndo, xRedo)
                     Next
 
-                    Me.RedoAddNote(xColumn, xVPosition, xD1, xBoolean, xBoolean2, True, xUndo, xRedo)
-                    AddNote(xVPosition, xColumn, xD1, xBoolean, xBoolean2)
+                    RedoAddNote(xColumn, xVPosition, xD1, LongNote, HiddenNote, True, xUndo, xRedo)
+                    AddNote(xVPosition, xColumn, xD1, LongNote, HiddenNote)
 
                     AddUndo(xUndo, xBaseRedo.Next)
 
                 Else
-                    Dim xBoolean As Boolean = My.Computer.Keyboard.ShiftKeyDown
-                    Dim xBoolean2 As Boolean = My.Computer.Keyboard.CtrlKeyDown
                     Dim xUI1 As Integer = (LWAV.SelectedIndex + 1) * 10000
-
-                    Dim xUndo As UndoRedo.LinkedURCmd = Nothing
-                    Dim xRedo As UndoRedo.LinkedURCmd = New UndoRedo.Void
-                    Dim xBaseRedo As UndoRedo.LinkedURCmd = xRedo
 
                     For xI1 = 1 To UBound(Notes)
                         If Notes(xI1).VPosition = xVPosition AndAlso Notes(xI1).ColumnIndex = xColumn Then _
-                            Me.RedoRemoveNote(Notes(xI1), True, xUndo, xRedo)
+                            RedoRemoveNote(Notes(xI1), True, xUndo, xRedo)
                     Next
 
-                    Me.RedoAddNote(xColumn, xVPosition, xUI1, xBoolean, xBoolean2, True, xUndo, xRedo)
-                    AddNote(xVPosition, xColumn, xUI1, xBoolean, xBoolean2)
+                    RedoAddNote(xColumn, xVPosition, xUI1, LongNote, HiddenNote, True, xUndo, xRedo)
+                    AddNote(xVPosition, xColumn, xUI1, LongNote, HiddenNote)
 
                     AddUndo(xUndo, xRedo)
-
                 End If
-
             End If
 
 Jump0:      If Not TempDraw Then TempDraw = True

@@ -59,7 +59,7 @@ Partial Public Class MainWindow
             If My.Computer.Keyboard.CtrlKeyDown Then xAlpha = vo.kOpacity
 
             Dim xText As String = C10to36(xValue \ 10000)
-            If nNumericLabel(TempColumn) Then xText = GetColumn(TempColumn).Title
+            If isColumnNumeric(TempColumn) Then xText = GetColumn(TempColumn).Title
             'If nNumericLabel(TempColumn) Then xText = xValue / 10000
             'If nCol(TempColumn).Text <> "" Then xText = nCol(TempColumn).Text
 
@@ -434,7 +434,7 @@ Partial Public Class MainWindow
             e.Graphics.FillRectangle(xBrush, HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS) + 2, VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight + 1, nLength(sNote.ColumnIndex) * gxWidth - 3, vo.kHeight - 1)
             e.Graphics.DrawRectangle(xPen1, HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS) + 1, VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight, nLength(sNote.ColumnIndex) * gxWidth - 2, vo.kHeight)
 
-            e.Graphics.DrawString(IIf(nNumericLabel(sNote.ColumnIndex), sNote.Value / 10000, xLabel),
+            e.Graphics.DrawString(IIf(isColumnNumeric(sNote.ColumnIndex), sNote.Value / 10000, xLabel),
                         vo.kFont, xBrush2, HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS) + vo.kLabelHShift, VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight + vo.kLabelVShift)
 
         Else
@@ -449,7 +449,7 @@ Partial Public Class MainWindow
             e.Graphics.FillRectangle(xBrush, HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS) + 2, VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight + 1, nLength(sNote.ColumnIndex) * gxWidth - 3, vo.kHeight - 1)
             e.Graphics.DrawRectangle(xPen2, HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS) + 1, VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight, nLength(sNote.ColumnIndex) * gxWidth - 2, vo.kHeight)
 
-            e.Graphics.DrawString(IIf(nNumericLabel(sNote.ColumnIndex), sNote.Value / 10000, xLabel),
+            e.Graphics.DrawString(IIf(isColumnNumeric(sNote.ColumnIndex), sNote.Value / 10000, xLabel),
                         vo.kFont, xBrush2, HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS) + vo.kLabelHShiftL, VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight + vo.kLabelVShift)
 
         End If
@@ -515,7 +515,7 @@ Partial Public Class MainWindow
             e.Graphics.FillRectangle(xBrush, HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS) + 2, VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight + 1, nLength(sNote.ColumnIndex) * gxWidth - 3, vo.kHeight - 1)
             e.Graphics.DrawRectangle(xPen1, HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS) + 1, VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight, nLength(sNote.ColumnIndex) * gxWidth - 2, vo.kHeight)
 
-            e.Graphics.DrawString(IIf(nNumericLabel(sNote.ColumnIndex), sNote.Value / 10000, xLabel),
+            e.Graphics.DrawString(IIf(isColumnNumeric(sNote.ColumnIndex), sNote.Value / 10000, xLabel),
                          vo.kFont, xBrush2, HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS) + vo.kLabelHShift, VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight + vo.kLabelVShift)
 
             If sNote.PairWithI > 0 Then
@@ -553,7 +553,7 @@ Partial Public Class MainWindow
             e.Graphics.DrawRectangle(xPen1, HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS) + 2, VerticalPositiontoDisplay(sNote.VPosition + sNote.Length, xVS, xHeight) - vo.kHeight,
                                             nLength(sNote.ColumnIndex) * gxWidth - 4, CInt(sNote.Length * gxHeight) + vo.kHeight)
 
-            e.Graphics.DrawString(IIf(nNumericLabel(sNote.ColumnIndex), sNote.Value / 10000, xLabel),
+            e.Graphics.DrawString(IIf(isColumnNumeric(sNote.ColumnIndex), sNote.Value / 10000, xLabel),
                          vo.kFont, xBrush2, HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS) + vo.kLabelHShiftL, VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight + vo.kLabelVShift)
 
             If ErrorCheck AndAlso sNote.HasError Then e.Graphics.DrawImage(My.Resources.ImageError, CInt(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) + nLength(sNote.ColumnIndex) / 2, xHS) - 12),
