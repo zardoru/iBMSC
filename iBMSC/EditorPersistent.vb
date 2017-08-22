@@ -262,7 +262,7 @@ Partial Public Class MainWindow
         'End Try
         'Exit Do
         'Loop
-        Dim Doc As New XmlDataDocument
+        Dim Doc As New XmlDocument
         Dim FileStream As New IO.FileStream(Path, FileMode.Open, FileAccess.Read)
         Doc.Load(FileStream)
 
@@ -537,7 +537,7 @@ EndOfSub:
     Private Sub LoadLocale(ByVal Path As String)
         If Not My.Computer.FileSystem.FileExists(Path) Then Return
 
-        Dim Doc As XmlDataDocument = Nothing
+        Dim Doc As XmlDocument = Nothing
         Dim FileStream As IO.FileStream = Nothing
 
         Dim xPOHeaderPart2 As Boolean = POHeaderPart2.Visible
@@ -548,7 +548,7 @@ EndOfSub:
         POWaveFormPart2.Visible = True
 
         Try
-            Doc = New XmlDataDocument
+            Doc = New XmlDocument
             FileStream = New IO.FileStream(Path, FileMode.Open, FileAccess.Read)
             Doc.Load(FileStream)
 
@@ -1230,7 +1230,7 @@ EndOfSub:
     End Sub
 
     Private Sub LoadLocaleXML(xStr As FileInfo)
-        Dim d As New XmlDataDocument
+        Dim d As New XmlDocument
         Dim fs As New FileStream(xStr.FullName, FileMode.Open, FileAccess.Read)
 
         Try

@@ -15,6 +15,7 @@ x64/
 iBMSC/build/
 iBMSC/[Bb]in/
 iBMSC/[Oo]bj/
+Release.zip
 
 # MSTest test Results
 [Tt]est[Rr]esult*/

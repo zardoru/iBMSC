@@ -4642,12 +4642,12 @@ Jump2:
 
 
     Private Sub tBeatValue_LostFocus(ByVal sender As Object, ByVal e As System.EventArgs) Handles tBeatValue.LostFocus
-        Dim a As Double = Val(tBeatValue.Text)
-        If a <= 0.0# Or a >= 1000.0# Then tBeatValue.BackColor = Color.FromArgb(&HFFFFC0C0) Else tBeatValue.BackColor = Nothing
+        Dim a As Double
+        If Double.TryParse(tBeatValue.Text, a) Then
+            If a <= 0.0# Or a >= 1000.0# Then tBeatValue.BackColor = Color.FromArgb(&HFFFFC0C0) Else tBeatValue.BackColor = Nothing
 
-        tBeatValue.Text = a
-        'Dim xDenom As Long = GetDenominator(a, 10000)
-        'tBeatValue.Text = CLng(a * xDenom) / xDenom
+            tBeatValue.Text = a
+        End If
     End Sub
 
 
@@ -4835,12 +4835,14 @@ case2:              Dim xI0 As Integer
     End Sub
 
     Private Sub BBeatApplyV_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles BBeatApplyV.Click
-        Dim a As Double = Val(tBeatValue.Text)
-        If a <= 0.0# Or a >= 1000.0# Then System.Media.SystemSounds.Hand.Play() : Exit Sub
+        Dim a As Double
+        If Double.TryParse(tBeatValue.Text, a) Then
+            If a <= 0.0# Or a >= 1000.0# Then System.Media.SystemSounds.Hand.Play() : Exit Sub
 
-        Dim xxD As Long = GetDenominator(a)
+            Dim xxD As Long = GetDenominator(a)
 
-        ApplyBeat(a, a & IIf(xxD > 10000, "", " ( " & CLng(a * xxD) & " / " & xxD & " ) "))
+            ApplyBeat(a, a & IIf(xxD > 10000, "", " ( " & CLng(a * xxD) & " / " & xxD & " ) "))
+        End If
     End Sub
 
 
@@ -5008,6 +5010,10 @@ case2:              Dim xI0 As Integer
     End Sub
 
     Private Sub Label15_Click(sender As Object, e As EventArgs) Handles Label15.Click
+
+    End Sub
+
+    Private Sub tBeatValue_TextChanged(sender As Object, e As EventArgs) Handles tBeatValue.TextChanged
 
     End Sub
 End Class
