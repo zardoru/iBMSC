@@ -93,7 +93,7 @@ Class NVorbisSource
         If Not _disposed Then
             _vorbisReader.Dispose()
         Else
-            Throw New ObjectDisposedException("NVorbisSource")
+            'Throw New ObjectDisposedException("NVorbisSource")
         End If
         _disposed = True
     End Sub
