@@ -459,7 +459,7 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
                     If gSnap Then xVPosition = SnapToGrid(xVPosition)
                     If xVPosition < 0 Or xVPosition >= VPosition1000() Then Exit Select
 
-                    Dim xColumn = GetColumnAtEvent(e, spH(sender.Tag))
+                    Dim xColumn = GetColumnAtEvent(e, xHS)
 
                     For xI2 As Integer = UBound(Notes) To 1 Step -1
                         If Notes(xI2).VPosition = xVPosition And Notes(xI2).ColumnIndex = xColumn Then NoteIndex = xI2 : Exit For
@@ -678,7 +678,7 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
 
                         If My.Computer.Keyboard.ShiftKeyDown Then
                             LWAV.SelectedIndices.Clear()
-                            LWAV.SelectedIndex = C36to10(C10to36(Notes(xI1).Value \ 10000)) - 1
+                            LWAV.SelectedIndex = Base36ToDecimal(C10to36(Notes(xI1).Value \ 10000)) - 1
                             validate_LWAV_view()
 
                         Else
@@ -738,8 +738,8 @@ Jump0:          'If xI1 = 0 Then
             If IsBase36(xStr) And Not (xStr = "00" Or xStr = "0") Then
                 Dim xUndo As UndoRedo.LinkedURCmd = Nothing
                 Dim xRedo As UndoRedo.LinkedURCmd = Nothing
-                RedoRelabelNote(Note, C36to10(xStr) * 10000, True, xUndo, xRedo)
-                Note.Value = C36to10(xStr) * 10000
+                RedoRelabelNote(Note, Base36ToDecimal(xStr) * 10000, True, xUndo, xRedo)
+                Note.Value = Base36ToDecimal(xStr) * 10000
                 AddUndo(xUndo, xRedo)
                 Return
             Else
@@ -950,11 +950,21 @@ Jump0:          'If xI1 = 0 Then
                             If DisableVerticalMove Then mouseVPosition = uNotes(0).VPosition
                             dVPosition = mouseVPosition - Notes(xITemp).VPosition  'delta VPosition
 
-                            mouseColumn = GetColumnAtEvent(e, xHS)
+                            xI1 = 0
+                            Dim mLeft As Integer = e.X / gxWidth + xHS 'horizontal position of the mouse
+                            If mLeft >= 0 Then
+                                Do
+                                    If mLeft < nLeft(xI1 + 1) Or xI1 >= gColumns Then mouseColumn = RealColumnToEnabled(xI1) : Exit Do 'get the column where mouse is 
+                                    xI1 += 1
+                                Loop
+                            End If
+
+                            dColumn = mouseColumn - RealColumnToEnabled(Notes(xITemp).ColumnIndex) 'get the enabled delta column where mouse is 
+
                             dColumn = mouseColumn - RealColumnToEnabled(Notes(xITemp).ColumnIndex) 'get the enabled delta column where mouse is 
 
                             'Ks cannot be beyond the left, the upper and the lower boundary
-                            Dim mLeft = 0
+                            mLeft = 0
                             Dim mVPosition As Double = 0
                             Dim muVPosition As Double = 191999
                             For xI1 = 1 To UBound(Notes)

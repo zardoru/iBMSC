@@ -49,20 +49,20 @@ Partial Public Class MainWindow
                 LBeat.Items(xIndex) = Add3Zeros(xIndex) & ": " & xRatio & IIf(xxD > 10000, "", " ( " & CLng(xRatio * xxD) & " / " & xxD & " ) ")
 
             ElseIf sLineTrim.StartsWith("#WAV", StringComparison.CurrentCultureIgnoreCase) Then
-                hWAV(C36to10(Mid(sLineTrim, Len("#WAV") + 1, 2))) = Mid(sLineTrim, Len("#WAV") + 4)
+                hWAV(Base36ToDecimal(Mid(sLineTrim, Len("#WAV") + 1, 2))) = Mid(sLineTrim, Len("#WAV") + 4)
 
             ElseIf sLineTrim.StartsWith("#BPM", StringComparison.CurrentCultureIgnoreCase) And Not Mid(sLineTrim, Len("#BPM") + 1, 1).Trim = "" Then  'If BPM##
                 If Val(Mid(sLineTrim, Len("#BPM") + 4)) > 0 And Val(Mid(sLineTrim, Len("#BPM") + 4)) < 65536 Then
-                    hBPM(C36to10(Mid(sLineTrim, Len("#BPM") + 1, 2))) = Val(Mid(sLineTrim, Len("#BPM") + 4)) * 10000
+                    hBPM(Base36ToDecimal(Mid(sLineTrim, Len("#BPM") + 1, 2))) = Val(Mid(sLineTrim, Len("#BPM") + 4)) * 10000
                 ElseIf Val(Mid(sLineTrim, Len("#BPM") + 4)) >= 65536 Then
-                    hBPM(C36to10(Mid(sLineTrim, Len("#BPM") + 1, 2))) = 655359999
+                    hBPM(Base36ToDecimal(Mid(sLineTrim, Len("#BPM") + 1, 2))) = 655359999
                 End If
 
             ElseIf sLineTrim.StartsWith("#STOP", StringComparison.CurrentCultureIgnoreCase) Then
                 If Val(Mid(sLineTrim, Len("#STOP") + 4)) > 0 And Val(Mid(sLineTrim, Len("#STOP") + 4)) < 65536 Then
-                    hSTOP(C36to10(Mid(sLineTrim, Len("#STOP") + 1, 2))) = Val(Mid(sLineTrim, Len("#STOP") + 4)) * 10000
+                    hSTOP(Base36ToDecimal(Mid(sLineTrim, Len("#STOP") + 1, 2))) = Val(Mid(sLineTrim, Len("#STOP") + 4)) * 10000
                 ElseIf Val(Mid(sLineTrim, Len("#STOP") + 4)) >= 65536 Then
-                    hSTOP(C36to10(Mid(sLineTrim, Len("#STOP") + 1, 2))) = 655359999
+                    hSTOP(Base36ToDecimal(Mid(sLineTrim, Len("#STOP") + 1, 2))) = 655359999
                 End If
 
 
@@ -133,7 +133,7 @@ Partial Public Class MainWindow
                 If Val(Mid(sLineTrim, Len("#LNTYPE") + 1).Trim) = 1 Then CHLnObj.SelectedIndex = 0
 
             ElseIf sLineTrim.StartsWith("#LNOBJ", StringComparison.CurrentCultureIgnoreCase) Then
-                Dim xValue As Integer = C36to10(Mid(sLineTrim, Len("#LNOBJ") + 1).Trim)
+                Dim xValue As Integer = Base36ToDecimal(Mid(sLineTrim, Len("#LNOBJ") + 1).Trim)
                 CHLnObj.SelectedIndex = xValue
 
                 'TODO: LNOBJ value validation
@@ -194,10 +194,10 @@ AddExpansion:       xExpansion &= sLine & vbCrLf
                     .Hidden = IdentifiertoHidden(xIdentifier)
                     .Selected = False
                     .VPosition = MeasureBottom(xMeasure) + MeasureLength(xMeasure) * (xI1 / 2 - 4) / ((Len(sLineTrim) - 7) / 2)
-                    .Value = C36to10(Mid(sLineTrim, xI1, 2)) * 10000
+                    .Value = Base36ToDecimal(Mid(sLineTrim, xI1, 2)) * 10000
                     If xIdentifier = "03" Then .Value = Convert.ToInt32(Mid(sLineTrim, xI1, 2), 16) * 10000
-                    If xIdentifier = "08" Then .Value = hBPM(C36to10(Mid(sLineTrim, xI1, 2)))
-                    If xIdentifier = "09" Then .Value = hSTOP(C36to10(Mid(sLineTrim, xI1, 2)))
+                    If xIdentifier = "08" Then .Value = hBPM(Base36ToDecimal(Mid(sLineTrim, xI1, 2)))
+                    If xIdentifier = "09" Then .Value = hSTOP(Base36ToDecimal(Mid(sLineTrim, xI1, 2)))
                 End With
             Next
         Next
@@ -383,12 +383,12 @@ AddExpansion:       xExpansion &= sLine & vbCrLf
                             .LongNote = IdentifiertoLongNote(Identifiers(CurrentBMSChannel))
                             .Hidden = IdentifiertoHidden(Identifiers(CurrentBMSChannel))
                             .VPosition = MeasureBottom(MeasureIndex)
-                            .Value = C36to10(xText(xI2))
+                            .Value = Base36ToDecimal(xText(xI2))
                         End With
                         If Identifiers(CurrentBMSChannel) = "08" Then _
-                            xprevNotes(UBound(xprevNotes)).Value = IIf(BPMx1296, hBPM(C36to10(xText(xI2))), hBPM(Convert.ToInt32(xText(xI2), 16)))
+                            xprevNotes(UBound(xprevNotes)).Value = IIf(BPMx1296, hBPM(Base36ToDecimal(xText(xI2))), hBPM(Convert.ToInt32(xText(xI2), 16)))
                         If Identifiers(CurrentBMSChannel) = "09" Then _
-                            xprevNotes(UBound(xprevNotes)).Value = IIf(STOPx1296, hSTOP(C36to10(xText(xI2))), hSTOP(Convert.ToInt32(xText(xI2), 16)))
+                            xprevNotes(UBound(xprevNotes)).Value = IIf(STOPx1296, hSTOP(Base36ToDecimal(xText(xI2))), hSTOP(Convert.ToInt32(xText(xI2), 16)))
                         Continue For
                     End If
                     If xStrKey(CInt(xVPosition(xI2) / xGCD)) <> "00" Then hasOverlapping = True
@@ -474,7 +474,7 @@ AddExpansion:       xExpansion &= sLine & vbCrLf
                     With xprevNotes(UBound(xprevNotes))
                         .ColumnIndex = ColumnIndex
                         .VPosition = MeasureBottom(MeasureIndex)
-                        .Value = C36to10(xText(xI2))
+                        .Value = Base36ToDecimal(xText(xI2))
                     End With
                     Continue For
                 End If

@@ -209,8 +209,8 @@ Partial Public Class MainWindow
         Dim xUpper As Double = MeasureUpper(measureIndex)
         Dim xCurr = MeasureBottom(measureIndex)
         Dim xDiff = 192 / divisions
-        Dim Height = VerticalPositiontoDisplay(xCurr, xVS, xTHeight)
         Do While xCurr < xUpper
+            Dim Height = VerticalPositiontoDisplay(xCurr, xVS, xTHeight)
             e1.Graphics.DrawLine(pen, 0, Height,
                                       xTWidth, Height)
             Line += 1
@@ -429,7 +429,7 @@ Partial Public Class MainWindow
         If sNote.Hidden Then xAlpha = vo.kOpacity
 
         Dim xLabel As String = C10to36(sNote.Value \ 10000)
-        If ShowFileName AndAlso hWAV(C36to10(xLabel)) <> "" Then xLabel = Path.GetFileNameWithoutExtension(hWAV(C36to10(xLabel)))
+        If ShowFileName AndAlso hWAV(Base36ToDecimal(xLabel)) <> "" Then xLabel = Path.GetFileNameWithoutExtension(hWAV(Base36ToDecimal(xLabel)))
 
         If Not sNote.LongNote Then
 
@@ -506,7 +506,7 @@ Partial Public Class MainWindow
         If sNote.Hidden Then xAlpha = vo.kOpacity
 
         Dim xLabel As String = C10to36(sNote.Value \ 10000)
-        If ShowFileName AndAlso hWAV(C36to10(xLabel)) <> "" Then xLabel = Path.GetFileNameWithoutExtension(hWAV(C36to10(xLabel)))
+        If ShowFileName AndAlso hWAV(Base36ToDecimal(xLabel)) <> "" Then xLabel = Path.GetFileNameWithoutExtension(hWAV(Base36ToDecimal(xLabel)))
 
         Dim xPen1 As Pen
         Dim xBrush As Drawing2D.LinearGradientBrush
