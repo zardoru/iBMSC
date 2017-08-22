@@ -144,6 +144,12 @@
     <Compile Include="Dialogs\fLoadFileProgress.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Dialogs\SplashScreen1.Designer.vb">
+      <DependentUpon>SplashScreen1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\SplashScreen1.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="EditorRecent.vb">
       <SubType>Form</SubType>
     </Compile>
@@ -235,6 +241,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\fLoadFileProgress.resx">
       <DependentUpon>fLoadFileProgress.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\SplashScreen1.resx">
+      <DependentUpon>SplashScreen1.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainWindow.resx">
       <DependentUpon>MainWindow.vb</DependentUpon>

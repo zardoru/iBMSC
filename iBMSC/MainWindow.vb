@@ -350,6 +350,16 @@ Public Class MainWindow
         If iCol < niB Then Return column(iCol) Else Return column(niB)
     End Function
 
+    Private Function BMSEChannelToColumnIndex(ByVal I As String)
+        Dim Ivalue = Val(I)
+        If Ivalue > 100 Then
+            Return niB + Ivalue - 101
+        ElseIf Ivalue < 100 And Ivalue > 0 Then
+            Return IdentifiertoColumnIndex(Mid(I, 2, 2))
+        End If
+        Return niB ' ??? how did a negative number get here?
+    End Function
+
     Private Function IdentifiertoColumnIndex(ByVal I As String) As Integer
         Select Case I
             Case "01" : Return niB
@@ -770,15 +780,28 @@ Public Class MainWindow
 
             'paste
             For xI1 = 1 To UBound(xStrLine)
-                xTempVP = Val(Mid(xStrLine(xI1), 5, 7)) + MeasureBottom(MeasureAtDisplacement(-xVS) + 1)
-                If Len(xStrLine(xI1)) > 11 And IdentifiertoColumnIndex(Mid(xStrLine(xI1), 2, 2)) > 0 And xTempVP >= 0 And xTempVP < VPosition1000() Then
+                ' zdr: holy crap this is obtuse
+                Dim posStr = Mid(xStrLine(xI1), 5, 7)
+                Dim vPos = Val(posStr) + MeasureBottom(MeasureAtDisplacement(-xVS) + 1)
+
+                Dim bmsIdent = Mid(xStrLine(xI1), 1, 3)
+                Dim lineCol = BMSEChannelToColumnIndex(bmsIdent)
+
+                Dim Value = Val(Mid(xStrLine(xI1), 12)) * 10000
+
+                Dim attribute = Mid(xStrLine(xI1), 4, 1)
+
+                If Len(xStrLine(xI1)) > 11 And ' Valid length
+                    lineCol > 0 And  ' Valid column 
+                    vPos >= 0 And vPos < VPosition1000() Then ' In range
                     ReDim Preserve Notes(UBound(Notes) + 1)
+
                     With Notes(UBound(Notes))
-                        .ColumnIndex = IdentifiertoColumnIndex(Mid(xStrLine(xI1), 2, 2))
-                        .VPosition = xTempVP
-                        .Value = Val(Mid(xStrLine(xI1), 12)) * 10000
-                        .LongNote = Mid(xStrLine(xI1), 4, 1) = "2"
-                        .Hidden = Mid(xStrLine(xI1), 4, 1) = "1"
+                        .ColumnIndex = lineCol
+                        .VPosition = vPos
+                        .Value = Value
+                        .LongNote = attribute = "2"
+                        .Hidden = attribute = "1"
                         .Selected = xSelected And nEnabled(.ColumnIndex)
                     End With
                 End If
