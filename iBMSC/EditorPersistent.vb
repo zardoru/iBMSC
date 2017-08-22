@@ -122,7 +122,7 @@ Partial Public Class MainWindow
             .WriteAttributeString("gShowC", gShowC)
             .WriteAttributeString("gBPM", gBPM)
             .WriteAttributeString("gSTOP", gSTOP)
-            .WriteAttributeString("gBLP", gBLP)
+            .WriteAttributeString("gBLP", gDisplayBGAColumn)
             .WriteAttributeString("gP2", CHPlayer.SelectedIndex)
             .WriteAttributeString("gCol", CGB.Value)
             .WriteAttributeString("gDivide", gDivide)

@@ -238,7 +238,7 @@ Public Class MainWindow
     Dim gWheel As Integer = 96
     Dim gPgUpDn As Integer = 384
 
-    Dim gBLP As Boolean = False
+    Dim gDisplayBGAColumn As Boolean = False
     Dim gSTOP As Boolean = False
     Dim gBPM As Boolean = True
     'Dim gA8 As Boolean = False
@@ -4575,15 +4575,12 @@ Jump2:
         RefreshPanelAll()
     End Sub
     Private Sub CGBLP_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles CGBLP.CheckedChanged
-        'Dim xUndo As UndoRedo.LinkedURCmd = Nothing
-        'Dim xRedo As UndoRedo.LinkedURCmd = Nothing
-        'Me.RedoChangeVisibleColumns(gBLP, gSTOP, iPlayer, CGBLP.Checked, gSTOP, iPlayer, xUndo, xRedo)
-        gBLP = CGBLP.Checked
+        gDisplayBGAColumn = CGBLP.Checked
 
-        column(niBGA).isVisible = gBLP
-        column(niLAYER).isVisible = gBLP
-        column(niPOOR).isVisible = gBLP
-        column(niS4).isVisible = gBLP
+        column(niBGA).isVisible = gDisplayBGAColumn
+        column(niLAYER).isVisible = gDisplayBGAColumn
+        column(niPOOR).isVisible = gDisplayBGAColumn
+        column(niS4).isVisible = gDisplayBGAColumn
 
         If IsInitializing Then Exit Sub
         For xI1 As Integer = 1 To UBound(Notes)
@@ -4594,9 +4591,6 @@ Jump2:
         RefreshPanelAll()
     End Sub
     Private Sub CGSTOP_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles CGSTOP.CheckedChanged
-        'Dim xUndo As UndoRedo.LinkedURCmd = Nothing
-        'Dim xRedo As UndoRedo.LinkedURCmd = Nothing
-        'Me.RedoChangeVisibleColumns(gBLP, gSTOP, iPlayer, gBLP, CGSTOP.Checked, iPlayer, xUndo, xRedo)
         gSTOP = CGSTOP.Checked
 
         column(niSTOP).isVisible = gSTOP
