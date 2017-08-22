@@ -316,6 +316,7 @@ Public Class MainWindow
 
     Public Sub New()
         InitializeComponent()
+        Audio.Initialize()
     End Sub
 
     Private Function nLeft(ByVal iCol As Integer) As Integer
@@ -627,18 +628,10 @@ Public Class MainWindow
     End Sub
 
     Private Sub PreviewNote(ByVal xFileLocation As String, ByVal bStop As Boolean)
-        'If bStop Then
-        '    mciSendString("close PREV", Nothing, 0, 0)
-        'Else
-        '    Dim sType As String = ""
-        '    If UCase(Path.GetExtension(xFileLocation)) = ".OGG" Then
-        '        sType = "type MPEGVideo "
-        '    End If
-
-        '    Dim xL1 As Long = mciSendString("open """ & xFileLocation & """ " & sType & "alias PREV", Nothing, 0, 0)
-        '    Dim xL2 As Long = mciSendString("play PREV notify", Nothing, 0, 0)
-        '    If PreviewErrorCheck AndAlso (xL1 <> 0 Or xL2 <> 0) Then MsgBox(IIf(xL1 <> 0, lpmsg(5) & " ", lpmsg(6) & " ") & xFileLocation, MsgBoxStyle.Exclamation, lpmsg(4))
-        'End If
+        If bStop Then
+            Audio.StopPlay()
+        End If
+        Audio.Play(xFileLocation)
     End Sub
 
     Private Sub AddNote(ByVal xVPosition As Double,
