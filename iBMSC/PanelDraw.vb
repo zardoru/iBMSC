@@ -52,45 +52,45 @@ Partial Public Class MainWindow
             DrawMouseOver(e1, xTHeight, xHS, xVS)
         End If
 
-        If TempDraw AndAlso (TempColumn > -1 And TempVPosition > -1) Then
+        If TempDraw AndAlso (SelectedColumn > -1 And TempVPosition > -1) Then
             Dim xValue As Integer = (LWAV.SelectedIndex + 1) * 10000
 
             Dim xAlpha As Single = 1.0F
             If My.Computer.Keyboard.CtrlKeyDown Then xAlpha = vo.kOpacity
 
             Dim xText As String = C10to36(xValue \ 10000)
-            If isColumnNumeric(TempColumn) Then xText = GetColumn(TempColumn).Title
+            If isColumnNumeric(SelectedColumn) Then xText = GetColumn(SelectedColumn).Title
             'If nNumericLabel(TempColumn) Then xText = xValue / 10000
             'If nCol(TempColumn).Text <> "" Then xText = nCol(TempColumn).Text
 
             If NTInput Or Not My.Computer.Keyboard.ShiftKeyDown Then
 
-                Dim xPen1 As New Pen(GetColumn(TempColumn).getBright(xAlpha))
-                Dim xBrush As New Drawing2D.LinearGradientBrush(New Point(HorizontalPositiontoDisplay(nLeft(TempColumn), xHS), VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight - 10),
-                               New Point(HorizontalPositiontoDisplay(nLeft(TempColumn) + nLength(TempColumn), xHS), VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) + 10),
-                               GetColumn(TempColumn).getBright(xAlpha),
-                               GetColumn(TempColumn).getDark(xAlpha))
-                Dim xBrush2 As New SolidBrush(GetColumn(TempColumn).cText)
+                Dim xPen1 As New Pen(GetColumn(SelectedColumn).getBright(xAlpha))
+                Dim xBrush As New Drawing2D.LinearGradientBrush(New Point(HorizontalPositiontoDisplay(nLeft(SelectedColumn), xHS), VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight - 10),
+                               New Point(HorizontalPositiontoDisplay(nLeft(SelectedColumn) + nLength(SelectedColumn), xHS), VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) + 10),
+                               GetColumn(SelectedColumn).getBright(xAlpha),
+                               GetColumn(SelectedColumn).getDark(xAlpha))
+                Dim xBrush2 As New SolidBrush(GetColumn(SelectedColumn).cText)
 
-                e1.Graphics.FillRectangle(xBrush, HorizontalPositiontoDisplay(nLeft(TempColumn), xHS) + 2, VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight + 1, nLength(TempColumn) * gxWidth - 3, vo.kHeight - 1)
-                e1.Graphics.DrawRectangle(xPen1, HorizontalPositiontoDisplay(nLeft(TempColumn), xHS) + 1, VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight, nLength(TempColumn) * gxWidth - 2, vo.kHeight)
+                e1.Graphics.FillRectangle(xBrush, HorizontalPositiontoDisplay(nLeft(SelectedColumn), xHS) + 2, VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight + 1, nLength(SelectedColumn) * gxWidth - 3, vo.kHeight - 1)
+                e1.Graphics.DrawRectangle(xPen1, HorizontalPositiontoDisplay(nLeft(SelectedColumn), xHS) + 1, VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight, nLength(SelectedColumn) * gxWidth - 2, vo.kHeight)
 
                 e1.Graphics.DrawString(xText, vo.kFont, xBrush2,
-                            HorizontalPositiontoDisplay(nLeft(TempColumn), xHS) + vo.kLabelHShift, VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight + vo.kLabelVShift)
+                            HorizontalPositiontoDisplay(nLeft(SelectedColumn), xHS) + vo.kLabelHShift, VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight + vo.kLabelVShift)
 
             Else
-                Dim xPen2 As New Pen(GetColumn(TempColumn).getLongBright(xAlpha))
-                Dim xBrush As New Drawing2D.LinearGradientBrush(New Point(HorizontalPositiontoDisplay(nLeft(TempColumn), xHS), VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight - 10),
-                                New Point(HorizontalPositiontoDisplay(nLeft(TempColumn) + nLength(TempColumn), xHS), VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) + 10),
-                                GetColumn(TempColumn).getLongBright(xAlpha),
-                                GetColumn(TempColumn).getLongDark(xAlpha))
-                Dim xBrush2 As New SolidBrush(GetColumn(TempColumn).cLText)
+                Dim xPen2 As New Pen(GetColumn(SelectedColumn).getLongBright(xAlpha))
+                Dim xBrush As New Drawing2D.LinearGradientBrush(New Point(HorizontalPositiontoDisplay(nLeft(SelectedColumn), xHS), VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight - 10),
+                                New Point(HorizontalPositiontoDisplay(nLeft(SelectedColumn) + nLength(SelectedColumn), xHS), VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) + 10),
+                                GetColumn(SelectedColumn).getLongBright(xAlpha),
+                                GetColumn(SelectedColumn).getLongDark(xAlpha))
+                Dim xBrush2 As New SolidBrush(GetColumn(SelectedColumn).cLText)
 
-                e1.Graphics.FillRectangle(xBrush, HorizontalPositiontoDisplay(nLeft(TempColumn), xHS) + 2, VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight + 1, nLength(TempColumn) * gxWidth - 3, vo.kHeight - 1)
-                e1.Graphics.DrawRectangle(xPen2, HorizontalPositiontoDisplay(nLeft(TempColumn), xHS) + 1, VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight, nLength(TempColumn) * gxWidth - 2, vo.kHeight)
+                e1.Graphics.FillRectangle(xBrush, HorizontalPositiontoDisplay(nLeft(SelectedColumn), xHS) + 2, VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight + 1, nLength(SelectedColumn) * gxWidth - 3, vo.kHeight - 1)
+                e1.Graphics.DrawRectangle(xPen2, HorizontalPositiontoDisplay(nLeft(SelectedColumn), xHS) + 1, VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight, nLength(SelectedColumn) * gxWidth - 2, vo.kHeight)
 
                 e1.Graphics.DrawString(xText, vo.kFont, xBrush2,
-                            HorizontalPositiontoDisplay(nLeft(TempColumn), xHS) + vo.kLabelHShiftL, VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight + vo.kLabelVShift)
+                            HorizontalPositiontoDisplay(nLeft(SelectedColumn), xHS) + vo.kLabelHShiftL, VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight + vo.kLabelVShift)
             End If
 
         End If
@@ -135,7 +135,7 @@ Partial Public Class MainWindow
 
     Private Sub DrawBackgroundColor(e1 As BufferedGraphics, xTHeight As Integer, xTWidth As Integer, xHS As Integer, xI1 As Integer)
         If gShowBG Then
-            For xI1 = 0 To gCol
+            For xI1 = 0 To gColumns
                 If nLeft(xI1 + 1) * gxWidth - xHS * gxWidth + 1 < 0 Then Continue For
                 If nLeft(xI1) * gxWidth - xHS * gxWidth + 1 > xTWidth Then Exit For
                 If Not GetColumn(xI1).cBG.GetBrightness = 0 And nLength(xI1) > 0 Then _
@@ -146,7 +146,7 @@ Partial Public Class MainWindow
 
     Private Function DrawColumnCaptions(e1 As BufferedGraphics, xTWidth As Integer, xHS As Integer, xI1 As Integer) As Integer
         If gShowC Then
-            For xI1 = 0 To gCol
+            For xI1 = 0 To gColumns
                 If nLeft(xI1 + 1) * gxWidth - xHS * gxWidth + 1 < 0 Then Continue For
                 If nLeft(xI1) * gxWidth - xHS * gxWidth + 1 > xTWidth Then Exit For
                 If nLength(xI1) > 0 Then e1.Graphics.DrawString(nTitle(xI1), vo.ColumnTitleFont, vo.ColumnTitle, nLeft(xI1) * gxWidth - xHS * gxWidth, 0)
@@ -156,58 +156,67 @@ Partial Public Class MainWindow
         Return xI1
     End Function
 
-    Private Function DrawLines(e1 As BufferedGraphics, xTHeight As Integer, xTWidth As Integer, xHS As Integer, xVS As Integer, xVSR As Integer, xVSu As Integer) As Integer
-        Dim xI1 As Integer
+    Private Function DrawLines(e1 As BufferedGraphics,
+                               xTHeight As Integer, xTWidth As Integer,
+                               xHS As Integer, xVS As Integer,
+                               xVSR As Integer, xVSu As Integer) As Integer
         'Vertical line
-        If gShowV Then
-            For xI1 = 0 To gCol
-                If nLeft(xI1) * gxWidth - xHS * gxWidth + 1 < 0 Then Continue For
-                If nLeft(xI1) * gxWidth - xHS * gxWidth + 1 > xTWidth Then Exit For
-                If nLength(xI1) > 0 Then e1.Graphics.DrawLine(vo.pVLine, nLeft(xI1) * gxWidth - xHS * gxWidth, 0, nLeft(xI1) * gxWidth - xHS * gxWidth, xTHeight)
+        If gShowVerticalLine Then
+            For xI1 = 0 To gColumns
+                Dim xpos = nLeft(xI1) * gxWidth - xHS * gxWidth
+                If xpos + 1 < 0 Then Continue For
+                If xpos + 1 > xTWidth Then Exit For
+                If nLength(xI1) > 0 Then e1.Graphics.DrawLine(vo.pVLine,
+                                                              xpos, 0,
+                                                              xpos, xTHeight)
             Next
         End If
 
         'Grid, Sub, Measure
-        For xI1 = InMeasure(xVSR) To InMeasure(xVSu)
-            Dim xI2 As Integer
-            Dim xCurr As Double
-            Dim xDiff As Double
-            Dim xUpper As Double = MeasureBottom(xI1) + MeasureLength(xI1)
-
+        Dim Measure
+        For Measure = MeasureAtDisplacement(xVSR) To MeasureAtDisplacement(xVSu)
             'grid
-            If Not gShow Then GoTo 2000
-            xI2 = 0
-            xCurr = MeasureBottom(xI1)
-            xDiff = 192 / gDivide
-            Do While xCurr < xUpper
-                e1.Graphics.DrawLine(vo.pGrid, 0, VerticalPositiontoDisplay(xCurr, xVS, xTHeight),
-                                       xTWidth, VerticalPositiontoDisplay(xCurr, xVS, xTHeight))
-                xI2 += 1
-                xCurr = MeasureBottom(xI1) + xI2 * xDiff
-            Loop
+            If gShowGrid Then DrawGridLines(e1,
+                                        xTHeight, xTWidth,
+                                        xVS, Measure,
+                                        gDivide, vo.pGrid)
 
             'sub
-2000:       If Not gShowS Then GoTo 2100
-            xI2 = 0
-            xCurr = MeasureBottom(xI1)
-            xDiff = 192 / gSub
-            Do While xCurr < xUpper
-                e1.Graphics.DrawLine(vo.pSub, 0, VerticalPositiontoDisplay(xCurr, xVS, xTHeight),
-                                      xTWidth, VerticalPositiontoDisplay(xCurr, xVS, xTHeight))
-                xI2 += 1
-                xCurr = MeasureBottom(xI1) + xI2 * xDiff
-            Loop
+            If gShowSubGrid Then DrawGridLines(e1,
+                                         xTHeight, xTWidth,
+                                         xVS, Measure,
+                                         gSub, vo.pSub)
+
 
             'measure and measurebar
-2100:       xCurr = MeasureBottom(xI1)
-            If gShowMB Then e1.Graphics.DrawLine(vo.pMLine, 0, VerticalPositiontoDisplay(xCurr, xVS, xTHeight),
-                                                 xTWidth, VerticalPositiontoDisplay(xCurr, xVS, xTHeight))
-            If gShowM Then e1.Graphics.DrawString("[" & Add3Zeros(xI1).ToString & "]", vo.kMFont, New SolidBrush(GetColumn(0).cText), -xHS * gxWidth,
-                                                  VerticalPositiontoDisplay(xCurr, xVS, xTHeight) - vo.kMFont.Height)
+            Dim xCurr = MeasureBottom(Measure)
+            Dim Height = VerticalPositiontoDisplay(xCurr, xVS, xTHeight)
+            If gShowMeasureBar Then e1.Graphics.DrawLine(vo.pMLine, 0, Height,
+                                                 xTWidth, Height)
+            If gShowMeasureNumber Then e1.Graphics.DrawString("[" & Add3Zeros(Measure).ToString & "]", vo.kMFont,
+                                                  New SolidBrush(GetColumn(0).cText), -xHS * gxWidth,
+                                                  Height - vo.kMFont.Height)
         Next
 
-        Return xI1
+        Return Measure
     End Function
+
+    Private Sub DrawGridLines(e1 As BufferedGraphics,
+                              xTHeight As Integer, xTWidth As Integer,
+                              xVS As Integer, measureIndex As Integer,
+                              divisions As Integer, pen As Pen)
+        Dim Line = 0
+        Dim xUpper As Double = MeasureUpper(measureIndex)
+        Dim xCurr = MeasureBottom(measureIndex)
+        Dim xDiff = 192 / divisions
+        Dim Height = VerticalPositiontoDisplay(xCurr, xVS, xTHeight)
+        Do While xCurr < xUpper
+            e1.Graphics.DrawLine(pen, 0, Height,
+                                      xTWidth, Height)
+            Line += 1
+            xCurr = MeasureBottom(measureIndex) + Line * xDiff
+        Loop
+    End Sub
 
     Private Sub DrawNotes(e1 As BufferedGraphics, xTHeight As Integer, xHS As Integer, xVS As Integer)
         Dim xI1 As Integer

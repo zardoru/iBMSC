@@ -25,16 +25,16 @@ Partial Class MainWindow
         Me.TBLangDef = New System.Windows.Forms.ToolStripMenuItem()
         Me.TBLangRefresh = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator9 = New System.Windows.Forms.ToolStripSeparator()
-        Me.TBLanguage = New System.Windows.Forms.ToolStripDropDownButton()
         Me.mnLanguage = New System.Windows.Forms.ToolStripMenuItem()
+        Me.TBLanguage = New System.Windows.Forms.ToolStripDropDownButton()
         Me.cmnTheme = New System.Windows.Forms.ContextMenuStrip(Me.components)
         Me.TBThemeDef = New System.Windows.Forms.ToolStripMenuItem()
         Me.TBThemeSave = New System.Windows.Forms.ToolStripMenuItem()
         Me.TBThemeRefresh = New System.Windows.Forms.ToolStripMenuItem()
         Me.TBThemeLoadComptability = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator6 = New System.Windows.Forms.ToolStripSeparator()
-        Me.TBTheme = New System.Windows.Forms.ToolStripDropDownButton()
         Me.mnTheme = New System.Windows.Forms.ToolStripMenuItem()
+        Me.TBTheme = New System.Windows.Forms.ToolStripDropDownButton()
         Me.POptionsScroll = New System.Windows.Forms.Panel()
         Me.POptions = New System.Windows.Forms.Panel()
         Me.POExpansion = New System.Windows.Forms.Panel()
@@ -443,7 +443,7 @@ Partial Class MainWindow
         '
         Me.cmnLanguage.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.TBLangDef, Me.TBLangRefresh, Me.ToolStripSeparator9})
         Me.cmnLanguage.Name = "cmnLanguage"
-        Me.cmnLanguage.OwnerItem = Me.mnLanguage
+        Me.cmnLanguage.OwnerItem = Me.TBLanguage
         Me.cmnLanguage.Size = New System.Drawing.Size(121, 54)
         '
         'TBLangDef
@@ -464,6 +464,14 @@ Partial Class MainWindow
         Me.ToolStripSeparator9.Name = "ToolStripSeparator9"
         Me.ToolStripSeparator9.Size = New System.Drawing.Size(117, 6)
         '
+        'mnLanguage
+        '
+        Me.mnLanguage.DropDown = Me.cmnLanguage
+        Me.mnLanguage.Image = Global.iBMSC.My.Resources.Resources.x16Language
+        Me.mnLanguage.Name = "mnLanguage"
+        Me.mnLanguage.Size = New System.Drawing.Size(229, 22)
+        Me.mnLanguage.Text = "&Language"
+        '
         'TBLanguage
         '
         Me.TBLanguage.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
@@ -474,19 +482,11 @@ Partial Class MainWindow
         Me.TBLanguage.Size = New System.Drawing.Size(29, 22)
         Me.TBLanguage.Text = "Language"
         '
-        'mnLanguage
-        '
-        Me.mnLanguage.DropDown = Me.cmnLanguage
-        Me.mnLanguage.Image = Global.iBMSC.My.Resources.Resources.x16Language
-        Me.mnLanguage.Name = "mnLanguage"
-        Me.mnLanguage.Size = New System.Drawing.Size(229, 22)
-        Me.mnLanguage.Text = "&Language"
-        '
         'cmnTheme
         '
         Me.cmnTheme.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.TBThemeDef, Me.TBThemeSave, Me.TBThemeRefresh, Me.TBThemeLoadComptability, Me.ToolStripSeparator6})
         Me.cmnTheme.Name = "cmnLanguage"
-        Me.cmnTheme.OwnerItem = Me.mnTheme
+        Me.cmnTheme.OwnerItem = Me.TBTheme
         Me.cmnTheme.Size = New System.Drawing.Size(246, 98)
         '
         'TBThemeDef
@@ -520,6 +520,14 @@ Partial Class MainWindow
         Me.ToolStripSeparator6.Name = "ToolStripSeparator6"
         Me.ToolStripSeparator6.Size = New System.Drawing.Size(242, 6)
         '
+        'mnTheme
+        '
+        Me.mnTheme.DropDown = Me.cmnTheme
+        Me.mnTheme.Image = Global.iBMSC.My.Resources.Resources.x16Theme
+        Me.mnTheme.Name = "mnTheme"
+        Me.mnTheme.Size = New System.Drawing.Size(229, 22)
+        Me.mnTheme.Text = "&Theme"
+        '
         'TBTheme
         '
         Me.TBTheme.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
@@ -529,14 +537,6 @@ Partial Class MainWindow
         Me.TBTheme.Name = "TBTheme"
         Me.TBTheme.Size = New System.Drawing.Size(29, 22)
         Me.TBTheme.Text = "Theme"
-        '
-        'mnTheme
-        '
-        Me.mnTheme.DropDown = Me.cmnTheme
-        Me.mnTheme.Image = Global.iBMSC.My.Resources.Resources.x16Theme
-        Me.mnTheme.Name = "mnTheme"
-        Me.mnTheme.Size = New System.Drawing.Size(229, 22)
-        Me.mnTheme.Text = "&Theme"
         '
         'POptionsScroll
         '

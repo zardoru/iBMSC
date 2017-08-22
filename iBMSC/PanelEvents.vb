@@ -350,16 +350,12 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
                 'If K Is Nothing Then pMouseDown = e.Location : Exit Select
 
                 'Find the clicked K
-                Dim xI1 As Integer
-                Dim xITemp As Integer = -1
+                Dim NoteIndex As Integer = -1
                 For xI1 = UBound(Notes) To 0 Step -1
                     'If mouse is clicking on a K
-                    If e.X >= HorizontalPositiontoDisplay(nLeft(Notes(xI1).ColumnIndex), xHS) + 1 And
-                       e.X <= HorizontalPositiontoDisplay(nLeft(Notes(xI1).ColumnIndex) + nLength(Notes(xI1).ColumnIndex), xHS) - 1 And
-                       e.Y >= VerticalPositiontoDisplay(Notes(xI1).VPosition + IIf(NTInput, Notes(xI1).Length, 0), xVS, xHeight) - vo.kHeight And
-                       e.Y <= VerticalPositiontoDisplay(Notes(xI1).VPosition, xVS, xHeight) Then
-                        'var xITemp is the index
-                        xITemp = xI1
+                    If MouseInNote(e, xHS, xVS, xHeight, xI1) Then
+                        ' found it!
+                        NoteIndex = xI1
                         deltaVPosition = IIf(NTInput, (xHeight - e.Y - gxHeight * xVS - 1) / gxHeight - Notes(xI1).VPosition, 0)
 
                         If NTInput And My.Computer.Keyboard.ShiftKeyDown Then
@@ -375,8 +371,8 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
                 'Play wav
                 If ClickStopPreview Then PreviewNote("", True)
                 'My.Computer.Audio.Stop()
-                If xITemp > 0 And PreviewOnClick AndAlso Not isColumnNumeric(Notes(xITemp).ColumnIndex) Then
-                    Dim xI2 As Integer = Notes(xITemp).Value \ 10000
+                If NoteIndex > 0 And PreviewOnClick AndAlso Not isColumnNumeric(Notes(NoteIndex).ColumnIndex) Then
+                    Dim xI2 As Integer = Notes(NoteIndex).Value \ 10000
                     If xI2 <= 0 Then xI2 = 1
                     If xI2 >= 1296 Then xI2 = 1295
 
@@ -393,70 +389,25 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
 
                 If TBSelect.Checked Then
 
-                    If xITemp >= 0 And e.Clicks = 2 Then
-                        If isColumnNumeric(Notes(xITemp).ColumnIndex) Then
-                            Dim xMessage As String = Strings.Messages.PromptEnterNumeric
-                            If Notes(xITemp).ColumnIndex = niBPM Then xMessage = Strings.Messages.PromptEnterBPM
-                            If Notes(xITemp).ColumnIndex = niSTOP Then xMessage = Strings.Messages.PromptEnterSTOP
-
-                            Dim xD1 As Double = Val(InputBox(xMessage, Me.Text)) * 10000
-                            If Not xD1 = 0 Then
-                                If xD1 <= 0 Then xD1 = 1
-                                If xD1 > 655359999 Then xD1 = 655359999
-
-                                Dim xUndo As UndoRedo.LinkedURCmd = Nothing
-                                Dim xRedo As UndoRedo.LinkedURCmd = Nothing
-                                Me.RedoRelabelNote(Notes(xITemp), xD1, xITemp, xUndo, xRedo)
-                                Notes(xITemp).Value = xD1
-                                If xITemp = 0 Then THBPM.Value = xD1 / 10000
-                                AddUndo(xUndo, xRedo)
-                            End If
-
-                        Else
-                            Dim xStr As String = UCase(Trim(InputBox(Strings.Messages.PromptEnter, Me.Text)))
-
-                            If Len(xStr) = 0 Then GoTo Jump2
-                            If xStr = "00" Or xStr = "0" Then GoTo Jump1
-
-                            If Not Len(xStr) = 1 And Not Len(xStr) = 2 Then GoTo Jump1
-
-                            Dim xI3 As Integer = Asc(Mid(xStr, 1, 1))
-                            If Not ((xI3 >= 48 And xI3 <= 57) Or (xI3 >= 65 And xI3 <= 90)) Then GoTo Jump1
-
-                            If Len(xStr) = 2 Then
-                                Dim xI4 As Integer = Asc(Mid(xStr, 2, 1))
-                                If Not ((xI4 >= 48 And xI4 <= 57) Or (xI4 >= 65 And xI4 <= 90)) Then GoTo Jump1
-                            End If
-
-                            Dim xUndo As UndoRedo.LinkedURCmd = Nothing
-                            Dim xRedo As UndoRedo.LinkedURCmd = Nothing
-                            Me.RedoRelabelNote(Notes(xITemp), C36to10(xStr) * 10000, True, xUndo, xRedo)
-                            Notes(xITemp).Value = C36to10(xStr) * 10000
-                            AddUndo(xUndo, xRedo)
-                            GoTo Jump2
-
-Jump1:
-                            MsgBox(Strings.Messages.InvalidLabel, MsgBoxStyle.Critical, Strings.Messages.Err)
-Jump2:
-                        End If
-
-                    ElseIf xITemp > 0 Then
+                    If NoteIndex >= 0 And e.Clicks = 2 Then
+                        DoubleClickNoteIndex(NoteIndex)
+                    ElseIf NoteIndex > 0 Then
                         'KMouseDown = -1
                         ReDim uNotes(-1)
 
                         'KMouseDown = xITemp
-                        Notes(xITemp).TempMouseDown = True
+                        Notes(NoteIndex).TempMouseDown = True
 
                         If My.Computer.Keyboard.CtrlKeyDown Then
                             'If Not K(xITemp).Selected Then K(xITemp).Selected = True
                             ctrlPressed = True
 
                         Else
-                            If Not Notes(xITemp).Selected Then
+                            If Not Notes(NoteIndex).Selected Then
                                 For xI1 = 0 To UBound(Notes)
                                     If Notes(xI1).Selected Then Notes(xI1).Selected = False
                                 Next
-                                Notes(xITemp).Selected = True
+                                Notes(NoteIndex).Selected = True
                             End If
 
                             Dim xI2 As Integer = 0
@@ -466,14 +417,14 @@ Jump2:
                             bAdjustSingle = xI2 = 1
 
                             ReDim uNotes(xI2)
-                            uNotes(0) = Notes(xITemp)
-                            Notes(xITemp).TempIndex = 0
+                            uNotes(0) = Notes(NoteIndex)
+                            Notes(NoteIndex).TempIndex = 0
                             xI2 = 1
 
-                            For xI1 = 1 To xITemp - 1
+                            For xI1 = 1 To NoteIndex - 1
                                 If Notes(xI1).Selected Then Notes(xI1).TempIndex = xI2 : uNotes(xI2) = Notes(xI1) : xI2 += 1
                             Next
-                            For xI1 = xITemp + 1 To UBound(Notes)
+                            For xI1 = NoteIndex + 1 To UBound(Notes)
                                 If Notes(xI1).Selected Then Notes(xI1).TempIndex = xI2 : uNotes(xI2) = Notes(xI1) : xI2 += 1
                             Next
 
@@ -501,43 +452,34 @@ Jump2:
 
                 ElseIf NTInput And TBWrite.Checked Then
                     TempVPosition = -1
-                    TempColumn = -1
+                    SelectedColumn = -1
                     TempDraw = False
 
                     Dim xVPosition As Double = (xHeight - xVS * gxHeight - e.Y - 1) / gxHeight 'VPosition of the mouse
                     If gSnap Then xVPosition = SnapToGrid(xVPosition)
                     If xVPosition < 0 Or xVPosition >= VPosition1000() Then Exit Select
 
-                    xI1 = 0
-                    Dim xColumn As Integer = 0
-                    Dim mLeft As Integer = e.X / gxWidth + xHS 'horizontal position of the mouse
-                    If mLeft >= 0 Then
-                        Do
-                            If mLeft < nLeft(xI1 + 1) Or xI1 >= gCol Then xColumn = xI1 : Exit Do 'get the column where mouse is 
-                            xI1 += 1
-                        Loop
-                    End If
-                    xColumn = EnabledColumnToReal(RealColumnToEnabled(xColumn))  'get the enabled column where mouse is 
+                    Dim xColumn = GetColumnAtEvent(e, spH(sender.Tag))
 
                     For xI2 As Integer = UBound(Notes) To 1 Step -1
-                        If Notes(xI2).VPosition = xVPosition And Notes(xI2).ColumnIndex = xColumn Then xITemp = xI2 : Exit For
+                        If Notes(xI2).VPosition = xVPosition And Notes(xI2).ColumnIndex = xColumn Then NoteIndex = xI2 : Exit For
                     Next
 
-                    If xITemp > 0 Then
+                    If NoteIndex > 0 Then
                         ReDim uNotes(0)
-                        uNotes(0) = Notes(xITemp)
-                        Notes(xITemp).TempIndex = 0
+                        uNotes(0) = Notes(NoteIndex)
+                        Notes(NoteIndex).TempIndex = 0
 
                         'KMouseDown = xITemp
-                        Notes(xITemp).TempMouseDown = True
-                        Notes(xITemp).Length = xVPosition - Notes(xITemp).VPosition
+                        Notes(NoteIndex).TempMouseDown = True
+                        Notes(NoteIndex).Length = xVPosition - Notes(NoteIndex).VPosition
 
                         'uVPos = K(xITemp).VPosition
                         bAdjustUpper = True
 
                         Dim xUndo As UndoRedo.LinkedURCmd = Nothing
                         Dim xRedo As UndoRedo.LinkedURCmd = Nothing
-                        Me.RedoLongNoteModify(uNotes(0), Notes(xITemp).VPosition, Notes(xITemp).Length, True, xUndo, xRedo)
+                        Me.RedoLongNoteModify(uNotes(0), Notes(NoteIndex).VPosition, Notes(NoteIndex).Length, True, xUndo, xRedo)
                         AddUndo(xUndo, xRedo)
                         'With uNote
                         '    AddUndo(sCmdKL(.ColumnIndex, .VPosition, .Value, K(xITemp).Length, .Hidden, .Length, True, True), _
@@ -609,7 +551,7 @@ Jump2:
                 ElseIf TBTimeSelect.Checked Then
 
                     Dim xL1 As Double
-                    If xITemp >= 0 Then xL1 = Notes(xITemp).VPosition _
+                    If NoteIndex >= 0 Then xL1 = Notes(NoteIndex).VPosition _
                                    Else xL1 = (xHeight - xVS * gxHeight - e.Y - 1) / gxHeight
 
                     vSelAdjust = My.Computer.Keyboard.ShiftKeyDown
@@ -625,25 +567,25 @@ Jump2:
 
                     If Not vSelAdjust Then
                         If vSelMouseOverLine = 1 Then
-                            If gSnap And xITemp <= 0 And Not My.Computer.Keyboard.CtrlKeyDown Then xL1 = SnapToGrid(xL1)
+                            If gSnap And NoteIndex <= 0 And Not My.Computer.Keyboard.CtrlKeyDown Then xL1 = SnapToGrid(xL1)
                             vSelLength += vSelStart - xL1
                             vSelHalf += vSelStart - xL1
                             vSelStart = xL1
 
                         ElseIf vSelMouseOverLine = 2 Then
                             vSelHalf = xL1
-                            If gSnap And xITemp <= 0 And Not My.Computer.Keyboard.CtrlKeyDown Then vSelHalf = SnapToGrid(vSelHalf)
+                            If gSnap And NoteIndex <= 0 And Not My.Computer.Keyboard.CtrlKeyDown Then vSelHalf = SnapToGrid(vSelHalf)
                             vSelHalf -= vSelStart
 
                         ElseIf vSelMouseOverLine = 3 Then
                             vSelLength = xL1
-                            If gSnap And xITemp <= 0 And Not My.Computer.Keyboard.CtrlKeyDown Then vSelLength = SnapToGrid(vSelLength)
+                            If gSnap And NoteIndex <= 0 And Not My.Computer.Keyboard.CtrlKeyDown Then vSelLength = SnapToGrid(vSelLength)
                             vSelLength -= vSelStart
 
                         Else
                             vSelLength = 0
                             vSelStart = xL1
-                            If gSnap And xITemp <= 0 And Not My.Computer.Keyboard.CtrlKeyDown Then vSelStart = SnapToGrid(vSelStart)
+                            If gSnap And NoteIndex <= 0 And Not My.Computer.Keyboard.CtrlKeyDown Then vSelStart = SnapToGrid(vSelStart)
                         End If
                         ValidateSelection()
 
@@ -656,7 +598,7 @@ Jump2:
                             vSelK = Notes
                             ReDim Preserve vSelK(UBound(vSelK))
 
-                            If gSnap And xITemp <= 0 And Not My.Computer.Keyboard.CtrlKeyDown Then xL1 = SnapToGrid(xL1)
+                            If gSnap And NoteIndex <= 0 And Not My.Computer.Keyboard.CtrlKeyDown Then xL1 = SnapToGrid(xL1)
                             AddUndo(New UndoRedo.Void, New UndoRedo.Void)
                             BPMChangeHalf(xL1 - vSelHalf - vSelStart, , True)
                             SortByVPositionInsertion()
@@ -671,7 +613,7 @@ Jump2:
                             vSelK = Notes
                             ReDim Preserve vSelK(UBound(vSelK))
 
-                            If gSnap And xITemp <= 0 And Not My.Computer.Keyboard.CtrlKeyDown Then xL1 = SnapToGrid(xL1)
+                            If gSnap And NoteIndex <= 0 And Not My.Computer.Keyboard.CtrlKeyDown Then xL1 = SnapToGrid(xL1)
                             AddUndo(New UndoRedo.Void, New UndoRedo.Void)
                             BPMChangeTop(IIf(vSelMouseOverLine = 3, xL1 - vSelStart, vSelStart + vSelLength - xL1) / vSelLength, , True)
                             SortByVPositionInsertion()
@@ -680,7 +622,7 @@ Jump2:
 
                         Else
                             vSelLength = xL1
-                            If gSnap And xITemp <= 0 And Not My.Computer.Keyboard.CtrlKeyDown Then vSelLength = SnapToGrid(vSelLength)
+                            If gSnap And NoteIndex <= 0 And Not My.Computer.Keyboard.CtrlKeyDown Then vSelLength = SnapToGrid(vSelLength)
                             vSelLength -= vSelStart
                         End If
 
@@ -732,13 +674,7 @@ Jump2:
                 Dim xI1 As Integer
                 For xI1 = UBound(Notes) To 1 Step -1
                     'If mouse is clicking on a K
-                    If e.X >= HorizontalPositiontoDisplay(nLeft(Notes(xI1).ColumnIndex), xHS) + 1 And
-                       e.X <= HorizontalPositiontoDisplay(nLeft(Notes(xI1).ColumnIndex) + nLength(Notes(xI1).ColumnIndex), xHS) - 1 And
-                       e.Y >= VerticalPositiontoDisplay(Notes(xI1).VPosition + IIf(NTInput, Notes(xI1).Length, 0), xVS, xHeight) - vo.kHeight And
-                       e.Y <= VerticalPositiontoDisplay(Notes(xI1).VPosition, xVS, xHeight) Then
-                        'var xITemp is the index
-                        'Dim xRedo As String = sCmdKD(K(xI1).ColumnIndex, K(xI1).VPosition, K(xI1).Value, IIf(NTInput, K(xI1).Length, K(xI1).LongNote), K(xI1).Hidden)
-                        'Dim xUndo As String = sCmdK(K(xI1).ColumnIndex, K(xI1).VPosition, K(xI1).Value, IIf(NTInput, K(xI1).Length, K(xI1).LongNote), K(xI1).Hidden, True)
+                    If MouseInNote(e, xHS, xVS, xHeight, xI1) Then
 
                         If My.Computer.Keyboard.ShiftKeyDown Then
                             LWAV.SelectedIndices.Clear()
@@ -770,6 +706,56 @@ Jump0:          'If xI1 = 0 Then
         End Select
     End Sub
 
+    Private Sub DoubleClickNoteIndex(NoteIndex As Integer)
+        Dim Note As Note = Notes(NoteIndex)
+        Dim NoteColumn As Integer = Note.ColumnIndex
+
+        If isColumnNumeric(NoteColumn) Then
+            'BPM/Stop prompt
+            Dim xMessage As String = Strings.Messages.PromptEnterNumeric
+            If NoteColumn = niBPM Then xMessage = Strings.Messages.PromptEnterBPM
+            If NoteColumn = niSTOP Then xMessage = Strings.Messages.PromptEnterSTOP
+
+            Dim PromptValue As Double = Val(InputBox(xMessage, Me.Text)) * 10000
+            If Not PromptValue = 0 Then
+                If PromptValue <= 0 Then PromptValue = 1
+                If PromptValue > 655359999 Then PromptValue = 655359999
+
+                Dim xUndo As UndoRedo.LinkedURCmd = Nothing
+                Dim xRedo As UndoRedo.LinkedURCmd = Nothing
+                RedoRelabelNote(Note, PromptValue, NoteIndex, xUndo, xRedo)
+                Note.Value = PromptValue
+                If NoteIndex = 0 Then THBPM.Value = PromptValue / 10000
+                AddUndo(xUndo, xRedo)
+            End If
+
+        Else
+            'Label prompt
+            Dim xStr As String = UCase(Trim(InputBox(Strings.Messages.PromptEnter, Me.Text)))
+
+            If Len(xStr) = 0 Then Return
+
+            If IsBase36(xStr) And Not (xStr = "00" Or xStr = "0") Then
+                Dim xUndo As UndoRedo.LinkedURCmd = Nothing
+                Dim xRedo As UndoRedo.LinkedURCmd = Nothing
+                RedoRelabelNote(Note, C36to10(xStr) * 10000, True, xUndo, xRedo)
+                Note.Value = C36to10(xStr) * 10000
+                AddUndo(xUndo, xRedo)
+                Return
+            Else
+                MsgBox(Strings.Messages.InvalidLabel, MsgBoxStyle.Critical, Strings.Messages.Err)
+            End If
+
+        End If
+    End Sub
+
+    Private Function MouseInNote(e As MouseEventArgs, xHS As Long, xVS As Long, xHeight As Integer, xI1 As Integer) As Boolean
+        Return e.X >= HorizontalPositiontoDisplay(nLeft(Notes(xI1).ColumnIndex), xHS) + 1 And
+                               e.X <= HorizontalPositiontoDisplay(nLeft(Notes(xI1).ColumnIndex) + nLength(Notes(xI1).ColumnIndex), xHS) - 1 And
+                               e.Y >= VerticalPositiontoDisplay(Notes(xI1).VPosition + IIf(NTInput, Notes(xI1).Length, 0), xVS, xHeight) - vo.kHeight And
+                               e.Y <= VerticalPositiontoDisplay(Notes(xI1).VPosition, xVS, xHeight)
+    End Function
+
     Private Sub PMainInMouseEnter(ByVal sender As Object, ByVal e As System.EventArgs) Handles PMainIn.MouseEnter, PMainInL.MouseEnter, PMainInR.MouseEnter
         spMouseOver = sender.Tag
         Dim xPMainIn As Panel = sender
@@ -782,7 +768,7 @@ Jump0:          'If xI1 = 0 Then
         'KMouseDown = -1
         ReDim uNotes(-1)
         TempVPosition = -1
-        TempColumn = -1
+        SelectedColumn = -1
         RefreshPanelAll()
     End Sub
 
@@ -812,19 +798,16 @@ Jump0:          'If xI1 = 0 Then
 
                 Dim xMouseRemainInSameRegion As Boolean = False
 
-                Dim xI1 As Integer
-                Dim xITemp As Integer = -1
-                For xI1 = UBound(Notes) To 0 Step -1
-                    If e.X >= HorizontalPositiontoDisplay(nLeft(Notes(xI1).ColumnIndex), xHS) + 1 And
-                       e.X <= HorizontalPositiontoDisplay(nLeft(Notes(xI1).ColumnIndex) + nLength(Notes(xI1).ColumnIndex), xHS) - 1 And
-                       e.Y >= VerticalPositiontoDisplay(Notes(xI1).VPosition + IIf(NTInput, Notes(xI1).Length, 0), xVS, xHeight) - vo.kHeight And
-                       e.Y <= VerticalPositiontoDisplay(Notes(xI1).VPosition, xVS, xHeight) Then
-                        xITemp = xI1
+                Dim noteIndex As Integer
+                Dim foundNoteIndex As Integer = -1
+                For noteIndex = UBound(Notes) To 0 Step -1
+                    If MouseInNote(e, xHS, xVS, xHeight, noteIndex) Then
+                        foundNoteIndex = noteIndex
 
-                        xMouseRemainInSameRegion = xITemp = KMouseOver
+                        xMouseRemainInSameRegion = foundNoteIndex = KMouseOver
                         If NTInput Then
-                            Dim xbAdjustUpper As Boolean = (e.Y <= VerticalPositiontoDisplay(Notes(xI1).VPosition + Notes(xI1).Length, xVS, xHeight)) And My.Computer.Keyboard.ShiftKeyDown
-                            Dim xbAdjustLength As Boolean = (e.Y >= VerticalPositiontoDisplay(Notes(xI1).VPosition, xVS, xHeight) - vo.kHeight Or xbAdjustUpper) And My.Computer.Keyboard.ShiftKeyDown
+                            Dim xbAdjustUpper As Boolean = (e.Y <= VerticalPositiontoDisplay(Notes(noteIndex).VPosition + Notes(noteIndex).Length, xVS, xHeight)) And My.Computer.Keyboard.ShiftKeyDown
+                            Dim xbAdjustLength As Boolean = (e.Y >= VerticalPositiontoDisplay(Notes(noteIndex).VPosition, xVS, xHeight) - vo.kHeight Or xbAdjustUpper) And My.Computer.Keyboard.ShiftKeyDown
                             xMouseRemainInSameRegion = xMouseRemainInSameRegion And xbAdjustUpper = bAdjustUpper And xbAdjustLength = bAdjustLength
                             bAdjustUpper = xbAdjustUpper
                             bAdjustLength = xbAdjustLength
@@ -857,20 +840,20 @@ Jump0:          'If xI1 = 0 Then
                         If xMouseOverLine <> vSelMouseOverLine Then RefreshPanelAll()
                     End If
 
-                    If xITemp > -1 Then
-                        Dim xDispX As Integer = HorizontalPositiontoDisplay(nLeft(Notes(xITemp).ColumnIndex), xHS)
+                    If foundNoteIndex > -1 Then
+                        Dim xDispX As Integer = HorizontalPositiontoDisplay(nLeft(Notes(foundNoteIndex).ColumnIndex), xHS)
                         Dim xDispY As Integer = IIf(Not NTInput Or (bAdjustLength And Not bAdjustUpper),
-                                                    VerticalPositiontoDisplay(Notes(xITemp).VPosition, xVS, xHeight) - vo.kHeight - 1,
-                                                    VerticalPositiontoDisplay(Notes(xITemp).VPosition + Notes(xITemp).Length, xVS, xHeight) - vo.kHeight - 1)
-                        Dim xDispW As Integer = nLength(Notes(xITemp).ColumnIndex) * gxWidth + 1
+                                                    VerticalPositiontoDisplay(Notes(foundNoteIndex).VPosition, xVS, xHeight) - vo.kHeight - 1,
+                                                    VerticalPositiontoDisplay(Notes(foundNoteIndex).VPosition + Notes(foundNoteIndex).Length, xVS, xHeight) - vo.kHeight - 1)
+                        Dim xDispW As Integer = nLength(Notes(foundNoteIndex).ColumnIndex) * gxWidth + 1
                         Dim xDispH As Integer = IIf(Not NTInput Or bAdjustLength,
                                                     vo.kHeight + 3,
-                                                    Notes(xITemp).Length * gxHeight + vo.kHeight + 3)
+                                                    Notes(foundNoteIndex).Length * gxHeight + vo.kHeight + 3)
 
                         Dim e1 As BufferedGraphics = BufferedGraphicsManager.Current.Allocate(spMain(iI).CreateGraphics, New Rectangle(xDispX, xDispY, xDispW, xDispH))
                         e1.Graphics.FillRectangle(vo.Bg, New Rectangle(xDispX, xDispY, xDispW, xDispH))
 
-                        If NTInput Then DrawNoteNT(Notes(xITemp), e1, xHS, xVS, xHeight) Else DrawNote(Notes(xITemp), e1, xHS, xVS, xHeight)
+                        If NTInput Then DrawNoteNT(Notes(foundNoteIndex), e1, xHS, xVS, xHeight) Else DrawNote(Notes(foundNoteIndex), e1, xHS, xVS, xHeight)
 
                         e1.Graphics.DrawRectangle(IIf(bAdjustLength, vo.kMouseOverE, vo.kMouseOver), xDispX, xDispY, xDispW - 1, xDispH - 1)
 
@@ -878,24 +861,16 @@ Jump0:          'If xI1 = 0 Then
                         e1.Dispose()
                     End If
 
-                    KMouseOver = xITemp
+                    KMouseOver = foundNoteIndex
 
                 ElseIf TBWrite.Checked Then
                     TempVPosition = (xHeight - xVS * gxHeight - e.Y - 1) / gxHeight 'VPosition of the mouse
                     If gSnap Then TempVPosition = SnapToGrid(TempVPosition)
 
-                    xI1 = 0
-                    Dim mLeft As Integer = e.X / gxWidth + xHS 'horizontal position of the mouse
-                    If mLeft >= 0 Then
-                        Do
-                            If mLeft < nLeft(xI1 + 1) Or xI1 >= gCol Then TempColumn = xI1 : Exit Do 'get the column where mouse is 
-                            xI1 += 1
-                        Loop
-                    End If
-                    TempColumn = EnabledColumnToReal(RealColumnToEnabled(TempColumn))  'get the enabled column where mouse is 
+                    SelectedColumn = GetColumnAtEvent(e, xHS)  'get the enabled column where mouse is 
 
                     TempLength = 0
-                    If xITemp > -1 Then TempLength = Notes(xITemp).Length
+                    If foundNoteIndex > -1 Then TempLength = Notes(foundNoteIndex).Length
 
                     RefreshPanelAll()
                 End If
@@ -975,18 +950,11 @@ Jump0:          'If xI1 = 0 Then
                             If DisableVerticalMove Then mouseVPosition = uNotes(0).VPosition
                             dVPosition = mouseVPosition - Notes(xITemp).VPosition  'delta VPosition
 
-                            xI1 = 0
-                            Dim mLeft As Integer = e.X / gxWidth + xHS 'horizontal position of the mouse
-                            If mLeft >= 0 Then
-                                Do
-                                    If mLeft < nLeft(xI1 + 1) Or xI1 >= gCol Then mouseColumn = RealColumnToEnabled(xI1) : Exit Do 'get the column where mouse is 
-                                    xI1 += 1
-                                Loop
-                            End If
+                            mouseColumn = GetColumnAtEvent(e, xHS)
                             dColumn = mouseColumn - RealColumnToEnabled(Notes(xITemp).ColumnIndex) 'get the enabled delta column where mouse is 
 
                             'Ks cannot be beyond the left, the upper and the lower boundary
-                            mLeft = 0
+                            Dim mLeft = 0
                             Dim mVPosition As Double = 0
                             Dim muVPosition As Double = 191999
                             For xI1 = 1 To UBound(Notes)
@@ -1119,17 +1087,10 @@ Jump0:          'If xI1 = 0 Then
 
                         Dim dVPosition As Double = mouseVPosition - Notes(xITemp).VPosition  'delta VPosition
 
-                        Dim mouseColumn As Integer = 0
-                        Dim xI1 As Integer = 0
-                        Dim mLeft As Integer = e.X / gxWidth + xHS 'horizontal position of the mouse
-                        Do
-                            If mLeft < nLeft(xI1 + 1) Or xI1 >= gCol Then mouseColumn = RealColumnToEnabled(xI1) : Exit Do 'get the column where mouse is 
-                            xI1 += 1
-                        Loop
-                        Dim dColumn As Integer = mouseColumn - RealColumnToEnabled(Notes(xITemp).ColumnIndex) 'delta Column
+                        Dim dColumn As Integer = GetColumnAtEvent(e, xHS) - RealColumnToEnabled(Notes(xITemp).ColumnIndex) 'delta Column
 
                         'Ks cannot be beyond the left, the upper and the lower boundary
-                        mLeft = 0
+                        Dim mLeft = 0
                         Dim mVPosition As Double = 0
                         Dim muVPosition As Double = 191999
                         For xI1 = 1 To UBound(Notes)
@@ -1256,7 +1217,7 @@ EndCtrlOpn:         End If
                                     '        True)
                                 End If
 
-                                TempColumn = .ColumnIndex
+                                SelectedColumn = .ColumnIndex
                                 TempVPosition = mouseVPosition
                                 TempLength = .Length
 
@@ -1271,16 +1232,7 @@ EndCtrlOpn:         End If
                     Else
                         TempVPosition = (xHeight - xVS * gxHeight - e.Y - 1) / gxHeight 'VPosition of the mouse
                         If gSnap Then TempVPosition = SnapToGrid(TempVPosition)
-
-                        Dim xI1 As Integer = 0
-                        Dim mLeft As Integer = e.X / gxWidth + xHS 'horizontal position of the mouse
-                        If mLeft >= 0 Then
-                            Do
-                                If mLeft < nLeft(xI1 + 1) Or xI1 >= gCol Then TempColumn = xI1 : Exit Do 'get the column where mouse is 
-                                xI1 += 1
-                            Loop
-                        End If
-                        TempColumn = EnabledColumnToReal(RealColumnToEnabled(TempColumn))  'get the enabled column where mouse is 
+                        SelectedColumn = GetColumnAtEvent(e, xHS)  'get the enabled column where mouse is 
 
                     End If
 
@@ -1427,6 +1379,22 @@ EndCtrlOpn:         End If
         POStatusRefresh()
     End Sub
 
+
+    Private Function GetColumnAtEvent(e As MouseEventArgs, xHS As Integer)
+        Dim xI1 As Integer = 0
+        Dim mLeft As Integer = e.X / gxWidth + xHS 'horizontal position of the mouse
+        Dim xColumn = 0
+        If mLeft >= 0 Then
+            Do
+                If mLeft < nLeft(xI1 + 1) Or xI1 >= gColumns Then xColumn = xI1 : Exit Do 'get the column where mouse is 
+                xI1 += 1
+            Loop
+        End If
+
+        Return EnabledColumnToReal(RealColumnToEnabled(xColumn))  'get the enabled column where mouse is 
+    End Function
+
+
     Private Sub PMainInMouseUp(ByVal sender As Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles PMainIn.MouseUp, PMainInL.MouseUp, PMainInR.MouseUp
         tempX = 0
         tempY = 0
@@ -1463,23 +1431,14 @@ EndCtrlOpn:         End If
             If NTInput Then GoTo Jump0
             If tempFirstMouseDown Then GoTo Jump0
 
-            Dim xI1 As Integer
+
             Dim xVPosition As Double
-            Dim xColumn As Integer
+
 
             xVPosition = (sender.Height - spV(iI) * gxHeight - e.Y - 1) / gxHeight 'VPosition of the mouse
             If gSnap Then xVPosition = SnapToGrid(xVPosition)
 
-            xI1 = 0
-            Dim mLeft As Integer = e.X / gxWidth + spH(iI) 'horizontal position of the mouse
-            If mLeft >= 0 Then
-                Do
-                    If mLeft < nLeft(xI1 + 1) Or xI1 >= gCol Then xColumn = xI1 : Exit Do 'get the column where mouse is 
-                    xI1 += 1
-                Loop
-            End If
-
-            xColumn = EnabledColumnToReal(RealColumnToEnabled(xColumn))  'get the enabled column where mouse is 
+            Dim xColumn = GetColumnAtEvent(e, spH(iI))
 
             If e.Button = Windows.Forms.MouseButtons.Left Then
                 Dim LongNote As Boolean = My.Computer.Keyboard.ShiftKeyDown
@@ -1528,7 +1487,7 @@ EndCtrlOpn:         End If
 
 Jump0:      If Not TempDraw Then TempDraw = True
             TempVPosition = -1
-            TempColumn = -1
+            SelectedColumn = -1
         End If
         CalculateGreatestVPosition()
         RefreshPanelAll()

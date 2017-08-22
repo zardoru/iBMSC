@@ -102,6 +102,10 @@ Public Class MainWindow
     Dim MeasureLength(999) As Double
     Dim MeasureBottom(999) As Double
 
+    Public Function MeasureUpper(idx As Integer) As Double
+        Return MeasureBottom(idx) + MeasureLength(idx)
+    End Function
+
 
     Dim Notes() As Note = {New Note(niBPM, -1, 1200000, 0, False)}
     Dim mColumn(999) As Integer  '0 = no column, 1 = 1 column, etc.
@@ -181,7 +185,7 @@ Public Class MainWindow
 
     'Variables for write tool
     Dim TempDraw As Boolean = False
-    Dim TempColumn As Integer = -1
+    Dim SelectedColumn As Integer = -1
     Dim TempVPosition As Double = -1.0#
     Dim TempLength As Double = 0.0#
 
@@ -219,12 +223,12 @@ Public Class MainWindow
 
     '----Grid Options
     Dim gSnap As Boolean = True
-    Dim gShow As Boolean = True 'Grid
-    Dim gShowS As Boolean = True 'Sub
+    Dim gShowGrid As Boolean = True 'Grid
+    Dim gShowSubGrid As Boolean = True 'Sub
     Dim gShowBG As Boolean = True 'BG Color
-    Dim gShowM As Boolean = True 'Measure Label
-    Dim gShowV As Boolean = True 'Vertical
-    Dim gShowMB As Boolean = True 'Measure Barline
+    Dim gShowMeasureNumber As Boolean = True 'Measure Label
+    Dim gShowVerticalLine As Boolean = True 'Vertical
+    Dim gShowMeasureBar As Boolean = True 'Measure Barline
     Dim gShowC As Boolean = True 'Column Caption
     Dim gDivide As Integer = 16
     Dim gSub As Integer = 4
@@ -239,7 +243,7 @@ Public Class MainWindow
     Dim gBPM As Boolean = True
     'Dim gA8 As Boolean = False
     Dim iPlayer As Integer = 0
-    Dim gCol As Integer = 46
+    Dim gColumns As Integer = 46
 
     '----Visual Options
     Dim vo As New visualSettings()
@@ -400,7 +404,7 @@ Public Class MainWindow
         Return xTHeight - CInt((xVPosition + xVSVal) * gxHeight) - 1
     End Function
 
-    Public Function InMeasure(ByVal xVPos As Double) As Integer
+    Public Function MeasureAtDisplacement(ByVal xVPos As Double) As Integer
         'Return Math.Floor((xVPos + FloatTolerance) / 192)
         'Return Math.Floor(xVPos / 192)
         Dim xI1 As Integer
@@ -411,11 +415,11 @@ Public Class MainWindow
     End Function
 
     Private Function VPosition1000() As Double
-        Return MeasureBottom(999) + MeasureLength(999)
+        Return MeasureUpper(999)
     End Function
 
     Private Function SnapToGrid(ByVal xVPos As Double) As Double
-        Dim xOffset As Double = MeasureBottom(InMeasure(xVPos))
+        Dim xOffset As Double = MeasureBottom(MeasureAtDisplacement(xVPos))
         Dim xRatio As Double = 192.0R / gDivide
         Return Math.Floor((xVPos - xOffset) / xRatio) * xRatio + xOffset
     End Function
@@ -592,7 +596,7 @@ Public Class MainWindow
                                         IIf(InitPath = "", My.Application.Info.DirectoryPath, InitPath),
                                         ExcludeFileName(FileName)) _
                                         & "\___TempBMS.bms"
-        Dim xMeasure As Integer = InMeasure(Math.Abs(spV(spFocus)))
+        Dim xMeasure As Integer = MeasureAtDisplacement(Math.Abs(spV(spFocus)))
         Dim xS1 As String = Replace(InitStr, "<apppath>", My.Application.Info.DirectoryPath)
         Dim xS2 As String = Replace(xS1, "<measure>", xMeasure)
         Dim xS3 As String = Replace(xS2, "<filename>", xFileName)
@@ -685,7 +689,7 @@ Public Class MainWindow
             For xI1 = 1 To UBound(xStrLine)
                 If xStrLine(xI1).Trim = "" Then Continue For
                 xStrSub = Split(xStrLine(xI1), " ")
-                xTempVP = Val(xStrSub(1)) + MeasureBottom(InMeasure(-xVS) + 1)
+                xTempVP = Val(xStrSub(1)) + MeasureBottom(MeasureAtDisplacement(-xVS) + 1)
                 If UBound(xStrSub) = 4 And xTempVP >= 0 And xTempVP < VPosition1000() Then
                     ReDim Preserve Notes(UBound(Notes) + 1)
                     With Notes(UBound(Notes))
@@ -727,7 +731,7 @@ Public Class MainWindow
             For xI1 = 1 To UBound(xStrLine)
                 If xStrLine(xI1).Trim = "" Then Continue For
                 xStrSub = Split(xStrLine(xI1), " ")
-                xTempVP = Val(xStrSub(1)) + MeasureBottom(InMeasure(-xVS) + 1)
+                xTempVP = Val(xStrSub(1)) + MeasureBottom(MeasureAtDisplacement(-xVS) + 1)
                 If UBound(xStrSub) = 4 And xTempVP >= 0 And xTempVP < VPosition1000() Then
                     ReDim Preserve Notes(UBound(Notes) + 1)
                     With Notes(UBound(Notes))
@@ -766,7 +770,7 @@ Public Class MainWindow
 
             'paste
             For xI1 = 1 To UBound(xStrLine)
-                xTempVP = Val(Mid(xStrLine(xI1), 5, 7)) + MeasureBottom(InMeasure(-xVS) + 1)
+                xTempVP = Val(Mid(xStrLine(xI1), 5, 7)) + MeasureBottom(MeasureAtDisplacement(-xVS) + 1)
                 If Len(xStrLine(xI1)) > 11 And IdentifiertoColumnIndex(Mid(xStrLine(xI1), 2, 2)) > 0 And xTempVP >= 0 And xTempVP < VPosition1000() Then
                     ReDim Preserve Notes(UBound(Notes) + 1)
                     With Notes(UBound(Notes))
@@ -811,7 +815,7 @@ Public Class MainWindow
         Dim MinMeasure As Double = 999
 
         For xI1 = 1 To UBound(Notes)
-            If Notes(xI1).Selected And InMeasure(Notes(xI1).VPosition) < MinMeasure Then MinMeasure = InMeasure(Notes(xI1).VPosition)
+            If Notes(xI1).Selected And MeasureAtDisplacement(Notes(xI1).VPosition) < MinMeasure Then MinMeasure = MeasureAtDisplacement(Notes(xI1).VPosition)
         Next
         MinMeasure = MeasureBottom(MinMeasure)
 
@@ -866,7 +870,7 @@ Public Class MainWindow
     Private Function EnabledColumnToReal(ByVal cEnabled As Integer) As Integer
         Dim xI1 As Integer = 0
         Do
-            If xI1 >= gCol Then Exit Do
+            If xI1 >= gColumns Then Exit Do
             If Not nEnabled(xI1) Then cEnabled += 1
             If xI1 >= cEnabled Then Exit Do
             xI1 += 1
@@ -1701,11 +1705,11 @@ EndSearch:
         FStatus.Visible = True
 
         TempDraw = False
-        TempColumn = -1
+        SelectedColumn = -1
         TempVPosition = -1
         TempLength = 0
 
-        vSelStart = MeasureBottom(InMeasure(-spV(spFocus)) + 1)
+        vSelStart = MeasureBottom(MeasureAtDisplacement(-spV(spFocus)) + 1)
         vSelLength = 0
 
         RefreshPanelAll()
@@ -1724,11 +1728,11 @@ EndSearch:
         FStatus.Visible = True
 
         TempDraw = True
-        TempColumn = -1
+        SelectedColumn = -1
         TempVPosition = -1
         TempLength = 0
 
-        vSelStart = MeasureBottom(InMeasure(-spV(spFocus)) + 1)
+        vSelStart = MeasureBottom(MeasureAtDisplacement(-spV(spFocus)) + 1)
         vSelLength = 0
 
         RefreshPanelAll()
@@ -1748,7 +1752,7 @@ EndSearch:
 
         vSelMouseOverLine = 0
         TempDraw = False
-        TempColumn = -1
+        SelectedColumn = -1
         TempVPosition = -1
         TempLength = 0
         ValidateSelection()
@@ -2226,13 +2230,13 @@ StartCount:     If Not NTInput Then
                 Dim mLeft As Integer = MouseMoveStatus.X / gxWidth + spH(spFocus) 'horizontal position of the mouse
                 If mLeft >= 0 Then
                     Do
-                        If mLeft < nLeft(xI1 + 1) Or xI1 >= gCol Then TempColumn = xI1 : Exit Do 'get the column where mouse is 
+                        If mLeft < nLeft(xI1 + 1) Or xI1 >= gColumns Then SelectedColumn = xI1 : Exit Do 'get the column where mouse is 
                         xI1 += 1
                     Loop
                 End If
-                TempColumn = EnabledColumnToReal(RealColumnToEnabled(TempColumn))  'get the enabled column where mouse is 
+                SelectedColumn = EnabledColumnToReal(RealColumnToEnabled(SelectedColumn))  'get the enabled column where mouse is 
 
-                Dim xMeasure As Integer = InMeasure(TempVPosition)
+                Dim xMeasure As Integer = MeasureAtDisplacement(TempVPosition)
                 Dim xMLength As Double = MeasureLength(xMeasure)
                 Dim xVposMod As Double = TempVPosition - MeasureBottom(xMeasure)
                 Dim xGCD As Double = GCD(IIf(xVposMod = 0, xMLength, xVposMod), xMLength)
@@ -2241,7 +2245,7 @@ StartCount:     If Not NTInput Then
                 FSP2.Text = xVposMod.ToString & " / " & xMLength & "  "
                 FSP3.Text = CInt(xVposMod / xGCD).ToString & " / " & CInt(xMLength / xGCD).ToString & "  "
                 FSP4.Text = TempVPosition.ToString() & "  "
-                FSC.Text = nTitle(TempColumn)
+                FSC.Text = nTitle(SelectedColumn)
                 FSW.Text = ""
                 FSM.Text = Add3Zeros(xMeasure)
                 FST.Text = ""
@@ -2249,7 +2253,7 @@ StartCount:     If Not NTInput Then
                 FSE.Text = ""
 
             Else
-                Dim xMeasure As Integer = InMeasure(Notes(xI1).VPosition)
+                Dim xMeasure As Integer = MeasureAtDisplacement(Notes(xI1).VPosition)
                 Dim xMLength As Double = MeasureLength(xMeasure)
                 Dim xVposMod As Double = Notes(xI1).VPosition - MeasureBottom(xMeasure)
                 Dim xGCD As Double = GCD(IIf(xVposMod = 0, xMLength, xVposMod), xMLength)
@@ -2270,9 +2274,9 @@ StartCount:     If Not NTInput Then
             End If
 
         ElseIf TBWrite.Checked Then
-            If TempColumn < 0 Then Exit Sub
+            If SelectedColumn < 0 Then Exit Sub
 
-            Dim xMeasure As Integer = InMeasure(TempVPosition)
+            Dim xMeasure As Integer = MeasureAtDisplacement(TempVPosition)
             Dim xMLength As Double = MeasureLength(xMeasure)
             Dim xVposMod As Double = TempVPosition - MeasureBottom(xMeasure)
             Dim xGCD As Double = GCD(IIf(xVposMod = 0, xMLength, xVposMod), xMLength)
@@ -2281,7 +2285,7 @@ StartCount:     If Not NTInput Then
             FSP2.Text = xVposMod.ToString & " / " & xMLength & "  "
             FSP3.Text = CInt(xVposMod / xGCD).ToString & " / " & CInt(xMLength / xGCD).ToString & "  "
             FSP4.Text = TempVPosition.ToString() & "  "
-            FSC.Text = nTitle(TempColumn)
+            FSC.Text = nTitle(SelectedColumn)
             FSW.Text = C10to36(LWAV.SelectedIndex + 1)
             FSM.Text = Add3Zeros(xMeasure)
             FST.Text = IIf(NTInput, TempLength, IIf(My.Computer.Keyboard.ShiftKeyDown, Strings.StatusBar.LongNote, ""))
@@ -3483,9 +3487,9 @@ EndOfAdjustment:
             column(xI1).Left = column(xI1 - 1).Left + IIf(column(xI1 - 1).isVisible, column(xI1 - 1).Width, 0)
             'If col(xI1).Width = 0 Then col(xI1).Visible = False
         Next
-        HSL.Maximum = nLeft(gCol) + column(niB).Width
-        HS.Maximum = nLeft(gCol) + column(niB).Width
-        HSR.Maximum = nLeft(gCol) + column(niB).Width
+        HSL.Maximum = nLeft(gColumns) + column(niB).Width
+        HS.Maximum = nLeft(gColumns) + column(niB).Width
+        HSR.Maximum = nLeft(gColumns) + column(niB).Width
     End Sub
 
     Private Sub CHPlayer_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles CHPlayer.SelectedIndexChanged
@@ -3514,7 +3518,7 @@ EndOfAdjustment:
     End Sub
 
     Private Sub CGB_ValueChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles CGB.ValueChanged
-        gCol = niB + CGB.Value - 1
+        gColumns = niB + CGB.Value - 1
         UpdateColumnsX()
         RefreshPanelAll()
     End Sub
@@ -3751,7 +3755,7 @@ Jump2:
 
 
     Private Sub TBFind_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TBFind.Click, mnFind.Click
-        Dim xDiag As New diagFind(gCol, Strings.Messages.Err, Strings.Messages.InvalidLabel)
+        Dim xDiag As New diagFind(gColumns, Strings.Messages.Err, Strings.Messages.InvalidLabel)
         xDiag.Show()
     End Sub
 
@@ -3986,14 +3990,14 @@ Jump2:
         Dim xRedo As UndoRedo.LinkedURCmd = New UndoRedo.Void
         Dim xBaseRedo As UndoRedo.LinkedURCmd = xRedo
 
-        Dim xMeasure As Integer = InMeasure(menuVPosition)
+        Dim xMeasure As Integer = MeasureAtDisplacement(menuVPosition)
         Dim xMLength As Double = MeasureLength(xMeasure)
         Dim xVP As Double = MeasureBottom(xMeasure)
 
         If NTInput Then
             Dim xI1 As Integer = 1
             Do While xI1 <= UBound(Notes)
-                If InMeasure(Notes(xI1).VPosition) >= 999 Then
+                If MeasureAtDisplacement(Notes(xI1).VPosition) >= 999 Then
                     Me.RedoRemoveNote(Notes(xI1), True, xUndo, xRedo)
                     RemoveNote(xI1, False)
                 Else
@@ -4023,7 +4027,7 @@ Jump2:
         Else
             Dim xI1 As Integer = 1
             Do While xI1 <= UBound(Notes)
-                If InMeasure(Notes(xI1).VPosition) >= 999 Then
+                If MeasureAtDisplacement(Notes(xI1).VPosition) >= 999 Then
                     Me.RedoRemoveNote(Notes(xI1), True, xUndo, xRedo)
                     RemoveNote(xI1, False)
                 Else
@@ -4056,14 +4060,14 @@ Jump2:
         Dim xRedo As UndoRedo.LinkedURCmd = New UndoRedo.Void
         Dim xBaseRedo As UndoRedo.LinkedURCmd = xRedo
 
-        Dim xMeasure As Integer = InMeasure(menuVPosition)
+        Dim xMeasure As Integer = MeasureAtDisplacement(menuVPosition)
         Dim xMLength As Double = MeasureLength(xMeasure)
         Dim xVP As Double = MeasureBottom(xMeasure)
 
         If NTInput Then
             Dim xI1 As Integer = 1
             Do While xI1 <= UBound(Notes)
-                If InMeasure(Notes(xI1).VPosition) = xMeasure And InMeasure(Notes(xI1).VPosition + Notes(xI1).Length) = xMeasure Then
+                If MeasureAtDisplacement(Notes(xI1).VPosition) = xMeasure And MeasureAtDisplacement(Notes(xI1).VPosition + Notes(xI1).Length) = xMeasure Then
                     Me.RedoRemoveNote(Notes(xI1), True, xUndo, xRedo)
                     RemoveNote(xI1, False)
                 Else
@@ -4094,7 +4098,7 @@ Jump2:
         Else
             Dim xI1 As Integer = 1
             Do While xI1 <= UBound(Notes)
-                If InMeasure(Notes(xI1).VPosition) = xMeasure Then
+                If MeasureAtDisplacement(Notes(xI1).VPosition) = xMeasure Then
                     Me.RedoRemoveNote(Notes(xI1), True, xUndo, xRedo)
                     RemoveNote(xI1, False)
                 Else
@@ -4428,7 +4432,7 @@ Jump2:
         If TBTimeSelect.Checked Then
             CalculateGreatestVPosition()
             vSelStart = 0
-            vSelLength = MeasureBottom(InMeasure(GreatestVPosition)) + MeasureLength(InMeasure(GreatestVPosition))
+            vSelLength = MeasureBottom(MeasureAtDisplacement(GreatestVPosition)) + MeasureLength(MeasureAtDisplacement(GreatestVPosition))
         End If
         RefreshPanelAll()
         POStatusRefresh()
@@ -4452,34 +4456,17 @@ Jump2:
     End Sub
 
     Private Sub mnUpdate_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnUpdate.Click
-        System.Diagnostics.Process.Start("http://www.cs.mcgill.ca/~ryang6/iBMSC/")
+        Process.Start("http://www.cs.mcgill.ca/~ryang6/iBMSC/")
     End Sub
 
     Private Sub mnUpdateC_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnUpdateC.Click
-        System.Diagnostics.Process.Start("http://bbs.rohome.net/thread-1074065-1-1.html")
+        Process.Start("http://bbs.rohome.net/thread-1074065-1-1.html")
     End Sub
 
     Private Sub mnQuit_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnQuit.Click
-        Me.Close()
+        Close()
     End Sub
 
-    Private Sub Form1_Resize(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Resize
-        'ttlMax.Visible = Me.WindowState <> FormWindowState.Maximized
-        'ttlRst.Visible = Me.WindowState = FormWindowState.Maximized
-        'sysMax.Enabled = Me.WindowState <> FormWindowState.Maximized
-        'sysRst.Enabled = Me.WindowState = FormWindowState.Maximized
-        'ControlVisibleChanged(Nothing, Nothing)
-
-        'Me.ShowCaption = Me.WindowState = FormWindowState.Maximized
-    End Sub
-
-    'Private Sub ControlVisibleChanged(ByVal sender As Object, ByVal e As EventArgs) Handles FStatus.VisibleChanged, pStatus.VisibleChanged, TBMain.VisibleChanged
-    '    Dim xBottom As Integer = 0
-    '    If FStatus.Visible And pStatus.Visible Then xBottom = FStatus.Height
-    '    Dim xTop As Integer = mnMain.Height + 1
-    '    If TBMain.Visible Then xTop += TBMain.Height
-    '    'DwmExtendFrameIntoClientArea(Me.Handle, NewMargin(0, 0, xTop, xBottom))
-    'End Sub
 
     Private Sub EnableDWM()
         mnMain.BackColor = Color.Black
@@ -4506,13 +4493,6 @@ Jump2:
             RemoveHandler xmn.MouseLeave, AddressOf mn_MouseLeave
         Next
     End Sub
-
-    'Private Sub pttl_Paint(ByVal sender As System.Object, ByVal e As System.Windows.Forms.PaintEventArgs) Handles pttl.Paint
-    '    e.Graphics.SmoothingMode = Drawing2D.SmoothingMode.HighQuality
-    '    'If Not IsSaved Then e.Graphics.DrawPath(New Pen(Color.Black, 2), TitlePath)
-    '    e.Graphics.DrawPath(Pens.Gray, TitlePath)
-    '    e.Graphics.FillPath(Brushes.White, TitlePath)
-    'End Sub
 
     Private Sub ttlIcon_MouseDown(ByVal sender As Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles ttlIcon.MouseDown
         ttlIcon.Image = My.Resources.icon2_16
@@ -4544,11 +4524,11 @@ Jump2:
         SpR.Visible = mnSRSplitter.Checked
     End Sub
     Private Sub CGShow_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles CGShow.CheckedChanged
-        gShow = CGShow.Checked
+        gShowGrid = CGShow.Checked
         RefreshPanelAll()
     End Sub
     Private Sub CGShowS_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles CGShowS.CheckedChanged
-        gShowS = CGShowS.Checked
+        gShowSubGrid = CGShowS.Checked
         RefreshPanelAll()
     End Sub
     Private Sub CGShowBG_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles CGShowBG.CheckedChanged
@@ -4556,15 +4536,15 @@ Jump2:
         RefreshPanelAll()
     End Sub
     Private Sub CGShowM_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles CGShowM.CheckedChanged
-        gShowM = CGShowM.Checked
+        gShowMeasureNumber = CGShowM.Checked
         RefreshPanelAll()
     End Sub
     Private Sub CGShowV_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles CGShowV.CheckedChanged
-        gShowV = CGShowV.Checked
+        gShowVerticalLine = CGShowV.Checked
         RefreshPanelAll()
     End Sub
     Private Sub CGShowMB_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles CGShowMB.CheckedChanged
-        gShowMB = CGShowMB.Checked
+        gShowMeasureBar = CGShowMB.Checked
         RefreshPanelAll()
     End Sub
     Private Sub CGShowC_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles CGShowC.CheckedChanged
@@ -4626,13 +4606,6 @@ Jump2:
     Private Sub CGDisableVertical_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles CGDisableVertical.CheckedChanged
         DisableVerticalMove = CGDisableVertical.Checked
     End Sub
-
-    'Private Sub BWAVOptions_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles BWAVOptions.Click
-    '    mnWAV.Show(BWAVOptions, 0, 24)
-    'End Sub
-    'Private Sub BBeatOptions_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles BBeatOptions.Click
-    '    mnBeat.Show(BBeatOptions, 0, 24)
-    'End Sub
 
     Private Sub CBeatPreserve_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles CBeatPreserve.Click, CBeatMeasure.Click, CBeatCut.Click, CBeatScale.Click
         'If Not sender.Checked Then Exit Sub

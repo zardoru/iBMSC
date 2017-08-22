@@ -120,11 +120,11 @@
         Dim xUpperIndex As Integer = 1
 
         If Not NTInput Then
-            For xMeasure As Integer = 0 To InMeasure(GreatestVPosition)
+            For xMeasure As Integer = 0 To MeasureAtDisplacement(GreatestVPosition)
                 'Find Ks in the same measure
                 Dim xI1 As Integer
                 For xI1 = xLowerIndex To UBound(Notes)
-                    If InMeasure(Notes(xI1).VPosition) > xMeasure Then Exit For
+                    If MeasureAtDisplacement(Notes(xI1).VPosition) > xMeasure Then Exit For
                 Next
                 xUpperIndex = xI1
 
@@ -132,7 +132,7 @@
                     'collect vposition data
                     Dim xVPos(-1) As Double
                     For xI2 As Integer = xLowerIndex To xUpperIndex - 1
-                        If nIdentifier(Notes(xI2).ColumnIndex, Notes(xI2).Value, Notes(xI2).LongNote, Notes(xI2).Hidden) = xId And Math.Abs(Notes(xI2).VPosition - InMeasure(Notes(xI2).VPosition) * 192) > 0 Then
+                        If nIdentifier(Notes(xI2).ColumnIndex, Notes(xI2).Value, Notes(xI2).LongNote, Notes(xI2).Hidden) = xId And Math.Abs(Notes(xI2).VPosition - MeasureAtDisplacement(Notes(xI2).VPosition) * 192) > 0 Then
                             ReDim Preserve xVPos(UBound(xVPos) + 1)
                             xVPos(UBound(xVPos)) = Notes(xI2).VPosition - xMeasure * 192 : If xVPos(UBound(xVPos)) < 0 Then xVPos(UBound(xVPos)) = 0
                         End If
@@ -174,26 +174,26 @@
 990:        Next
 
         Else
-            For xMeasure As Integer = 0 To InMeasure(GreatestVPosition)
+            For xMeasure As Integer = 0 To MeasureAtDisplacement(GreatestVPosition)
 
                 For Each xId As String In Identifiers
                     Dim xVPos(-1) As Double
 
                     'collect vposition data
                     For xI2 As Integer = 1 To UBound(Notes)
-                        If InMeasure(Notes(xI2).VPosition) > xMeasure Then Exit For
+                        If MeasureAtDisplacement(Notes(xI2).VPosition) > xMeasure Then Exit For
 
                         If nIdentifier(Notes(xI2).ColumnIndex, Notes(xI2).Value, CBool(Notes(xI2).Length), Notes(xI2).Hidden) <> xId Then GoTo 1330
                         If IdentifiertoLongNote(xId) Xor CBool(Notes(xI2).Length) Then GoTo 1330
 
-                        If InMeasure(Notes(xI2).VPosition) = xMeasure AndAlso Math.Abs(Notes(xI2).VPosition - InMeasure(Notes(xI2).VPosition) * 192) > 0 Then
+                        If MeasureAtDisplacement(Notes(xI2).VPosition) = xMeasure AndAlso Math.Abs(Notes(xI2).VPosition - MeasureAtDisplacement(Notes(xI2).VPosition) * 192) > 0 Then
                             ReDim Preserve xVPos(UBound(xVPos) + 1)
                             xVPos(UBound(xVPos)) = Notes(xI2).VPosition - xMeasure * 192 : If xVPos(UBound(xVPos)) < 0 Then xVPos(UBound(xVPos)) = 0
                         End If
 
                         If Not CBool(Notes(xI2).Length) Then GoTo 1330
 
-                        If InMeasure(Notes(xI2).VPosition + Notes(xI2).Length) = xMeasure AndAlso Not Notes(xI2).VPosition + Notes(xI2).Length - xMeasure * 192 = 0 Then
+                        If MeasureAtDisplacement(Notes(xI2).VPosition + Notes(xI2).Length) = xMeasure AndAlso Not Notes(xI2).VPosition + Notes(xI2).Length - xMeasure * 192 = 0 Then
                             ReDim Preserve xVPos(UBound(xVPos) + 1)
                             xVPos(UBound(xVPos)) = Notes(xI2).VPosition + Notes(xI2).Length - xMeasure * 192 : If xVPos(UBound(xVPos)) < 0 Then xVPos(UBound(xVPos)) = 0
                         End If
@@ -255,7 +255,7 @@
         If Not NTInput Then
             For Each xadj As dgMyO2.Adj In xaj
                 For xI1 As Integer = 1 To UBound(Notes)
-                    If InMeasure(Notes(xI1).VPosition) = xadj.Measure And
+                    If MeasureAtDisplacement(Notes(xI1).VPosition) = xadj.Measure And
                        Notes(xI1).ColumnIndex = xadj.ColumnIndex And
                        Notes(xI1).LongNote = xadj.LongNote And
                        Notes(xI1).Hidden = xadj.Hidden Then
@@ -271,13 +271,13 @@
 
                     Dim xStart As Double = Notes(xI1).VPosition
                     Dim xEnd As Double = Notes(xI1).VPosition + Notes(xI1).Length
-                    If InMeasure(Notes(xI1).VPosition) = xadj.Measure And
+                    If MeasureAtDisplacement(Notes(xI1).VPosition) = xadj.Measure And
                        Notes(xI1).ColumnIndex = xadj.ColumnIndex And
                        Notes(xI1).Hidden = xadj.Hidden Then _
                         xStart = CLng(Notes(xI1).VPosition / IIf(xadj.AdjTo64, 3, 4)) * IIf(xadj.AdjTo64, 3, 4)
 
                     If Notes(xI1).Length > 0 AndAlso
-                       InMeasure(Notes(xI1).VPosition + Notes(xI1).Length) = xadj.Measure And
+                       MeasureAtDisplacement(Notes(xI1).VPosition + Notes(xI1).Length) = xadj.Measure And
                        Notes(xI1).ColumnIndex = xadj.ColumnIndex And
                        Notes(xI1).Hidden = xadj.Hidden Then _
                         xEnd = CLng((Notes(xI1).VPosition + Notes(xI1).Length) / IIf(xadj.AdjTo64, 3, 4)) * IIf(xadj.AdjTo64, 3, 4)

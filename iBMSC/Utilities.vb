@@ -1,4 +1,6 @@
-﻿Namespace Editor
+﻿Imports System.Text.RegularExpressions
+
+Namespace Editor
     Public Module Functions
         Public Function Add3Zeros(ByVal xNum As Integer) As String
             Dim xStr1 As String = "000" & xNum
@@ -192,6 +194,12 @@
             Loop
 
             Return m10
+        End Function
+
+
+        Public Function IsBase36(str As String) As Boolean
+            Static re As New Regex("^[A-Za-z0-9]+$")
+            Return re.IsMatch(str)
         End Function
 
     End Module
