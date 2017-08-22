@@ -248,19 +248,6 @@ Public Class MainWindow
         vo = xvo
     End Sub
 
-
-    '----WaveForm Options
-    Dim wWavL() As Short
-    Dim wWavR() As Short
-    Dim wLock As Boolean = True
-    Dim wBitsPerSample As Short
-    Dim wSampleRate As Integer
-    Dim wNumChannels As Short
-    Dim wPosition As Double = 0
-    Dim wLeft As Integer = 50
-    Dim wWidth As Integer = 100
-    Dim wPrecision As Integer = 1
-
     '----Preview Options
     Structure PlayerArguments
         Public Path As String

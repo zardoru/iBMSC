@@ -393,8 +393,8 @@ Partial Public Class MainWindow
                 xD1 = bWavDataIndex(xI2) + (xI3 - bVPosition(xI2)) * 1.25 * wSampleRate / bBPM(xI2)
 
                 If xD1 <= UBound(wWavL) And xD1 >= 0 Then
-                    xPtsL(xI1) = New PointF(wWavL(Int(xD1)) / 65536 * wWidth + wLeft, xI1 / wPrecision)
-                    xPtsR(xI1) = New PointF(wWavR(Int(xD1)) / 65536 * wWidth + wLeft, xI1 / wPrecision)
+                    xPtsL(xI1) = New PointF(wWavL(Int(xD1)) * wWidth + wLeft, xI1 / wPrecision)
+                    xPtsR(xI1) = New PointF(wWavR(Int(xD1)) * wWidth + wLeft, xI1 / wPrecision)
                 Else
                     xPtsL(xI1) = New PointF(wLeft, xI1 / wPrecision)
                     xPtsR(xI1) = New PointF(wLeft, xI1 / wPrecision)
