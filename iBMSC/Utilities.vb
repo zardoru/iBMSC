@@ -29,7 +29,7 @@ Namespace Editor
             If xStart > 1295 Then xStart = 1295
             Return C10to36S(xStart \ 36) & C10to36S(xStart Mod 36)
         End Function
-        Public Function Base36ToDecimal(ByVal xStart As String) As Integer
+        Public Function C36to10(ByVal xStart As String) As Integer
             xStart = Mid("00" & xStart, Len(xStart) + 1)
             Return C36to10S(xStart.Chars(0)) * 36 + C36to10S(xStart.Chars(1))
         End Function

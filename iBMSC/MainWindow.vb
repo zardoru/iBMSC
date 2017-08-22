@@ -3725,7 +3725,7 @@ EndOfAdjustment:
                 Dim xI4 As Integer = Asc(Mid(xStr, 2, 1))
                 If Not ((xI4 >= 48 And xI4 <= 57) Or (xI4 >= 65 And xI4 <= 90)) Then GoTo Jump1
             End If
-            Dim xVal As Integer = Base36ToDecimal(xStr) * 10000
+            Dim xVal As Integer = C36to10(xStr) * 10000
 
             Dim xUndo As UndoRedo.LinkedURCmd = Nothing
             Dim xRedo As UndoRedo.LinkedURCmd = New UndoRedo.Void
@@ -3779,8 +3779,8 @@ Jump2:
 
         fdriMesL = xMesL
         fdriMesU = xMesU
-        fdriLblL = Base36ToDecimal(xLblL) * 10000
-        fdriLblU = Base36ToDecimal(xLblU) * 10000
+        fdriLblL = C36to10(xLblL) * 10000
+        fdriLblU = C36to10(xLblU) * 10000
         fdriValL = xValL
         fdriValU = xValU
         fdriCol = iCol
@@ -3824,8 +3824,8 @@ Jump2:
 
         fdriMesL = xMesL
         fdriMesU = xMesU
-        fdriLblL = Base36ToDecimal(xLblL) * 10000
-        fdriLblU = Base36ToDecimal(xLblU) * 10000
+        fdriLblL = C36to10(xLblL) * 10000
+        fdriLblU = C36to10(xLblU) * 10000
         fdriValL = xValL
         fdriValU = xValU
         fdriCol = iCol
@@ -3862,8 +3862,8 @@ Jump2:
 
         fdriMesL = xMesL
         fdriMesU = xMesU
-        fdriLblL = Base36ToDecimal(xLblL) * 10000
-        fdriLblU = Base36ToDecimal(xLblU) * 10000
+        fdriLblL = C36to10(xLblL) * 10000
+        fdriLblU = C36to10(xLblU) * 10000
         fdriValL = xValL
         fdriValU = xValU
         fdriCol = iCol
@@ -3909,8 +3909,8 @@ Jump2:
 
         fdriMesL = xMesL
         fdriMesU = xMesU
-        fdriLblL = Base36ToDecimal(xLblL) * 10000
-        fdriLblU = Base36ToDecimal(xLblU) * 10000
+        fdriLblL = C36to10(xLblL) * 10000
+        fdriLblU = C36to10(xLblU) * 10000
         fdriValL = xValL
         fdriValU = xValU
         fdriCol = iCol
@@ -3922,7 +3922,7 @@ Jump2:
         Dim xbHidden As Boolean = iRange Mod 11 = 0
         Dim xbVisible As Boolean = iRange Mod 13 = 0
 
-        Dim xxLbl As Integer = Base36ToDecimal(xReplaceLbl) * 10000
+        Dim xxLbl As Integer = C36to10(xReplaceLbl) * 10000
 
         Dim xUndo As UndoRedo.LinkedURCmd = Nothing
         Dim xRedo As UndoRedo.LinkedURCmd = New UndoRedo.Void
@@ -3952,8 +3952,8 @@ Jump2:
 
         fdriMesL = xMesL
         fdriMesU = xMesU
-        fdriLblL = Base36ToDecimal(xLblL) * 10000
-        fdriLblU = Base36ToDecimal(xLblU) * 10000
+        fdriLblL = C36to10(xLblL) * 10000
+        fdriLblU = C36to10(xLblU) * 10000
         fdriValL = xValL
         fdriValU = xValU
         fdriCol = iCol

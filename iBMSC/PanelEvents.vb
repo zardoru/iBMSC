@@ -678,7 +678,7 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
 
                         If My.Computer.Keyboard.ShiftKeyDown Then
                             LWAV.SelectedIndices.Clear()
-                            LWAV.SelectedIndex = Base36ToDecimal(C10to36(Notes(xI1).Value \ 10000)) - 1
+                            LWAV.SelectedIndex = C36to10(C10to36(Notes(xI1).Value \ 10000)) - 1
                             validate_LWAV_view()
 
                         Else
@@ -738,8 +738,8 @@ Jump0:          'If xI1 = 0 Then
             If IsBase36(xStr) And Not (xStr = "00" Or xStr = "0") Then
                 Dim xUndo As UndoRedo.LinkedURCmd = Nothing
                 Dim xRedo As UndoRedo.LinkedURCmd = Nothing
-                RedoRelabelNote(Note, Base36ToDecimal(xStr) * 10000, True, xUndo, xRedo)
-                Note.Value = Base36ToDecimal(xStr) * 10000
+                RedoRelabelNote(Note, C36to10(xStr) * 10000, True, xUndo, xRedo)
+                Note.Value = C36to10(xStr) * 10000
                 AddUndo(xUndo, xRedo)
                 Return
             Else

@@ -229,7 +229,8 @@ Partial Public Class MainWindow
                 'If the K is inside the visible area or
                 '   the K is below the visible area but has an end point above the lower border
                 If Notes(xI1).VPosition >= xLowerBorder OrElse
-                   (Notes(xI1).VPosition <= xLowerBorder And Notes(xI1).VPosition + Notes(xI1).Length >= xLowerBorder) Then _
+                   (Notes(xI1).VPosition <= xLowerBorder And Notes(xI1).VPosition + Notes(xI1).Length >= xLowerBorder) OrElse
+                   (Notes(xI1).VPosition <= xLowerBorder And Notes(Notes(xI1).PairWithI).VPosition >= xLowerBorder) Then _
                     DrawNoteNT(Notes(xI1), e1, xHS, xVS, xTHeight)
             Next
 
@@ -429,7 +430,7 @@ Partial Public Class MainWindow
         If sNote.Hidden Then xAlpha = vo.kOpacity
 
         Dim xLabel As String = C10to36(sNote.Value \ 10000)
-        If ShowFileName AndAlso hWAV(Base36ToDecimal(xLabel)) <> "" Then xLabel = Path.GetFileNameWithoutExtension(hWAV(Base36ToDecimal(xLabel)))
+        If ShowFileName AndAlso hWAV(C36to10(xLabel)) <> "" Then xLabel = Path.GetFileNameWithoutExtension(hWAV(C36to10(xLabel)))
 
         If Not sNote.LongNote Then
 
@@ -464,18 +465,7 @@ Partial Public Class MainWindow
         End If
 
         If sNote.PairWithI <> 0 Then
-            Dim xPen2 As New Pen(GetColumn(sNote.ColumnIndex).getLongBright(xAlpha))
-            Dim xBrush3 As New Drawing2D.LinearGradientBrush(
-                        New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) - 0.5 * nLength(sNote.ColumnIndex), xHS),
-                                VerticalPositiontoDisplay(Notes(sNote.PairWithI).VPosition, xVS, xHeight)),
-                        New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) + 1.5 * nLength(sNote.ColumnIndex), xHS),
-                                VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) + vo.kHeight),
-                        GetColumn(sNote.ColumnIndex).getLongBright(xAlpha),
-                        GetColumn(sNote.ColumnIndex).getLongDark(xAlpha))
-            e.Graphics.FillRectangle(xBrush3, HorizontalPositiontoDisplay(nLeft(Notes(sNote.PairWithI).ColumnIndex), xHS) + 3, VerticalPositiontoDisplay(Notes(sNote.PairWithI).VPosition, xVS, xHeight) + 1,
-                                            nLength(Notes(sNote.PairWithI).ColumnIndex) * gxWidth - 5, VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - VerticalPositiontoDisplay(Notes(sNote.PairWithI).VPosition, xVS, xHeight) - vo.kHeight - 1)
-            e.Graphics.DrawRectangle(xPen2, HorizontalPositiontoDisplay(nLeft(Notes(sNote.PairWithI).ColumnIndex), xHS) + 2, VerticalPositiontoDisplay(Notes(sNote.PairWithI).VPosition, xVS, xHeight),
-                                            nLength(Notes(sNote.PairWithI).ColumnIndex) * gxWidth - 4, VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - VerticalPositiontoDisplay(Notes(sNote.PairWithI).VPosition, xVS, xHeight) - vo.kHeight)
+            DrawPairedLNBody(sNote, e, xHS, xVS, xHeight, xAlpha)
         End If
 
         'e.Graphics.DrawString(sNote.TimeOffset.ToString("0.##"), New Font("Verdana", 9), Brushes.Cyan, _
@@ -489,6 +479,21 @@ Partial Public Class MainWindow
 
         If sNote.Selected Then e.Graphics.DrawRectangle(vo.kSelected, HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS), VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight - 1, nLength(sNote.ColumnIndex) * gxWidth, vo.kHeight + 2)
 
+    End Sub
+
+    Private Sub DrawPairedLNBody(sNote As Note, e As BufferedGraphics, xHS As Long, xVS As Long, xHeight As Integer, xAlpha As Single)
+        Dim xPen2 As New Pen(GetColumn(sNote.ColumnIndex).getLongBright(xAlpha))
+        Dim xBrush3 As New Drawing2D.LinearGradientBrush(
+                    New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) - 0.5 * nLength(sNote.ColumnIndex), xHS),
+                            VerticalPositiontoDisplay(Notes(sNote.PairWithI).VPosition, xVS, xHeight)),
+                    New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) + 1.5 * nLength(sNote.ColumnIndex), xHS),
+                            VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) + vo.kHeight),
+                    GetColumn(sNote.ColumnIndex).getLongBright(xAlpha),
+                    GetColumn(sNote.ColumnIndex).getLongDark(xAlpha))
+        e.Graphics.FillRectangle(xBrush3, HorizontalPositiontoDisplay(nLeft(Notes(sNote.PairWithI).ColumnIndex), xHS) + 3, VerticalPositiontoDisplay(Notes(sNote.PairWithI).VPosition, xVS, xHeight) + 1,
+                                        nLength(Notes(sNote.PairWithI).ColumnIndex) * gxWidth - 5, VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - VerticalPositiontoDisplay(Notes(sNote.PairWithI).VPosition, xVS, xHeight) - vo.kHeight - 1)
+        e.Graphics.DrawRectangle(xPen2, HorizontalPositiontoDisplay(nLeft(Notes(sNote.PairWithI).ColumnIndex), xHS) + 2, VerticalPositiontoDisplay(Notes(sNote.PairWithI).VPosition, xVS, xHeight),
+                                        nLength(Notes(sNote.PairWithI).ColumnIndex) * gxWidth - 4, VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - VerticalPositiontoDisplay(Notes(sNote.PairWithI).VPosition, xVS, xHeight) - vo.kHeight)
     End Sub
 
     ''' <summary>
@@ -506,7 +511,7 @@ Partial Public Class MainWindow
         If sNote.Hidden Then xAlpha = vo.kOpacity
 
         Dim xLabel As String = C10to36(sNote.Value \ 10000)
-        If ShowFileName AndAlso hWAV(Base36ToDecimal(xLabel)) <> "" Then xLabel = Path.GetFileNameWithoutExtension(hWAV(Base36ToDecimal(xLabel)))
+        If ShowFileName AndAlso hWAV(C36to10(xLabel)) <> "" Then xLabel = Path.GetFileNameWithoutExtension(hWAV(C36to10(xLabel)))
 
         Dim xPen1 As Pen
         Dim xBrush As Drawing2D.LinearGradientBrush
@@ -527,19 +532,8 @@ Partial Public Class MainWindow
             e.Graphics.DrawString(IIf(isColumnNumeric(sNote.ColumnIndex), sNote.Value / 10000, xLabel),
                          vo.kFont, xBrush2, HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS) + vo.kLabelHShift, VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight + vo.kLabelVShift)
 
-            If sNote.PairWithI > 0 Then
-                Dim xPen2 As New Pen(GetColumn(sNote.ColumnIndex).getLongBright(xAlpha))
-                Dim xBrush3 As New Drawing2D.LinearGradientBrush(
-                            New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) - 0.5 * nLength(sNote.ColumnIndex), xHS),
-                                    VerticalPositiontoDisplay(Notes(sNote.PairWithI).VPosition, xVS, xHeight)),
-                            New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) + 1.5 * nLength(sNote.ColumnIndex), xHS),
-                                    VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) + vo.kHeight),
-                            GetColumn(sNote.ColumnIndex).getLongBright(xAlpha),
-                            GetColumn(sNote.ColumnIndex).getLongDark(xAlpha))
-                e.Graphics.FillRectangle(xBrush3, HorizontalPositiontoDisplay(nLeft(Notes(sNote.PairWithI).ColumnIndex), xHS) + 3, VerticalPositiontoDisplay(Notes(sNote.PairWithI).VPosition, xVS, xHeight) + 1,
-                                                nLength(Notes(sNote.PairWithI).ColumnIndex) * gxWidth - 5, VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - VerticalPositiontoDisplay(Notes(sNote.PairWithI).VPosition, xVS, xHeight) - vo.kHeight - 1)
-                e.Graphics.DrawRectangle(xPen2, HorizontalPositiontoDisplay(nLeft(Notes(sNote.PairWithI).ColumnIndex), xHS) + 2, VerticalPositiontoDisplay(Notes(sNote.PairWithI).VPosition, xVS, xHeight),
-                                                nLength(Notes(sNote.PairWithI).ColumnIndex) * gxWidth - 4, VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - VerticalPositiontoDisplay(Notes(sNote.PairWithI).VPosition, xVS, xHeight) - vo.kHeight)
+            If sNote.PairWithI <> 0 Then
+                DrawPairedLNBody(sNote, e, xHS, xVS, xHeight, xAlpha)
             End If
 
             If ErrorCheck AndAlso sNote.HasError Then e.Graphics.DrawImage(My.Resources.ImageError, CInt(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) + nLength(sNote.ColumnIndex) / 2, xHS) - 12),
