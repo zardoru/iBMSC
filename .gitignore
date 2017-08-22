@@ -8,15 +8,13 @@
 
 # Build results
 
+packages/
 [Dd]ebug/
 [Rr]elease/
 x64/
-build/
-[Bb]in/
-[Oo]bj/
-
-# Enable "build/" folder in the NuGet Packages folder since NuGet packages use it for MSBuild targets
-!packages/*/build/
+iBMSC/build/
+iBMSC/[Bb]in/
+iBMSC/[Oo]bj/
 
 # MSTest test Results
 [Tt]est[Rr]esult*/
