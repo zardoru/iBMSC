@@ -52,18 +52,12 @@ Partial Public Class MainWindow
                 hWAV(C36to10(Mid(sLineTrim, Len("#WAV") + 1, 2))) = Mid(sLineTrim, Len("#WAV") + 4)
 
             ElseIf sLineTrim.StartsWith("#BPM", StringComparison.CurrentCultureIgnoreCase) And Not Mid(sLineTrim, Len("#BPM") + 1, 1).Trim = "" Then  'If BPM##
-                If Val(Mid(sLineTrim, Len("#BPM") + 4)) > 0 And Val(Mid(sLineTrim, Len("#BPM") + 4)) < 65536 Then
-                    hBPM(C36to10(Mid(sLineTrim, Len("#BPM") + 1, 2))) = Val(Mid(sLineTrim, Len("#BPM") + 4)) * 10000
-                ElseIf Val(Mid(sLineTrim, Len("#BPM") + 4)) >= 65536 Then
-                    hBPM(C36to10(Mid(sLineTrim, Len("#BPM") + 1, 2))) = 655359999
-                End If
+                ' zdr: No limits on BPM editing.. they don't make much sense.
+                hBPM(C36to10(Mid(sLineTrim, Len("#BPM") + 1, 2))) = Val(Mid(sLineTrim, Len("#BPM") + 4)) * 10000
 
+                'No limits on STOPs either.
             ElseIf sLineTrim.StartsWith("#STOP", StringComparison.CurrentCultureIgnoreCase) Then
-                If Val(Mid(sLineTrim, Len("#STOP") + 4)) > 0 And Val(Mid(sLineTrim, Len("#STOP") + 4)) < 65536 Then
-                    hSTOP(C36to10(Mid(sLineTrim, Len("#STOP") + 1, 2))) = Val(Mid(sLineTrim, Len("#STOP") + 4)) * 10000
-                ElseIf Val(Mid(sLineTrim, Len("#STOP") + 4)) >= 65536 Then
-                    hSTOP(C36to10(Mid(sLineTrim, Len("#STOP") + 1, 2))) = 655359999
-                End If
+                hSTOP(C36to10(Mid(sLineTrim, Len("#STOP") + 1, 2))) = Val(Mid(sLineTrim, Len("#STOP") + 4)) * 10000
 
 
             ElseIf sLineTrim.StartsWith("#TITLE", StringComparison.CurrentCultureIgnoreCase) Then
@@ -233,7 +227,7 @@ AddExpansion:       xExpansion &= sLine & vbCrLf
         Dim hasOverlapping As Boolean = False
         'Dim xStrAll As String = ""   'for all 
         Dim xStrMeasure(MeasureAtDisplacement(GreatestVPosition) + 1) As String
-        Dim Identifiers() As String = {"01", "03", "04", "06", "07", "08", "09",
+        Dim BMSChannelList() As String = {"01", "03", "04", "06", "07", "08", "09",
                                        "11", "12", "13", "14", "15", "16", "18", "19",
                                        "21", "22", "23", "24", "25", "26", "28", "29",
                                        "31", "32", "33", "34", "35", "36", "38", "39",
@@ -282,7 +276,7 @@ AddExpansion:       xExpansion &= sLine & vbCrLf
         xStrHeader &= vbCrLf
 
         Dim NotesInMeasure() As Note   'Temp K for storing Ks in the same measure
-        Dim xK As Note     'Temp K
+        Dim tempNote As Note     'Temp K
         Dim GreatestColumn As Integer = 0  'greatest column for B column
 
         Dim xprevNotes(-1) As Note  'Notes too close to the next measure
@@ -317,45 +311,47 @@ AddExpansion:       xExpansion &= sLine & vbCrLf
             ReDim xprevNotes(-1)
 
             GreatestColumn = 0
-            For Each xK In NotesInMeasure  'Find greatest column
-                GreatestColumn = IIf(xK.ColumnIndex > GreatestColumn, xK.ColumnIndex, GreatestColumn)
+            For Each tempNote In NotesInMeasure  'Find greatest column
+                GreatestColumn = IIf(tempNote.ColumnIndex > GreatestColumn, tempNote.ColumnIndex, GreatestColumn)
             Next
 
             WriteBGM(MeasureIndex, hasOverlapping, xStrMeasure, NotesInMeasure, GreatestColumn, xprevNotes)
 
-            For CurrentBMSChannel = 1 To UBound(Identifiers) 'Start rendering other notes (xI3 is Identifiers index)
+            For CurrentBMSChannel = 1 To UBound(BMSChannelList) 'Start rendering other notes
                 Dim xVPosition(-1) 'Ks in the same column
                 Dim xText(-1)      'Ks in the same column
 
                 For xI4 = 0 To UBound(NotesInMeasure) 'Find Ks in the same column (xI4 is TK index)
-                    If nIdentifier(NotesInMeasure(xI4).ColumnIndex, NotesInMeasure(xI4).Value, NotesInMeasure(xI4).LongNote, NotesInMeasure(xI4).Hidden) = Identifiers(CurrentBMSChannel) Then
+                    If nIdentifier(NotesInMeasure(xI4).ColumnIndex, NotesInMeasure(xI4).Value, NotesInMeasure(xI4).LongNote, NotesInMeasure(xI4).Hidden) = BMSChannelList(CurrentBMSChannel) Then
                         ReDim Preserve xVPosition(UBound(xVPosition) + 1)
                         ReDim Preserve xText(UBound(xText) + 1)
                         xVPosition(UBound(xVPosition)) = NotesInMeasure(xI4).VPosition - MeasureBottom(MeasureAtDisplacement(NotesInMeasure(xI4).VPosition))
                         If xVPosition(UBound(xVPosition)) < 0 Then xVPosition(UBound(xVPosition)) = 0
 
-                        If Identifiers(CurrentBMSChannel) = "03" Then 'If integer bpm
+                        If BMSChannelList(CurrentBMSChannel) = "03" Then 'If integer bpm
                             xText(UBound(xText)) = Mid("0" & Hex(NotesInMeasure(xI4).Value \ 10000), Len(Hex(NotesInMeasure(xI4).Value \ 10000)))
-                        ElseIf Identifiers(CurrentBMSChannel) = "08" Then 'If bpm requires declaration
+                        ElseIf BMSChannelList(CurrentBMSChannel) = "08" Then 'If bpm requires declaration
                             Dim BpmIndex
-                            For BpmIndex = 1 To UBound(hBPM)
+                            For BpmIndex = 1 To UBound(hBPM) ' find BPM value in existing array
                                 If NotesInMeasure(xI4).Value = hBPM(BpmIndex) Then Exit For
                             Next
-                            If BpmIndex > UBound(hBPM) Then
+                            If BpmIndex > UBound(hBPM) Then ' Didn't find it, add it
                                 ReDim Preserve hBPM(UBound(hBPM) + 1)
                                 hBPM(UBound(hBPM)) = NotesInMeasure(xI4).Value
                             End If
                             xText(UBound(xText)) = IIf(BPMx1296, C10to36(BpmIndex), Mid("0" & Hex(BpmIndex), Len(Hex(BpmIndex))))
-                        ElseIf Identifiers(CurrentBMSChannel) = "09" Then 'If STOP
+                        ElseIf BMSChannelList(CurrentBMSChannel) = "09" Then 'If STOP
                             Dim StopIndex
-                            For StopIndex = 1 To UBound(hSTOP)
+                            For StopIndex = 1 To UBound(hSTOP) ' find STOP value in existing array
                                 If NotesInMeasure(xI4).Value = hSTOP(StopIndex) Then Exit For
                             Next
-                            If StopIndex > UBound(hSTOP) Then
+                            If StopIndex > UBound(hSTOP) Then ' Didn't find it, add it
                                 ReDim Preserve hSTOP(UBound(hSTOP) + 1)
                                 hSTOP(UBound(hSTOP)) = NotesInMeasure(xI4).Value
                             End If
-                            xText(UBound(xText)) = IIf(STOPx1296, C10to36(StopIndex), Mid("0" & Hex(StopIndex), Len(Hex(StopIndex))))
+                            xText(UBound(xText)) = IIf(STOPx1296,
+                                                       C10to36(StopIndex),
+                                                       Mid("0" & Hex(StopIndex), Len(Hex(StopIndex))))
                         Else
                             xText(UBound(xText)) = C10to36(NotesInMeasure(xI4).Value \ 10000)
                         End If
@@ -379,15 +375,15 @@ AddExpansion:       xExpansion &= sLine & vbCrLf
                     If CInt(xVPosition(xI2) / xGCD) > UBound(xStrKey) Then
                         ReDim Preserve xprevNotes(UBound(xprevNotes) + 1)
                         With xprevNotes(UBound(xprevNotes))
-                            .ColumnIndex = IdentifiertoColumnIndex(Identifiers(CurrentBMSChannel))
-                            .LongNote = IdentifiertoLongNote(Identifiers(CurrentBMSChannel))
-                            .Hidden = IdentifiertoHidden(Identifiers(CurrentBMSChannel))
+                            .ColumnIndex = IdentifiertoColumnIndex(BMSChannelList(CurrentBMSChannel))
+                            .LongNote = IdentifiertoLongNote(BMSChannelList(CurrentBMSChannel))
+                            .Hidden = IdentifiertoHidden(BMSChannelList(CurrentBMSChannel))
                             .VPosition = MeasureBottom(MeasureIndex)
                             .Value = C36to10(xText(xI2))
                         End With
-                        If Identifiers(CurrentBMSChannel) = "08" Then _
+                        If BMSChannelList(CurrentBMSChannel) = "08" Then _
                             xprevNotes(UBound(xprevNotes)).Value = IIf(BPMx1296, hBPM(C36to10(xText(xI2))), hBPM(Convert.ToInt32(xText(xI2), 16)))
-                        If Identifiers(CurrentBMSChannel) = "09" Then _
+                        If BMSChannelList(CurrentBMSChannel) = "09" Then _
                             xprevNotes(UBound(xprevNotes)).Value = IIf(STOPx1296, hSTOP(C36to10(xText(xI2))), hSTOP(Convert.ToInt32(xText(xI2), 16)))
                         Continue For
                     End If
@@ -395,19 +391,24 @@ AddExpansion:       xExpansion &= sLine & vbCrLf
                     xStrKey(CInt(xVPosition(xI2) / xGCD)) = xText(xI2)
                 Next
 
-                xStrMeasure(MeasureIndex) &= "#" & Add3Zeros(MeasureIndex) & Identifiers(CurrentBMSChannel) & ":" & Join(xStrKey, "") & vbCrLf
+                xStrMeasure(MeasureIndex) &= "#" & Add3Zeros(MeasureIndex) & BMSChannelList(CurrentBMSChannel) & ":" & Join(xStrKey, "") & vbCrLf
             Next
 
         Next
 
         For MeasureIndex = 1 To UBound(hWAV)
-            If Not hWAV(MeasureIndex) = "" Then xStrHeader &= "#WAV" & C10to36(MeasureIndex) & " " & hWAV(MeasureIndex) & vbCrLf
+            If Not hWAV(MeasureIndex) = "" Then xStrHeader &= "#WAV" & C10to36(MeasureIndex) &
+                                                    " " & hWAV(MeasureIndex) & vbCrLf
         Next
         For MeasureIndex = 1 To UBound(hBPM)
-            xStrHeader &= "#BPM" & IIf(BPMx1296, C10to36(MeasureIndex), Mid("0" & Hex(MeasureIndex), Len(Hex(MeasureIndex)))) & " " & CStr(hBPM(MeasureIndex) / 10000) & vbCrLf
+            xStrHeader &= "#BPM" &
+                IIf(BPMx1296, C10to36(MeasureIndex), Mid("0" & Hex(MeasureIndex), Len(Hex(MeasureIndex)))) &
+                " " & Decimalify(hBPM(MeasureIndex) / 10000) & vbCrLf
         Next
         For MeasureIndex = 1 To UBound(hSTOP)
-            xStrHeader &= "#STOP" & IIf(STOPx1296, C10to36(MeasureIndex), Mid("0" & Hex(MeasureIndex), Len(Hex(MeasureIndex)))) & " " & CStr(hSTOP(MeasureIndex) / 10000) & vbCrLf
+            xStrHeader &= "#STOP" &
+                IIf(STOPx1296, C10to36(MeasureIndex), Mid("0" & Hex(MeasureIndex), Len(Hex(MeasureIndex)))) &
+                " " & Decimalify(hSTOP(MeasureIndex) / 10000) & vbCrLf
         Next
 
         If hasOverlapping Then MsgBox(Strings.Messages.SaveWarning & vbCrLf &

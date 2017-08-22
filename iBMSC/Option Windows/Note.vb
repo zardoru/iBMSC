@@ -2,7 +2,7 @@
     Structure Note
         Public VPosition As Double
         Public ColumnIndex As Integer
-        Public Value As Integer 'x10000
+        Public Value As Long 'x10000
         Public LongNote As Boolean
         Public Hidden As Boolean
         Public Length As Double

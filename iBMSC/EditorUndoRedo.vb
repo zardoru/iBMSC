@@ -141,18 +141,6 @@ Partial Public Class MainWindow
                         If NTInput Then ConvertBMSE2NT() Else ConvertNT2BMSE()
                     End If
 
-                    'Case UndoRedo.opChangeVisibleColumns
-                    '    Dim xCmd As UndoRedo.ChangeVisibleColumns = sCmd
-                    '    IsInitializing = True
-                    '    CGBLP.Checked = xCmd.CGBLP
-                    '    CGSTOP.Checked = xCmd.CGSTOP
-                    '    CHPlayer.SelectedIndex = xCmd.CHPlayer
-                    '    IsInitializing = False
-                    '    For xI2 As Integer = 1 To UBound(K)
-                    '        K(xI2).Selected = K(xI2).Selected And nEnabled(K(xI2).ColumnIndex)
-                    '    Next
-                    '    UpdateKLeft()
-
                 Case UndoRedo.opVoid
 
                 Case UndoRedo.opNoOperation

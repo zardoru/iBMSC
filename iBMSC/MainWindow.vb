@@ -218,8 +218,8 @@ Public Class MainWindow
 
     '----Header Options
     Dim hWAV(1295) As String
-    Dim hBPM(1295) As Integer   'x10000
-    Dim hSTOP(1295) As Integer
+    Dim hBPM(1295) As Long   'x10000
+    Dim hSTOP(1295) As Long
 
     '----Grid Options
     Dim gSnap As Boolean = True
