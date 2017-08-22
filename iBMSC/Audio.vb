@@ -14,6 +14,22 @@ Module Audio
                                                                     End Function, ".ogg"))
     End Sub
 
+    Public Function CheckFilename(ByVal filename As String) As String
+        If File.Exists(filename) Then
+            Return filename
+        End If
+        Dim ext = Path.GetExtension(filename)
+        If String.Compare(ext, ".ogg") = 0 Then
+            Dim wpath = Path.ChangeExtension(filename, ".wav")
+            Return IIf(File.Exists(wpath), wpath, filename)
+        End If
+        If String.Compare(ext, ".wav") = 0 Then
+            Dim opath = Path.ChangeExtension(filename, ".ogg")
+            Return IIf(File.Exists(opath), opath, filename)
+        End If
+        Return filename
+    End Function
+
     Public Sub Play(ByVal filename As String)
 
         If Source IsNot Nothing Then
@@ -25,7 +41,13 @@ Module Audio
             Return
         End If
 
-        Source = CodecFactory.Instance.GetCodec(filename)
+        Dim fn = CheckFilename(filename)
+
+        If Not File.Exists(fn) Then
+            Return
+        End If
+
+        Source = CodecFactory.Instance.GetCodec(fn)
         Output.Initialize(Source)
         Output.Play()
     End Sub
