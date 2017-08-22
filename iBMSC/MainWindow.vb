@@ -73,7 +73,7 @@ Public Class MainWindow
 
     Public column() As Column = {New Column(0, 50, "Measure", False, True, True, 0, 0, &HFF00FFFF, 0, &HFF00FFFF, 0),
                               New Column(50, 60, "BPM", True, True, True, 3, 0, &HFFFF0000, 0, &HFFFF0000, 0),
-                              New Column(110, 50, "STOP", True, True, False, 9, 0, &HFFFF0000, 0, &HFFFF0000, 0),
+                              New Column(110, 50, "STOP", True, True, True, 9, 0, &HFFFF0000, 0, &HFFFF0000, 0),
                               New Column(110, 5, "", False, False, True, 0, 0, 0, 0, 0, 0),
                               New Column(115, 42, "A1", True, False, True, 16, &HFFB0B0B0, &HFF000000, &HFFC0C0C0, &HFF000000, &H14FFFFFF),
                               New Column(157, 30, "A2", True, False, True, 11, &HFF62B0FF, &HFF000000, &HFF6AB0F7, &HFF000000, &H140033FF),
@@ -4443,7 +4443,7 @@ Jump2:
                 If Me.WindowState = FormWindowState.Maximized Then Me.WindowState = FormWindowState.Normal Else Me.WindowState = FormWindowState.Maximized
             End If
         ElseIf e.Button = Windows.Forms.MouseButtons.Right Then
-            mnSys.Show(sender, e.Location)
+            'mnSys.Show(sender, e.Location)
         End If
     End Sub
 
@@ -4519,7 +4519,7 @@ Jump2:
 
     Private Sub ttlIcon_MouseDown(ByVal sender As Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles ttlIcon.MouseDown
         ttlIcon.Image = My.Resources.icon2_16
-        mnSys.Show(ttlIcon, 0, ttlIcon.Height)
+        'mnSys.Show(ttlIcon, 0, ttlIcon.Height)
     End Sub
     Private Sub ttlIcon_MouseEnter(ByVal sender As Object, ByVal e As System.EventArgs) Handles ttlIcon.MouseEnter
         ttlIcon.Image = My.Resources.icon2_16_highlight

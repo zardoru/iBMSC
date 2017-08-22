@@ -25,16 +25,16 @@ Partial Class MainWindow
         Me.TBLangDef = New System.Windows.Forms.ToolStripMenuItem()
         Me.TBLangRefresh = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator9 = New System.Windows.Forms.ToolStripSeparator()
-        Me.mnLanguage = New System.Windows.Forms.ToolStripMenuItem()
         Me.TBLanguage = New System.Windows.Forms.ToolStripDropDownButton()
+        Me.mnLanguage = New System.Windows.Forms.ToolStripMenuItem()
         Me.cmnTheme = New System.Windows.Forms.ContextMenuStrip(Me.components)
         Me.TBThemeDef = New System.Windows.Forms.ToolStripMenuItem()
         Me.TBThemeSave = New System.Windows.Forms.ToolStripMenuItem()
         Me.TBThemeRefresh = New System.Windows.Forms.ToolStripMenuItem()
         Me.TBThemeLoadComptability = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator6 = New System.Windows.Forms.ToolStripSeparator()
-        Me.mnTheme = New System.Windows.Forms.ToolStripMenuItem()
         Me.TBTheme = New System.Windows.Forms.ToolStripDropDownButton()
+        Me.mnTheme = New System.Windows.Forms.ToolStripMenuItem()
         Me.POptionsScroll = New System.Windows.Forms.Panel()
         Me.POptions = New System.Windows.Forms.Panel()
         Me.POExpansion = New System.Windows.Forms.Panel()
@@ -245,12 +245,7 @@ Partial Class MainWindow
         Me.mnPlayB = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnPlay = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnStop = New System.Windows.Forms.ToolStripMenuItem()
-        Me.mnAbout = New System.Windows.Forms.ToolStripMenuItem()
-        Me.mnAbout1 = New System.Windows.Forms.ToolStripMenuItem()
-        Me.mnUpdate = New System.Windows.Forms.ToolStripMenuItem()
-        Me.mnUpdateC = New System.Windows.Forms.ToolStripMenuItem()
-        Me.POConvert = New System.Windows.Forms.ToolStripDropDownButton()
-        Me.mnSys = New System.Windows.Forms.ContextMenuStrip(Me.components)
+        Me.mnSys = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnSMenu = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnSTB = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnSOP = New System.Windows.Forms.ToolStripMenuItem()
@@ -269,6 +264,11 @@ Partial Class MainWindow
         Me.CGBPM = New System.Windows.Forms.ToolStripMenuItem()
         Me.CGSTOP = New System.Windows.Forms.ToolStripMenuItem()
         Me.CGBLP = New System.Windows.Forms.ToolStripMenuItem()
+        Me.mnAbout = New System.Windows.Forms.ToolStripMenuItem()
+        Me.mnAbout1 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.mnUpdate = New System.Windows.Forms.ToolStripMenuItem()
+        Me.mnUpdateC = New System.Windows.Forms.ToolStripMenuItem()
+        Me.POConvert = New System.Windows.Forms.ToolStripDropDownButton()
         Me.TBMain = New System.Windows.Forms.ToolStrip()
         Me.TBNew = New System.Windows.Forms.ToolStripButton()
         Me.TBOpen = New System.Windows.Forms.ToolStripSplitButton()
@@ -424,7 +424,6 @@ Partial Class MainWindow
         Me.Menu1.SuspendLayout()
         Me.mnMain.SuspendLayout()
         Me.cmnConversion.SuspendLayout()
-        Me.mnSys.SuspendLayout()
         Me.TBMain.SuspendLayout()
         Me.pStatus.SuspendLayout()
         Me.FStatus2.SuspendLayout()
@@ -443,7 +442,7 @@ Partial Class MainWindow
         '
         Me.cmnLanguage.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.TBLangDef, Me.TBLangRefresh, Me.ToolStripSeparator9})
         Me.cmnLanguage.Name = "cmnLanguage"
-        Me.cmnLanguage.OwnerItem = Me.TBLanguage
+        Me.cmnLanguage.OwnerItem = Me.mnLanguage
         Me.cmnLanguage.Size = New System.Drawing.Size(121, 54)
         '
         'TBLangDef
@@ -464,14 +463,6 @@ Partial Class MainWindow
         Me.ToolStripSeparator9.Name = "ToolStripSeparator9"
         Me.ToolStripSeparator9.Size = New System.Drawing.Size(117, 6)
         '
-        'mnLanguage
-        '
-        Me.mnLanguage.DropDown = Me.cmnLanguage
-        Me.mnLanguage.Image = Global.iBMSC.My.Resources.Resources.x16Language
-        Me.mnLanguage.Name = "mnLanguage"
-        Me.mnLanguage.Size = New System.Drawing.Size(229, 22)
-        Me.mnLanguage.Text = "&Language"
-        '
         'TBLanguage
         '
         Me.TBLanguage.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
@@ -482,11 +473,19 @@ Partial Class MainWindow
         Me.TBLanguage.Size = New System.Drawing.Size(29, 22)
         Me.TBLanguage.Text = "Language"
         '
+        'mnLanguage
+        '
+        Me.mnLanguage.DropDown = Me.cmnLanguage
+        Me.mnLanguage.Image = Global.iBMSC.My.Resources.Resources.x16Language
+        Me.mnLanguage.Name = "mnLanguage"
+        Me.mnLanguage.Size = New System.Drawing.Size(229, 22)
+        Me.mnLanguage.Text = "&Language"
+        '
         'cmnTheme
         '
         Me.cmnTheme.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.TBThemeDef, Me.TBThemeSave, Me.TBThemeRefresh, Me.TBThemeLoadComptability, Me.ToolStripSeparator6})
         Me.cmnTheme.Name = "cmnLanguage"
-        Me.cmnTheme.OwnerItem = Me.TBTheme
+        Me.cmnTheme.OwnerItem = Me.mnTheme
         Me.cmnTheme.Size = New System.Drawing.Size(246, 98)
         '
         'TBThemeDef
@@ -520,14 +519,6 @@ Partial Class MainWindow
         Me.ToolStripSeparator6.Name = "ToolStripSeparator6"
         Me.ToolStripSeparator6.Size = New System.Drawing.Size(242, 6)
         '
-        'mnTheme
-        '
-        Me.mnTheme.DropDown = Me.cmnTheme
-        Me.mnTheme.Image = Global.iBMSC.My.Resources.Resources.x16Theme
-        Me.mnTheme.Name = "mnTheme"
-        Me.mnTheme.Size = New System.Drawing.Size(229, 22)
-        Me.mnTheme.Text = "&Theme"
-        '
         'TBTheme
         '
         Me.TBTheme.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
@@ -538,12 +529,20 @@ Partial Class MainWindow
         Me.TBTheme.Size = New System.Drawing.Size(29, 22)
         Me.TBTheme.Text = "Theme"
         '
+        'mnTheme
+        '
+        Me.mnTheme.DropDown = Me.cmnTheme
+        Me.mnTheme.Image = Global.iBMSC.My.Resources.Resources.x16Theme
+        Me.mnTheme.Name = "mnTheme"
+        Me.mnTheme.Size = New System.Drawing.Size(229, 22)
+        Me.mnTheme.Text = "&Theme"
+        '
         'POptionsScroll
         '
         Me.POptionsScroll.AutoScroll = True
         Me.POptionsScroll.Controls.Add(Me.POptions)
         Me.POptionsScroll.Dock = System.Windows.Forms.DockStyle.Right
-        Me.POptionsScroll.Location = New System.Drawing.Point(808, 0)
+        Me.POptionsScroll.Location = New System.Drawing.Point(882, 0)
         Me.POptionsScroll.Name = "POptionsScroll"
         Me.POptionsScroll.Size = New System.Drawing.Size(200, 730)
         Me.POptionsScroll.TabIndex = 28
@@ -2540,11 +2539,11 @@ Partial Class MainWindow
         Me.mnMain.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
         Me.mnMain.Dock = System.Windows.Forms.DockStyle.None
         Me.mnMain.GripMargin = New System.Windows.Forms.Padding(2)
-        Me.mnMain.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnFile, Me.mnEdit, Me.mnOptions, Me.mnConversion, Me.mnPreview, Me.mnAbout})
+        Me.mnMain.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnFile, Me.mnEdit, Me.mnSys, Me.mnOptions, Me.mnConversion, Me.mnPreview, Me.mnAbout})
         Me.mnMain.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow
         Me.mnMain.Location = New System.Drawing.Point(0, 0)
         Me.mnMain.Name = "mnMain"
-        Me.mnMain.Size = New System.Drawing.Size(803, 23)
+        Me.mnMain.Size = New System.Drawing.Size(877, 23)
         Me.mnMain.TabIndex = 57
         '
         'mnFile
@@ -2988,47 +2987,12 @@ Partial Class MainWindow
         Me.mnStop.Size = New System.Drawing.Size(201, 22)
         Me.mnStop.Text = "&Stop"
         '
-        'mnAbout
-        '
-        Me.mnAbout.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnAbout1, Me.mnUpdate, Me.mnUpdateC})
-        Me.mnAbout.Name = "mnAbout"
-        Me.mnAbout.Size = New System.Drawing.Size(52, 19)
-        Me.mnAbout.Text = "&About"
-        '
-        'mnAbout1
-        '
-        Me.mnAbout1.Image = Global.iBMSC.My.Resources.Resources.x16About
-        Me.mnAbout1.Name = "mnAbout1"
-        Me.mnAbout1.Size = New System.Drawing.Size(206, 22)
-        Me.mnAbout1.Text = "&About"
-        '
-        'mnUpdate
-        '
-        Me.mnUpdate.Name = "mnUpdate"
-        Me.mnUpdate.Size = New System.Drawing.Size(206, 22)
-        Me.mnUpdate.Text = "Check &Updates"
-        '
-        'mnUpdateC
-        '
-        Me.mnUpdateC.Name = "mnUpdateC"
-        Me.mnUpdateC.Size = New System.Drawing.Size(206, 22)
-        Me.mnUpdateC.Text = "Check Updates (Chinese)"
-        '
-        'POConvert
-        '
-        Me.POConvert.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
-        Me.POConvert.DropDown = Me.cmnConversion
-        Me.POConvert.Image = Global.iBMSC.My.Resources.Resources.ConvertNotes
-        Me.POConvert.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me.POConvert.Name = "POConvert"
-        Me.POConvert.Size = New System.Drawing.Size(29, 22)
-        Me.POConvert.Text = "Convert Notes"
-        '
         'mnSys
         '
-        Me.mnSys.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnSMenu, Me.mnSTB, Me.mnSOP, Me.mnSStatus, Me.mnSLSplitter, Me.mnSRSplitter, Me.ToolStripSeparator21, Me.CGShow, Me.CGShowS, Me.CGShowBG, Me.CGShowM, Me.CGShowMB, Me.CGShowV, Me.CGShowC, Me.ToolStripSeparator22, Me.CGBPM, Me.CGSTOP, Me.CGBLP})
+        Me.mnSys.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnSMenu, Me.mnSTB, Me.mnSOP, Me.mnSStatus, Me.mnSLSplitter, Me.mnSRSplitter, Me.ToolStripSeparator21, Me.CGShow, Me.CGShowS, Me.CGShowBG, Me.CGShowM, Me.CGShowMB, Me.CGShowV, Me.CGShowC, Me.ToolStripSeparator22, Me.CGBPM, Me.CGSTOP, Me.CGBLP})
         Me.mnSys.Name = "mnSys"
-        Me.mnSys.Size = New System.Drawing.Size(173, 368)
+        Me.mnSys.Size = New System.Drawing.Size(44, 19)
+        Me.mnSys.Text = "&View"
         '
         'mnSMenu
         '
@@ -3164,7 +3128,9 @@ Partial Class MainWindow
         '
         'CGSTOP
         '
+        Me.CGSTOP.Checked = True
         Me.CGSTOP.CheckOnClick = True
+        Me.CGSTOP.CheckState = System.Windows.Forms.CheckState.Checked
         Me.CGSTOP.Name = "CGSTOP"
         Me.CGSTOP.Size = New System.Drawing.Size(172, 22)
         Me.CGSTOP.Text = "STOP"
@@ -3175,6 +3141,42 @@ Partial Class MainWindow
         Me.CGBLP.Name = "CGBLP"
         Me.CGBLP.Size = New System.Drawing.Size(172, 22)
         Me.CGBLP.Text = "BGA / Layer / Poor"
+        '
+        'mnAbout
+        '
+        Me.mnAbout.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnAbout1, Me.mnUpdate, Me.mnUpdateC})
+        Me.mnAbout.Name = "mnAbout"
+        Me.mnAbout.Size = New System.Drawing.Size(52, 19)
+        Me.mnAbout.Text = "&About"
+        '
+        'mnAbout1
+        '
+        Me.mnAbout1.Image = Global.iBMSC.My.Resources.Resources.x16About
+        Me.mnAbout1.Name = "mnAbout1"
+        Me.mnAbout1.Size = New System.Drawing.Size(206, 22)
+        Me.mnAbout1.Text = "&About"
+        '
+        'mnUpdate
+        '
+        Me.mnUpdate.Name = "mnUpdate"
+        Me.mnUpdate.Size = New System.Drawing.Size(206, 22)
+        Me.mnUpdate.Text = "Check &Updates"
+        '
+        'mnUpdateC
+        '
+        Me.mnUpdateC.Name = "mnUpdateC"
+        Me.mnUpdateC.Size = New System.Drawing.Size(206, 22)
+        Me.mnUpdateC.Text = "Check Updates (Chinese)"
+        '
+        'POConvert
+        '
+        Me.POConvert.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.POConvert.DropDown = Me.cmnConversion
+        Me.POConvert.Image = Global.iBMSC.My.Resources.Resources.ConvertNotes
+        Me.POConvert.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.POConvert.Name = "POConvert"
+        Me.POConvert.Size = New System.Drawing.Size(29, 22)
+        Me.POConvert.Text = "Convert Notes"
         '
         'TBMain
         '
@@ -3558,7 +3560,7 @@ Partial Class MainWindow
         Me.pStatus.Dock = System.Windows.Forms.DockStyle.Bottom
         Me.pStatus.Location = New System.Drawing.Point(0, 708)
         Me.pStatus.Name = "pStatus"
-        Me.pStatus.Size = New System.Drawing.Size(803, 22)
+        Me.pStatus.Size = New System.Drawing.Size(877, 22)
         Me.pStatus.TabIndex = 62
         '
         'FStatus2
@@ -3679,7 +3681,7 @@ Partial Class MainWindow
         Me.FStatus.Location = New System.Drawing.Point(0, 0)
         Me.FStatus.Name = "FStatus"
         Me.FStatus.ShowItemToolTips = True
-        Me.FStatus.Size = New System.Drawing.Size(803, 22)
+        Me.FStatus.Size = New System.Drawing.Size(877, 22)
         Me.FStatus.SizingGrip = False
         Me.FStatus.TabIndex = 62
         Me.FStatus.Text = "Status"
@@ -3783,11 +3785,11 @@ Partial Class MainWindow
         Me.ToolStripContainer1.ContentPanel.Controls.Add(Me.SpL)
         Me.ToolStripContainer1.ContentPanel.Controls.Add(Me.PMainR)
         Me.ToolStripContainer1.ContentPanel.Controls.Add(Me.PMainL)
-        Me.ToolStripContainer1.ContentPanel.Size = New System.Drawing.Size(803, 660)
+        Me.ToolStripContainer1.ContentPanel.Size = New System.Drawing.Size(877, 660)
         Me.ToolStripContainer1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.ToolStripContainer1.Location = New System.Drawing.Point(0, 0)
         Me.ToolStripContainer1.Name = "ToolStripContainer1"
-        Me.ToolStripContainer1.Size = New System.Drawing.Size(803, 708)
+        Me.ToolStripContainer1.Size = New System.Drawing.Size(877, 708)
         Me.ToolStripContainer1.TabIndex = 65
         Me.ToolStripContainer1.Text = "ToolStripContainer1"
         '
@@ -3807,7 +3809,7 @@ Partial Class MainWindow
         Me.PMain.ForeColor = System.Drawing.Color.White
         Me.PMain.Location = New System.Drawing.Point(5, 0)
         Me.PMain.Name = "PMain"
-        Me.PMain.Size = New System.Drawing.Size(793, 660)
+        Me.PMain.Size = New System.Drawing.Size(867, 660)
         Me.PMain.TabIndex = 58
         Me.PMain.Tag = "1"
         '
@@ -3820,7 +3822,7 @@ Partial Class MainWindow
         Me.PMainIn.ForeColor = System.Drawing.Color.White
         Me.PMainIn.Location = New System.Drawing.Point(0, 0)
         Me.PMainIn.Name = "PMainIn"
-        Me.PMainIn.Size = New System.Drawing.Size(776, 643)
+        Me.PMainIn.Size = New System.Drawing.Size(850, 643)
         Me.PMainIn.TabIndex = 0
         Me.PMainIn.TabStop = True
         Me.PMainIn.Tag = "1"
@@ -3829,7 +3831,7 @@ Partial Class MainWindow
         '
         Me.ttlIcon.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.ttlIcon.Image = Global.iBMSC.My.Resources.Resources.icon2_16
-        Me.ttlIcon.Location = New System.Drawing.Point(750, 10)
+        Me.ttlIcon.Location = New System.Drawing.Point(824, 10)
         Me.ttlIcon.Name = "ttlIcon"
         Me.ttlIcon.Size = New System.Drawing.Size(16, 16)
         Me.ttlIcon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize
@@ -3842,7 +3844,7 @@ Partial Class MainWindow
         Me.VS.AccessibleRole = System.Windows.Forms.AccessibleRole.ScrollBar
         Me.VS.Dock = System.Windows.Forms.DockStyle.Right
         Me.VS.LargeChange = 592
-        Me.VS.Location = New System.Drawing.Point(776, 0)
+        Me.VS.Location = New System.Drawing.Point(850, 0)
         Me.VS.Maximum = 591
         Me.VS.Minimum = -10000
         Me.VS.Name = "VS"
@@ -3859,7 +3861,7 @@ Partial Class MainWindow
         Me.HS.Location = New System.Drawing.Point(0, 643)
         Me.HS.Maximum = 1233
         Me.HS.Name = "HS"
-        Me.HS.Size = New System.Drawing.Size(793, 17)
+        Me.HS.Size = New System.Drawing.Size(867, 17)
         Me.HS.TabIndex = 3
         Me.HS.Tag = "1"
         '
@@ -3868,7 +3870,7 @@ Partial Class MainWindow
         Me.SpR.Dock = System.Windows.Forms.DockStyle.Right
         Me.SpR.FlatAppearance.BorderSize = 0
         Me.SpR.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.SpR.Location = New System.Drawing.Point(798, 0)
+        Me.SpR.Location = New System.Drawing.Point(872, 0)
         Me.SpR.Name = "SpR"
         Me.SpR.Size = New System.Drawing.Size(5, 660)
         Me.SpR.TabIndex = 59
@@ -3898,7 +3900,7 @@ Partial Class MainWindow
         Me.PMainR.Dock = System.Windows.Forms.DockStyle.Right
         Me.PMainR.Font = New System.Drawing.Font("Verdana", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.PMainR.ForeColor = System.Drawing.Color.White
-        Me.PMainR.Location = New System.Drawing.Point(803, 0)
+        Me.PMainR.Location = New System.Drawing.Point(877, 0)
         Me.PMainR.Name = "PMainR"
         Me.PMainR.Size = New System.Drawing.Size(0, 660)
         Me.PMainR.TabIndex = 56
@@ -3998,7 +4000,7 @@ Partial Class MainWindow
         Me.POptionsResizer.Dock = System.Windows.Forms.DockStyle.Right
         Me.POptionsResizer.FlatAppearance.BorderSize = 0
         Me.POptionsResizer.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.POptionsResizer.Location = New System.Drawing.Point(803, 0)
+        Me.POptionsResizer.Location = New System.Drawing.Point(877, 0)
         Me.POptionsResizer.Name = "POptionsResizer"
         Me.POptionsResizer.Size = New System.Drawing.Size(5, 730)
         Me.POptionsResizer.TabIndex = 67
@@ -4009,7 +4011,7 @@ Partial Class MainWindow
         '
         Me.AllowDrop = True
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None
-        Me.ClientSize = New System.Drawing.Size(1008, 730)
+        Me.ClientSize = New System.Drawing.Size(1082, 730)
         Me.Controls.Add(Me.ToolStripContainer1)
         Me.Controls.Add(Me.pStatus)
         Me.Controls.Add(Me.POptionsResizer)
@@ -4115,7 +4117,6 @@ Partial Class MainWindow
         Me.mnMain.ResumeLayout(False)
         Me.mnMain.PerformLayout()
         Me.cmnConversion.ResumeLayout(False)
-        Me.mnSys.ResumeLayout(False)
         Me.TBMain.ResumeLayout(False)
         Me.TBMain.PerformLayout()
         Me.pStatus.ResumeLayout(False)
@@ -4218,7 +4219,7 @@ Partial Class MainWindow
     Friend WithEvents ToolStripSeparator11 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents POBMirror As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents POBModify As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents mnSys As System.Windows.Forms.ContextMenuStrip
+    Friend WithEvents mnSys As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnSMenu As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnSTB As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnSOP As System.Windows.Forms.ToolStripMenuItem
