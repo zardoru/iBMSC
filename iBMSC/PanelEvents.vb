@@ -1415,9 +1415,11 @@ EndCtrlOpn:         End If
         Return EnabledColumnToReal(RealColumnToEnabled(xColumn))  'get the enabled column where mouse is 
     End Function
 
-    Private Sub PMain_Scroll(sender As Object, e As MouseEventArgs) Handles PMain.MouseWheel, PMainIn.MouseWheel, PMainInL.MouseWheel, PMainInR.MouseWheel
+    ' az: Handle zoom in/out. The other events are commented out
+    ' because this should not double-fire.
+    Private Sub PMain_Scroll(sender As Object, e As MouseEventArgs) Handles PMain.MouseWheel ', PMainIn.MouseWheel, PMainInL.MouseWheel, PMainInR.MouseWheel
         If Not My.Computer.Keyboard.CtrlKeyDown Then Exit Sub
-        Dim dv = CGHeight2.Value + e.Delta / 100
+        Dim dv = Math.Round(CGHeight2.Value + e.Delta / 120)
         CGHeight2.Value = Math.Min(CGHeight2.Maximum, Math.Max(CGHeight2.Minimum, dv))
         CGHeight.Value = CGHeight2.Value / 4
     End Sub

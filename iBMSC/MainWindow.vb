@@ -617,13 +617,13 @@ Public Class MainWindow
         SetIsSaved(IsSaved)
     End Sub
 
-    Private Sub SetIsSaved(ByVal xBool As Boolean)
+    Private Sub SetIsSaved(ByVal isSaved As Boolean)
         'pttl.Refresh()
         'pIsSaved.Visible = Not xBool
         Dim xVersion As String = My.Application.Info.Version.Major & "." & My.Application.Info.Version.Minor &
                              IIf(My.Application.Info.Version.Build = 0, "", "." & My.Application.Info.Version.Build)
-        Me.Text = IIf(xBool, "", "*") & GetFileName(FileName) & " - iBMS BMS Creator Delta " & xVersion
-        IsSaved = xBool
+        Text = IIf(isSaved, "", "*") & GetFileName(FileName) & " - " & My.Application.Info.Title & " " & xVersion
+        Me.IsSaved = isSaved
     End Sub
 
     Private Sub PreviewNote(ByVal xFileLocation As String, ByVal bStop As Boolean)
@@ -1660,7 +1660,11 @@ EndSearch:
     Private Sub VSValueChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles VS.ValueChanged, VSL.ValueChanged, VSR.ValueChanged
         Dim iI As Integer = sender.Tag
 
-        If My.Computer.Keyboard.CtrlKeyDown Then Exit Sub
+        ' az: We got a wheel event when we're zooming in/out
+        If My.Computer.Keyboard.CtrlKeyDown Then
+            sender.Value = VSValue ' Undo the scroll
+            Exit Sub
+        End If
 
         If iI = spFocus And Not pMouseDown = New Point(-1, -1) And Not VSValue = -1 Then pMouseDown.Y += (VSValue - sender.Value) * gxHeight
         spV(iI) = sender.Value
