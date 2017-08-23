@@ -156,7 +156,7 @@ Partial Public Class MainWindow
 
         SortByVPositionInsertion()
         UpdatePairing()
-        CalculateTotalNotes()
+        CalculateTotalPlayableNotes()
         CalculateGreatestVPosition()
         RefreshPanelAll()
         POStatusRefresh()

@@ -95,7 +95,7 @@
         UpdatePairing()
         Notes(0).Value = vBPM
         THBPM.Value = vBPM / 10000
-        CalculateTotalNotes()
+        CalculateTotalPlayableNotes()
         CalculateGreatestVPosition()
         RefreshPanelAll()
         POStatusRefresh()
@@ -132,7 +132,7 @@
                     'collect vposition data
                     Dim xVPos(-1) As Double
                     For xI2 As Integer = xLowerIndex To xUpperIndex - 1
-                        If nIdentifier(Notes(xI2).ColumnIndex, Notes(xI2).Value, Notes(xI2).LongNote, Notes(xI2).Hidden) = xId And Math.Abs(Notes(xI2).VPosition - MeasureAtDisplacement(Notes(xI2).VPosition) * 192) > 0 Then
+                        If GetBMSChannelBy(Notes(xI2)) = xId And Math.Abs(Notes(xI2).VPosition - MeasureAtDisplacement(Notes(xI2).VPosition) * 192) > 0 Then
                             ReDim Preserve xVPos(UBound(xVPos) + 1)
                             xVPos(UBound(xVPos)) = Notes(xI2).VPosition - xMeasure * 192 : If xVPos(UBound(xVPos)) < 0 Then xVPos(UBound(xVPos)) = 0
                         End If
@@ -159,11 +159,11 @@
                         'put result
                         ReDim Preserve xResult(UBound(xResult) + 1)
                         xResult(UBound(xResult)) = xMeasure & "_" &
-                                                   IdentifiertoColumnIndex(xId) & "_" &
-                                                   nTitle(IdentifiertoColumnIndex(xId)) & "_" &
+                                                   BMSChannelToColumn(xId) & "_" &
+                                                   nTitle(BMSChannelToColumn(xId)) & "_" &
                                                    CStr(CInt(192 / xGCD)) & "_" &
                                                    CInt(IdentifiertoLongNote(xId)) & "_" &
-                                                   CInt(IdentifiertoHidden(xId)) & "_" &
+                                                   CInt(IsChannelHidden(xId)) & "_" &
                                                    CInt(xAdj64) & "_" &
                                                    xD64 & "_" &
                                                    xD48
@@ -183,7 +183,7 @@
                     For xI2 As Integer = 1 To UBound(Notes)
                         If MeasureAtDisplacement(Notes(xI2).VPosition) > xMeasure Then Exit For
 
-                        If nIdentifier(Notes(xI2).ColumnIndex, Notes(xI2).Value, CBool(Notes(xI2).Length), Notes(xI2).Hidden) <> xId Then GoTo 1330
+                        If GetBMSChannelBy(Notes(xI2)) <> xId Then GoTo 1330
                         If IdentifiertoLongNote(xId) Xor CBool(Notes(xI2).Length) Then GoTo 1330
 
                         If MeasureAtDisplacement(Notes(xI2).VPosition) = xMeasure AndAlso Math.Abs(Notes(xI2).VPosition - MeasureAtDisplacement(Notes(xI2).VPosition) * 192) > 0 Then
@@ -220,11 +220,11 @@
                         'put result
                         ReDim Preserve xResult(UBound(xResult) + 1)
                         xResult(UBound(xResult)) = xMeasure & "_" &
-                                                   IdentifiertoColumnIndex(xId) & "_" &
-                                                   nTitle(IdentifiertoColumnIndex(xId)) & "_" &
+                                                   BMSChannelToColumn(xId) & "_" &
+                                                   nTitle(BMSChannelToColumn(xId)) & "_" &
                                                    CStr(CInt(192 / xGCD)) & "_" &
                                                    CInt(IdentifiertoLongNote(xId)) & "_" &
-                                                   CInt(IdentifiertoHidden(xId)) & "_" &
+                                                   CInt(IsChannelHidden(xId)) & "_" &
                                                    CInt(xAdj64) & "_" &
                                                    xD64 & "_" &
                                                    xD48
@@ -300,7 +300,7 @@
         AddUndo(xUndo, xBaseRedo.Next)
         SortByVPositionInsertion()
         UpdatePairing()
-        CalculateTotalNotes()
+        CalculateTotalPlayableNotes()
         CalculateGreatestVPosition()
         RefreshPanelAll()
         POStatusRefresh()

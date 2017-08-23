@@ -97,6 +97,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Audio.vb" />
+    <Compile Include="BMS.vb" />
     <Compile Include="ChartIO.vb">
       <SubType>Form</SubType>
     </Compile>

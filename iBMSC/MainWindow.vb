@@ -310,6 +310,20 @@ Public Class MainWindow
         Audio.Initialize()
     End Sub
 
+    Private Function GetBMSChannelBy(note As Note) As String
+        Dim iCol = note.ColumnIndex
+        Dim xVal = note.Value
+        Dim xLong = note.LongNote
+        Dim xHidden = note.Hidden
+        Dim xI As Integer = GetColumn(iCol).Identifier
+        If iCol = niBPM AndAlso (xVal / 10000 <> xVal \ 10000 Or xVal >= 2560000) Then xI += idflBPM
+        If (iCol >= niA1 And iCol <= niA8) Or (iCol >= niD1 And iCol <= niD8) Then
+            If xLong Then xI += idLong
+            If xHidden Then xI += idHidden
+        End If
+        Return Add2Zeros(xI)
+    End Function
+
     Private Function nLeft(ByVal iCol As Integer) As Integer
         If iCol < niB Then Return column(iCol).Left Else Return column(niB).Left + (iCol - niB) * column(niB).Width
     End Function
@@ -327,24 +341,8 @@ Public Class MainWindow
     Private Function isColumnNumeric(ByVal iCol As Integer) As Boolean
         If iCol < niB Then Return column(iCol).isNumeric Else Return column(niB).isNumeric
     End Function
-    Private Function nIdentifier(ByVal iCol As Integer, ByVal xVal As Integer, ByVal xLong As Boolean, ByVal xHidden As Boolean) As String
-        Dim xI As Integer = GetColumn(iCol).Identifier
-        If iCol = niBPM AndAlso (xVal / 10000 <> xVal \ 10000 Or xVal >= 2560000) Then xI += idflBPM
-        If (iCol >= niA1 And iCol <= niA8) Or (iCol >= niD1 And iCol <= niD8) Then
-            If xLong Then xI += idLong
-            If xHidden Then xI += idHidden
-        End If
-        Return Add2Zeros(xI)
-    End Function
 
-    Private Function IdentifiertoLongNote(ByVal I As String) As Boolean
-        Dim xI As Integer = CInt(Val(I))
-        Return xI >= 50 And xI < 90
-    End Function
-    Private Function IdentifiertoHidden(ByVal I As String) As Boolean
-        Dim xI As Integer = CInt(Val(I))
-        Return (xI >= 30 And xI < 50) Or (xI >= 70 And xI < 90)
-    End Function
+
 
     Private Function GetColumn(ByVal iCol As Integer) As Column
         If iCol < niB Then Return column(iCol) Else Return column(niB)
@@ -355,12 +353,12 @@ Public Class MainWindow
         If Ivalue > 100 Then
             Return niB + Ivalue - 101
         ElseIf Ivalue < 100 And Ivalue > 0 Then
-            Return IdentifiertoColumnIndex(Mid(I, 2, 2))
+            Return BMSChannelToColumn(Mid(I, 2, 2))
         End If
         Return niB ' ??? how did a negative number get here?
     End Function
 
-    Private Function IdentifiertoColumnIndex(ByVal I As String) As Integer
+    Private Function BMSChannelToColumn(ByVal I As String) As Integer
         Select Case I
             Case "01" : Return niB
             Case "03", "08" : Return niBPM
@@ -630,7 +628,7 @@ Public Class MainWindow
 
     Private Sub PreviewNote(ByVal xFileLocation As String, ByVal bStop As Boolean)
         If bStop Then
-            Audio.StopPlay()
+            Audio.StopPlaying()
         End If
         Audio.Play(xFileLocation)
     End Sub
@@ -665,7 +663,7 @@ Public Class MainWindow
         End With
 
         If SortAndUpdatePairing Then SortByVPositionInsertion() : UpdatePairing()
-        CalculateTotalNotes()
+        CalculateTotalPlayableNotes()
     End Sub
 
     Private Sub RemoveNote(ByVal I As Integer, Optional ByVal SortAndUpdatePairing As Boolean = True)
@@ -679,7 +677,7 @@ Public Class MainWindow
         'CalculateTotalNotes()
     End Sub
 
-    Private Sub AddNotes(Optional ByVal xSelected As Boolean = True, Optional ByVal SortAndUpdatePairing As Boolean = True)
+    Private Sub AddNotesFromClipboard(Optional ByVal xSelected As Boolean = True, Optional ByVal SortAndUpdatePairing As Boolean = True)
         Dim xStrLine() As String = Split(Clipboard.GetText, vbCrLf)
 
         Dim xI1 As Integer
@@ -829,7 +827,7 @@ Public Class MainWindow
         End If
 
         If SortAndUpdatePairing Then SortByVPositionInsertion() : UpdatePairing()
-        CalculateTotalNotes()
+        CalculateTotalPlayableNotes()
     End Sub
 
     Private Sub CopyNotes(Optional ByVal Unselect As Boolean = True)
@@ -887,7 +885,7 @@ Public Class MainWindow
             xI1 += 1
         Loop While xI1 < UBound(Notes) + 1
         If SortAndUpdatePairing Then SortByVPositionInsertion() : UpdatePairing()
-        CalculateTotalNotes()
+        CalculateTotalPlayableNotes()
     End Sub
 
     Private Function EnabledColumnToReal(ByVal cEnabled As Integer) As Integer
@@ -1180,7 +1178,7 @@ Public Class MainWindow
             Dim xLeftCursor As Cursor = ActuallyLoadCursor(xTempFileName)
             My.Computer.FileSystem.WriteAllBytes(xTempFileName, My.Resources.CursorResizeRight, False)
             Dim xRightCursor As Cursor = ActuallyLoadCursor(xTempFileName)
-            System.IO.File.Delete(xTempFileName)
+            File.Delete(xTempFileName)
 
             POWAVResizer.Cursor = xDownCursor
             POBeatResizer.Cursor = xDownCursor
@@ -1435,7 +1433,8 @@ EndSearch:
         Return False
     End Function
 
-    Private Sub TBNew_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TBNew.Click, mnNew.Click
+    Private Sub TBNew_Click(ByVal sender As System.Object, ByVal e As EventArgs) Handles TBNew.Click, mnNew.Click
+
         'KMouseDown = -1
         ReDim uNotes(-1)
         KMouseOver = -1
@@ -1474,7 +1473,7 @@ EndSearch:
         SetIsSaved(True)
         'pIsSaved.Visible = Not IsSaved
 
-        CalculateTotalNotes()
+        CalculateTotalPlayableNotes()
         CalculateGreatestVPosition()
         RefreshPanelAll()
         POStatusRefresh()
@@ -1660,6 +1659,9 @@ EndSearch:
 
     Private Sub VSValueChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles VS.ValueChanged, VSL.ValueChanged, VSR.ValueChanged
         Dim iI As Integer = sender.Tag
+
+        If My.Computer.Keyboard.CtrlKeyDown Then Exit Sub
+
         If iI = spFocus And Not pMouseDown = New Point(-1, -1) And Not VSValue = -1 Then pMouseDown.Y += (VSValue - sender.Value) * gxHeight
         spV(iI) = sender.Value
 
@@ -2036,7 +2038,7 @@ EndSearch:
 
         SortByVPositionInsertion()
         UpdatePairing()
-        CalculateTotalNotes()
+        CalculateTotalPlayableNotes()
         RefreshPanelAll()
         POStatusRefresh()
         CalculateGreatestVPosition()
@@ -2049,7 +2051,7 @@ EndSearch:
     End Sub
 
     Private Sub TBPaste_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TBPaste.Click, mnPaste.Click
-        AddNotes()
+        AddNotesFromClipboard()
 
         Dim xUndo As UndoRedo.LinkedURCmd = Nothing
         Dim xRedo As UndoRedo.LinkedURCmd = New UndoRedo.Void
@@ -2061,7 +2063,7 @@ EndSearch:
 
         SortByVPositionInsertion()
         UpdatePairing()
-        CalculateTotalNotes()
+        CalculateTotalPlayableNotes()
         RefreshPanelAll()
         POStatusRefresh()
         CalculateGreatestVPosition()
@@ -2219,7 +2221,7 @@ StartCount:     If Not NTInput Then
     ''' Remark: Pls sort and updatepairing before this process.
     ''' </summary>
 
-    Private Sub CalculateTotalNotes()
+    Private Sub CalculateTotalPlayableNotes()
         Dim xI1 As Integer
         Dim xIAll As Integer = 0
 
@@ -2746,13 +2748,6 @@ EndofSub:
 
         Me.RedoAddNoteAll(False, xUndo, xRedo)
 
-        'Save redo
-        'For xI3 = 1 To UBound(K)
-        '    K(xI3).Selected = True
-        'Next
-        'xRedo = "KZ" & vbCrLf & _
-        '                      sCmdKs(False) & vbCrLf & _
-        '                      "SA_" & vSelStart & "_" & vSelLength & "_" & vSelHalf & "_1"
 
         'Restore note selection
         xVLower = IIf(vSelLength > 0, vSelStart, vSelStart + vSelLength)
@@ -2830,17 +2825,13 @@ EndofSub:
         xConstBPM = (xVUpper - xVLower) / xConstBPM
 
         'Compare BPM        '(xVHalf - xVLower) / xValue + (xVUpper - xVHalf) / xResult = (xVUpper - xVLower) / xConstBPM
-        If (xVUpper - xVLower) / xConstBPM < (xVHalf - xVLower) / xValue Or xValue > 655359999 Then _
-            MsgBox("Please enter a value between " & ((xVHalf - xVLower) * xConstBPM / (xVUpper - xVLower) / 10000) & " and 65535.9999.", MsgBoxStyle.Critical, Strings.Messages.Err) : Return
+        If (xVUpper - xVLower) / xConstBPM < (xVHalf - xVLower) / xValue Then _
+            MsgBox("Please enter a value that is at least " & ((xVHalf - xVLower) * xConstBPM / (xVUpper - xVLower) / 10000) & ".", MsgBoxStyle.Critical, Strings.Messages.Err) : Return
         Dim xResult As Integer
         Dim xTempDivider As Double = xConstBPM * xVHalf - xConstBPM * xVLower - xValue * xVUpper + xValue * xVLower
         Dim xTemp001 As Double = (xVHalf - xVUpper) * xValue * xConstBPM / xTempDivider
-        If xTempDivider >= 0 Or
-          (xVHalf - xVUpper) * xValue * xConstBPM / xTempDivider > 655359999 Then
-            xResult = 655359999
-        Else
-            xResult = (xVHalf - xVUpper) * xValue * xConstBPM / xTempDivider
-        End If
+
+        xResult = (xVHalf - xVUpper) * xValue * xConstBPM / xTempDivider
 
         'Save undo
         'For xI3 = 1 To UBound(K)
@@ -3333,7 +3324,7 @@ EndOfAdjustment:
 
         SortByVPositionInsertion()
         UpdatePairing()
-        CalculateTotalNotes()
+        CalculateTotalPlayableNotes()
     End Sub
 
     Private Sub ConvertNT2BMSE()
@@ -3369,7 +3360,7 @@ EndOfAdjustment:
 
         SortByVPositionInsertion()
         UpdatePairing()
-        CalculateTotalNotes()
+        CalculateTotalPlayableNotes()
     End Sub
 
     Private Sub TBNTInput_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TBNTInput.Click, mnNTInput.Click
@@ -3407,17 +3398,6 @@ EndOfAdjustment:
         If Notes IsNot Nothing Then Notes(0).Value = THBPM.Value * 10000 : RefreshPanelAll()
         If IsSaved Then SetIsSaved(False)
     End Sub
-
-    Private Function EncodingToString() As String
-        If TextEncoding Is System.Text.Encoding.Default Then Return "ANSI (Locale dependant)"
-        If TextEncoding Is System.Text.Encoding.Unicode Then Return "Unicode"
-        If TextEncoding Is System.Text.Encoding.ASCII Then Return "ASCII"
-        If TextEncoding Is System.Text.Encoding.BigEndianUnicode Then Return "BigEndian"
-        If TextEncoding Is System.Text.Encoding.UTF32 Then Return "UTF32"
-        If TextEncoding Is System.Text.Encoding.UTF7 Then Return "UTF7"
-        If TextEncoding Is System.Text.Encoding.UTF8 Then Return "UTF8"
-        Return "ANSI"
-    End Function
 
     Private Sub TWPosition_ValueChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TWPosition.ValueChanged
         wPosition = TWPosition.Value
@@ -3548,7 +3528,7 @@ EndOfAdjustment:
 
     Private Sub TBGOptions_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TBGOptions.Click, mnGOptions.Click
         Dim xTE As Integer
-        Select Case UCase(EncodingToString())
+        Select Case UCase(EncodingToString(TextEncoding)) ' az: wow seriously? is there really no better way? 
             Case "ANSI" : xTE = 0
             Case "UNICODE" : xTE = 1
             Case "ASCII" : xTE = 2
@@ -3701,7 +3681,7 @@ EndOfAdjustment:
         RefreshPanelAll()
     End Sub
 
-    Private Sub POBModify_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles POBModify.Click
+    Private Sub POBModify_Click(ByVal sender As System.Object, ByVal e As EventArgs) Handles POBModify.Click
         Dim xNum As Boolean = False
         Dim xLbl As Boolean = False
         Dim xI1 As Integer
@@ -3715,10 +3695,9 @@ EndOfAdjustment:
         If Not (xNum Or xLbl) Then Exit Sub
 
         If xNum Then
-            Dim xD1 As Double = Val(InputBox(Strings.Messages.PromptEnterNumeric, Me.Text)) * 10000
+            Dim xD1 As Double = Val(InputBox(Strings.Messages.PromptEnterNumeric, Text)) * 10000
             If Not xD1 = 0 Then
                 If xD1 <= 0 Then xD1 = 1
-                If xD1 > 655359999 Then xD1 = 655359999
 
                 Dim xUndo As UndoRedo.LinkedURCmd = Nothing
                 Dim xRedo As UndoRedo.LinkedURCmd = New UndoRedo.Void
@@ -3920,7 +3899,7 @@ Jump2:
         SortByVPositionInsertion()
         UpdatePairing()
         RefreshPanelAll()
-        CalculateTotalNotes()
+        CalculateTotalPlayableNotes()
         Beep()
     End Sub
 
@@ -4074,7 +4053,7 @@ Jump2:
         AddUndo(xUndo, xBaseRedo.Next)
         UpdatePairing()
         CalculateGreatestVPosition()
-        CalculateTotalNotes()
+        CalculateTotalPlayableNotes()
         RefreshPanelAll()
     End Sub
 
@@ -4147,7 +4126,7 @@ Jump2:
         SortByVPositionInsertion()
         UpdatePairing()
         CalculateGreatestVPosition()
-        CalculateTotalNotes()
+        CalculateTotalPlayableNotes()
         RefreshPanelAll()
     End Sub
 
@@ -4473,7 +4452,7 @@ Jump2:
 
         AddUndo(xUndo, xBaseRedo.Next)
         CalculateGreatestVPosition()
-        CalculateTotalNotes()
+        CalculateTotalPlayableNotes()
         RefreshPanelAll()
         POStatusRefresh()
     End Sub
@@ -4814,7 +4793,7 @@ case2:              Dim xI0 As Integer
         AddUndo(xUndo, xBaseRedo.Next)
         SortByVPositionInsertion()
         UpdatePairing()
-        CalculateTotalNotes()
+        CalculateTotalPlayableNotes()
         CalculateGreatestVPosition()
         RefreshPanelAll()
         POStatusRefresh()
@@ -5010,4 +4989,5 @@ case2:              Dim xI0 As Integer
     Private Sub tBeatValue_TextChanged(sender As Object, e As EventArgs) Handles tBeatValue.TextChanged
 
     End Sub
+
 End Class

@@ -52,7 +52,7 @@ Module Audio
         Output.Play()
     End Sub
 
-    Public Sub StopPlay()
+    Public Sub StopPlaying()
         Output.Stop()
     End Sub
 End Module
