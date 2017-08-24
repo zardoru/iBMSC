@@ -762,7 +762,7 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
 
     Private Function MouseInNote(e As MouseEventArgs, xHS As Long, xVS As Long, xHeight As Integer, note As Note) As Boolean
         Return e.X >= HorizontalPositiontoDisplay(nLeft(note.ColumnIndex), xHS) + 1 And
-               e.X <= HorizontalPositiontoDisplay(nLeft(note.ColumnIndex) + nLength(note.ColumnIndex), xHS) - 1 And
+               e.X <= HorizontalPositiontoDisplay(nLeft(note.ColumnIndex) + getColumnWidth(note.ColumnIndex), xHS) - 1 And
                e.Y >= VerticalPositiontoDisplay(note.VPosition + IIf(NTInput, note.Length, 0), xVS, xHeight) - vo.kHeight And
                e.Y <= VerticalPositiontoDisplay(note.VPosition, xVS, xHeight)
     End Function
@@ -856,7 +856,7 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
                         Dim xDispY As Integer = IIf(Not NTInput Or (bAdjustLength And Not bAdjustUpper),
                                                     VerticalPositiontoDisplay(Notes(foundNoteIndex).VPosition, xVS, xHeight) - vo.kHeight - 1,
                                                     VerticalPositiontoDisplay(Notes(foundNoteIndex).VPosition + Notes(foundNoteIndex).Length, xVS, xHeight) - vo.kHeight - 1)
-                        Dim xDispW As Integer = nLength(Notes(foundNoteIndex).ColumnIndex) * gxWidth + 1
+                        Dim xDispW As Integer = getColumnWidth(Notes(foundNoteIndex).ColumnIndex) * gxWidth + 1
                         Dim xDispH As Integer = IIf(Not NTInput Or bAdjustLength,
                                                     vo.kHeight + 3,
                                                     Notes(foundNoteIndex).Length * gxHeight + vo.kHeight + 3)
@@ -918,7 +918,7 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
                         For xI1 = 1 To UBound(Notes)
                             rNote = New Rectangle(HorizontalPositiontoDisplay(nLeft(Notes(xI1).ColumnIndex), xHS) + 1,
                                                   VerticalPositiontoDisplay(Notes(xI1).VPosition + IIf(NTInput, Notes(xI1).Length, 0), xVS, xHeight) - vo.kHeight,
-                                                  nLength(Notes(xI1).ColumnIndex) * gxWidth - 2,
+                                                  getColumnWidth(Notes(xI1).ColumnIndex) * gxWidth - 2,
                                                   vo.kHeight + IIf(NTInput, Notes(xI1).Length * gxHeight, 0))
                             If Math.Abs((rSBox.X + rSBox.Width / 2) - (rNote.X + rNote.Width / 2)) <= Math.Abs((rSBox.Width + rNote.Width) / 2) And
                                Math.Abs((rSBox.Y + rSBox.Height / 2) - (rNote.Y + rNote.Height / 2)) <= Math.Abs((rSBox.Height + rNote.Height) / 2) Then
@@ -1263,7 +1263,7 @@ EndCtrlOpn:         End If
                     If Notes IsNot Nothing Then
                         For xI1 = UBound(Notes) To 0 Step -1 ' az: MouseInNote implied, but I'm not sure yet
                             If e.X >= HorizontalPositiontoDisplay(nLeft(Notes(xI1).ColumnIndex), xHS) + 1 And
-                               e.X <= HorizontalPositiontoDisplay(nLeft(Notes(xI1).ColumnIndex) + nLength(Notes(xI1).ColumnIndex), xHS) - 1 And
+                               e.X <= HorizontalPositiontoDisplay(nLeft(Notes(xI1).ColumnIndex) + getColumnWidth(Notes(xI1).ColumnIndex), xHS) - 1 And
                                e.Y >= VerticalPositiontoDisplay(Notes(xI1).VPosition, xVS, xHeight) - vo.kHeight And
                                e.Y <= VerticalPositiontoDisplay(Notes(xI1).VPosition, xVS, xHeight) Then
                                 xITemp = xI1

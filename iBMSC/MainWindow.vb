@@ -327,7 +327,7 @@ Public Class MainWindow
     Private Function nLeft(ByVal iCol As Integer) As Integer
         If iCol < niB Then Return column(iCol).Left Else Return column(niB).Left + (iCol - niB) * column(niB).Width
     End Function
-    Private Function nLength(ByVal iCol As Integer) As Integer
+    Private Function getColumnWidth(ByVal iCol As Integer) As Integer
         If Not GetColumn(iCol).isVisible Then Return 0
         If iCol < niB Then Return column(iCol).Width Else Return column(niB).Width
     End Function
@@ -1302,7 +1302,9 @@ Public Class MainWindow
                             End If
                             Exit For
                         Next
-                        If j = 0 Then Notes(i).HasError = True
+                        If j = 0 Then
+                            Notes(i).HasError = True
+                        End If
                     End If
                 End If
             Next
@@ -1338,14 +1340,19 @@ Public Class MainWindow
                         If Notes(j).ColumnIndex <> Notes(i).ColumnIndex Then Continue For
                         Notes(i).PairWithI = j
                         Notes(j).PairWithI = i
-                        If Not Notes(j).LongNote AndAlso Notes(j).Value \ 10000 <> LnObj Then Notes(j).HasError = True
+                        If Not Notes(j).LongNote AndAlso Notes(j).Value \ 10000 <> LnObj Then
+                            Notes(j).HasError = True
+                        End If
                         Exit For
                     Next
 
-                    If j = UBound(Notes) + 1 Then Notes(i).HasError = True
+                    If j = UBound(Notes) + 1 Then
+                        Notes(i).HasError = True
+                    End If
 EndSearch:
 
-                ElseIf Notes(i).Value \ 10000 = LnObj Then
+                ElseIf Notes(i).Value \ 10000 = LnObj And
+                    Not isColumnNumeric(Notes(i).ColumnIndex) Then
                     'LnObj: Match anything below.
                     '           If matching a LongNote not matching back, then error on below.
                     '           If overlapping a note, then error.
@@ -1353,15 +1360,23 @@ EndSearch:
                     '       If nothing below, then error.
                     For j = i - 1 To 1 Step -1
                         If Notes(i).ColumnIndex <> Notes(j).ColumnIndex Then Continue For
-                        If Notes(j).PairWithI <> 0 And Notes(j).PairWithI <> i Then Notes(j).HasError = True
+                        If Notes(j).PairWithI <> 0 And Notes(j).PairWithI <> i Then
+                            Notes(j).HasError = True
+                        End If
                         Notes(i).PairWithI = j
                         Notes(j).PairWithI = i
-                        If Notes(i).VPosition = Notes(j).VPosition Then Notes(i).HasError = True
-                        If Notes(j).Value \ 10000 = LnObj Then Notes(j).HasError = True
+                        If Notes(i).VPosition = Notes(j).VPosition Then
+                            Notes(i).HasError = True
+                        End If
+                        If Notes(j).Value \ 10000 = LnObj Then
+                            Notes(j).HasError = True
+                        End If
                         Exit For
                     Next
 
-                    If j = 0 Then Notes(i).HasError = True
+                    If j = 0 Then
+                        Notes(i).HasError = True
+                    End If
 
                 Else
                     'ShortNote: If overlapping a note, then error.

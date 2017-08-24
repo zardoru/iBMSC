@@ -67,13 +67,13 @@ Partial Public Class MainWindow
 
                 Dim xPen1 As New Pen(GetColumn(SelectedColumn).getBright(xAlpha))
                 Dim xBrush As New Drawing2D.LinearGradientBrush(New Point(HorizontalPositiontoDisplay(nLeft(SelectedColumn), xHS), VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight - 10),
-                               New Point(HorizontalPositiontoDisplay(nLeft(SelectedColumn) + nLength(SelectedColumn), xHS), VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) + 10),
+                               New Point(HorizontalPositiontoDisplay(nLeft(SelectedColumn) + getColumnWidth(SelectedColumn), xHS), VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) + 10),
                                GetColumn(SelectedColumn).getBright(xAlpha),
                                GetColumn(SelectedColumn).getDark(xAlpha))
                 Dim xBrush2 As New SolidBrush(GetColumn(SelectedColumn).cText)
 
-                e1.Graphics.FillRectangle(xBrush, HorizontalPositiontoDisplay(nLeft(SelectedColumn), xHS) + 2, VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight + 1, nLength(SelectedColumn) * gxWidth - 3, vo.kHeight - 1)
-                e1.Graphics.DrawRectangle(xPen1, HorizontalPositiontoDisplay(nLeft(SelectedColumn), xHS) + 1, VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight, nLength(SelectedColumn) * gxWidth - 2, vo.kHeight)
+                e1.Graphics.FillRectangle(xBrush, HorizontalPositiontoDisplay(nLeft(SelectedColumn), xHS) + 2, VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight + 1, getColumnWidth(SelectedColumn) * gxWidth - 3, vo.kHeight - 1)
+                e1.Graphics.DrawRectangle(xPen1, HorizontalPositiontoDisplay(nLeft(SelectedColumn), xHS) + 1, VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight, getColumnWidth(SelectedColumn) * gxWidth - 2, vo.kHeight)
 
                 e1.Graphics.DrawString(xText, vo.kFont, xBrush2,
                             HorizontalPositiontoDisplay(nLeft(SelectedColumn), xHS) + vo.kLabelHShift, VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight + vo.kLabelVShift)
@@ -81,13 +81,13 @@ Partial Public Class MainWindow
             Else
                 Dim xPen2 As New Pen(GetColumn(SelectedColumn).getLongBright(xAlpha))
                 Dim xBrush As New Drawing2D.LinearGradientBrush(New Point(HorizontalPositiontoDisplay(nLeft(SelectedColumn), xHS), VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight - 10),
-                                New Point(HorizontalPositiontoDisplay(nLeft(SelectedColumn) + nLength(SelectedColumn), xHS), VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) + 10),
+                                New Point(HorizontalPositiontoDisplay(nLeft(SelectedColumn) + getColumnWidth(SelectedColumn), xHS), VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) + 10),
                                 GetColumn(SelectedColumn).getLongBright(xAlpha),
                                 GetColumn(SelectedColumn).getLongDark(xAlpha))
                 Dim xBrush2 As New SolidBrush(GetColumn(SelectedColumn).cLText)
 
-                e1.Graphics.FillRectangle(xBrush, HorizontalPositiontoDisplay(nLeft(SelectedColumn), xHS) + 2, VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight + 1, nLength(SelectedColumn) * gxWidth - 3, vo.kHeight - 1)
-                e1.Graphics.DrawRectangle(xPen2, HorizontalPositiontoDisplay(nLeft(SelectedColumn), xHS) + 1, VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight, nLength(SelectedColumn) * gxWidth - 2, vo.kHeight)
+                e1.Graphics.FillRectangle(xBrush, HorizontalPositiontoDisplay(nLeft(SelectedColumn), xHS) + 2, VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight + 1, getColumnWidth(SelectedColumn) * gxWidth - 3, vo.kHeight - 1)
+                e1.Graphics.DrawRectangle(xPen2, HorizontalPositiontoDisplay(nLeft(SelectedColumn), xHS) + 1, VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight, getColumnWidth(SelectedColumn) * gxWidth - 2, vo.kHeight)
 
                 e1.Graphics.DrawString(xText, vo.kFont, xBrush2,
                             HorizontalPositiontoDisplay(nLeft(SelectedColumn), xHS) + vo.kLabelHShiftL, VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight + vo.kLabelVShift)
@@ -138,8 +138,8 @@ Partial Public Class MainWindow
             For xI1 = 0 To gColumns
                 If nLeft(xI1 + 1) * gxWidth - xHS * gxWidth + 1 < 0 Then Continue For
                 If nLeft(xI1) * gxWidth - xHS * gxWidth + 1 > xTWidth Then Exit For
-                If Not GetColumn(xI1).cBG.GetBrightness = 0 And nLength(xI1) > 0 Then _
-                    e1.Graphics.FillRectangle(New SolidBrush(GetColumn(xI1).cBG), nLeft(xI1) * gxWidth - xHS * gxWidth + 1, 0, nLength(xI1) * gxWidth, xTHeight)
+                If Not GetColumn(xI1).cBG.GetBrightness = 0 And getColumnWidth(xI1) > 0 Then _
+                    e1.Graphics.FillRectangle(New SolidBrush(GetColumn(xI1).cBG), nLeft(xI1) * gxWidth - xHS * gxWidth + 1, 0, getColumnWidth(xI1) * gxWidth, xTHeight)
             Next
         End If
     End Sub
@@ -149,7 +149,7 @@ Partial Public Class MainWindow
             For xI1 = 0 To gColumns
                 If nLeft(xI1 + 1) * gxWidth - xHS * gxWidth + 1 < 0 Then Continue For
                 If nLeft(xI1) * gxWidth - xHS * gxWidth + 1 > xTWidth Then Exit For
-                If nLength(xI1) > 0 Then e1.Graphics.DrawString(nTitle(xI1), vo.ColumnTitleFont, vo.ColumnTitle, nLeft(xI1) * gxWidth - xHS * gxWidth, 0)
+                If getColumnWidth(xI1) > 0 Then e1.Graphics.DrawString(nTitle(xI1), vo.ColumnTitleFont, vo.ColumnTitle, nLeft(xI1) * gxWidth - xHS * gxWidth, 0)
             Next
         End If
 
@@ -166,7 +166,7 @@ Partial Public Class MainWindow
                 Dim xpos = nLeft(xI1) * gxWidth - xHS * gxWidth
                 If xpos + 1 < 0 Then Continue For
                 If xpos + 1 > xTWidth Then Exit For
-                If nLength(xI1) > 0 Then e1.Graphics.DrawLine(vo.pVLine,
+                If getColumnWidth(xI1) > 0 Then e1.Graphics.DrawLine(vo.pVLine,
                                                               xpos, 0,
                                                               xpos, xTHeight)
             Next
@@ -252,7 +252,7 @@ Partial Public Class MainWindow
             Dim xDispY As Integer = IIf(Not NTInput Or (bAdjustLength And Not bAdjustUpper),
                                         VerticalPositiontoDisplay(Notes(KMouseOver).VPosition, xVS, xTHeight) - vo.kHeight - 1,
                                         VerticalPositiontoDisplay(Notes(KMouseOver).VPosition + Notes(KMouseOver).Length, xVS, xTHeight) - vo.kHeight - 1)
-            Dim xDispW As Integer = nLength(Notes(KMouseOver).ColumnIndex) * gxWidth + 1
+            Dim xDispW As Integer = getColumnWidth(Notes(KMouseOver).ColumnIndex) * gxWidth + 1
             Dim xDispH As Integer = IIf(Not NTInput Or bAdjustLength,
                                         vo.kHeight + 3,
                                         Notes(KMouseOver).Length * gxHeight + vo.kHeight + 3)
@@ -265,7 +265,7 @@ Partial Public Class MainWindow
             e1.Graphics.DrawRectangle(vo.kMouseOver,
                                       HorizontalPositiontoDisplay(nLeft(Notes(KMouseOver).ColumnIndex), xHS),
                                       VerticalPositiontoDisplay(Notes(KMouseOver).VPosition, xVS, xTHeight) - vo.kHeight - 1,
-                                      nLength(Notes(KMouseOver).ColumnIndex) * gxWidth,
+                                      getColumnWidth(Notes(KMouseOver).ColumnIndex) * gxWidth,
                                       vo.kHeight + 2)
         End If
     End Sub
@@ -432,37 +432,44 @@ Partial Public Class MainWindow
         Dim xLabel As String = C10to36(sNote.Value \ 10000)
         If ShowFileName AndAlso hWAV(C36to10(xLabel)) <> "" Then xLabel = Path.GetFileNameWithoutExtension(hWAV(C36to10(xLabel)))
 
+        Dim xPen As Pen
+        Dim xBrush As Drawing2D.LinearGradientBrush
+        Dim xBrush2 As SolidBrush
+
         If Not sNote.LongNote Then
 
-            Dim xPen1 As New Pen(GetColumn(sNote.ColumnIndex).getBright(xAlpha))
-            Dim xBrush As New Drawing2D.LinearGradientBrush(New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS), VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight - 10),
-                           New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) + nLength(sNote.ColumnIndex), xHS), VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) + 10),
+            xPen = New Pen(GetColumn(sNote.ColumnIndex).getBright(xAlpha))
+            xBrush = New Drawing2D.LinearGradientBrush(New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS), VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight - 10),
+                           New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) + getColumnWidth(sNote.ColumnIndex), xHS), VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) + 10),
                            GetColumn(sNote.ColumnIndex).getBright(xAlpha),
                            GetColumn(sNote.ColumnIndex).getDark(xAlpha))
-            Dim xBrush2 As New SolidBrush(GetColumn(sNote.ColumnIndex).cText)
-
-            e.Graphics.FillRectangle(xBrush, HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS) + 2, VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight + 1, nLength(sNote.ColumnIndex) * gxWidth - 3, vo.kHeight - 1)
-            e.Graphics.DrawRectangle(xPen1, HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS) + 1, VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight, nLength(sNote.ColumnIndex) * gxWidth - 2, vo.kHeight)
-
-            e.Graphics.DrawString(IIf(isColumnNumeric(sNote.ColumnIndex), sNote.Value / 10000, xLabel),
-                        vo.kFont, xBrush2, HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS) + vo.kLabelHShift, VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight + vo.kLabelVShift)
-
+            xBrush2 = New SolidBrush(GetColumn(sNote.ColumnIndex).cText)
         Else
 
-            Dim xPen2 As New Pen(GetColumn(sNote.ColumnIndex).getLongBright(xAlpha))
-            Dim xBrush As New Drawing2D.LinearGradientBrush(New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS), VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight - 10),
-                            New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) + nLength(sNote.ColumnIndex), xHS), VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) + 10),
+            xPen = New Pen(GetColumn(sNote.ColumnIndex).getLongBright(xAlpha))
+            xBrush = New Drawing2D.LinearGradientBrush(New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS), VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight - 10),
+                            New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) + getColumnWidth(sNote.ColumnIndex), xHS), VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) + 10),
                             GetColumn(sNote.ColumnIndex).getLongBright(xAlpha),
                             GetColumn(sNote.ColumnIndex).getLongDark(xAlpha))
-            Dim xBrush2 As New SolidBrush(GetColumn(sNote.ColumnIndex).cLText)
-
-            e.Graphics.FillRectangle(xBrush, HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS) + 2, VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight + 1, nLength(sNote.ColumnIndex) * gxWidth - 3, vo.kHeight - 1)
-            e.Graphics.DrawRectangle(xPen2, HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS) + 1, VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight, nLength(sNote.ColumnIndex) * gxWidth - 2, vo.kHeight)
-
-            e.Graphics.DrawString(IIf(isColumnNumeric(sNote.ColumnIndex), sNote.Value / 10000, xLabel),
-                        vo.kFont, xBrush2, HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS) + vo.kLabelHShiftL, VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight + vo.kLabelVShift)
+            xBrush2 = New SolidBrush(GetColumn(sNote.ColumnIndex).cLText)
 
         End If
+
+        ' Fill
+        e.Graphics.FillRectangle(xBrush, HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS) + 2,
+                                     VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight + 1,
+                                     getColumnWidth(sNote.ColumnIndex) * gxWidth - 3,
+                                     vo.kHeight - 1)
+        ' Outline
+        e.Graphics.DrawRectangle(xPen,
+                                     HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS) + 1,
+                                     VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight,
+                                     getColumnWidth(sNote.ColumnIndex) * gxWidth - 2,
+                                     vo.kHeight)
+
+        ' Label
+        e.Graphics.DrawString(IIf(isColumnNumeric(sNote.ColumnIndex), sNote.Value / 10000, xLabel),
+                        vo.kFont, xBrush2, HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS) + vo.kLabelHShift, VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight + vo.kLabelVShift)
 
         If sNote.PairWithI <> 0 Then
             DrawPairedLNBody(sNote, e, xHS, xVS, xHeight, xAlpha)
@@ -473,27 +480,27 @@ Partial Public Class MainWindow
 
         'If ErrorCheck AndAlso (sNote.LongNote Xor sNote.PairWithI <> 0) Then e.Graphics.DrawImage(My.Resources.ImageError, _
         If ErrorCheck AndAlso sNote.HasError Then e.Graphics.DrawImage(My.Resources.ImageError,
-                                                            CInt(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) + nLength(sNote.ColumnIndex) / 2, xHS) - 12),
+                                                            CInt(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) + getColumnWidth(sNote.ColumnIndex) / 2, xHS) - 12),
                                                             CInt(VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight / 2 - 12),
                                                             24, 24)
 
-        If sNote.Selected Then e.Graphics.DrawRectangle(vo.kSelected, HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS), VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight - 1, nLength(sNote.ColumnIndex) * gxWidth, vo.kHeight + 2)
+        If sNote.Selected Then e.Graphics.DrawRectangle(vo.kSelected, HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS), VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight - 1, getColumnWidth(sNote.ColumnIndex) * gxWidth, vo.kHeight + 2)
 
     End Sub
 
     Private Sub DrawPairedLNBody(sNote As Note, e As BufferedGraphics, xHS As Long, xVS As Long, xHeight As Integer, xAlpha As Single)
         Dim xPen2 As New Pen(GetColumn(sNote.ColumnIndex).getLongBright(xAlpha))
         Dim xBrush3 As New Drawing2D.LinearGradientBrush(
-                    New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) - 0.5 * nLength(sNote.ColumnIndex), xHS),
+                    New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) - 0.5 * getColumnWidth(sNote.ColumnIndex), xHS),
                             VerticalPositiontoDisplay(Notes(sNote.PairWithI).VPosition, xVS, xHeight)),
-                    New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) + 1.5 * nLength(sNote.ColumnIndex), xHS),
+                    New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) + 1.5 * getColumnWidth(sNote.ColumnIndex), xHS),
                             VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) + vo.kHeight),
                     GetColumn(sNote.ColumnIndex).getLongBright(xAlpha),
                     GetColumn(sNote.ColumnIndex).getLongDark(xAlpha))
         e.Graphics.FillRectangle(xBrush3, HorizontalPositiontoDisplay(nLeft(Notes(sNote.PairWithI).ColumnIndex), xHS) + 3, VerticalPositiontoDisplay(Notes(sNote.PairWithI).VPosition, xVS, xHeight) + 1,
-                                        nLength(Notes(sNote.PairWithI).ColumnIndex) * gxWidth - 5, VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - VerticalPositiontoDisplay(Notes(sNote.PairWithI).VPosition, xVS, xHeight) - vo.kHeight - 1)
+                                        getColumnWidth(Notes(sNote.PairWithI).ColumnIndex) * gxWidth - 5, VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - VerticalPositiontoDisplay(Notes(sNote.PairWithI).VPosition, xVS, xHeight) - vo.kHeight - 1)
         e.Graphics.DrawRectangle(xPen2, HorizontalPositiontoDisplay(nLeft(Notes(sNote.PairWithI).ColumnIndex), xHS) + 2, VerticalPositiontoDisplay(Notes(sNote.PairWithI).VPosition, xVS, xHeight),
-                                        nLength(Notes(sNote.PairWithI).ColumnIndex) * gxWidth - 4, VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - VerticalPositiontoDisplay(Notes(sNote.PairWithI).VPosition, xVS, xHeight) - vo.kHeight)
+                                        getColumnWidth(Notes(sNote.PairWithI).ColumnIndex) * gxWidth - 4, VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - VerticalPositiontoDisplay(Notes(sNote.PairWithI).VPosition, xVS, xHeight) - vo.kHeight)
     End Sub
 
     ''' <summary>
@@ -521,50 +528,58 @@ Partial Public Class MainWindow
             xPen1 = New Pen(GetColumn(sNote.ColumnIndex).getBright(xAlpha))
             xBrush = New Drawing2D.LinearGradientBrush(
                             New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS), VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight - 10),
-                            New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) + nLength(sNote.ColumnIndex), xHS), VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) + 10),
+                            New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) + getColumnWidth(sNote.ColumnIndex), xHS), VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) + 10),
                             GetColumn(sNote.ColumnIndex).getBright(xAlpha),
                             GetColumn(sNote.ColumnIndex).getDark(xAlpha))
             xBrush2 = New SolidBrush(GetColumn(sNote.ColumnIndex).cText)
-
-            e.Graphics.FillRectangle(xBrush, HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS) + 2, VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight + 1, nLength(sNote.ColumnIndex) * gxWidth - 3, vo.kHeight - 1)
-            e.Graphics.DrawRectangle(xPen1, HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS) + 1, VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight, nLength(sNote.ColumnIndex) * gxWidth - 2, vo.kHeight)
-
-            e.Graphics.DrawString(IIf(isColumnNumeric(sNote.ColumnIndex), sNote.Value / 10000, xLabel),
-                         vo.kFont, xBrush2, HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS) + vo.kLabelHShift, VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight + vo.kLabelVShift)
-
-            If sNote.PairWithI <> 0 Then
-                DrawPairedLNBody(sNote, e, xHS, xVS, xHeight, xAlpha)
-            End If
-
-            If ErrorCheck AndAlso sNote.HasError Then e.Graphics.DrawImage(My.Resources.ImageError, CInt(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) + nLength(sNote.ColumnIndex) / 2, xHS) - 12),
-                                                                                                    CInt(VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight / 2 - 12),
-                                                                                                    24, 24)
-            If sNote.Selected Then e.Graphics.DrawRectangle(vo.kSelected, HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS), VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight - 1,
-                                                                        nLength(sNote.ColumnIndex) * gxWidth, vo.kHeight + 2)
-
         Else
             xPen1 = New Pen(GetColumn(sNote.ColumnIndex).getLongBright(xAlpha))
             xBrush = New Drawing2D.LinearGradientBrush(
-                            New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) - 0.5 * nLength(sNote.ColumnIndex), xHS), VerticalPositiontoDisplay(sNote.VPosition + sNote.Length, xVS, xHeight) - vo.kHeight),
-                            New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) + 1.5 * nLength(sNote.ColumnIndex), xHS), VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight)),
+                            New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) - 0.5 * getColumnWidth(sNote.ColumnIndex), xHS), VerticalPositiontoDisplay(sNote.VPosition + sNote.Length, xVS, xHeight) - vo.kHeight),
+                            New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) + 1.5 * getColumnWidth(sNote.ColumnIndex), xHS), VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight)),
                             GetColumn(sNote.ColumnIndex).getLongBright(xAlpha),
                             GetColumn(sNote.ColumnIndex).getLongDark(xAlpha))
             xBrush2 = New SolidBrush(GetColumn(sNote.ColumnIndex).cLText)
+        End If
 
-            e.Graphics.FillRectangle(xBrush, HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS) + 3, VerticalPositiontoDisplay(sNote.VPosition + sNote.Length, xVS, xHeight) - vo.kHeight + 1,
-                                             nLength(sNote.ColumnIndex) * gxWidth - 5, CInt(sNote.Length * gxHeight) + vo.kHeight - 1)
-            e.Graphics.DrawRectangle(xPen1, HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS) + 2, VerticalPositiontoDisplay(sNote.VPosition + sNote.Length, xVS, xHeight) - vo.kHeight,
-                                            nLength(sNote.ColumnIndex) * gxWidth - 4, CInt(sNote.Length * gxHeight) + vo.kHeight)
+        ' Note gradient
+        e.Graphics.FillRectangle(xBrush,
+                                     HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS) + 1,
+                                     VerticalPositiontoDisplay(sNote.VPosition + sNote.Length, xVS, xHeight) - vo.kHeight + 1,
+                                     getColumnWidth(sNote.ColumnIndex) * gxWidth - 1,
+                                     CInt(sNote.Length * gxHeight) + vo.kHeight - 1)
 
-            e.Graphics.DrawString(IIf(isColumnNumeric(sNote.ColumnIndex), sNote.Value / 10000, xLabel),
-                         vo.kFont, xBrush2, HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS) + vo.kLabelHShiftL, VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight + vo.kLabelVShift)
+        ' Outline
+        e.Graphics.DrawRectangle(xPen1, HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS) + 1,
+                                     VerticalPositiontoDisplay(sNote.VPosition + sNote.Length, xVS, xHeight) - vo.kHeight,
+                                            getColumnWidth(sNote.ColumnIndex) * gxWidth - 3, CInt(sNote.Length * gxHeight) + vo.kHeight)
 
-            If ErrorCheck AndAlso sNote.HasError Then e.Graphics.DrawImage(My.Resources.ImageError, CInt(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) + nLength(sNote.ColumnIndex) / 2, xHS) - 12),
-                                                                                                    CInt(VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight / 2 - 12),
-                                                                                                    24, 24)
-            If sNote.Selected Then e.Graphics.DrawRectangle(vo.kSelected, HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS), VerticalPositiontoDisplay(sNote.VPosition + sNote.Length, xVS, xHeight) - vo.kHeight - 1,
-                                                                        nLength(sNote.ColumnIndex) * gxWidth, CInt(sNote.Length * gxHeight) + vo.kHeight + 2)
+        ' Note B36
+        e.Graphics.DrawString(IIf(isColumnNumeric(sNote.ColumnIndex), sNote.Value / 10000, xLabel),
+                              vo.kFont, xBrush2,
+                              HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS) + vo.kLabelHShiftL - 2,
+                              VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight + vo.kLabelVShift)
 
+        ' Draw paired body
+        If sNote.Length = 0 And sNote.PairWithI <> 0 Then
+            DrawPairedLNBody(sNote, e, xHS, xVS, xHeight, xAlpha)
+        End If
+
+        ' Select Box
+        If sNote.Selected Then
+            e.Graphics.DrawRectangle(vo.kSelected,
+                                    HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS),
+                                    VerticalPositiontoDisplay(sNote.VPosition + sNote.Length, xVS, xHeight) - vo.kHeight - 1,
+                                    getColumnWidth(sNote.ColumnIndex) * gxWidth,
+                                    CInt(sNote.Length * gxHeight) + vo.kHeight + 2)
+        End If
+
+        ' Errors
+        If ErrorCheck AndAlso sNote.HasError Then
+            e.Graphics.DrawImage(My.Resources.ImageError,
+                                 CInt(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) + getColumnWidth(sNote.ColumnIndex) / 2, xHS) - 12),
+                                 CInt(VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight / 2 - 12),
+                                 24, 24)
         End If
 
         'e.Graphics.DrawString(sNote.TimeOffset.ToString("0.##"), New Font("Verdana", 9), Brushes.Cyan, _
