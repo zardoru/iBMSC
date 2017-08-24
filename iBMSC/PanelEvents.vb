@@ -136,24 +136,24 @@ Partial Public Class MainWindow
                 mnDelete_Click(mnDelete, New System.EventArgs)
 
             Case Keys.Home
-                If spFocus = 0 Then VSL.Value = 0
-                If spFocus = 1 Then VS.Value = 0
-                If spFocus = 2 Then VSR.Value = 0
+                If PanelFocus = 0 Then VSL.Value = 0
+                If PanelFocus = 1 Then VS.Value = 0
+                If PanelFocus = 2 Then VSR.Value = 0
 
             Case Keys.End
-                If spFocus = 0 Then VSL.Value = VSL.Minimum
-                If spFocus = 1 Then VS.Value = VS.Minimum
-                If spFocus = 2 Then VSR.Value = VSR.Minimum
+                If PanelFocus = 0 Then VSL.Value = VSL.Minimum
+                If PanelFocus = 1 Then VS.Value = VS.Minimum
+                If PanelFocus = 2 Then VSR.Value = VSR.Minimum
 
             Case Keys.PageUp
-                If spFocus = 0 Then VSL.Value = IIf(VSL.Value - gPgUpDn > VSL.Minimum, VSL.Value - gPgUpDn, VSL.Minimum)
-                If spFocus = 1 Then VS.Value = IIf(VS.Value - gPgUpDn > VS.Minimum, VS.Value - gPgUpDn, VS.Minimum)
-                If spFocus = 2 Then VSR.Value = IIf(VSR.Value - gPgUpDn > VSR.Minimum, VSR.Value - gPgUpDn, VSR.Minimum)
+                If PanelFocus = 0 Then VSL.Value = IIf(VSL.Value - gPgUpDn > VSL.Minimum, VSL.Value - gPgUpDn, VSL.Minimum)
+                If PanelFocus = 1 Then VS.Value = IIf(VS.Value - gPgUpDn > VS.Minimum, VS.Value - gPgUpDn, VS.Minimum)
+                If PanelFocus = 2 Then VSR.Value = IIf(VSR.Value - gPgUpDn > VSR.Minimum, VSR.Value - gPgUpDn, VSR.Minimum)
 
             Case Keys.PageDown
-                If spFocus = 0 Then VSL.Value = IIf(VSL.Value + gPgUpDn < 0, VSL.Value + gPgUpDn, 0)
-                If spFocus = 1 Then VS.Value = IIf(VS.Value + gPgUpDn < 0, VS.Value + gPgUpDn, 0)
-                If spFocus = 2 Then VSR.Value = IIf(VSR.Value + gPgUpDn < 0, VSR.Value + gPgUpDn, 0)
+                If PanelFocus = 0 Then VSL.Value = IIf(VSL.Value + gPgUpDn < 0, VSL.Value + gPgUpDn, 0)
+                If PanelFocus = 1 Then VS.Value = IIf(VS.Value + gPgUpDn < 0, VS.Value + gPgUpDn, 0)
+                If PanelFocus = 2 Then VSR.Value = IIf(VSR.Value + gPgUpDn < 0, VSR.Value + gPgUpDn, 0)
 
             Case Keys.Oemcomma
                 If gDivide * 2 <= CGDivide.Maximum Then CGDivide.Value = gDivide * 2
@@ -199,7 +199,8 @@ Partial Public Class MainWindow
                 End If
 
             Case Keys.G
-                CGSnap.Checked = Not gSnap
+                'az: don't trigger when we use Go To Measure
+                If Not My.Computer.Keyboard.CtrlKeyDown Then CGSnap.Checked = Not gSnap
 
             Case Keys.L
                 If Not My.Computer.Keyboard.CtrlKeyDown Then POBLong_Click(Nothing, Nothing)
@@ -297,9 +298,9 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
         If Not Me.Created Then Exit Sub
 
         Dim iI As Integer = sender.Tag
-        spWidth(0) = PMainL.Width
-        spWidth(1) = PMain.Width
-        spWidth(2) = PMainR.Width
+        PanelWidth(0) = PMainL.Width
+        PanelWidth(1) = PMain.Width
+        PanelWidth(2) = PMainR.Width
 
         Select Case iI
             Case 0
@@ -328,19 +329,19 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
     Private Sub PMainInMouseDown(ByVal sender As Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles PMainIn.MouseDown, PMainInL.MouseDown, PMainInR.MouseDown
         tempFirstMouseDown = FirstClickDisabled And Not sender.Focused
 
-        spFocus = sender.Tag
+        PanelFocus = sender.Tag
         sender.Focus()
         LastMouseDownLocation = New Point(-1, -1)
-        VSValue = spV(spFocus)
+        VSValue = PanelDisplacement(PanelFocus)
 
         If NTInput Then bAdjustUpper = False : bAdjustLength = False
         Me.ctrlPressed = False : Me.ctrlForDuplicate = False
 
         If MiddleButtonClicked Then MiddleButtonClicked = False : Exit Sub
 
-        Dim xHS As Long = spH(spFocus)
-        Dim xVS As Long = spV(spFocus)
-        Dim xHeight As Integer = spMain(spFocus).Height
+        Dim xHS As Long = PanelHeight(PanelFocus)
+        Dim xVS As Long = PanelDisplacement(PanelFocus)
+        Dim xHeight As Integer = spMain(PanelFocus).Height
 
         Select Case e.Button
             Case Windows.Forms.MouseButtons.Left
@@ -784,8 +785,8 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
     Private Sub PMainInMouseEnter(ByVal sender As Object, ByVal e As System.EventArgs) Handles PMainIn.MouseEnter, PMainInL.MouseEnter, PMainInR.MouseEnter
         spMouseOver = sender.Tag
         Dim xPMainIn As Panel = sender
-        If AutoFocusMouseEnter AndAlso Me.Focused Then xPMainIn.Focus() : spFocus = spMouseOver
-        If FirstMouseEnter Then FirstMouseEnter = False : xPMainIn.Focus() : spFocus = spMouseOver
+        If AutoFocusMouseEnter AndAlso Me.Focused Then xPMainIn.Focus() : PanelFocus = spMouseOver
+        If FirstMouseEnter Then FirstMouseEnter = False : xPMainIn.Focus() : PanelFocus = spMouseOver
     End Sub
 
     Private Sub PMainInMouseLeave(ByVal sender As Object, ByVal e As System.EventArgs) Handles PMainIn.MouseLeave, PMainInL.MouseLeave, PMainInR.MouseLeave
@@ -807,8 +808,8 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
 
         Dim iI As Integer = sender.Tag
 
-        Dim xHS As Long = spH(iI)
-        Dim xVS As Long = spV(iI)
+        Dim xHS As Long = PanelHeight(iI)
+        Dim xVS As Long = PanelDisplacement(iI)
         Dim xHeight As Integer = spMain(iI).Height
         Dim xWidth As Integer = spMain(iI).Width
 
@@ -1371,7 +1372,7 @@ EndCtrlOpn:         End If
                     If xI1 > 0 Then xI1 = 0
                     If xI2 < 0 Then xI2 = 0
 
-                    Select Case spFocus
+                    Select Case PanelFocus
                         Case 0
                             If xI1 < VSL.Minimum Then xI1 = VSL.Minimum
                             VSL.Value = xI1
@@ -1480,10 +1481,10 @@ EndCtrlOpn:         End If
                 Dim xVPosition As Double
 
 
-                xVPosition = (sender.Height - spV(iI) * gxHeight - e.Y - 1) / gxHeight 'VPosition of the mouse
+                xVPosition = (sender.Height - PanelDisplacement(iI) * gxHeight - e.Y - 1) / gxHeight 'VPosition of the mouse
                 If gSnap Then xVPosition = SnapToGrid(xVPosition)
 
-                Dim xColumn = GetColumnAtEvent(e, spH(iI))
+                Dim xColumn = GetColumnAtEvent(e, PanelHeight(iI))
 
                 If e.Button = Windows.Forms.MouseButtons.Left Then
                     Dim LongNote As Boolean = My.Computer.Keyboard.ShiftKeyDown
@@ -1544,19 +1545,19 @@ EndCtrlOpn:         End If
         Select Case spMouseOver
             Case 0
                 'xI1 = spV(iI) - Math.Sign(e.Delta) * VSL.SmallChange * 5 / gxHeight
-                xI1 = spV(spMouseOver) - Math.Sign(e.Delta) * gWheel
+                xI1 = PanelDisplacement(spMouseOver) - Math.Sign(e.Delta) * gWheel
                 If xI1 > 0 Then xI1 = 0
                 If xI1 < VSL.Minimum Then xI1 = VSL.Minimum
                 VSL.Value = xI1
             Case 1
                 'xI1 = spV(iI) - Math.Sign(e.Delta) * VS.SmallChange * 5 / gxHeight
-                xI1 = spV(spMouseOver) - Math.Sign(e.Delta) * gWheel
+                xI1 = PanelDisplacement(spMouseOver) - Math.Sign(e.Delta) * gWheel
                 If xI1 > 0 Then xI1 = 0
                 If xI1 < VS.Minimum Then xI1 = VS.Minimum
                 VS.Value = xI1
             Case 2
                 'xI1 = spV(iI) - Math.Sign(e.Delta) * VSR.SmallChange * 5 / gxHeight
-                xI1 = spV(spMouseOver) - Math.Sign(e.Delta) * gWheel
+                xI1 = PanelDisplacement(spMouseOver) - Math.Sign(e.Delta) * gWheel
                 If xI1 > 0 Then xI1 = 0
                 If xI1 < VSR.Minimum Then xI1 = VSR.Minimum
                 VSR.Value = xI1

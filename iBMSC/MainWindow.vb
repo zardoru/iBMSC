@@ -281,12 +281,12 @@ Public Class MainWindow
     Dim pTempFileNames() As String = {}
 
     '----Split Panel Options
-    Dim spWidth() As Single = {0, 100, 0}
-    Dim spH() As Integer = {0, 0, 0}
-    Dim spV() As Integer = {0, 0, 0}
+    Dim PanelWidth() As Single = {0, 100, 0}
+    Dim PanelHeight() As Integer = {0, 0, 0}
+    Dim PanelDisplacement() As Integer = {0, 0, 0}
     Dim spLock() As Boolean = {False, False, False}
     Dim spDiff() As Integer = {0, 0, 0}
-    Dim spFocus As Integer = 1 '0 = Left, 1 = Middle, 2 = Right
+    Dim PanelFocus As Integer = 1 '0 = Left, 1 = Middle, 2 = Right
     Dim spMouseOver As Integer = 1
 
     Dim AutoFocusMouseEnter As Boolean = False
@@ -604,7 +604,7 @@ Public Class MainWindow
                                         IIf(InitPath = "", My.Application.Info.DirectoryPath, InitPath),
                                         ExcludeFileName(FileName)) _
                                         & "\___TempBMS.bms"
-        Dim xMeasure As Integer = MeasureAtDisplacement(Math.Abs(spV(spFocus)))
+        Dim xMeasure As Integer = MeasureAtDisplacement(Math.Abs(PanelDisplacement(PanelFocus)))
         Dim xS1 As String = Replace(InitStr, "<apppath>", My.Application.Info.DirectoryPath)
         Dim xS2 As String = Replace(xS1, "<measure>", xMeasure)
         Dim xS3 As String = Replace(xS2, "<filename>", xFileName)
@@ -685,7 +685,7 @@ Public Class MainWindow
             Notes(xI1).Selected = False
         Next
 
-        Dim xVS As Long = spV(spFocus)
+        Dim xVS As Long = PanelDisplacement(PanelFocus)
         Dim xTempVP As Double
         Dim xKbu() As Note = Notes
 
@@ -1092,8 +1092,6 @@ Public Class MainWindow
 
     Private Sub Form1_KeyDown(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyEventArgs) Handles Me.KeyDown
         Select Case e.KeyCode
-            Case Keys.F4
-                If Not My.Computer.Keyboard.AltKeyDown Then MsgBox(Strings.Messages.EraserObsolete, MsgBoxStyle.Information, "Eraser tool")
             Case Keys.F11
                 setFullScreen(Not isFullScreen)
         End Select
@@ -1668,8 +1666,8 @@ EndSearch:
 
 
     Private Sub VSGotFocus(ByVal sender As Object, ByVal e As System.EventArgs) Handles VS.GotFocus, VSL.GotFocus, VSR.GotFocus
-        spFocus = sender.Tag
-        spMain(spFocus).Focus()
+        PanelFocus = sender.Tag
+        spMain(PanelFocus).Focus()
     End Sub
 
     Private Sub VSValueChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles VS.ValueChanged, VSL.ValueChanged, VSR.ValueChanged
@@ -1681,11 +1679,11 @@ EndSearch:
             Exit Sub
         End If
 
-        If iI = spFocus And Not LastMouseDownLocation = New Point(-1, -1) And Not VSValue = -1 Then LastMouseDownLocation.Y += (VSValue - sender.Value) * gxHeight
-        spV(iI) = sender.Value
+        If iI = PanelFocus And Not LastMouseDownLocation = New Point(-1, -1) And Not VSValue = -1 Then LastMouseDownLocation.Y += (VSValue - sender.Value) * gxHeight
+        PanelDisplacement(iI) = sender.Value
 
         If spLock((iI + 1) Mod 3) Then
-            Dim xVS As Integer = spV(iI) + spDiff(iI)
+            Dim xVS As Integer = PanelDisplacement(iI) + spDiff(iI)
             If xVS > 0 Then xVS = 0
             If xVS < VS.Minimum Then xVS = VS.Minimum
             Select Case iI
@@ -1696,7 +1694,7 @@ EndSearch:
         End If
 
         If spLock((iI + 2) Mod 3) Then
-            Dim xVS As Integer = spV(iI) - spDiff((iI + 2) Mod 3)
+            Dim xVS As Integer = PanelDisplacement(iI) - spDiff((iI + 2) Mod 3)
             If xVS > 0 Then xVS = 0
             If xVS < VS.Minimum Then xVS = VS.Minimum
             Select Case iI
@@ -1706,8 +1704,8 @@ EndSearch:
             End Select
         End If
 
-        spDiff(iI) = spV((iI + 1) Mod 3) - spV(iI)
-        spDiff((iI + 2) Mod 3) = spV(iI) - spV((iI + 2) Mod 3)
+        spDiff(iI) = PanelDisplacement((iI + 1) Mod 3) - PanelDisplacement(iI)
+        spDiff((iI + 2) Mod 3) = PanelDisplacement(iI) - PanelDisplacement((iI + 2) Mod 3)
 
         VSValue = sender.Value
         RefreshPanel(iI, spMain(iI).DisplayRectangle)
@@ -1718,21 +1716,21 @@ EndSearch:
         spLock(iI) = sender.Checked
         If Not spLock(iI) Then Return
 
-        spDiff(iI) = spV((iI + 1) Mod 3) - spV(iI)
-        spDiff((iI + 2) Mod 3) = spV(iI) - spV((iI + 2) Mod 3)
+        spDiff(iI) = PanelDisplacement((iI + 1) Mod 3) - PanelDisplacement(iI)
+        spDiff((iI + 2) Mod 3) = PanelDisplacement(iI) - PanelDisplacement((iI + 2) Mod 3)
 
         'POHeaderB.Text = spDiff(0) & "_" & spDiff(1) & "_" & spDiff(2)
     End Sub
 
     Private Sub HSGotFocus(ByVal sender As Object, ByVal e As System.EventArgs) Handles HS.GotFocus, HSL.GotFocus, HSR.GotFocus
-        spFocus = sender.Tag
-        spMain(spFocus).Focus()
+        PanelFocus = sender.Tag
+        spMain(PanelFocus).Focus()
     End Sub
 
     Private Sub HSValueChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles HS.ValueChanged, HSL.ValueChanged, HSR.ValueChanged
         Dim iI As Integer = sender.Tag
         If Not LastMouseDownLocation = New Point(-1, -1) And Not HSValue = -1 Then LastMouseDownLocation.X += (HSValue - sender.Value) * gxWidth
-        spH(iI) = sender.Value
+        PanelHeight(iI) = sender.Value
         HSValue = sender.Value
         RefreshPanel(iI, spMain(iI).DisplayRectangle)
     End Sub
@@ -1753,7 +1751,7 @@ EndSearch:
         TempVPosition = -1
         TempLength = 0
 
-        vSelStart = MeasureBottom(MeasureAtDisplacement(-spV(spFocus)) + 1)
+        vSelStart = MeasureBottom(MeasureAtDisplacement(-PanelDisplacement(PanelFocus)) + 1)
         vSelLength = 0
 
         RefreshPanelAll()
@@ -1776,7 +1774,7 @@ EndSearch:
         TempVPosition = -1
         TempLength = 0
 
-        vSelStart = MeasureBottom(MeasureAtDisplacement(-spV(spFocus)) + 1)
+        vSelStart = MeasureBottom(MeasureAtDisplacement(-PanelDisplacement(PanelFocus)) + 1)
         vSelLength = 0
 
         RefreshPanelAll()
@@ -1862,7 +1860,7 @@ EndSearch:
     Private Sub Timer1_Tick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Timer1.Tick
         Dim xI1 As Integer
 
-        Select Case spFocus
+        Select Case PanelFocus
             Case 0
                 With VSL
                     xI1 = .Value + (tempY / 5) / gxHeight
@@ -1907,7 +1905,7 @@ EndSearch:
         End Select
 
         Dim xMEArgs As New System.Windows.Forms.MouseEventArgs(Windows.Forms.MouseButtons.Left, 0, MouseMoveStatus.X, MouseMoveStatus.Y, 0)
-        PMainInMouseMove(spMain(spFocus), xMEArgs)
+        PMainInMouseMove(spMain(PanelFocus), xMEArgs)
 
     End Sub
 
@@ -1916,7 +1914,7 @@ EndSearch:
 
         Dim xI1 As Integer
 
-        Select Case spFocus
+        Select Case PanelFocus
             Case 0
                 With VSL
                     xI1 = .Value + (Cursor.Position.Y - MiddleButtonLocation.Y) / 5 / gxHeight
@@ -1961,7 +1959,7 @@ EndSearch:
         End Select
 
         Dim xMEArgs As New System.Windows.Forms.MouseEventArgs(Windows.Forms.MouseButtons.Left, 0, MouseMoveStatus.X, MouseMoveStatus.Y, 0)
-        PMainInMouseMove(spMain(spFocus), xMEArgs)
+        PMainInMouseMove(spMain(PanelFocus), xMEArgs)
     End Sub
 
     Private Sub validate_LWAV_view()
@@ -2267,11 +2265,11 @@ StartCount:     If Not NTInput Then
             Dim xI1 As Integer = KMouseOver
             If xI1 < 0 Then
 
-                TempVPosition = (spMain(spFocus).Height - spV(spFocus) * gxHeight - MouseMoveStatus.Y - 1) / gxHeight 'VPosition of the mouse
+                TempVPosition = (spMain(PanelFocus).Height - PanelDisplacement(PanelFocus) * gxHeight - MouseMoveStatus.Y - 1) / gxHeight 'VPosition of the mouse
                 If gSnap Then TempVPosition = SnapToGrid(TempVPosition)
 
                 xI1 = 0
-                Dim mLeft As Integer = MouseMoveStatus.X / gxWidth + spH(spFocus) 'horizontal position of the mouse
+                Dim mLeft As Integer = MouseMoveStatus.X / gxWidth + PanelHeight(PanelFocus) 'horizontal position of the mouse
                 If mLeft >= 0 Then
                     Do
                         If mLeft < nLeft(xI1 + 1) Or xI1 >= gColumns Then SelectedColumn = xI1 : Exit Do 'get the column where mouse is 
@@ -5005,5 +5003,18 @@ case2:              Dim xI0 As Integer
 
     Private Sub tBeatValue_TextChanged(sender As Object, e As EventArgs) Handles tBeatValue.TextChanged
 
+    End Sub
+
+    Private Sub mnGotoMeasure_Click(sender As Object, e As EventArgs) Handles mnGotoMeasure.Click
+        Dim s = InputBox(Strings.Messages.PromptEnterMeasure, "Enter Measure")
+
+        Dim i As Integer
+        If Int32.TryParse(s, i) Then
+            If i < 0 Or i > 999 Then
+                Exit Sub
+            End If
+
+            PanelDisplacement(PanelFocus) = -MeasureBottom(i)
+        End If
     End Sub
 End Class

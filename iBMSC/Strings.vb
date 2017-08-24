@@ -18,6 +18,7 @@ Public Class Strings
         Public Shared SaveOnExit2 As String = "You still need to tell me if you want to save changes even though you are closing the application with task manager. -_,-"
         Public Shared PromptEnter As String = "Please enter a label."
         Public Shared PromptEnterNumeric As String = "Please enter a value."
+        Public Shared PromptEnterMeasure As String = "Please enter a measure (0-999)."
         Public Shared PromptEnterBPM As String = "Please enter a BPM value."
         Public Shared PromptEnterSTOP As String = "Please enter a STOP value."
         Public Shared PromptSlashValue As String = "When the slash key (""/"") is pressed, change grid division to:"

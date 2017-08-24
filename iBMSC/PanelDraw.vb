@@ -19,9 +19,9 @@ Partial Public Class MainWindow
 
         Dim xTHeight As Integer = spMain(xIndex).Height
         Dim xTWidth As Integer = spMain(xIndex).Width
-        Dim xHS As Integer = spH(xIndex)
-        Dim xVS As Integer = spV(xIndex)
-        Dim xVSR As Integer = -spV(xIndex)
+        Dim xHS As Integer = PanelHeight(xIndex)
+        Dim xVS As Integer = PanelDisplacement(xIndex)
+        Dim xVSR As Integer = -PanelDisplacement(xIndex)
         Dim xVSu As Integer = IIf(xVSR + xTHeight / gxHeight > VPosition1000(), VPosition1000(), xVSR + xTHeight / gxHeight)
 
         'e1.Graphics.SmoothingMode = Drawing2D.SmoothingMode.AntiAlias
@@ -134,7 +134,7 @@ Partial Public Class MainWindow
     End Sub
 
     Private Sub DrawSelectionBox(xIndex As Integer, e1 As BufferedGraphics)
-        If TBSelect.Checked AndAlso xIndex = spFocus AndAlso Not (pMouseMove = New Point(-1, -1) Or LastMouseDownLocation = New Point(-1, -1)) Then
+        If TBSelect.Checked AndAlso xIndex = PanelFocus AndAlso Not (pMouseMove = New Point(-1, -1) Or LastMouseDownLocation = New Point(-1, -1)) Then
             e1.Graphics.DrawRectangle(vo.SelBox, IIf(pMouseMove.X > LastMouseDownLocation.X, LastMouseDownLocation.X, pMouseMove.X),
                                                 IIf(pMouseMove.Y > LastMouseDownLocation.Y, LastMouseDownLocation.Y, pMouseMove.Y),
                                                 Math.Abs(pMouseMove.X - LastMouseDownLocation.X), Math.Abs(pMouseMove.Y - LastMouseDownLocation.Y))

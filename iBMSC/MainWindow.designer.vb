@@ -356,6 +356,7 @@ Partial Class MainWindow
         Me.HSL = New System.Windows.Forms.HScrollBar()
         Me.POptionsResizer = New System.Windows.Forms.Button()
         Me.ToolTipUniversal = New System.Windows.Forms.ToolTip(Me.components)
+        Me.mnGotoMeasure = New System.Windows.Forms.ToolStripMenuItem()
         Me.cmnLanguage.SuspendLayout()
         Me.cmnTheme.SuspendLayout()
         Me.POptionsScroll.SuspendLayout()
@@ -2668,7 +2669,7 @@ Partial Class MainWindow
         '
         'mnEdit
         '
-        Me.mnEdit.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnUndo, Me.mnRedo, Me.ToolStripSeparator17, Me.mnCut, Me.mnCopy, Me.mnPaste, Me.mnDelete, Me.mnSelectAll, Me.ToolStripSeparator18, Me.mnFind, Me.mnStatistics, Me.ToolStripSeparator19, Me.mnTimeSelect, Me.mnSelect, Me.mnWrite, Me.ToolStripSeparator23, Me.mnMyO2})
+        Me.mnEdit.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnUndo, Me.mnRedo, Me.ToolStripSeparator17, Me.mnCut, Me.mnCopy, Me.mnPaste, Me.mnDelete, Me.mnSelectAll, Me.mnGotoMeasure, Me.ToolStripSeparator18, Me.mnFind, Me.mnStatistics, Me.ToolStripSeparator19, Me.mnTimeSelect, Me.mnSelect, Me.mnWrite, Me.ToolStripSeparator23, Me.mnMyO2})
         Me.mnEdit.Name = "mnEdit"
         Me.mnEdit.Size = New System.Drawing.Size(39, 19)
         Me.mnEdit.Text = "&Edit"
@@ -4008,6 +4009,13 @@ Partial Class MainWindow
         Me.POptionsResizer.TabStop = False
         Me.POptionsResizer.UseVisualStyleBackColor = True
         '
+        'mnGotoMeasure
+        '
+        Me.mnGotoMeasure.Name = "mnGotoMeasure"
+        Me.mnGotoMeasure.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.G), System.Windows.Forms.Keys)
+        Me.mnGotoMeasure.Size = New System.Drawing.Size(233, 22)
+        Me.mnGotoMeasure.Text = "Go To Measure..."
+        '
         'MainWindow
         '
         Me.AllowDrop = True
@@ -4476,4 +4484,5 @@ Partial Class MainWindow
     Friend WithEvents BGSlash As System.Windows.Forms.Button
     Friend WithEvents FSM As System.Windows.Forms.ToolStripStatusLabel
     Friend WithEvents mnUpdateC As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents mnGotoMeasure As ToolStripMenuItem
 End Class
