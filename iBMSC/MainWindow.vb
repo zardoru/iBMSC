@@ -2133,6 +2133,11 @@ EndSearch:
             xArg = pArgs(CurrentPlayer)
         End If
 
+        ' az: Treat it like we cancelled the operation
+        If Not File.Exists(PrevCodeToReal(xArg.Path)) Then
+            Exit Sub
+        End If
+
         Dim xStrAll As String = SaveBMS()
         Dim xFileName As String = IIf(Not PathIsValid(FileName),
                                       IIf(InitPath = "", My.Application.Info.DirectoryPath, InitPath),
@@ -2152,6 +2157,10 @@ EndSearch:
             xArg = pArgs(CurrentPlayer)
         End If
 
+        If Not File.Exists(PrevCodeToReal(xArg.Path)) Then
+            Exit Sub
+        End If
+
         Dim xStrAll As String = SaveBMS()
         Dim xFileName As String = IIf(Not PathIsValid(FileName),
                                       IIf(InitPath = "", My.Application.Info.DirectoryPath, InitPath),
@@ -2159,6 +2168,7 @@ EndSearch:
         My.Computer.FileSystem.WriteAllText(xFileName, xStrAll, False, TextEncoding)
 
         AddTempFileList(xFileName)
+
         System.Diagnostics.Process.Start(PrevCodeToReal(xArg.Path), PrevCodeToReal(xArg.aBegin))
     End Sub
 
@@ -2169,6 +2179,10 @@ EndSearch:
         If Not File.Exists(PrevCodeToReal(xArg.Path)) Then
             PlayerMissingPrompt()
             xArg = pArgs(CurrentPlayer)
+        End If
+
+        If Not File.Exists(PrevCodeToReal(xArg.Path)) Then
+            Exit Sub
         End If
 
         System.Diagnostics.Process.Start(PrevCodeToReal(xArg.Path), PrevCodeToReal(xArg.aStop))
