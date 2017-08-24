@@ -4,14 +4,20 @@ Imports CSCore.Codecs
 Imports CSCore.SoundOut
 
 Module Audio
-    Dim Output As WasapiOut
+    Dim Output As DirectSoundOut
     Dim Source As IWaveSource
 
     Public Sub Initialize()
-        Output = New WasapiOut()
+        Output = New DirectSoundOut()
         CodecFactory.Instance.Register("ogg", New CodecFactoryEntry(Function(s)
                                                                         Return New NVorbisSource(s).ToWaveSource()
                                                                     End Function, ".ogg"))
+    End Sub
+
+    Public Sub Finalize()
+        Output.Stop()
+        Output.Dispose()
+        Output = Nothing
     End Sub
 
     Public Function CheckFilename(ByVal filename As String) As String
@@ -34,6 +40,7 @@ Module Audio
 
         If Source IsNot Nothing Then
             Output.Stop()
+            Source.Dispose()
             Source = Nothing
         End If
 
@@ -70,7 +77,7 @@ Class NVorbisSource
         End If
         _stream = stream
         _vorbisReader = New VorbisReader(stream, Nothing)
-        _waveFormat = New WaveFormat(_vorbisReader.SampleRate, _vorbisReader.Channels, AudioEncoding.IeeeFloat)
+        _waveFormat = New WaveFormat(_vorbisReader.SampleRate, 32, _vorbisReader.Channels, AudioEncoding.IeeeFloat)
     End Sub
 
     Public ReadOnly Property CanSeek As Boolean Implements IAudioSource.CanSeek
@@ -113,7 +120,7 @@ Class NVorbisSource
 
     Public Sub Dispose() Implements IDisposable.Dispose
         If Not _disposed Then
-            _vorbisReader.Dispose()
+            '_vorbisReader.Dispose()
         Else
             'Throw New ObjectDisposedException("NVorbisSource")
         End If

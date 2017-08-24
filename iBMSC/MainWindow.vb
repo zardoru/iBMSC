@@ -1150,6 +1150,10 @@ Public Class MainWindow
         Return New Cursor(LoadCursorFromFile(path))
     End Function
 
+    Private Sub Unload() Handles MyBase.Disposed
+        Audio.Finalize()
+    End Sub
+
     Private Sub Form1_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
         'On Error Resume Next
         Me.TopMost = True
