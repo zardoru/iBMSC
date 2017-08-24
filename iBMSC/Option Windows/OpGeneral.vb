@@ -40,6 +40,8 @@ Public Class OpGeneral
             Case 4 : zEncoding = System.Text.Encoding.UTF32
             Case 5 : zEncoding = System.Text.Encoding.UTF7
             Case 6 : zEncoding = System.Text.Encoding.UTF8
+            Case 7 : zEncoding = System.Text.Encoding.GetEncoding(932)
+            Case 8 : zEncoding = System.Text.Encoding.GetEncoding(51949)
         End Select
         'zSort = CSortingMethod.SelectedIndex
         zMiddle = IIf(rMiddleDrag.Checked, 1, 0)
@@ -127,6 +129,9 @@ Public Class OpGeneral
         cAutoSave.Text = Strings.fopGeneral.AutoSave
         Label7.Text = Strings.fopGeneral.minutes
         cMStopPreview.Text = Strings.fopGeneral.StopPreviewOnClick
+
+        Dim enc = System.Text.Encoding.Default
+        CTextEncoding.Items(0) = "System ANSI (" & enc.EncodingName & ")"
 
         OK_Button.Text = Strings.OK
         Cancel_Button.Text = Strings.Cancel

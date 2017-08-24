@@ -3568,6 +3568,9 @@ EndOfAdjustment:
             Case "UTF32" : xTE = 4
             Case "UTF7" : xTE = 5
             Case "UTF8" : xTE = 6
+            Case "SJIS" : xTE = 7
+            Case "EUC-KR" : xTE = 8
+            Case Else : xTE = 0
         End Select
 
         Dim xDiag As New OpGeneral(gWheel, gPgUpDn, MiddleButtonMoveMethod, xTE, 192.0R / BMSGridLimit,

@@ -42,7 +42,9 @@ Namespace Editor
             If TextEncoding Is Text.Encoding.UTF32 Then Return "UTF32"
             If TextEncoding Is Text.Encoding.UTF7 Then Return "UTF7"
             If TextEncoding Is Text.Encoding.UTF8 Then Return "UTF8"
-            Return "ANSI"
+            If TextEncoding Is Text.Encoding.GetEncoding(932) Then Return "SJIS"
+            If TextEncoding Is System.Text.Encoding.GetEncoding(51949) Then Return "EUC-KR"
+            Return "ANSI (" & TextEncoding.EncodingName & ")"
         End Function
 
         ''' <summary>

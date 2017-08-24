@@ -22,37 +22,37 @@ Partial Class OpGeneral
     '不要使用代码编辑器修改它。
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        Me.TableLayoutPanel1 = New System.Windows.Forms.TableLayoutPanel
-        Me.OK_Button = New System.Windows.Forms.Button
-        Me.Cancel_Button = New System.Windows.Forms.Button
-        Me.CWheel = New System.Windows.Forms.ComboBox
-        Me.CTextEncoding = New System.Windows.Forms.ComboBox
-        Me.Label1 = New System.Windows.Forms.Label
-        Me.Label2 = New System.Windows.Forms.Label
-        Me.Label4 = New System.Windows.Forms.Label
-        Me.TBAssociate = New System.Windows.Forms.Button
-        Me.cBeep = New System.Windows.Forms.CheckBox
-        Me.PictureBox1 = New System.Windows.Forms.PictureBox
-        Me.cBpm1296 = New System.Windows.Forms.CheckBox
-        Me.cStop1296 = New System.Windows.Forms.CheckBox
-        Me.cMEnterFocus = New System.Windows.Forms.CheckBox
-        Me.cMClickFocus = New System.Windows.Forms.CheckBox
-        Me.TBAssociatePMS = New System.Windows.Forms.Button
-        Me.TBAssociateIBMSC = New System.Windows.Forms.Button
-        Me.Label5 = New System.Windows.Forms.Label
-        Me.CPgUpDn = New System.Windows.Forms.ComboBox
-        Me.NAutoSave = New System.Windows.Forms.NumericUpDown
-        Me.Label7 = New System.Windows.Forms.Label
-        Me.cAutoSave = New System.Windows.Forms.CheckBox
-        Me.cMStopPreview = New System.Windows.Forms.CheckBox
-        Me.nGridPartition = New System.Windows.Forms.NumericUpDown
-        Me.Label6 = New System.Windows.Forms.Label
-        Me.TBAssociateBME = New System.Windows.Forms.Button
-        Me.TBAssociateBML = New System.Windows.Forms.Button
-        Me.Label3 = New System.Windows.Forms.Label
-        Me.FlowLayoutPanel1 = New System.Windows.Forms.FlowLayoutPanel
-        Me.rMiddleAuto = New System.Windows.Forms.RadioButton
-        Me.rMiddleDrag = New System.Windows.Forms.RadioButton
+        Me.TableLayoutPanel1 = New System.Windows.Forms.TableLayoutPanel()
+        Me.OK_Button = New System.Windows.Forms.Button()
+        Me.Cancel_Button = New System.Windows.Forms.Button()
+        Me.CWheel = New System.Windows.Forms.ComboBox()
+        Me.CTextEncoding = New System.Windows.Forms.ComboBox()
+        Me.Label1 = New System.Windows.Forms.Label()
+        Me.Label2 = New System.Windows.Forms.Label()
+        Me.Label4 = New System.Windows.Forms.Label()
+        Me.TBAssociate = New System.Windows.Forms.Button()
+        Me.cBeep = New System.Windows.Forms.CheckBox()
+        Me.PictureBox1 = New System.Windows.Forms.PictureBox()
+        Me.cBpm1296 = New System.Windows.Forms.CheckBox()
+        Me.cStop1296 = New System.Windows.Forms.CheckBox()
+        Me.cMEnterFocus = New System.Windows.Forms.CheckBox()
+        Me.cMClickFocus = New System.Windows.Forms.CheckBox()
+        Me.TBAssociatePMS = New System.Windows.Forms.Button()
+        Me.TBAssociateIBMSC = New System.Windows.Forms.Button()
+        Me.Label5 = New System.Windows.Forms.Label()
+        Me.CPgUpDn = New System.Windows.Forms.ComboBox()
+        Me.NAutoSave = New System.Windows.Forms.NumericUpDown()
+        Me.Label7 = New System.Windows.Forms.Label()
+        Me.cAutoSave = New System.Windows.Forms.CheckBox()
+        Me.cMStopPreview = New System.Windows.Forms.CheckBox()
+        Me.nGridPartition = New System.Windows.Forms.NumericUpDown()
+        Me.Label6 = New System.Windows.Forms.Label()
+        Me.TBAssociateBME = New System.Windows.Forms.Button()
+        Me.TBAssociateBML = New System.Windows.Forms.Button()
+        Me.Label3 = New System.Windows.Forms.Label()
+        Me.FlowLayoutPanel1 = New System.Windows.Forms.FlowLayoutPanel()
+        Me.rMiddleAuto = New System.Windows.Forms.RadioButton()
+        Me.rMiddleDrag = New System.Windows.Forms.RadioButton()
         Me.TableLayoutPanel1.SuspendLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.NAutoSave, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -108,10 +108,10 @@ Partial Class OpGeneral
         '
         Me.CTextEncoding.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.CTextEncoding.FormattingEnabled = True
-        Me.CTextEncoding.Items.AddRange(New Object() {"ANSI", "Unicode", "ASCII", "Big Endian Unicode", "UTF32", "UTF7", "UTF8"})
-        Me.CTextEncoding.Location = New System.Drawing.Point(154, 18)
+        Me.CTextEncoding.Items.AddRange(New Object() {"ANSI (Locale dependant)", "Unicode", "ASCII", "Big Endian Unicode", "UTF32", "UTF7", "UTF8", "Shift-JIS", "EUC-KR"})
+        Me.CTextEncoding.Location = New System.Drawing.Point(137, 18)
         Me.CTextEncoding.Name = "CTextEncoding"
-        Me.CTextEncoding.Size = New System.Drawing.Size(237, 23)
+        Me.CTextEncoding.Size = New System.Drawing.Size(254, 23)
         Me.CTextEncoding.TabIndex = 2
         '
         'Label1
@@ -125,7 +125,7 @@ Partial Class OpGeneral
         '
         'Label2
         '
-        Me.Label2.Location = New System.Drawing.Point(12, 20)
+        Me.Label2.Location = New System.Drawing.Point(-5, 20)
         Me.Label2.Name = "Label2"
         Me.Label2.Size = New System.Drawing.Size(136, 17)
         Me.Label2.TabIndex = 41
@@ -134,7 +134,7 @@ Partial Class OpGeneral
         '
         'Label4
         '
-        Me.Label4.Location = New System.Drawing.Point(12, 50)
+        Me.Label4.Location = New System.Drawing.Point(-5, 50)
         Me.Label4.Name = "Label4"
         Me.Label4.Size = New System.Drawing.Size(136, 17)
         Me.Label4.TabIndex = 43
@@ -143,9 +143,9 @@ Partial Class OpGeneral
         '
         'TBAssociate
         '
-        Me.TBAssociate.Location = New System.Drawing.Point(154, 47)
+        Me.TBAssociate.Location = New System.Drawing.Point(137, 47)
         Me.TBAssociate.Name = "TBAssociate"
-        Me.TBAssociate.Size = New System.Drawing.Size(105, 23)
+        Me.TBAssociate.Size = New System.Drawing.Size(122, 23)
         Me.TBAssociate.TabIndex = 3
         Me.TBAssociate.Text = "*.bms"
         Me.TBAssociate.UseVisualStyleBackColor = True
@@ -186,7 +186,7 @@ Partial Class OpGeneral
         Me.cStop1296.AutoSize = True
         Me.cStop1296.Location = New System.Drawing.Point(32, 219)
         Me.cStop1296.Name = "cStop1296"
-        Me.cStop1296.Size = New System.Drawing.Size(198, 19)
+        Me.cStop1296.Size = New System.Drawing.Size(197, 19)
         Me.cStop1296.TabIndex = 10
         Me.cStop1296.Text = "Extend number of STOPs to 1296"
         Me.cStop1296.UseVisualStyleBackColor = True
@@ -213,9 +213,9 @@ Partial Class OpGeneral
         '
         'TBAssociatePMS
         '
-        Me.TBAssociatePMS.Location = New System.Drawing.Point(317, 76)
+        Me.TBAssociatePMS.Location = New System.Drawing.Point(310, 78)
         Me.TBAssociatePMS.Name = "TBAssociatePMS"
-        Me.TBAssociatePMS.Size = New System.Drawing.Size(75, 23)
+        Me.TBAssociatePMS.Size = New System.Drawing.Size(81, 23)
         Me.TBAssociatePMS.TabIndex = 4
         Me.TBAssociatePMS.Text = "*.pms"
         Me.TBAssociatePMS.UseVisualStyleBackColor = True
@@ -294,7 +294,7 @@ Partial Class OpGeneral
         '
         'nGridPartition
         '
-        Me.nGridPartition.Location = New System.Drawing.Point(195, 107)
+        Me.nGridPartition.Location = New System.Drawing.Point(219, 107)
         Me.nGridPartition.Maximum = New Decimal(New Integer() {10000, 0, 0, 0})
         Me.nGridPartition.Minimum = New Decimal(New Integer() {8, 0, 0, 0})
         Me.nGridPartition.Name = "nGridPartition"
@@ -304,7 +304,7 @@ Partial Class OpGeneral
         '
         'Label6
         '
-        Me.Label6.Location = New System.Drawing.Point(20, 109)
+        Me.Label6.Location = New System.Drawing.Point(44, 108)
         Me.Label6.Name = "Label6"
         Me.Label6.Size = New System.Drawing.Size(169, 17)
         Me.Label6.TabIndex = 62
@@ -313,7 +313,7 @@ Partial Class OpGeneral
         '
         'TBAssociateBME
         '
-        Me.TBAssociateBME.Location = New System.Drawing.Point(154, 76)
+        Me.TBAssociateBME.Location = New System.Drawing.Point(137, 78)
         Me.TBAssociateBME.Name = "TBAssociateBME"
         Me.TBAssociateBME.Size = New System.Drawing.Size(76, 23)
         Me.TBAssociateBME.TabIndex = 63
@@ -322,9 +322,9 @@ Partial Class OpGeneral
         '
         'TBAssociateBML
         '
-        Me.TBAssociateBML.Location = New System.Drawing.Point(236, 76)
+        Me.TBAssociateBML.Location = New System.Drawing.Point(219, 78)
         Me.TBAssociateBML.Name = "TBAssociateBML"
-        Me.TBAssociateBML.Size = New System.Drawing.Size(75, 23)
+        Me.TBAssociateBML.Size = New System.Drawing.Size(85, 23)
         Me.TBAssociateBML.TabIndex = 64
         Me.TBAssociateBML.Text = "*.bml"
         Me.TBAssociateBML.UseVisualStyleBackColor = True

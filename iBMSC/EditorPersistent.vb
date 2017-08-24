@@ -361,6 +361,8 @@ Partial Public Class MainWindow
                     Case "UTF32" : TextEncoding = System.Text.Encoding.UTF32
                     Case "UTF7" : TextEncoding = System.Text.Encoding.UTF7
                     Case "UTF8" : TextEncoding = System.Text.Encoding.UTF8
+                    Case "SJIS" : TextEncoding = System.Text.Encoding.GetEncoding(932)
+                    Case "EUC-KR" : TextEncoding = System.Text.Encoding.GetEncoding(51949)
                 End Select
 
                 XMLLoadAttribute(.GetAttribute("BMSGridLimit"), BMSGridLimit)
