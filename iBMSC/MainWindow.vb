@@ -3233,6 +3233,7 @@ EndOfAdjustment:
 
         Dim xOrigPath() As String = CType(e.Data.GetData(DataFormats.FileDrop), String())
         Dim xPath() As String = FilterFileBySupported(xOrigPath, SupportedAudioExtension)
+        Array.Sort(xPath)
         If xPath.Length = 0 Then
             RefreshPanelAll()
             Exit Sub
@@ -4997,19 +4998,12 @@ case2:              Dim xI0 As Integer
         End Try
     End Sub
 
-    Private Sub LWAV_SelectedIndexChanged(sender As Object, e As EventArgs) Handles LWAV.SelectedIndexChanged
-
-    End Sub
 
     Private Sub Label15_Click(sender As Object, e As EventArgs) Handles Label15.Click
 
     End Sub
 
     Private Sub tBeatValue_TextChanged(sender As Object, e As EventArgs) Handles tBeatValue.TextChanged
-
-    End Sub
-
-    Private Sub mnSys_Click(sender As Object, e As EventArgs) Handles mnSys.Click
 
     End Sub
 End Class
