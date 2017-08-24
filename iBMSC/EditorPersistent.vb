@@ -684,10 +684,10 @@ EndOfSub:
 
                 Dim eAbout As XmlElement = eMenu.Item("About")
                 If eAbout IsNot Nothing Then
-                    XMLLoadLocaleMenu(eAbout.Item("Title"), mnAbout.Text)
-                    XMLLoadLocaleMenu(eAbout.Item("About"), mnAbout1.Text)
-                    XMLLoadLocaleMenu(eAbout.Item("CheckUpdates"), mnUpdate.Text)
-                    XMLLoadLocaleMenu(eAbout.Item("CheckUpdatesC"), mnUpdateC.Text)
+                    'XMLLoadLocaleMenu(eAbout.Item("Title"), mnAbout.Text)
+                    'XMLLoadLocaleMenu(eAbout.Item("About"), mnAbout1.Text)
+                    'XMLLoadLocaleMenu(eAbout.Item("CheckUpdates"), mnUpdate.Text)
+                    'XMLLoadLocaleMenu(eAbout.Item("CheckUpdatesC"), mnUpdateC.Text)
                 End If
             End If
 

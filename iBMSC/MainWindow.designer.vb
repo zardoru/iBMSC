@@ -264,10 +264,6 @@ Partial Class MainWindow
         Me.mnPlayB = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnPlay = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnStop = New System.Windows.Forms.ToolStripMenuItem()
-        Me.mnAbout = New System.Windows.Forms.ToolStripMenuItem()
-        Me.mnAbout1 = New System.Windows.Forms.ToolStripMenuItem()
-        Me.mnUpdate = New System.Windows.Forms.ToolStripMenuItem()
-        Me.mnUpdateC = New System.Windows.Forms.ToolStripMenuItem()
         Me.POConvert = New System.Windows.Forms.ToolStripDropDownButton()
         Me.TBMain = New System.Windows.Forms.ToolStrip()
         Me.TBNew = New System.Windows.Forms.ToolStripButton()
@@ -2540,7 +2536,7 @@ Partial Class MainWindow
         Me.mnMain.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
         Me.mnMain.Dock = System.Windows.Forms.DockStyle.None
         Me.mnMain.GripMargin = New System.Windows.Forms.Padding(2)
-        Me.mnMain.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnFile, Me.mnEdit, Me.mnSys, Me.mnOptions, Me.mnConversion, Me.mnPreview, Me.mnAbout})
+        Me.mnMain.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnFile, Me.mnEdit, Me.mnSys, Me.mnOptions, Me.mnConversion, Me.mnPreview})
         Me.mnMain.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow
         Me.mnMain.Location = New System.Drawing.Point(0, 0)
         Me.mnMain.Name = "mnMain"
@@ -3143,32 +3139,6 @@ Partial Class MainWindow
         Me.mnStop.ShortcutKeys = System.Windows.Forms.Keys.F7
         Me.mnStop.Size = New System.Drawing.Size(201, 22)
         Me.mnStop.Text = "&Stop"
-        '
-        'mnAbout
-        '
-        Me.mnAbout.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnAbout1, Me.mnUpdate, Me.mnUpdateC})
-        Me.mnAbout.Name = "mnAbout"
-        Me.mnAbout.Size = New System.Drawing.Size(52, 19)
-        Me.mnAbout.Text = "&About"
-        '
-        'mnAbout1
-        '
-        Me.mnAbout1.Image = Global.iBMSC.My.Resources.Resources.x16About
-        Me.mnAbout1.Name = "mnAbout1"
-        Me.mnAbout1.Size = New System.Drawing.Size(206, 22)
-        Me.mnAbout1.Text = "&About"
-        '
-        'mnUpdate
-        '
-        Me.mnUpdate.Name = "mnUpdate"
-        Me.mnUpdate.Size = New System.Drawing.Size(206, 22)
-        Me.mnUpdate.Text = "Check &Updates"
-        '
-        'mnUpdateC
-        '
-        Me.mnUpdateC.Name = "mnUpdateC"
-        Me.mnUpdateC.Size = New System.Drawing.Size(206, 22)
-        Me.mnUpdateC.Text = "Check Updates (Chinese)"
         '
         'POConvert
         '
@@ -4198,7 +4168,6 @@ Partial Class MainWindow
     Friend WithEvents mnWrite As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents ToolStripSeparator23 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents mnConversion As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents mnAbout As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnErrorCheck As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnPreviewOnClick As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnShowFileName As System.Windows.Forms.ToolStripMenuItem
@@ -4207,8 +4176,6 @@ Partial Class MainWindow
     Friend WithEvents mnVOptions As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnLanguage As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnTheme As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents mnAbout1 As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents mnUpdate As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents cmnLanguage As System.Windows.Forms.ContextMenuStrip
     Friend WithEvents TBLangDef As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents ToolStripSeparator9 As System.Windows.Forms.ToolStripSeparator
@@ -4483,6 +4450,5 @@ Partial Class MainWindow
     Friend WithEvents CGBPM As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents BGSlash As System.Windows.Forms.Button
     Friend WithEvents FSM As System.Windows.Forms.ToolStripStatusLabel
-    Friend WithEvents mnUpdateC As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnGotoMeasure As ToolStripMenuItem
 End Class

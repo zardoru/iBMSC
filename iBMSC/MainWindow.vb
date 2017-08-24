@@ -3171,7 +3171,7 @@ EndOfAdjustment:
 
 
 
-    Private Sub TBAbout_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TBAbout.Click, mnAbout1.Click
+    Private Sub TBAbout_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TBAbout.Click
         Dim Aboutboxx1 As New AboutBox1()
         'If My.Computer.FileSystem.FileExists(My.Application.Info.DirectoryPath & "\About.png") Then
         Aboutboxx1.bBitmap = My.Resources.About0
@@ -4492,11 +4492,11 @@ Jump2:
         POStatusRefresh()
     End Sub
 
-    Private Sub mnUpdate_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnUpdate.Click
+    Private Sub mnUpdate_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
         Process.Start("http://www.cs.mcgill.ca/~ryang6/iBMSC/")
     End Sub
 
-    Private Sub mnUpdateC_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnUpdateC.Click
+    Private Sub mnUpdateC_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
         Process.Start("http://bbs.rohome.net/thread-1074065-1-1.html")
     End Sub
 
