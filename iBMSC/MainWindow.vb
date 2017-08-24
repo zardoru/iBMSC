@@ -316,7 +316,7 @@ Public Class MainWindow
         Dim xLong = note.LongNote
         Dim xHidden = note.Hidden
         Dim xI As Integer = GetColumn(iCol).Identifier
-        If iCol = niBPM AndAlso (xVal / 10000 <> xVal \ 10000 Or xVal >= 2560000) Then xI += idflBPM
+        If iCol = niBPM AndAlso (xVal / 10000 <> xVal \ 10000 Or xVal >= 2560000 Or xVal < 0) Then xI += idflBPM
         If (iCol >= niA1 And iCol <= niA8) Or (iCol >= niD1 And iCol <= niD8) Then
             If xLong Then xI += idLong
             If xHidden Then xI += idHidden
@@ -635,7 +635,7 @@ Public Class MainWindow
 
     Private Sub AddNote(ByVal xVPosition As Double,
                         ByVal xColumnIndex As Integer,
-                        ByVal xValue As Integer,
+                        ByVal xValue As Long,
                         ByVal xLongNote As Boolean,
                         ByVal xHidden As Boolean,
                Optional ByVal xSelected As Boolean = False,
@@ -3061,7 +3061,7 @@ EndOfAdjustment:
         End If
     End Sub
 
-    Private Function FindNoteIndex(ByVal nColumnIndex As Integer, ByVal nVposition As Double, ByVal nValue As Integer, ByVal nLongNote As Double, ByVal nHidden As Boolean) As Integer
+    Private Function FindNoteIndex(ByVal nColumnIndex As Integer, ByVal nVposition As Double, ByVal nValue As Long, ByVal nLongNote As Double, ByVal nHidden As Boolean) As Integer
         Dim xI1 As Integer
         If NTInput Then
             For xI1 = 1 To UBound(Notes)

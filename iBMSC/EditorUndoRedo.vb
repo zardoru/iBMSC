@@ -200,7 +200,7 @@ Partial Public Class MainWindow
         mnRedo.Enabled = False
     End Sub
 
-    Private Sub RedoAddNote(ByVal xCol As Integer, ByVal xVPos As Double, ByVal xVal As Integer, ByVal xLong As Double, ByVal xHide As Boolean,
+    Private Sub RedoAddNote(ByVal xCol As Integer, ByVal xVPos As Double, ByVal xVal As Long, ByVal xLong As Double, ByVal xHide As Boolean,
     ByVal xSel As Boolean, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
         Dim xUndo As New UndoRedo.RemoveNote(xCol, xVPos, xVal, xLong, xHide)
         Dim xRedo As New UndoRedo.AddNote(xCol, xVPos, xVal, xLong, xHide, xSel)

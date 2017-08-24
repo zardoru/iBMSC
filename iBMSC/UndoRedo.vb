@@ -75,7 +75,7 @@ Public Class UndoRedo
         '1 + 25 + 1 = 27
         Public ColumnIndex As Integer = 0
         Public VPosition As Double = 0
-        Public Value As Integer = 10000
+        Public Value As Long = 10000
         Public LongNote As Double = 0
         Public Hidden As Boolean = False
         Public Selected As Boolean = False
@@ -97,13 +97,13 @@ Public Class UndoRedo
         Public Sub New(ByVal b() As Byte)
             ColumnIndex = BitConverter.ToInt32(b, 1)
             VPosition = BitConverter.ToDouble(b, 5)
-            Value = BitConverter.ToInt32(b, 13)
-            LongNote = BitConverter.ToDouble(b, 17)
-            Hidden = CBool(b(25))
-            Selected = CBool(b(26))
+            Value = BitConverter.ToInt64(b, 13)
+            LongNote = BitConverter.ToDouble(b, 21)
+            Hidden = CBool(b(29))
+            Selected = CBool(b(30))
         End Sub
 
-        Public Sub New(ByVal xColumnIndex As Integer, ByVal xVPosition As Double, ByVal xValue As Integer, ByVal xLongNote As Double, ByVal xHidden As Boolean, _
+        Public Sub New(ByVal xColumnIndex As Integer, ByVal xVPosition As Double, ByVal xValue As Long, ByVal xLongNote As Double, ByVal xHidden As Boolean,
         ByVal xSelected As Boolean)
             ColumnIndex = xColumnIndex
             VPosition = xVPosition
@@ -124,7 +124,7 @@ Public Class UndoRedo
         '1 + 25 = 26
         Public ColumnIndex As Integer = 0
         Public VPosition As Double = 0
-        Public Value As Integer = 10000
+        Public Value As Long = 10000
         Public LongNote As Double = 0
         Public Hidden As Boolean = False
 
@@ -144,12 +144,12 @@ Public Class UndoRedo
         Public Sub New(ByVal b() As Byte)
             ColumnIndex = BitConverter.ToInt32(b, 1)
             VPosition = BitConverter.ToDouble(b, 5)
-            Value = BitConverter.ToInt32(b, 13)
-            LongNote = BitConverter.ToDouble(b, 17)
-            Hidden = CBool(b(25))
+            Value = BitConverter.ToInt64(b, 13)
+            LongNote = BitConverter.ToDouble(b, 21)
+            Hidden = CBool(b(29))
         End Sub
 
-        Public Sub New(ByVal xColumnIndex As Integer, ByVal xVPosition As Double, ByVal xValue As Integer, ByVal xLongNote As Double, ByVal xHidden As Boolean)
+        Public Sub New(ByVal xColumnIndex As Integer, ByVal xVPosition As Double, ByVal xValue As Long, ByVal xLongNote As Double, ByVal xHidden As Boolean)
             ColumnIndex = xColumnIndex
             VPosition = xVPosition
             Value = xValue

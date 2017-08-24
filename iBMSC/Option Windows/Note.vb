@@ -17,7 +17,7 @@
         Public TempIndex As Integer
 
         Public Function equalsBMSE(ByVal nColumnIndex As Integer, ByVal nVposition As Double,
-    ByVal nValue As Integer, ByVal nLongNote As Boolean, ByVal nHidden As Boolean) As Boolean
+    ByVal nValue As Long, ByVal nLongNote As Boolean, ByVal nHidden As Boolean) As Boolean
             Return VPosition = nVposition And
                ColumnIndex = nColumnIndex And
                Value = nValue And
@@ -25,7 +25,7 @@
                Hidden = nHidden
         End Function
         Public Function equalsNT(ByVal nColumnIndex As Integer, ByVal nVposition As Double,
-    ByVal nValue As Integer, ByVal nLength As Double, ByVal nHidden As Boolean) As Boolean
+    ByVal nValue As Long, ByVal nLength As Double, ByVal nHidden As Boolean) As Boolean
             Return VPosition = nVposition And
                ColumnIndex = nColumnIndex And
                Value = nValue And

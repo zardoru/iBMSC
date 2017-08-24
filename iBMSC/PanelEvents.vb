@@ -1480,7 +1480,7 @@ EndCtrlOpn:         End If
                         If xColumn = niBPM Then xMessage = Strings.Messages.PromptEnterBPM
                         If xColumn = niSTOP Then xMessage = Strings.Messages.PromptEnterSTOP
 
-                        Dim value As Double = Val(InputBox(xMessage, Me.Text)) * 10000
+                        Dim value As Long = Val(InputBox(xMessage, Me.Text)) * 10000
 
                         If value <> 0 Then
                             For xI1 = 1 To UBound(Notes)
