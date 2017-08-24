@@ -51,7 +51,7 @@
 
     Private Sub OpenRecent(ByVal xFileName As String)
         'KMouseDown = -1
-        ReDim uNotes(-1)
+        ReDim SelectedNotes(-1)
         KMouseOver = -1
         If Not My.Computer.FileSystem.FileExists(xFileName) Then
             MsgBox(Strings.Messages.CannotFind.Replace("{}", xFileName), MsgBoxStyle.Critical)

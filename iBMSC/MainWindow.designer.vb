@@ -25,16 +25,16 @@ Partial Class MainWindow
         Me.TBLangDef = New System.Windows.Forms.ToolStripMenuItem()
         Me.TBLangRefresh = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator9 = New System.Windows.Forms.ToolStripSeparator()
-        Me.TBLanguage = New System.Windows.Forms.ToolStripDropDownButton()
         Me.mnLanguage = New System.Windows.Forms.ToolStripMenuItem()
+        Me.TBLanguage = New System.Windows.Forms.ToolStripDropDownButton()
         Me.cmnTheme = New System.Windows.Forms.ContextMenuStrip(Me.components)
         Me.TBThemeDef = New System.Windows.Forms.ToolStripMenuItem()
         Me.TBThemeSave = New System.Windows.Forms.ToolStripMenuItem()
         Me.TBThemeRefresh = New System.Windows.Forms.ToolStripMenuItem()
         Me.TBThemeLoadComptability = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator6 = New System.Windows.Forms.ToolStripSeparator()
-        Me.TBTheme = New System.Windows.Forms.ToolStripDropDownButton()
         Me.mnTheme = New System.Windows.Forms.ToolStripMenuItem()
+        Me.TBTheme = New System.Windows.Forms.ToolStripDropDownButton()
         Me.POptionsScroll = New System.Windows.Forms.Panel()
         Me.POptions = New System.Windows.Forms.Panel()
         Me.POExpansion = New System.Windows.Forms.Panel()
@@ -260,6 +260,7 @@ Partial Class MainWindow
         Me.ToolStripSeparator11 = New System.Windows.Forms.ToolStripSeparator()
         Me.POBModify = New System.Windows.Forms.ToolStripMenuItem()
         Me.POBMirror = New System.Windows.Forms.ToolStripMenuItem()
+        Me.POConvert = New System.Windows.Forms.ToolStripDropDownButton()
         Me.mnPreview = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnPlayB = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnPlay = New System.Windows.Forms.ToolStripMenuItem()
@@ -268,7 +269,6 @@ Partial Class MainWindow
         Me.mnAbout1 = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnUpdate = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnUpdateC = New System.Windows.Forms.ToolStripMenuItem()
-        Me.POConvert = New System.Windows.Forms.ToolStripDropDownButton()
         Me.TBMain = New System.Windows.Forms.ToolStrip()
         Me.TBNew = New System.Windows.Forms.ToolStripButton()
         Me.TBOpen = New System.Windows.Forms.ToolStripSplitButton()
@@ -442,7 +442,7 @@ Partial Class MainWindow
         '
         Me.cmnLanguage.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.TBLangDef, Me.TBLangRefresh, Me.ToolStripSeparator9})
         Me.cmnLanguage.Name = "cmnLanguage"
-        Me.cmnLanguage.OwnerItem = Me.mnLanguage
+        Me.cmnLanguage.OwnerItem = Me.TBLanguage
         Me.cmnLanguage.Size = New System.Drawing.Size(121, 54)
         '
         'TBLangDef
@@ -463,6 +463,14 @@ Partial Class MainWindow
         Me.ToolStripSeparator9.Name = "ToolStripSeparator9"
         Me.ToolStripSeparator9.Size = New System.Drawing.Size(117, 6)
         '
+        'mnLanguage
+        '
+        Me.mnLanguage.DropDown = Me.cmnLanguage
+        Me.mnLanguage.Image = Global.iBMSC.My.Resources.Resources.x16Language
+        Me.mnLanguage.Name = "mnLanguage"
+        Me.mnLanguage.Size = New System.Drawing.Size(229, 22)
+        Me.mnLanguage.Text = "&Language"
+        '
         'TBLanguage
         '
         Me.TBLanguage.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
@@ -473,19 +481,11 @@ Partial Class MainWindow
         Me.TBLanguage.Size = New System.Drawing.Size(29, 22)
         Me.TBLanguage.Text = "Language"
         '
-        'mnLanguage
-        '
-        Me.mnLanguage.DropDown = Me.cmnLanguage
-        Me.mnLanguage.Image = Global.iBMSC.My.Resources.Resources.x16Language
-        Me.mnLanguage.Name = "mnLanguage"
-        Me.mnLanguage.Size = New System.Drawing.Size(229, 22)
-        Me.mnLanguage.Text = "&Language"
-        '
         'cmnTheme
         '
         Me.cmnTheme.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.TBThemeDef, Me.TBThemeSave, Me.TBThemeRefresh, Me.TBThemeLoadComptability, Me.ToolStripSeparator6})
         Me.cmnTheme.Name = "cmnLanguage"
-        Me.cmnTheme.OwnerItem = Me.mnTheme
+        Me.cmnTheme.OwnerItem = Me.TBTheme
         Me.cmnTheme.Size = New System.Drawing.Size(246, 98)
         '
         'TBThemeDef
@@ -519,6 +519,14 @@ Partial Class MainWindow
         Me.ToolStripSeparator6.Name = "ToolStripSeparator6"
         Me.ToolStripSeparator6.Size = New System.Drawing.Size(242, 6)
         '
+        'mnTheme
+        '
+        Me.mnTheme.DropDown = Me.cmnTheme
+        Me.mnTheme.Image = Global.iBMSC.My.Resources.Resources.x16Theme
+        Me.mnTheme.Name = "mnTheme"
+        Me.mnTheme.Size = New System.Drawing.Size(229, 22)
+        Me.mnTheme.Text = "&Theme"
+        '
         'TBTheme
         '
         Me.TBTheme.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
@@ -528,14 +536,6 @@ Partial Class MainWindow
         Me.TBTheme.Name = "TBTheme"
         Me.TBTheme.Size = New System.Drawing.Size(29, 22)
         Me.TBTheme.Text = "Theme"
-        '
-        'mnTheme
-        '
-        Me.mnTheme.DropDown = Me.cmnTheme
-        Me.mnTheme.Image = Global.iBMSC.My.Resources.Resources.x16Theme
-        Me.mnTheme.Name = "mnTheme"
-        Me.mnTheme.Size = New System.Drawing.Size(229, 22)
-        Me.mnTheme.Text = "&Theme"
         '
         'POptionsScroll
         '
@@ -560,7 +560,7 @@ Partial Class MainWindow
         Me.POptions.Dock = System.Windows.Forms.DockStyle.Top
         Me.POptions.Location = New System.Drawing.Point(0, 0)
         Me.POptions.Name = "POptions"
-        Me.POptions.Size = New System.Drawing.Size(183, 1689)
+        Me.POptions.Size = New System.Drawing.Size(183, 1722)
         Me.POptions.TabIndex = 29
         '
         'POExpansion
@@ -570,7 +570,7 @@ Partial Class MainWindow
         Me.POExpansion.Controls.Add(Me.POExpansionInner)
         Me.POExpansion.Controls.Add(Me.POExpansionSwitch)
         Me.POExpansion.Dock = System.Windows.Forms.DockStyle.Top
-        Me.POExpansion.Location = New System.Drawing.Point(0, 1419)
+        Me.POExpansion.Location = New System.Drawing.Point(0, 1452)
         Me.POExpansion.Name = "POExpansion"
         Me.POExpansion.Size = New System.Drawing.Size(183, 270)
         Me.POExpansion.TabIndex = 6
@@ -616,10 +616,10 @@ Partial Class MainWindow
         'POExpansionSwitch
         '
         Me.POExpansionSwitch.Appearance = System.Windows.Forms.Appearance.Button
-        Me.POExpansionSwitch.BackColor = System.Drawing.Color.Silver
+        Me.POExpansionSwitch.BackColor = System.Drawing.SystemColors.Control
         Me.POExpansionSwitch.Cursor = System.Windows.Forms.Cursors.Hand
         Me.POExpansionSwitch.Dock = System.Windows.Forms.DockStyle.Top
-        Me.POExpansionSwitch.FlatStyle = System.Windows.Forms.FlatStyle.Popup
+        Me.POExpansionSwitch.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.POExpansionSwitch.Location = New System.Drawing.Point(0, 0)
         Me.POExpansionSwitch.Name = "POExpansionSwitch"
         Me.POExpansionSwitch.Size = New System.Drawing.Size(183, 20)
@@ -637,7 +637,7 @@ Partial Class MainWindow
         Me.POBeat.Controls.Add(Me.POBeatInner)
         Me.POBeat.Controls.Add(Me.POBeatSwitch)
         Me.POBeat.Dock = System.Windows.Forms.DockStyle.Top
-        Me.POBeat.Location = New System.Drawing.Point(0, 1149)
+        Me.POBeat.Location = New System.Drawing.Point(0, 1182)
         Me.POBeat.Name = "POBeat"
         Me.POBeat.Size = New System.Drawing.Size(183, 270)
         Me.POBeat.TabIndex = 5
@@ -671,14 +671,14 @@ Partial Class MainWindow
         Me.POBeatExpander.Cursor = System.Windows.Forms.Cursors.Hand
         Me.POBeatExpander.Dock = System.Windows.Forms.DockStyle.Top
         Me.POBeatExpander.FlatAppearance.BorderSize = 0
-        Me.POBeatExpander.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.POBeatExpander.Image = Global.iBMSC.My.Resources.Resources.Expand
+        Me.POBeatExpander.FlatStyle = System.Windows.Forms.FlatStyle.Popup
         Me.POBeatExpander.Location = New System.Drawing.Point(0, 54)
         Me.POBeatExpander.Margin = New System.Windows.Forms.Padding(0)
         Me.POBeatExpander.Name = "POBeatExpander"
-        Me.POBeatExpander.Size = New System.Drawing.Size(183, 14)
+        Me.POBeatExpander.Size = New System.Drawing.Size(183, 25)
         Me.POBeatExpander.TabIndex = 65
         Me.POBeatExpander.TabStop = False
+        Me.POBeatExpander.Text = "Expand..."
         Me.POBeatExpander.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         Me.POBeatExpander.UseVisualStyleBackColor = False
         '
@@ -799,11 +799,11 @@ Partial Class MainWindow
         Me.LBeat.IntegralHeight = False
         Me.LBeat.ItemHeight = 14
         Me.LBeat.Items.AddRange(New Object() {"000: 15.984375 (1023/64)"})
-        Me.LBeat.Location = New System.Drawing.Point(3, 144)
+        Me.LBeat.Location = New System.Drawing.Point(3, 155)
         Me.LBeat.Margin = New System.Windows.Forms.Padding(3, 0, 3, 0)
         Me.LBeat.Name = "LBeat"
         Me.LBeat.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended
-        Me.LBeat.Size = New System.Drawing.Size(177, 101)
+        Me.LBeat.Size = New System.Drawing.Size(177, 90)
         Me.LBeat.TabIndex = 26
         '
         'POBeatPart2
@@ -817,7 +817,7 @@ Partial Class MainWindow
         Me.POBeatPart2.Controls.Add(Me.CBeatMeasure, 0, 1)
         Me.POBeatPart2.Controls.Add(Me.CBeatPreserve, 0, 0)
         Me.POBeatPart2.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.POBeatPart2.Location = New System.Drawing.Point(0, 68)
+        Me.POBeatPart2.Location = New System.Drawing.Point(0, 79)
         Me.POBeatPart2.Margin = New System.Windows.Forms.Padding(0)
         Me.POBeatPart2.Name = "POBeatPart2"
         Me.POBeatPart2.RowCount = 4
@@ -879,10 +879,10 @@ Partial Class MainWindow
         'POBeatSwitch
         '
         Me.POBeatSwitch.Appearance = System.Windows.Forms.Appearance.Button
-        Me.POBeatSwitch.BackColor = System.Drawing.Color.Silver
+        Me.POBeatSwitch.BackColor = System.Drawing.SystemColors.Control
         Me.POBeatSwitch.Cursor = System.Windows.Forms.Cursors.Hand
         Me.POBeatSwitch.Dock = System.Windows.Forms.DockStyle.Top
-        Me.POBeatSwitch.FlatStyle = System.Windows.Forms.FlatStyle.Popup
+        Me.POBeatSwitch.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.POBeatSwitch.Location = New System.Drawing.Point(0, 0)
         Me.POBeatSwitch.Name = "POBeatSwitch"
         Me.POBeatSwitch.Size = New System.Drawing.Size(183, 20)
@@ -901,7 +901,7 @@ Partial Class MainWindow
         Me.POWAV.Controls.Add(Me.POWAVInner)
         Me.POWAV.Controls.Add(Me.POWAVSwitch)
         Me.POWAV.Dock = System.Windows.Forms.DockStyle.Top
-        Me.POWAV.Location = New System.Drawing.Point(0, 879)
+        Me.POWAV.Location = New System.Drawing.Point(0, 912)
         Me.POWAV.Name = "POWAV"
         Me.POWAV.Size = New System.Drawing.Size(183, 270)
         Me.POWAV.TabIndex = 4
@@ -934,14 +934,14 @@ Partial Class MainWindow
         Me.POWAVExpander.Cursor = System.Windows.Forms.Cursors.Hand
         Me.POWAVExpander.Dock = System.Windows.Forms.DockStyle.Top
         Me.POWAVExpander.FlatAppearance.BorderSize = 0
-        Me.POWAVExpander.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.POWAVExpander.Image = Global.iBMSC.My.Resources.Resources.Expand
+        Me.POWAVExpander.FlatStyle = System.Windows.Forms.FlatStyle.Popup
         Me.POWAVExpander.Location = New System.Drawing.Point(0, 30)
         Me.POWAVExpander.Margin = New System.Windows.Forms.Padding(0)
         Me.POWAVExpander.Name = "POWAVExpander"
-        Me.POWAVExpander.Size = New System.Drawing.Size(183, 14)
+        Me.POWAVExpander.Size = New System.Drawing.Size(183, 25)
         Me.POWAVExpander.TabIndex = 34
         Me.POWAVExpander.TabStop = False
+        Me.POWAVExpander.Text = "Expand..."
         Me.POWAVExpander.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         Me.POWAVExpander.UseVisualStyleBackColor = False
         '
@@ -951,11 +951,11 @@ Partial Class MainWindow
         Me.LWAV.Font = New System.Drawing.Font("Consolas", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.LWAV.IntegralHeight = False
         Me.LWAV.ItemHeight = 14
-        Me.LWAV.Location = New System.Drawing.Point(3, 82)
+        Me.LWAV.Location = New System.Drawing.Point(3, 93)
         Me.LWAV.Margin = New System.Windows.Forms.Padding(3, 0, 3, 0)
         Me.LWAV.Name = "LWAV"
         Me.LWAV.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended
-        Me.LWAV.Size = New System.Drawing.Size(177, 163)
+        Me.LWAV.Size = New System.Drawing.Size(177, 152)
         Me.LWAV.TabIndex = 25
         '
         'FlowLayoutPanel3
@@ -1038,7 +1038,7 @@ Partial Class MainWindow
         Me.POWAVPart2.Controls.Add(Me.CWAVMultiSelect, 0, 0)
         Me.POWAVPart2.Controls.Add(Me.CWAVChangeLabel, 0, 1)
         Me.POWAVPart2.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.POWAVPart2.Location = New System.Drawing.Point(0, 44)
+        Me.POWAVPart2.Location = New System.Drawing.Point(0, 55)
         Me.POWAVPart2.Margin = New System.Windows.Forms.Padding(0)
         Me.POWAVPart2.Name = "POWAVPart2"
         Me.POWAVPart2.RowCount = 2
@@ -1077,18 +1077,18 @@ Partial Class MainWindow
         'POWAVSwitch
         '
         Me.POWAVSwitch.Appearance = System.Windows.Forms.Appearance.Button
-        Me.POWAVSwitch.BackColor = System.Drawing.Color.Silver
+        Me.POWAVSwitch.BackColor = System.Drawing.SystemColors.Control
         Me.POWAVSwitch.Checked = True
         Me.POWAVSwitch.CheckState = System.Windows.Forms.CheckState.Checked
         Me.POWAVSwitch.Cursor = System.Windows.Forms.Cursors.Hand
         Me.POWAVSwitch.Dock = System.Windows.Forms.DockStyle.Top
-        Me.POWAVSwitch.FlatStyle = System.Windows.Forms.FlatStyle.Popup
+        Me.POWAVSwitch.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.POWAVSwitch.Location = New System.Drawing.Point(0, 0)
         Me.POWAVSwitch.Name = "POWAVSwitch"
         Me.POWAVSwitch.Size = New System.Drawing.Size(183, 20)
         Me.POWAVSwitch.TabIndex = 4
         Me.POWAVSwitch.TabStop = False
-        Me.POWAVSwitch.Text = "#WAV"
+        Me.POWAVSwitch.Text = "#WAV (Sounds List)"
         Me.POWAVSwitch.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         Me.POWAVSwitch.UseCompatibleTextRendering = True
         Me.POWAVSwitch.UseVisualStyleBackColor = False
@@ -1100,9 +1100,9 @@ Partial Class MainWindow
         Me.POWaveForm.Controls.Add(Me.POWaveFormInner)
         Me.POWaveForm.Controls.Add(Me.POWaveFormSwitch)
         Me.POWaveForm.Dock = System.Windows.Forms.DockStyle.Top
-        Me.POWaveForm.Location = New System.Drawing.Point(0, 647)
+        Me.POWaveForm.Location = New System.Drawing.Point(0, 669)
         Me.POWaveForm.Name = "POWaveForm"
-        Me.POWaveForm.Size = New System.Drawing.Size(183, 232)
+        Me.POWaveForm.Size = New System.Drawing.Size(183, 243)
         Me.POWaveForm.TabIndex = 3
         '
         'POWaveFormInner
@@ -1115,7 +1115,7 @@ Partial Class MainWindow
         Me.POWaveFormInner.Dock = System.Windows.Forms.DockStyle.Top
         Me.POWaveFormInner.Location = New System.Drawing.Point(0, 20)
         Me.POWaveFormInner.Name = "POWaveFormInner"
-        Me.POWaveFormInner.Size = New System.Drawing.Size(183, 212)
+        Me.POWaveFormInner.Size = New System.Drawing.Size(183, 223)
         Me.POWaveFormInner.TabIndex = 29
         Me.POWaveFormInner.Visible = False
         '
@@ -1143,7 +1143,7 @@ Partial Class MainWindow
         Me.POWaveFormPart2.Controls.Add(Me.TWWidth2, 1, 1)
         Me.POWaveFormPart2.Controls.Add(Me.TWPrecision2, 1, 2)
         Me.POWaveFormPart2.Dock = System.Windows.Forms.DockStyle.Top
-        Me.POWaveFormPart2.Location = New System.Drawing.Point(0, 72)
+        Me.POWaveFormPart2.Location = New System.Drawing.Point(0, 83)
         Me.POWaveFormPart2.Name = "POWaveFormPart2"
         Me.POWaveFormPart2.RowCount = 5
         Me.POWaveFormPart2.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28.0!))
@@ -1342,14 +1342,14 @@ Partial Class MainWindow
         Me.POWaveFormExpander.Cursor = System.Windows.Forms.Cursors.Hand
         Me.POWaveFormExpander.Dock = System.Windows.Forms.DockStyle.Top
         Me.POWaveFormExpander.FlatAppearance.BorderSize = 0
-        Me.POWaveFormExpander.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.POWaveFormExpander.Image = Global.iBMSC.My.Resources.Resources.Expand
+        Me.POWaveFormExpander.FlatStyle = System.Windows.Forms.FlatStyle.Popup
         Me.POWaveFormExpander.Location = New System.Drawing.Point(0, 58)
         Me.POWaveFormExpander.Margin = New System.Windows.Forms.Padding(0)
         Me.POWaveFormExpander.Name = "POWaveFormExpander"
-        Me.POWaveFormExpander.Size = New System.Drawing.Size(183, 14)
+        Me.POWaveFormExpander.Size = New System.Drawing.Size(183, 25)
         Me.POWaveFormExpander.TabIndex = 29
         Me.POWaveFormExpander.TabStop = False
+        Me.POWaveFormExpander.Text = "Expand..."
         Me.POWaveFormExpander.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         Me.POWaveFormExpander.UseVisualStyleBackColor = False
         '
@@ -1506,10 +1506,10 @@ Partial Class MainWindow
         'POWaveFormSwitch
         '
         Me.POWaveFormSwitch.Appearance = System.Windows.Forms.Appearance.Button
-        Me.POWaveFormSwitch.BackColor = System.Drawing.Color.Silver
+        Me.POWaveFormSwitch.BackColor = System.Drawing.SystemColors.Control
         Me.POWaveFormSwitch.Cursor = System.Windows.Forms.Cursors.Hand
         Me.POWaveFormSwitch.Dock = System.Windows.Forms.DockStyle.Top
-        Me.POWaveFormSwitch.FlatStyle = System.Windows.Forms.FlatStyle.Popup
+        Me.POWaveFormSwitch.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.POWaveFormSwitch.Location = New System.Drawing.Point(0, 0)
         Me.POWaveFormSwitch.Name = "POWaveFormSwitch"
         Me.POWaveFormSwitch.Size = New System.Drawing.Size(183, 20)
@@ -1527,9 +1527,9 @@ Partial Class MainWindow
         Me.POGrid.Controls.Add(Me.POGridInner)
         Me.POGrid.Controls.Add(Me.POGridSwitch)
         Me.POGrid.Dock = System.Windows.Forms.DockStyle.Top
-        Me.POGrid.Location = New System.Drawing.Point(0, 428)
+        Me.POGrid.Location = New System.Drawing.Point(0, 439)
         Me.POGrid.Name = "POGrid"
-        Me.POGrid.Size = New System.Drawing.Size(183, 219)
+        Me.POGrid.Size = New System.Drawing.Size(183, 230)
         Me.POGrid.TabIndex = 2
         '
         'POGridInner
@@ -1542,7 +1542,7 @@ Partial Class MainWindow
         Me.POGridInner.Dock = System.Windows.Forms.DockStyle.Top
         Me.POGridInner.Location = New System.Drawing.Point(0, 20)
         Me.POGridInner.Name = "POGridInner"
-        Me.POGridInner.Size = New System.Drawing.Size(183, 199)
+        Me.POGridInner.Size = New System.Drawing.Size(183, 210)
         Me.POGridInner.TabIndex = 3
         '
         'POGridPart2
@@ -1554,7 +1554,7 @@ Partial Class MainWindow
         Me.POGridPart2.Controls.Add(Me.TableLayoutPanel5, 0, 1)
         Me.POGridPart2.Controls.Add(Me.TableLayoutPanel4, 0, 0)
         Me.POGridPart2.Dock = System.Windows.Forms.DockStyle.Top
-        Me.POGridPart2.Location = New System.Drawing.Point(0, 141)
+        Me.POGridPart2.Location = New System.Drawing.Point(0, 152)
         Me.POGridPart2.Name = "POGridPart2"
         Me.POGridPart2.RowCount = 2
         Me.POGridPart2.RowStyles.Add(New System.Windows.Forms.RowStyle())
@@ -1691,14 +1691,14 @@ Partial Class MainWindow
         Me.POGridExpander.Cursor = System.Windows.Forms.Cursors.Hand
         Me.POGridExpander.Dock = System.Windows.Forms.DockStyle.Top
         Me.POGridExpander.FlatAppearance.BorderSize = 0
-        Me.POGridExpander.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.POGridExpander.Image = Global.iBMSC.My.Resources.Resources.Expand
+        Me.POGridExpander.FlatStyle = System.Windows.Forms.FlatStyle.Popup
         Me.POGridExpander.Location = New System.Drawing.Point(0, 127)
         Me.POGridExpander.Margin = New System.Windows.Forms.Padding(0)
         Me.POGridExpander.Name = "POGridExpander"
-        Me.POGridExpander.Size = New System.Drawing.Size(183, 14)
+        Me.POGridExpander.Size = New System.Drawing.Size(183, 25)
         Me.POGridExpander.TabIndex = 27
         Me.POGridExpander.TabStop = False
+        Me.POGridExpander.Text = "Expand..."
         Me.POGridExpander.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         Me.POGridExpander.UseVisualStyleBackColor = False
         '
@@ -1919,12 +1919,12 @@ Partial Class MainWindow
         'POGridSwitch
         '
         Me.POGridSwitch.Appearance = System.Windows.Forms.Appearance.Button
-        Me.POGridSwitch.BackColor = System.Drawing.Color.Silver
+        Me.POGridSwitch.BackColor = System.Drawing.SystemColors.Control
         Me.POGridSwitch.Checked = True
         Me.POGridSwitch.CheckState = System.Windows.Forms.CheckState.Checked
         Me.POGridSwitch.Cursor = System.Windows.Forms.Cursors.Hand
         Me.POGridSwitch.Dock = System.Windows.Forms.DockStyle.Top
-        Me.POGridSwitch.FlatStyle = System.Windows.Forms.FlatStyle.Popup
+        Me.POGridSwitch.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.POGridSwitch.Location = New System.Drawing.Point(0, 0)
         Me.POGridSwitch.Name = "POGridSwitch"
         Me.POGridSwitch.Size = New System.Drawing.Size(183, 20)
@@ -1944,7 +1944,7 @@ Partial Class MainWindow
         Me.POHeader.Dock = System.Windows.Forms.DockStyle.Top
         Me.POHeader.Location = New System.Drawing.Point(0, 0)
         Me.POHeader.Name = "POHeader"
-        Me.POHeader.Size = New System.Drawing.Size(183, 428)
+        Me.POHeader.Size = New System.Drawing.Size(183, 439)
         Me.POHeader.TabIndex = 1
         '
         'POHeaderInner
@@ -1957,7 +1957,7 @@ Partial Class MainWindow
         Me.POHeaderInner.Dock = System.Windows.Forms.DockStyle.Top
         Me.POHeaderInner.Location = New System.Drawing.Point(0, 20)
         Me.POHeaderInner.Name = "POHeaderInner"
-        Me.POHeaderInner.Size = New System.Drawing.Size(183, 408)
+        Me.POHeaderInner.Size = New System.Drawing.Size(183, 419)
         Me.POHeaderInner.TabIndex = 2
         '
         'POHeaderPart2
@@ -1994,7 +1994,7 @@ Partial Class MainWindow
         Me.POHeaderPart2.Controls.Add(Me.THSubTitle, 1, 0)
         Me.POHeaderPart2.Controls.Add(Me.THSubArtist, 1, 1)
         Me.POHeaderPart2.Dock = System.Windows.Forms.DockStyle.Top
-        Me.POHeaderPart2.Location = New System.Drawing.Point(0, 175)
+        Me.POHeaderPart2.Location = New System.Drawing.Point(0, 186)
         Me.POHeaderPart2.Name = "POHeaderPart2"
         Me.POHeaderPart2.RowCount = 10
         Me.POHeaderPart2.RowStyles.Add(New System.Windows.Forms.RowStyle())
@@ -2288,14 +2288,14 @@ Partial Class MainWindow
         Me.POHeaderExpander.Cursor = System.Windows.Forms.Cursors.Hand
         Me.POHeaderExpander.Dock = System.Windows.Forms.DockStyle.Top
         Me.POHeaderExpander.FlatAppearance.BorderSize = 0
-        Me.POHeaderExpander.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.POHeaderExpander.Image = Global.iBMSC.My.Resources.Resources.Expand
+        Me.POHeaderExpander.FlatStyle = System.Windows.Forms.FlatStyle.Popup
         Me.POHeaderExpander.Location = New System.Drawing.Point(0, 161)
         Me.POHeaderExpander.Margin = New System.Windows.Forms.Padding(0)
         Me.POHeaderExpander.Name = "POHeaderExpander"
-        Me.POHeaderExpander.Size = New System.Drawing.Size(183, 14)
+        Me.POHeaderExpander.Size = New System.Drawing.Size(183, 25)
         Me.POHeaderExpander.TabIndex = 26
         Me.POHeaderExpander.TabStop = False
+        Me.POHeaderExpander.Text = "Expand..."
         Me.POHeaderExpander.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         Me.POHeaderExpander.UseVisualStyleBackColor = False
         '
@@ -2488,12 +2488,12 @@ Partial Class MainWindow
         'POHeaderSwitch
         '
         Me.POHeaderSwitch.Appearance = System.Windows.Forms.Appearance.Button
-        Me.POHeaderSwitch.BackColor = System.Drawing.Color.Silver
+        Me.POHeaderSwitch.BackColor = System.Drawing.SystemColors.Control
         Me.POHeaderSwitch.Checked = True
         Me.POHeaderSwitch.CheckState = System.Windows.Forms.CheckState.Checked
         Me.POHeaderSwitch.Cursor = System.Windows.Forms.Cursors.Hand
         Me.POHeaderSwitch.Dock = System.Windows.Forms.DockStyle.Top
-        Me.POHeaderSwitch.FlatStyle = System.Windows.Forms.FlatStyle.Popup
+        Me.POHeaderSwitch.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.POHeaderSwitch.Location = New System.Drawing.Point(0, 0)
         Me.POHeaderSwitch.Name = "POHeaderSwitch"
         Me.POHeaderSwitch.Size = New System.Drawing.Size(183, 20)
@@ -2817,6 +2817,7 @@ Partial Class MainWindow
         Me.mnSMenu.Name = "mnSMenu"
         Me.mnSMenu.Size = New System.Drawing.Size(172, 22)
         Me.mnSMenu.Text = "&Main Menu"
+        Me.mnSMenu.Visible = False
         '
         'mnSTB
         '
@@ -3040,7 +3041,7 @@ Partial Class MainWindow
         '
         Me.cmnConversion.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.POBLong, Me.POBShort, Me.POBLongShort, Me.ToolStripSeparator10, Me.POBHidden, Me.POBVisible, Me.POBHiddenVisible, Me.ToolStripSeparator11, Me.POBModify, Me.POBMirror})
         Me.cmnConversion.Name = "cmnLanguage"
-        Me.cmnConversion.OwnerItem = Me.POConvert
+        Me.cmnConversion.OwnerItem = Me.mnConversion
         Me.cmnConversion.Size = New System.Drawing.Size(222, 192)
         '
         'POBLong
@@ -3111,6 +3112,16 @@ Partial Class MainWindow
         Me.POBMirror.Size = New System.Drawing.Size(221, 22)
         Me.POBMirror.Text = "Mi&rror"
         '
+        'POConvert
+        '
+        Me.POConvert.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.POConvert.DropDown = Me.cmnConversion
+        Me.POConvert.Image = Global.iBMSC.My.Resources.Resources.ConvertNotes
+        Me.POConvert.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.POConvert.Name = "POConvert"
+        Me.POConvert.Size = New System.Drawing.Size(29, 22)
+        Me.POConvert.Text = "Convert Notes"
+        '
         'mnPreview
         '
         Me.mnPreview.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnPlayB, Me.mnPlay, Me.mnStop})
@@ -3167,16 +3178,6 @@ Partial Class MainWindow
         Me.mnUpdateC.Name = "mnUpdateC"
         Me.mnUpdateC.Size = New System.Drawing.Size(206, 22)
         Me.mnUpdateC.Text = "Check Updates (Chinese)"
-        '
-        'POConvert
-        '
-        Me.POConvert.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
-        Me.POConvert.DropDown = Me.cmnConversion
-        Me.POConvert.Image = Global.iBMSC.My.Resources.Resources.ConvertNotes
-        Me.POConvert.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me.POConvert.Name = "POConvert"
-        Me.POConvert.Size = New System.Drawing.Size(29, 22)
-        Me.POConvert.Text = "Convert Notes"
         '
         'TBMain
         '

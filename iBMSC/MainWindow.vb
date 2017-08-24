@@ -160,7 +160,7 @@ Public Class MainWindow
     'Variables for select tool
     Dim DisableVerticalMove As Boolean = False
     Dim KMouseOver As Integer = -1   'Mouse is on which note (for drawing green outline)
-    Dim pMouseDown As PointF = New Point(-1, -1)          'Mouse is clicked on which point (location for display) (for selection box)
+    Dim LastMouseDownLocation As PointF = New Point(-1, -1)          'Mouse is clicked on which point (location for display) (for selection box)
     Dim pMouseMove As PointF = New Point(-1, -1)          'Mouse is moved to which point   (location for display) (for selection box)
     'Dim KMouseDown As Integer = -1   'Mouse is clicked on which note (for moving)
     Dim deltaVPosition As Double = 0   'difference between mouse and VPosition of K
@@ -179,12 +179,12 @@ Public Class MainWindow
     'Dim uPairWithI As Double    'temp variables for undo, original note length
     Dim uAdded As Boolean       'temp variables for undo, if undo command is added
     'Dim uNote As Note           'temp variables for undo, original note
-    Dim uNotes(-1) As Note        'temp notes for undo
+    Dim SelectedNotes(-1) As Note        'temp notes for undo
     Dim ctrlPressed As Boolean = False          'Indicates if the CTRL key is pressed while mousedown
     Dim ctrlForDuplicate As Boolean = False     'Indicates if duplicate notes of select/unselect note
 
     'Variables for write tool
-    Dim TempDraw As Boolean = False
+    Dim ShouldDrawTempNote As Boolean = False
     Dim SelectedColumn As Integer = -1
     Dim TempVPosition As Double = -1.0#
     Dim TempLength As Double = 0.0#
@@ -1451,7 +1451,7 @@ EndSearch:
     Private Sub TBNew_Click(ByVal sender As System.Object, ByVal e As EventArgs) Handles TBNew.Click, mnNew.Click
 
         'KMouseDown = -1
-        ReDim uNotes(-1)
+        ReDim SelectedNotes(-1)
         KMouseOver = -1
         If ClosingPopSave() Then Exit Sub
 
@@ -1496,7 +1496,7 @@ EndSearch:
 
     Private Sub TBNewC_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) 'Handles TBNewC.Click
         'KMouseDown = -1
-        ReDim uNotes(-1)
+        ReDim SelectedNotes(-1)
         KMouseOver = -1
         If ClosingPopSave() Then Exit Sub
 
@@ -1531,7 +1531,7 @@ EndSearch:
 
     Private Sub TBOpen_ButtonClick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TBOpen.ButtonClick, mnOpen.Click
         'KMouseDown = -1
-        ReDim uNotes(-1)
+        ReDim SelectedNotes(-1)
         KMouseOver = -1
         If ClosingPopSave() Then Exit Sub
 
@@ -1552,7 +1552,7 @@ EndSearch:
 
     Private Sub TBImportIBMSC_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TBImportIBMSC.Click, mnImportIBMSC.Click
         'KMouseDown = -1
-        ReDim uNotes(-1)
+        ReDim SelectedNotes(-1)
         KMouseOver = -1
         If ClosingPopSave() Then Return
 
@@ -1572,7 +1572,7 @@ EndSearch:
 
     Private Sub TBImportSM_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TBImportSM.Click, mnImportSM.Click
         'KMouseDown = -1
-        ReDim uNotes(-1)
+        ReDim SelectedNotes(-1)
         KMouseOver = -1
         If ClosingPopSave() Then Exit Sub
 
@@ -1592,7 +1592,7 @@ EndSearch:
 
     Private Sub TBSave_ButtonClick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TBSave.ButtonClick, mnSave.Click
         'KMouseDown = -1
-        ReDim uNotes(-1)
+        ReDim SelectedNotes(-1)
         KMouseOver = -1
 
         If ExcludeFileName(FileName) = "" Then
@@ -1622,7 +1622,7 @@ EndSearch:
 
     Private Sub TBSaveAs_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TBSaveAs.Click, mnSaveAs.Click
         'KMouseDown = -1
-        ReDim uNotes(-1)
+        ReDim SelectedNotes(-1)
         KMouseOver = -1
 
         Dim xDSave As New SaveFileDialog
@@ -1650,7 +1650,7 @@ EndSearch:
 
     Private Sub TBExport_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TBExport.Click, mnExport.Click
         'KMouseDown = -1
-        ReDim uNotes(-1)
+        ReDim SelectedNotes(-1)
         KMouseOver = -1
 
         Dim xDSave As New SaveFileDialog
@@ -1681,7 +1681,7 @@ EndSearch:
             Exit Sub
         End If
 
-        If iI = spFocus And Not pMouseDown = New Point(-1, -1) And Not VSValue = -1 Then pMouseDown.Y += (VSValue - sender.Value) * gxHeight
+        If iI = spFocus And Not LastMouseDownLocation = New Point(-1, -1) And Not VSValue = -1 Then LastMouseDownLocation.Y += (VSValue - sender.Value) * gxHeight
         spV(iI) = sender.Value
 
         If spLock((iI + 1) Mod 3) Then
@@ -1731,7 +1731,7 @@ EndSearch:
 
     Private Sub HSValueChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles HS.ValueChanged, HSL.ValueChanged, HSR.ValueChanged
         Dim iI As Integer = sender.Tag
-        If Not pMouseDown = New Point(-1, -1) And Not HSValue = -1 Then pMouseDown.X += (HSValue - sender.Value) * gxWidth
+        If Not LastMouseDownLocation = New Point(-1, -1) And Not HSValue = -1 Then LastMouseDownLocation.X += (HSValue - sender.Value) * gxWidth
         spH(iI) = sender.Value
         HSValue = sender.Value
         RefreshPanel(iI, spMain(iI).DisplayRectangle)
@@ -1748,7 +1748,7 @@ EndSearch:
         FStatus2.Visible = False
         FStatus.Visible = True
 
-        TempDraw = False
+        ShouldDrawTempNote = False
         SelectedColumn = -1
         TempVPosition = -1
         TempLength = 0
@@ -1771,7 +1771,7 @@ EndSearch:
         FStatus2.Visible = False
         FStatus.Visible = True
 
-        TempDraw = True
+        ShouldDrawTempNote = True
         SelectedColumn = -1
         TempVPosition = -1
         TempLength = 0
@@ -1795,7 +1795,7 @@ EndSearch:
         FStatus2.Visible = True
 
         vSelMouseOverLine = 0
-        TempDraw = False
+        ShouldDrawTempNote = False
         SelectedColumn = -1
         TempVPosition = -1
         TempLength = 0
@@ -3106,7 +3106,7 @@ EndOfAdjustment:
     Private Sub TBUndo_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TBUndo.Click, mnUndo.Click
         KMouseOver = -1
         'KMouseDown = -1
-        ReDim uNotes(-1)
+        ReDim SelectedNotes(-1)
         If sUndo(sI).ofType = UndoRedo.opNoOperation Then Exit Sub
         Operate(sUndo(sI))
         sI = sIM()
@@ -3120,7 +3120,7 @@ EndOfAdjustment:
     Private Sub TBRedo_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TBRedo.Click, mnRedo.Click
         KMouseOver = -1
         'KMouseDown = -1
-        ReDim uNotes(-1)
+        ReDim SelectedNotes(-1)
         If sRedo(sIA).ofType = UndoRedo.opNoOperation Then Exit Sub
         Operate(sRedo(sIA))
         sI = sIA()
@@ -3301,7 +3301,7 @@ EndOfAdjustment:
     End Sub
 
     Private Sub ConvertBMSE2NT()
-        ReDim uNotes(-1)
+        ReDim SelectedNotes(-1)
         SortByVPositionInsertion()
 
         For i2 As Integer = 0 To UBound(Notes)
@@ -3347,7 +3347,7 @@ EndOfAdjustment:
     End Sub
 
     Private Sub ConvertNT2BMSE()
-        ReDim uNotes(-1)
+        ReDim SelectedNotes(-1)
         Dim xK(0) As Note
         xK(0) = Notes(0)
 
@@ -4911,10 +4911,10 @@ case2:              Dim xI0 As Integer
 
             If Source.Checked Then
                 Target.Visible = True
-                Source.Image = My.Resources.Collapse
+                'Source.Image = My.Resources.Collapse
             Else
                 Target.Visible = False
-                Source.Image = My.Resources.Expand
+                'Source.Image = My.Resources.Expand
             End If
 
         Catch ex As Exception
@@ -5009,4 +5009,7 @@ case2:              Dim xI0 As Integer
 
     End Sub
 
+    Private Sub mnSys_Click(sender As Object, e As EventArgs) Handles mnSys.Click
+
+    End Sub
 End Class

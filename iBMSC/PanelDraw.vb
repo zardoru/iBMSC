@@ -52,47 +52,8 @@ Partial Public Class MainWindow
             DrawMouseOver(e1, xTHeight, xHS, xVS)
         End If
 
-        If TempDraw AndAlso (SelectedColumn > -1 And TempVPosition > -1) Then
-            Dim xValue As Integer = (LWAV.SelectedIndex + 1) * 10000
-
-            Dim xAlpha As Single = 1.0F
-            If My.Computer.Keyboard.CtrlKeyDown Then xAlpha = vo.kOpacity
-
-            Dim xText As String = C10to36(xValue \ 10000)
-            If isColumnNumeric(SelectedColumn) Then xText = GetColumn(SelectedColumn).Title
-            'If nNumericLabel(TempColumn) Then xText = xValue / 10000
-            'If nCol(TempColumn).Text <> "" Then xText = nCol(TempColumn).Text
-
-            If NTInput Or Not My.Computer.Keyboard.ShiftKeyDown Then
-
-                Dim xPen1 As New Pen(GetColumn(SelectedColumn).getBright(xAlpha))
-                Dim xBrush As New Drawing2D.LinearGradientBrush(New Point(HorizontalPositiontoDisplay(nLeft(SelectedColumn), xHS), VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight - 10),
-                               New Point(HorizontalPositiontoDisplay(nLeft(SelectedColumn) + getColumnWidth(SelectedColumn), xHS), VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) + 10),
-                               GetColumn(SelectedColumn).getBright(xAlpha),
-                               GetColumn(SelectedColumn).getDark(xAlpha))
-                Dim xBrush2 As New SolidBrush(GetColumn(SelectedColumn).cText)
-
-                e1.Graphics.FillRectangle(xBrush, HorizontalPositiontoDisplay(nLeft(SelectedColumn), xHS) + 2, VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight + 1, getColumnWidth(SelectedColumn) * gxWidth - 3, vo.kHeight - 1)
-                e1.Graphics.DrawRectangle(xPen1, HorizontalPositiontoDisplay(nLeft(SelectedColumn), xHS) + 1, VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight, getColumnWidth(SelectedColumn) * gxWidth - 2, vo.kHeight)
-
-                e1.Graphics.DrawString(xText, vo.kFont, xBrush2,
-                            HorizontalPositiontoDisplay(nLeft(SelectedColumn), xHS) + vo.kLabelHShift, VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight + vo.kLabelVShift)
-
-            Else
-                Dim xPen2 As New Pen(GetColumn(SelectedColumn).getLongBright(xAlpha))
-                Dim xBrush As New Drawing2D.LinearGradientBrush(New Point(HorizontalPositiontoDisplay(nLeft(SelectedColumn), xHS), VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight - 10),
-                                New Point(HorizontalPositiontoDisplay(nLeft(SelectedColumn) + getColumnWidth(SelectedColumn), xHS), VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) + 10),
-                                GetColumn(SelectedColumn).getLongBright(xAlpha),
-                                GetColumn(SelectedColumn).getLongDark(xAlpha))
-                Dim xBrush2 As New SolidBrush(GetColumn(SelectedColumn).cLText)
-
-                e1.Graphics.FillRectangle(xBrush, HorizontalPositiontoDisplay(nLeft(SelectedColumn), xHS) + 2, VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight + 1, getColumnWidth(SelectedColumn) * gxWidth - 3, vo.kHeight - 1)
-                e1.Graphics.DrawRectangle(xPen2, HorizontalPositiontoDisplay(nLeft(SelectedColumn), xHS) + 1, VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight, getColumnWidth(SelectedColumn) * gxWidth - 2, vo.kHeight)
-
-                e1.Graphics.DrawString(xText, vo.kFont, xBrush2,
-                            HorizontalPositiontoDisplay(nLeft(SelectedColumn), xHS) + vo.kLabelHShiftL, VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight + vo.kLabelVShift)
-            End If
-
+        If ShouldDrawTempNote AndAlso (SelectedColumn > -1 And TempVPosition > -1) Then
+            DrawTempNote(e1, xTHeight, xHS, xVS)
         End If
 
         'Time Selection
@@ -112,6 +73,53 @@ Partial Public Class MainWindow
         e1.Dispose()
     End Sub
 
+    Private Sub DrawTempNote(e1 As BufferedGraphics, xTHeight As Integer, xHS As Integer, xVS As Integer)
+        Dim xValue As Integer = (LWAV.SelectedIndex + 1) * 10000
+
+        Dim xAlpha As Single = 1.0F
+        If My.Computer.Keyboard.CtrlKeyDown Then xAlpha = vo.kOpacity
+
+        Dim xText As String = C10to36(xValue \ 10000)
+        If isColumnNumeric(SelectedColumn) Then
+            xText = GetColumn(SelectedColumn).Title
+        End If
+
+        Dim xPen As Pen
+        Dim xBrush As Drawing2D.LinearGradientBrush
+        Dim xBrush2 As SolidBrush
+        Dim point1 As New Point(HorizontalPositiontoDisplay(nLeft(SelectedColumn), xHS),
+                                VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight - 10)
+        Dim point2 As New Point(HorizontalPositiontoDisplay(nLeft(SelectedColumn) + getColumnWidth(SelectedColumn), xHS),
+                                VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) + 10)
+        If NTInput Or Not My.Computer.Keyboard.ShiftKeyDown Then
+            xPen = New Pen(GetColumn(SelectedColumn).getBright(xAlpha))
+            xBrush = New Drawing2D.LinearGradientBrush(point1, point2,
+                           GetColumn(SelectedColumn).getBright(xAlpha),
+                           GetColumn(SelectedColumn).getDark(xAlpha))
+            xBrush2 = New SolidBrush(GetColumn(SelectedColumn).cText)
+
+        Else
+            xPen = New Pen(GetColumn(SelectedColumn).getLongBright(xAlpha))
+            xBrush = New Drawing2D.LinearGradientBrush(point1, point2,
+                            GetColumn(SelectedColumn).getLongBright(xAlpha),
+                            GetColumn(SelectedColumn).getLongDark(xAlpha))
+            xBrush2 = New SolidBrush(GetColumn(SelectedColumn).cLText)
+        End If
+
+        e1.Graphics.FillRectangle(xBrush, HorizontalPositiontoDisplay(nLeft(SelectedColumn), xHS) + 2,
+                                  VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight + 1,
+                                  getColumnWidth(SelectedColumn) * gxWidth - 3,
+                                  vo.kHeight - 1)
+        e1.Graphics.DrawRectangle(xPen,
+                                  HorizontalPositiontoDisplay(nLeft(SelectedColumn), xHS) + 1,
+                                  VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight,
+                                  getColumnWidth(SelectedColumn) * gxWidth - 2,
+                                  vo.kHeight)
+
+        e1.Graphics.DrawString(xText, vo.kFont, xBrush2,
+                        HorizontalPositiontoDisplay(nLeft(SelectedColumn), xHS) + vo.kLabelHShiftL, VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight + vo.kLabelVShift)
+    End Sub
+
     Private Sub DrawDragAndDrop(xIndex As Integer, e1 As BufferedGraphics)
         If UBound(DDFileName) > -1 Then
             'Dim xFont As New Font("Cambria", 12)
@@ -126,10 +134,10 @@ Partial Public Class MainWindow
     End Sub
 
     Private Sub DrawSelectionBox(xIndex As Integer, e1 As BufferedGraphics)
-        If TBSelect.Checked AndAlso xIndex = spFocus AndAlso Not (pMouseMove = New Point(-1, -1) Or pMouseDown = New Point(-1, -1)) Then
-            e1.Graphics.DrawRectangle(vo.SelBox, IIf(pMouseMove.X > pMouseDown.X, pMouseDown.X, pMouseMove.X),
-                                                IIf(pMouseMove.Y > pMouseDown.Y, pMouseDown.Y, pMouseMove.Y),
-                                                Math.Abs(pMouseMove.X - pMouseDown.X), Math.Abs(pMouseMove.Y - pMouseDown.Y))
+        If TBSelect.Checked AndAlso xIndex = spFocus AndAlso Not (pMouseMove = New Point(-1, -1) Or LastMouseDownLocation = New Point(-1, -1)) Then
+            e1.Graphics.DrawRectangle(vo.SelBox, IIf(pMouseMove.X > LastMouseDownLocation.X, LastMouseDownLocation.X, pMouseMove.X),
+                                                IIf(pMouseMove.Y > LastMouseDownLocation.Y, LastMouseDownLocation.Y, pMouseMove.Y),
+                                                Math.Abs(pMouseMove.X - LastMouseDownLocation.X), Math.Abs(pMouseMove.Y - LastMouseDownLocation.Y))
         End If
     End Sub
 
