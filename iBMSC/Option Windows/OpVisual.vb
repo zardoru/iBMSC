@@ -1,3 +1,4 @@
+Imports System.Runtime.CompilerServices
 Imports System.Windows.Forms
 Imports iBMSC.Editor
 
@@ -45,6 +46,8 @@ Public Class OpVisual
     Dim col() As Column
     Dim co() As ColumnOptionSet
 
+
+
     Public Sub New(ByVal xvo As visualSettings, ByVal xcol() As Column, ByVal monoFont As Font)
         InitializeComponent()
 
@@ -75,13 +78,14 @@ Public Class OpVisual
         fButtonChange(Me.fMeasureLabel, vo.kMFont)
         fButtonChange(Me.fTSBPM, vo.PEBPMFont)
 
-        Me.iNoteHeight.Value = vo.kHeight
-        Me.iLabelVerticalShift.Value = vo.kLabelVShift
-        Me.iLabelHorizShift.Value = vo.kLabelHShift
-        Me.iLongLabelHorizShift.Value = vo.kLabelHShiftL
-        Me.iHiddenNoteOpacity.Value = vo.kOpacity
-        Me.iTSSensitivity.Value = vo.PEDeltaMouseOver
-        Me.iMiddleSensitivity.Value = vo.MiddleDeltaRelease
+
+        Me.iNoteHeight.SetValClamped(vo.kHeight)
+        Me.iLabelVerticalShift.SetValClamped(vo.kLabelVShift)
+        Me.iLabelHorizShift.SetValClamped(vo.kLabelHShift)
+        Me.iLongLabelHorizShift.SetValClamped(vo.kLabelHShiftL)
+        Me.iHiddenNoteOpacity.SetValClamped(vo.kOpacity)
+        Me.iTSSensitivity.SetValClamped(vo.PEDeltaMouseOver)
+        Me.iMiddleSensitivity.SetValClamped(vo.MiddleDeltaRelease)
 
         'lWidth = xlWidth
         'lTitle = xlTitle

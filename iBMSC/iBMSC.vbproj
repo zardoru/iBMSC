@@ -157,6 +157,7 @@
     <Compile Include="EditorUndoRedo.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Extensions.vb" />
     <Compile Include="MainWindow.designer.vb">
       <DependentUpon>MainWindow.vb</DependentUpon>
     </Compile>
