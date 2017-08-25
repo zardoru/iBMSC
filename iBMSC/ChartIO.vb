@@ -884,7 +884,7 @@ Jump1:
                     For i As Integer = 1 To UBound(Notes)
                         Notes(i).VPosition = br.ReadDouble
                         Notes(i).ColumnIndex = br.ReadInt32
-                        Notes(i).Value = br.ReadInt32
+                        Notes(i).Value = br.ReadInt64
 
                         Dim xFormat As Integer = br.ReadByte
 
