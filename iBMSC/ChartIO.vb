@@ -108,8 +108,8 @@ Partial Public Class MainWindow
                 Catch ex As Exception
                 End Try
 
-            ElseIf sLineTrim.StartsWith("#EXRANK", StringComparison.CurrentCultureIgnoreCase) Then
-                THExRank.Text = Mid(sLineTrim, Len("#EXRANK") + 1).Trim
+            ElseIf sLineTrim.StartsWith("#DEFEXRANK", StringComparison.CurrentCultureIgnoreCase) Then
+                THExRank.Text = Mid(sLineTrim, Len("#DEFEXRANK") + 1).Trim
 
             ElseIf sLineTrim.StartsWith("#TOTAL", StringComparison.CurrentCultureIgnoreCase) Then
                 Dim xStr As String = Mid(sLineTrim, Len("#TOTAL") + 1).Trim
@@ -343,7 +343,7 @@ AddExpansion:       xExpansion &= sLine & vbCrLf
         If THBackBMP.Text <> "" Then xStrHeader &= "#BACKBMP " & THBackBMP.Text & vbCrLf
         xStrHeader &= vbCrLf
         If CHDifficulty.SelectedIndex Then xStrHeader &= "#DIFFICULTY " & CHDifficulty.SelectedIndex & vbCrLf
-        If THExRank.Text <> "" Then xStrHeader &= "#EXRANK " & THExRank.Text & vbCrLf
+        If THExRank.Text <> "" Then xStrHeader &= "#DEFEXRANK " & THExRank.Text & vbCrLf
         If THTotal.Text <> "" Then xStrHeader &= "#TOTAL " & THTotal.Text & vbCrLf
         If THComment.Text <> "" Then xStrHeader &= "#COMMENT """ & THComment.Text & """" & vbCrLf
         'If THLnType.Text <> "" Then xStrHeader &= "#LNTYPE " & THLnType.Text & vbCrLf
