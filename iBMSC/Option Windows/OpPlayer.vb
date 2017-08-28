@@ -79,6 +79,7 @@ Public Class OpPlayer
         'AddHandler LPlayer.SelectedIndexChanged, AddressOf LPlayer_SelectedIndexChanged
 
         LPlayer.SelectedIndex = IIf(CurrPlayer > UBound(pArg), CurrPlayer - 1, CurrPlayer)
+        CurrPlayer = Math.Min(CurrPlayer, UBound(pArg))
         ShowInTextbox()
     End Sub
 
