@@ -77,7 +77,7 @@ Partial Public Class MainWindow
         Dim xValue As Integer = (LWAV.SelectedIndex + 1) * 10000
 
         Dim xAlpha As Single = 1.0F
-        If My.Computer.Keyboard.CtrlKeyDown Then xAlpha = vo.kOpacity
+        If ModifierHiddenActive() Then xAlpha = vo.kOpacity
 
         Dim xText As String = C10to36(xValue \ 10000)
         If isColumnNumeric(SelectedColumn) Then
@@ -94,7 +94,7 @@ Partial Public Class MainWindow
 
         Dim bright As Color
         Dim dark As Color
-        If NTInput Or Not My.Computer.Keyboard.ShiftKeyDown Then
+        If NTInput Or Not ModifierLongNoteActive() Then
             xPen = New Pen(GetColumn(SelectedColumn).getBright(xAlpha))
             bright = GetColumn(SelectedColumn).getBright(xAlpha)
             dark = GetColumn(SelectedColumn).getDark(xAlpha)
@@ -109,7 +109,7 @@ Partial Public Class MainWindow
         End If
 
         ' Temp landmine
-        If My.Computer.Keyboard.AltKeyDown Then
+        If ModifierLandmineActive() Then
             bright = Color.Red
             dark = Color.Red
         End If

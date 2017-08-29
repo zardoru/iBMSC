@@ -179,6 +179,7 @@
     <Compile Include="PanelEvents.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="PanelKeyStates.vb" />
     <Compile Include="Utilities.vb" />
     <Compile Include="Option Windows\Note.vb" />
     <Compile Include="Strings.vb" />

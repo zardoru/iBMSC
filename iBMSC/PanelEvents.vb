@@ -474,7 +474,7 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
                 If Notes(xI2).VPosition = xVPosition And Notes(xI2).ColumnIndex = xColumn Then NoteIndex = xI2 : Exit For
             Next
 
-            Dim Hidden As Boolean = My.Computer.Keyboard.CtrlKeyDown
+            Dim Hidden As Boolean = ModifierHiddenActive()
 
             If NoteIndex > 0 Then
                 ReDim SelectedNotes(0)
@@ -527,7 +527,7 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
             Else
                 Dim xLbl As Integer = (LWAV.SelectedIndex + 1) * 10000
 
-                Dim Landmine As Boolean = My.Computer.Keyboard.AltKeyDown And Not Hidden
+                Dim Landmine As Boolean = ModifierLandmineActive()
 
                 ReDim Preserve Notes(UBound(Notes) + 1)
                 With Notes(UBound(Notes))
@@ -565,7 +565,7 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
             If NoteIndex >= 0 Then xL1 = Notes(NoteIndex).VPosition _
                            Else xL1 = (xHeight - xVS * gxHeight - e.Y - 1) / gxHeight
 
-            vSelAdjust = My.Computer.Keyboard.ShiftKeyDown
+            vSelAdjust = ModifierLongNoteActive()
 
             vSelMouseOverLine = 0
             If Math.Abs(e.Y - VerticalPositiontoDisplay(vSelStart + vSelLength, xVS, xHeight)) <= vo.PEDeltaMouseOver Then
@@ -578,25 +578,25 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
 
             If Not vSelAdjust Then
                 If vSelMouseOverLine = 1 Then
-                    If gSnap And NoteIndex <= 0 And Not My.Computer.Keyboard.CtrlKeyDown Then xL1 = SnapToGrid(xL1)
+                    If gSnap And NoteIndex <= 0 Then xL1 = SnapToGrid(xL1)
                     vSelLength += vSelStart - xL1
                     vSelHalf += vSelStart - xL1
                     vSelStart = xL1
 
                 ElseIf vSelMouseOverLine = 2 Then
                     vSelHalf = xL1
-                    If gSnap And NoteIndex <= 0 And Not My.Computer.Keyboard.CtrlKeyDown Then vSelHalf = SnapToGrid(vSelHalf)
+                    If gSnap And NoteIndex <= 0 Then vSelHalf = SnapToGrid(vSelHalf)
                     vSelHalf -= vSelStart
 
                 ElseIf vSelMouseOverLine = 3 Then
                     vSelLength = xL1
-                    If gSnap And NoteIndex <= 0 And Not My.Computer.Keyboard.CtrlKeyDown Then vSelLength = SnapToGrid(vSelLength)
+                    If gSnap And NoteIndex <= 0 Then vSelLength = SnapToGrid(vSelLength)
                     vSelLength -= vSelStart
 
                 Else
                     vSelLength = 0
                     vSelStart = xL1
-                    If gSnap And NoteIndex <= 0 And Not My.Computer.Keyboard.CtrlKeyDown Then vSelStart = SnapToGrid(vSelStart)
+                    If gSnap And NoteIndex <= 0 Then vSelStart = SnapToGrid(vSelStart)
                 End If
                 ValidateSelection()
 
@@ -835,8 +835,11 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
 
                         xMouseRemainInSameRegion = foundNoteIndex = KMouseOver
                         If NTInput Then
-                            Dim xbAdjustUpper As Boolean = (e.Y <= VerticalPositiontoDisplay(Notes(noteIndex).VPosition + Notes(noteIndex).Length, xVS, xHeight)) And My.Computer.Keyboard.ShiftKeyDown
-                            Dim xbAdjustLength As Boolean = (e.Y >= VerticalPositiontoDisplay(Notes(noteIndex).VPosition, xVS, xHeight) - vo.kHeight Or xbAdjustUpper) And My.Computer.Keyboard.ShiftKeyDown
+                            Dim vy = VerticalPositiontoDisplay(Notes(noteIndex).VPosition + Notes(noteIndex).Length,
+                                                                                             xVS, xHeight)
+
+                            Dim xbAdjustUpper As Boolean = (e.Y <= vy) And ModifierLongNoteActive()
+                            Dim xbAdjustLength As Boolean = (e.Y >= vy - vo.kHeight Or xbAdjustUpper) And ModifierLongNoteActive()
                             xMouseRemainInSameRegion = xMouseRemainInSameRegion And xbAdjustUpper = bAdjustUpper And xbAdjustLength = bAdjustLength
                             bAdjustUpper = xbAdjustUpper
                             bAdjustLength = xbAdjustLength
@@ -1490,9 +1493,9 @@ EndCtrlOpn:         End If
                 Dim xColumn = GetColumnAtEvent(e, PanelHeight(iI))
 
                 If e.Button = Windows.Forms.MouseButtons.Left Then
-                    Dim HiddenNote As Boolean = My.Computer.Keyboard.CtrlKeyDown
-                    Dim LongNote As Boolean = My.Computer.Keyboard.ShiftKeyDown And Not HiddenNote
-                    Dim Landmine As Boolean = My.Computer.Keyboard.AltKeyDown And Not LongNote
+                    Dim HiddenNote As Boolean = ModifierHiddenActive()
+                    Dim LongNote As Boolean = ModifierLongNoteActive()
+                    Dim Landmine As Boolean = ModifierLandmineActive()
                     Dim xUndo As UndoRedo.LinkedURCmd = Nothing
                     Dim xRedo As UndoRedo.LinkedURCmd = New UndoRedo.Void
                     Dim xBaseRedo As UndoRedo.LinkedURCmd = xRedo
