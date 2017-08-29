@@ -474,6 +474,8 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
                 If Notes(xI2).VPosition = xVPosition And Notes(xI2).ColumnIndex = xColumn Then NoteIndex = xI2 : Exit For
             Next
 
+            Dim Hidden As Boolean = My.Computer.Keyboard.CtrlKeyDown
+
             If NoteIndex > 0 Then
                 ReDim SelectedNotes(0)
                 SelectedNotes(0) = Notes(NoteIndex)
@@ -501,7 +503,6 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
                 If xColumn = niBPM Then xMessage = Strings.Messages.PromptEnterBPM
                 If xColumn = niSTOP Then xMessage = Strings.Messages.PromptEnterSTOP
 
-                Dim Hidden As Boolean = My.Computer.Keyboard.CtrlKeyDown
                 Dim value As Double = Val(InputBox(xMessage, Text)) * 10000
 
                 If Not value = 0 Then
@@ -517,7 +518,7 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
                     Next
                     Me.RedoAddNote(xColumn, xVPosition, value, 0, Hidden, True, xUndo, xRedo)
 
-                    AddNote(xVPosition, xColumn, value, 0, Hidden)
+                    AddNote(xVPosition, xColumn, value, 0, Hidden, False)
                     AddUndo(xUndo, xBaseRedo.Next)
                 End If
 
@@ -525,7 +526,8 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
 
             Else
                 Dim xLbl As Integer = (LWAV.SelectedIndex + 1) * 10000
-                Dim Hidden As Boolean = My.Computer.Keyboard.CtrlKeyDown
+
+                Dim Landmine As Boolean = My.Computer.Keyboard.AltKeyDown And Not Hidden
 
                 ReDim Preserve Notes(UBound(Notes) + 1)
                 With Notes(UBound(Notes))
@@ -533,12 +535,13 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
                     .ColumnIndex = xColumn
                     .Value = xLbl
                     .Hidden = Hidden
+                    .Landmine = Landmine
                     .TempMouseDown = True
                 End With
 
                 ReDim SelectedNotes(0)
                 SelectedNotes(0) = Notes(UBound(Notes))
-                SelectedNotes(0).PairWithI = -1
+                SelectedNotes(0).LNPair = -1
 
                 'KMouseDown = 1
 
@@ -1222,7 +1225,7 @@ EndCtrlOpn:         End If
                                 If .VPosition < 0 Then .Length += .VPosition : .VPosition = 0
                                 If .VPosition + .Length >= VPosition1000() Then .Length = VPosition1000() - 1 - .VPosition
 
-                                If SelectedNotes(0).PairWithI = -1 Then 'If new note
+                                If SelectedNotes(0).LNPair = -1 Then 'If new note
                                     Dim xUndo As UndoRedo.LinkedURCmd = Nothing
                                     Dim xRedo As UndoRedo.LinkedURCmd = Nothing
                                     Me.RedoAddNote(Notes(xITemp), True, xUndo, xRedo)
@@ -1487,9 +1490,9 @@ EndCtrlOpn:         End If
                 Dim xColumn = GetColumnAtEvent(e, PanelHeight(iI))
 
                 If e.Button = Windows.Forms.MouseButtons.Left Then
-                    Dim LongNote As Boolean = My.Computer.Keyboard.ShiftKeyDown
                     Dim HiddenNote As Boolean = My.Computer.Keyboard.CtrlKeyDown
-
+                    Dim LongNote As Boolean = My.Computer.Keyboard.ShiftKeyDown And Not HiddenNote
+                    Dim Landmine As Boolean = My.Computer.Keyboard.AltKeyDown And Not LongNote
                     Dim xUndo As UndoRedo.LinkedURCmd = Nothing
                     Dim xRedo As UndoRedo.LinkedURCmd = New UndoRedo.Void
                     Dim xBaseRedo As UndoRedo.LinkedURCmd = xRedo
@@ -1508,7 +1511,7 @@ EndCtrlOpn:         End If
                             Next
 
                             RedoAddNote(xColumn, xVPosition, value, LongNote, HiddenNote, True, xUndo, xRedo)
-                            AddNote(xVPosition, xColumn, value, LongNote, HiddenNote)
+                            AddNote(xVPosition, xColumn, value, LongNote, HiddenNote, False)
 
                             AddUndo(xUndo, xBaseRedo.Next)
                         End If
@@ -1522,7 +1525,7 @@ EndCtrlOpn:         End If
                         Next
 
                         RedoAddNote(xColumn, xVPosition, xUI1, LongNote, HiddenNote, True, xUndo, xRedo)
-                        AddNote(xVPosition, xColumn, xUI1, LongNote, HiddenNote)
+                        AddNote(xVPosition, xColumn, xUI1, LongNote, HiddenNote, Landmine)
 
                         AddUndo(xUndo, xRedo)
                     End If

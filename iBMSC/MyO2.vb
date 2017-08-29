@@ -162,7 +162,7 @@
                                                    BMSChannelToColumn(xId) & "_" &
                                                    nTitle(BMSChannelToColumn(xId)) & "_" &
                                                    CStr(CInt(192 / xGCD)) & "_" &
-                                                   CInt(IdentifiertoLongNote(xId)) & "_" &
+                                                   CInt(IsChannelLongNote(xId)) & "_" &
                                                    CInt(IsChannelHidden(xId)) & "_" &
                                                    CInt(xAdj64) & "_" &
                                                    xD64 & "_" &
@@ -184,7 +184,7 @@
                         If MeasureAtDisplacement(Notes(xI2).VPosition) > xMeasure Then Exit For
 
                         If GetBMSChannelBy(Notes(xI2)) <> xId Then GoTo 1330
-                        If IdentifiertoLongNote(xId) Xor CBool(Notes(xI2).Length) Then GoTo 1330
+                        If IsChannelLongNote(xId) Xor CBool(Notes(xI2).Length) Then GoTo 1330
 
                         If MeasureAtDisplacement(Notes(xI2).VPosition) = xMeasure AndAlso Math.Abs(Notes(xI2).VPosition - MeasureAtDisplacement(Notes(xI2).VPosition) * 192) > 0 Then
                             ReDim Preserve xVPos(UBound(xVPos) + 1)
@@ -223,7 +223,7 @@
                                                    BMSChannelToColumn(xId) & "_" &
                                                    nTitle(BMSChannelToColumn(xId)) & "_" &
                                                    CStr(CInt(192 / xGCD)) & "_" &
-                                                   CInt(IdentifiertoLongNote(xId)) & "_" &
+                                                   CInt(IsChannelLongNote(xId)) & "_" &
                                                    CInt(IsChannelHidden(xId)) & "_" &
                                                    CInt(xAdj64) & "_" &
                                                    xD64 & "_" &

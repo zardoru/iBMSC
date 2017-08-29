@@ -6,8 +6,9 @@
         Public LongNote As Boolean
         Public Hidden As Boolean
         Public Length As Double
+        Public Landmine As Boolean
 
-        Public PairWithI As Integer
+        Public LNPair As Integer
         Public Selected As Boolean
         Public HasError As Boolean
 
@@ -40,15 +41,11 @@
             LongNote = nLongNote
             Length = nLongNote
             Hidden = nHidden
+            Landmine = False
         End Sub
         Public Sub New(ByVal nColumnIndex As Integer, ByVal nVposition As Double,
     ByVal nValue As Integer, ByVal nLongNote As Double, ByVal nHidden As Boolean, ByVal nSelected As Boolean)
-            VPosition = nVposition
-            ColumnIndex = nColumnIndex
-            Value = nValue
-            LongNote = nLongNote
-            Length = nLongNote
-            Hidden = nHidden
+            Me.New(nColumnIndex, nVposition, nValue, nLongNote, nHidden)
             Selected = nSelected
         End Sub
     End Structure

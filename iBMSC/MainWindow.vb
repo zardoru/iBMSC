@@ -36,68 +36,6 @@ Public Class MainWindow
     'Private Const SWP_FRAMECHANGED As Integer = &H20
     'Private Const SWP_REFRESH As Integer = SWP_NOZORDER Or SWP_NOSIZE Or SWP_NOMOVE Or SWP_NOACTIVATE Or SWP_FRAMECHANGED
 
-    Public Const niMeasure As Integer = 0
-    Public Const niBPM As Integer = 1
-    Public Const niSTOP As Integer = 2
-    Public Const niS1 As Integer = 3
-
-    Public Const niA1 As Integer = 4
-    Public Const niA2 As Integer = 5
-    Public Const niA3 As Integer = 6
-    Public Const niA4 As Integer = 7
-    Public Const niA5 As Integer = 8
-    Public Const niA6 As Integer = 9
-    Public Const niA7 As Integer = 10
-    Public Const niA8 As Integer = 11
-    Public Const niS2 As Integer = 12
-
-    Public Const niD1 As Integer = 13
-    Public Const niD2 As Integer = 14
-    Public Const niD3 As Integer = 15
-    Public Const niD4 As Integer = 16
-    Public Const niD5 As Integer = 17
-    Public Const niD6 As Integer = 18
-    Public Const niD7 As Integer = 19
-    Public Const niD8 As Integer = 20
-    Public Const niS3 As Integer = 21
-
-    Public Const niBGA As Integer = 22
-    Public Const niLAYER As Integer = 23
-    Public Const niPOOR As Integer = 24
-    Public Const niS4 As Integer = 25
-    Public Const niB As Integer = 26
-
-    Public Const idflBPM As Integer = 5
-    Public Const idLong As Integer = 40
-    Public Const idHidden As Integer = 20
-
-    Public column() As Column = {New Column(0, 50, "Measure", False, True, True, 0, 0, &HFF00FFFF, 0, &HFF00FFFF, 0),
-                              New Column(50, 60, "BPM", True, True, True, 3, 0, &HFFFF0000, 0, &HFFFF0000, 0),
-                              New Column(110, 50, "STOP", True, True, True, 9, 0, &HFFFF0000, 0, &HFFFF0000, 0),
-                              New Column(110, 5, "", False, False, True, 0, 0, 0, 0, 0, 0),
-                              New Column(115, 42, "A1", True, False, True, 16, &HFFB0B0B0, &HFF000000, &HFFC0C0C0, &HFF000000, &H14FFFFFF),
-                              New Column(157, 30, "A2", True, False, True, 11, &HFF62B0FF, &HFF000000, &HFF6AB0F7, &HFF000000, &H140033FF),
-                              New Column(187, 42, "A3", True, False, True, 12, &HFFB0B0B0, &HFF000000, &HFFC0C0C0, &HFF000000, &H14FFFFFF),
-                              New Column(229, 45, "A4", True, False, True, 13, &HFFFFC862, &HFF000000, &HFFF7C66A, &HFF000000, &H16F38B0C),
-                              New Column(274, 42, "A5", True, False, True, 14, &HFFB0B0B0, &HFF000000, &HFFC0C0C0, &HFF000000, &H14FFFFFF),
-                              New Column(316, 30, "A6", True, False, True, 15, &HFF62B0FF, &HFF000000, &HFF6AB0F7, &HFF000000, &H140033FF),
-                              New Column(346, 42, "A7", True, False, True, 18, &HFFB0B0B0, &HFF000000, &HFFC0C0C0, &HFF000000, &H14FFFFFF),
-                              New Column(388, 40, "A8", True, False, True, 19, &HFF808080, &HFF000000, &HFF909090, &HFF000000, 0),
-                              New Column(388, 5, "", False, False, True, 0, 0, 0, 0, 0, 0),
-                              New Column(393, 42, "D1", True, False, False, 21, &HFFB0B0B0, &HFF000000, &HFFC0C0C0, &HFF000000, &H14FFFFFF),
-                              New Column(393, 30, "D2", True, False, False, 22, &HFF62B0FF, &HFF000000, &HFF6AB0F7, &HFF000000, &H140033FF),
-                              New Column(393, 42, "D3", True, False, False, 23, &HFFB0B0B0, &HFF000000, &HFFC0C0C0, &HFF000000, &H14FFFFFF),
-                              New Column(393, 45, "D4", True, False, False, 24, &HFFFFC862, &HFF000000, &HFFF7C66A, &HFF000000, &H16F38B0C),
-                              New Column(393, 42, "D5", True, False, False, 25, &HFFB0B0B0, &HFF000000, &HFFC0C0C0, &HFF000000, &H14FFFFFF),
-                              New Column(393, 30, "D6", True, False, False, 28, &HFF62B0FF, &HFF000000, &HFF6AB0F7, &HFF000000, &H140033FF),
-                              New Column(393, 42, "D7", True, False, False, 29, &HFFB0B0B0, &HFF000000, &HFFC0C0C0, &HFF000000, &H14FFFFFF),
-                              New Column(393, 40, "D8", True, False, False, 26, &HFF808080, &HFF000000, &HFF909090, &HFF000000, 0),
-                              New Column(393, 5, "", False, False, False, 0, 0, 0, 0, 0, 0),
-                              New Column(393, 40, "BGA", True, False, False, 4, &HFF8CD78A, &HFF000000, &HFF90D38E, &HFF000000, 0),
-                              New Column(393, 40, "LAYER", True, False, False, 7, &HFF8CD78A, &HFF000000, &HFF90D38E, &HFF000000, 0),
-                              New Column(393, 40, "POOR", True, False, False, 6, &HFF8CD78A, &HFF000000, &HFF90D38E, &HFF000000, 0),
-                              New Column(393, 5, "", False, False, False, 0, 0, 0, 0, 0, 0),
-                              New Column(393, 40, "B", True, False, True, 1, &HFFE18080, &HFF000000, &HFFDC8585, &HFF000000, 0)}
 
     Dim MeasureLength(999) As Double
     Dim MeasureBottom(999) As Double
@@ -309,85 +247,6 @@ Public Class MainWindow
         InitializeComponent()
         Audio.Initialize()
     End Sub
-
-    Private Function GetBMSChannelBy(note As Note) As String
-        Dim iCol = note.ColumnIndex
-        Dim xVal = note.Value
-        Dim xLong = note.LongNote
-        Dim xHidden = note.Hidden
-        Dim xI As Integer = GetColumn(iCol).Identifier
-        If iCol = niBPM AndAlso (xVal / 10000 <> xVal \ 10000 Or xVal >= 2560000 Or xVal < 0) Then xI += idflBPM
-        If (iCol >= niA1 And iCol <= niA8) Or (iCol >= niD1 And iCol <= niD8) Then
-            If xLong Then xI += idLong
-            If xHidden Then xI += idHidden
-        End If
-        Return Add2Zeros(xI)
-    End Function
-
-    Private Function nLeft(ByVal iCol As Integer) As Integer
-        If iCol < niB Then Return column(iCol).Left Else Return column(niB).Left + (iCol - niB) * column(niB).Width
-    End Function
-    Private Function getColumnWidth(ByVal iCol As Integer) As Integer
-        If Not GetColumn(iCol).isVisible Then Return 0
-        If iCol < niB Then Return column(iCol).Width Else Return column(niB).Width
-    End Function
-    Private Function nTitle(ByVal iCol As Integer) As String
-        If iCol < niB Then Return column(iCol).Title Else Return column(niB).Title & (iCol - niB + 1).ToString
-    End Function
-    Private Function nEnabled(ByVal iCol As Integer) As Boolean
-        'If iCol < niB Then Return col(iCol).Enabled And col(iCol).Visible Else Return col(niB).Enabled And col(niB).Visible
-        If iCol < niB Then Return column(iCol).isEnabledAfterAll Else Return column(niB).isEnabledAfterAll
-    End Function
-    Private Function isColumnNumeric(ByVal iCol As Integer) As Boolean
-        If iCol < niB Then Return column(iCol).isNumeric Else Return column(niB).isNumeric
-    End Function
-
-
-
-    Private Function GetColumn(ByVal iCol As Integer) As Column
-        If iCol < niB Then Return column(iCol) Else Return column(niB)
-    End Function
-
-    Private Function BMSEChannelToColumnIndex(ByVal I As String)
-        Dim Ivalue = Val(I)
-        If Ivalue > 100 Then
-            Return niB + Ivalue - 101
-        ElseIf Ivalue < 100 And Ivalue > 0 Then
-            Return BMSChannelToColumn(Mid(I, 2, 2))
-        End If
-        Return niB ' ??? how did a negative number get here?
-    End Function
-
-    Private Function BMSChannelToColumn(ByVal I As String) As Integer
-        Select Case I
-            Case "01" : Return niB
-            Case "03", "08" : Return niBPM
-            Case "09" : Return niSTOP
-            Case "04" : Return niBGA
-            Case "07" : Return niLAYER
-            Case "06" : Return niPOOR
-
-            Case "16", "36", "56", "76" : Return niA1
-            Case "11", "31", "51", "71" : Return niA2
-            Case "12", "32", "52", "72" : Return niA3
-            Case "13", "33", "53", "73" : Return niA4
-            Case "14", "34", "54", "74" : Return niA5
-            Case "15", "35", "55", "75" : Return niA6
-            Case "18", "38", "58", "78" : Return niA7
-            Case "19", "39", "59", "79" : Return niA8
-
-            Case "21", "41", "61", "81" : Return niD1
-            Case "22", "42", "62", "82" : Return niD2
-            Case "23", "43", "63", "83" : Return niD3
-            Case "24", "44", "64", "84" : Return niD4
-            Case "25", "45", "65", "85" : Return niD5
-            Case "28", "48", "68", "88" : Return niD6
-            Case "29", "49", "69", "89" : Return niD7
-            Case "26", "46", "66", "86" : Return niD8
-
-            Case Else : Return 0
-        End Select
-    End Function
 
     ''' <summary>
     ''' 
@@ -638,6 +497,7 @@ Public Class MainWindow
                         ByVal xValue As Long,
                         ByVal xLongNote As Boolean,
                         ByVal xHidden As Boolean,
+                        ByVal xLandmine As Boolean,
                Optional ByVal xSelected As Boolean = False,
                Optional ByVal OverWrite As Boolean = True,
                Optional ByVal SortAndUpdatePairing As Boolean = True)
@@ -659,6 +519,7 @@ Public Class MainWindow
             .Value = xValue
             .LongNote = xLongNote
             .Hidden = xHidden
+            .Landmine = xLandmine
             .Selected = xSelected And nEnabled(xColumnIndex)
         End With
 
@@ -1275,7 +1136,7 @@ Public Class MainWindow
         If NTInput Then
             For i = 0 To UBound(Notes)
                 Notes(i).HasError = False
-                Notes(i).PairWithI = 0
+                Notes(i).LNPair = 0
                 If Notes(i).Length < 0 Then Notes(i).Length = 0
             Next
 
@@ -1299,8 +1160,8 @@ Public Class MainWindow
                             If Notes(j).Length <> 0 OrElse Notes(j).Value \ 10000 = LnObj Then
                                 Notes(i).HasError = True
                             Else
-                                Notes(i).PairWithI = j
-                                Notes(j).PairWithI = i
+                                Notes(i).LNPair = j
+                                Notes(j).LNPair = i
                             End If
                             Exit For
                         Next
@@ -1314,7 +1175,7 @@ Public Class MainWindow
         Else
             For i = 0 To UBound(Notes)
                 Notes(i).HasError = False
-                Notes(i).PairWithI = 0
+                Notes(i).LNPair = 0
             Next
 
             For i = 1 To UBound(Notes)
@@ -1330,8 +1191,8 @@ Public Class MainWindow
                         If Notes(j).VPosition = Notes(i).VPosition Then
                             Notes(i).HasError = True
                             GoTo EndSearch
-                        ElseIf Notes(j).LongNote And Notes(j).PairWithI = i Then
-                            Notes(i).PairWithI = j
+                        ElseIf Notes(j).LongNote And Notes(j).LNPair = i Then
+                            Notes(i).LNPair = j
                             GoTo EndSearch
                         Else
                             Exit For
@@ -1340,8 +1201,8 @@ Public Class MainWindow
 
                     For j = i + 1 To UBound(Notes)
                         If Notes(j).ColumnIndex <> Notes(i).ColumnIndex Then Continue For
-                        Notes(i).PairWithI = j
-                        Notes(j).PairWithI = i
+                        Notes(i).LNPair = j
+                        Notes(j).LNPair = i
                         If Not Notes(j).LongNote AndAlso Notes(j).Value \ 10000 <> LnObj Then
                             Notes(j).HasError = True
                         End If
@@ -1362,11 +1223,11 @@ EndSearch:
                     '       If nothing below, then error.
                     For j = i - 1 To 1 Step -1
                         If Notes(i).ColumnIndex <> Notes(j).ColumnIndex Then Continue For
-                        If Notes(j).PairWithI <> 0 And Notes(j).PairWithI <> i Then
+                        If Notes(j).LNPair <> 0 And Notes(j).LNPair <> i Then
                             Notes(j).HasError = True
                         End If
-                        Notes(i).PairWithI = j
-                        Notes(j).PairWithI = i
+                        Notes(i).LNPair = j
+                        Notes(j).LNPair = i
                         If Notes(i).VPosition = Notes(j).VPosition Then
                             Notes(i).HasError = True
                         End If
@@ -2497,7 +2358,7 @@ StartCount:     If Not NTInput Then
                 If Notes(xI1).VPosition > xVUpper Then Exit For
                 If Notes(xI1).ColumnIndex = niBPM Then
                     xBPM = Notes(xI1).Value
-                    Notes(xI1).Value = IIf(Notes(xI1).Value * xRatio <= 655359999, Notes(xI1).Value * xRatio, 655359999)
+                    Notes(xI1).Value = Notes(xI1).Value * xRatio
                 End If
                 Notes(xI1).VPosition = (Notes(xI1).VPosition - xVLower) * xRatio + xVLower
             Next
@@ -2510,8 +2371,8 @@ StartCount:     If Not NTInput Then
             Next
 
             'Add BPMs
-            AddNote(xVLower, niBPM, IIf(xValueL * xRatio <= 655359999, xValueL * xRatio, 655359999), False, False, , , False)
-            AddNote(xVUpper + (xRatio - 1) * (xVUpper - xVLower), niBPM, xValueU, False, False, , , False)
+            AddNote(xVLower, niBPM, xValueL * xRatio, False, False, False, , , False)
+            AddNote(xVUpper + (xRatio - 1) * (xVUpper - xVLower), niBPM, xValueU, False, False, False, , , False)
 
         Else
             Dim xAddBPML As Boolean = True
@@ -2551,8 +2412,8 @@ StartCount:     If Not NTInput Then
             Next
 
             'Add BPMs
-            If xAddBPML Then AddNote(xVLower, niBPM, IIf(xValueL * xRatio <= 655359999, xValueL * xRatio, 655359999), False, False, , , False)
-            If xAddBPMU Then AddNote((xVUpper - xVLower) * xRatio + xVLower, niBPM, xValueU, False, False, , , False)
+            If xAddBPML Then AddNote(xVLower, niBPM, xValueL * xRatio, False, False, False, , , False)
+            If xAddBPMU Then AddNote((xVUpper - xVLower) * xRatio + xVLower, niBPM, xValueU, False, False, False, , , False)
         End If
 
         'Check BPM Overflow
@@ -2653,7 +2514,7 @@ EndofSub:
                 If Notes(xI1).VPosition > xVHalf Then Exit For
                 If Notes(xI1).ColumnIndex = niBPM Then
                     xBPM = Notes(xI1).Value
-                    Notes(xI1).Value = IIf(Notes(xI1).Value * xRatio1 <= 655359999, Notes(xI1).Value * xRatio1, 655359999)
+                    Notes(xI1).Value = Notes(xI1).Value * xRatio1
                 End If
                 Notes(xI1).VPosition = (Notes(xI1).VPosition - xVLower) * xRatio1 + xVLower
             Next
@@ -2678,9 +2539,13 @@ EndofSub:
             'Next
 
             'Add BPMs
-            AddNote(xVLower, niBPM, IIf(xVHalf <> xVLower AndAlso xValueL * xRatio1 <= 655359999, xValueL * xRatio1, 655359999), False, False, , , False)
-            AddNote(xVHalf + dVPosition, niBPM, IIf(xVHalf <> xVUpper AndAlso xValueM * xRatio2 <= 655359999, xValueM * xRatio2, 655359999), False, False, , , False)
-            AddNote(xVUpper, niBPM, xValueU, False, False, , , False)
+            ' az: cond. removed; 
+            ' IIf(xVHalf <> xVLower AndAlso xValueL * xRatio1 <= 655359999, xValueL * xRatio1, 655359999)
+            AddNote(xVLower, niBPM, xValueL * xRatio1, False, False, False, , , False)
+            ' az: cond removed;
+            ' IIf(xVHalf <> xVUpper AndAlso xValueM * xRatio2 <= 655359999, xValueM * xRatio2, 655359999)
+            AddNote(xVHalf + dVPosition, niBPM, xValueM * xRatio2, False, False, False, , , False)
+            AddNote(xVUpper, niBPM, xValueU, False, False, False, , , False)
 
         Else
             Dim xAddBPML As Boolean = True
@@ -2697,7 +2562,10 @@ EndofSub:
                         xValueU = Notes(xI1).Value
                         If Notes(xI1).VPosition = xVLower Then
                             xAddBPML = False
-                            Notes(xI1).Value = IIf(xVHalf <> xVLower AndAlso Notes(xI1).Value * xRatio1 <= 655359999, Notes(xI1).Value * xRatio1, 655359999)
+
+                            ' az: condition removed;
+                            ' IIf(xVHalf <> xVLower AndAlso Notes(xI1).Value * xRatio1 <= 655359999, Notes(xI1).Value * xRatio1, 655359999)
+                            Notes(xI1).Value = Notes(xI1).Value * xRatio1
                         End If
                     End If
 
@@ -2717,9 +2585,13 @@ EndofSub:
                         xValueU = Notes(xI1).Value
                         If Notes(xI1).VPosition = xVHalf Then
                             xAddBPMM = False
-                            Notes(xI1).Value = IIf(xVHalf <> xVUpper AndAlso Notes(xI1).Value * xRatio2 <= 655359999, Notes(xI1).Value * xRatio2, 655359999)
+                            ' az: cond. remove
+                            ' IIf(xVHalf <> xVUpper AndAlso Notes(xI1).Value * xRatio2 <= 655359999, Notes(xI1).Value * xRatio2, 655359999)
+                            Notes(xI1).Value = Notes(xI1).Value * xRatio2
                         Else
-                            Notes(xI1).Value = IIf(Notes(xI1).Value * xRatio1 <= 655359999, Notes(xI1).Value * xRatio1, 655359999)
+                            ' az: cond. remove
+                            ' IIf(Notes(xI1).Value * xRatio1 <= 655359999, Notes(xI1).Value * xRatio1, 655359999)
+                            Notes(xI1).Value = Notes(xI1).Value * xRatio1
                         End If
                     End If
 
@@ -2760,9 +2632,11 @@ EndofSub:
             Next
 
             'Add BPMs
-            If xAddBPML Then AddNote(xVLower, niBPM, IIf(xVHalf <> xVLower AndAlso xValueL * xRatio1 <= 655359999, xValueL * xRatio1, 655359999), False, False, , , False)
-            If xAddBPMM Then AddNote(xVHalf + dVPosition, niBPM, IIf(xVHalf <> xVUpper AndAlso xValueM * xRatio2 <= 655359999, xValueM * xRatio2, 655359999), False, False, , , False)
-            If xAddBPMU Then AddNote(xVUpper, niBPM, xValueU, False, False, , , False)
+            ' IIf(xVHalf <> xVLower AndAlso xValueL * xRatio1 <= 655359999, xValueL * xRatio1, 655359999)
+            If xAddBPML Then AddNote(xVLower, niBPM, xValueL * xRatio1, False, False, False, , , False)
+            ' IIf(xVHalf <> xVUpper AndAlso xValueM * xRatio2 <= 655359999, xValueM * xRatio2, 655359999)
+            If xAddBPMM Then AddNote(xVHalf + dVPosition, niBPM, xValueM * xRatio2, False, False, False, , , False)
+            If xAddBPMU Then AddNote(xVUpper, niBPM, xValueU, False, False, False, , , False)
         End If
 
         'Check BPM Overflow
@@ -3373,6 +3247,7 @@ EndOfAdjustment:
             With xK(UBound(xK))
                 .ColumnIndex = Notes(xI1).ColumnIndex
                 .LongNote = Notes(xI1).Length > 0
+                .Landmine = Notes(xI1).Landmine
                 .Value = Notes(xI1).Value
                 .VPosition = Notes(xI1).VPosition
                 .Selected = Notes(xI1).Selected
@@ -3384,6 +3259,7 @@ EndOfAdjustment:
                 With xK(UBound(xK))
                     .ColumnIndex = Notes(xI1).ColumnIndex
                     .LongNote = True
+                    .Landmine = False
                     .Value = Notes(xI1).Value
                     .VPosition = Notes(xI1).VPosition + Notes(xI1).Length
                     .Selected = Notes(xI1).Selected

@@ -91,20 +91,30 @@ Partial Public Class MainWindow
                                 VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight - 10)
         Dim point2 As New Point(HorizontalPositiontoDisplay(nLeft(SelectedColumn) + getColumnWidth(SelectedColumn), xHS),
                                 VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) + 10)
+
+        Dim bright As Color
+        Dim dark As Color
         If NTInput Or Not My.Computer.Keyboard.ShiftKeyDown Then
             xPen = New Pen(GetColumn(SelectedColumn).getBright(xAlpha))
-            xBrush = New Drawing2D.LinearGradientBrush(point1, point2,
-                           GetColumn(SelectedColumn).getBright(xAlpha),
-                           GetColumn(SelectedColumn).getDark(xAlpha))
-            xBrush2 = New SolidBrush(GetColumn(SelectedColumn).cText)
+            bright = GetColumn(SelectedColumn).getBright(xAlpha)
+            dark = GetColumn(SelectedColumn).getDark(xAlpha)
 
+            xBrush2 = New SolidBrush(GetColumn(SelectedColumn).cText)
         Else
             xPen = New Pen(GetColumn(SelectedColumn).getLongBright(xAlpha))
-            xBrush = New Drawing2D.LinearGradientBrush(point1, point2,
-                            GetColumn(SelectedColumn).getLongBright(xAlpha),
-                            GetColumn(SelectedColumn).getLongDark(xAlpha))
+            bright = GetColumn(SelectedColumn).getLongBright(xAlpha)
+            dark = GetColumn(SelectedColumn).getLongDark(xAlpha)
+
             xBrush2 = New SolidBrush(GetColumn(SelectedColumn).cLText)
         End If
+
+        ' Temp landmine
+        If My.Computer.Keyboard.AltKeyDown Then
+            bright = Color.Red
+            dark = Color.Red
+        End If
+
+        xBrush = New Drawing2D.LinearGradientBrush(point1, point2, bright, dark)
 
         e1.Graphics.FillRectangle(xBrush, HorizontalPositiontoDisplay(nLeft(SelectedColumn), xHS) + 2,
                                   VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight + 1,
@@ -117,7 +127,8 @@ Partial Public Class MainWindow
                                   vo.kHeight)
 
         e1.Graphics.DrawString(xText, vo.kFont, xBrush2,
-                        HorizontalPositiontoDisplay(nLeft(SelectedColumn), xHS) + vo.kLabelHShiftL, VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight + vo.kLabelVShift)
+                        HorizontalPositiontoDisplay(nLeft(SelectedColumn), xHS) + vo.kLabelHShiftL - 2,
+                        VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight + vo.kLabelVShift)
     End Sub
 
     Private Sub DrawDragAndDrop(xIndex As Integer, e1 As BufferedGraphics)
@@ -238,7 +249,7 @@ Partial Public Class MainWindow
                 '   the K is below the visible area but has an end point above the lower border
                 If Notes(xI1).VPosition >= xLowerBorder OrElse
                    (Notes(xI1).VPosition <= xLowerBorder And Notes(xI1).VPosition + Notes(xI1).Length >= xLowerBorder) OrElse
-                   (Notes(xI1).VPosition <= xLowerBorder And Notes(Notes(xI1).PairWithI).VPosition >= xLowerBorder) Then _
+                   (Notes(xI1).VPosition <= xLowerBorder And Notes(Notes(xI1).LNPair).VPosition >= xLowerBorder) Then _
                     DrawNoteNT(Notes(xI1), e1, xHS, xVS, xTHeight)
             Next
 
@@ -248,7 +259,7 @@ Partial Public Class MainWindow
                 'If the K is inside the visible area or
                 '   the K is below the visible area but is paired with another K above the lower border
                 If Notes(xI1).VPosition >= xLowerBorder OrElse
-                   (Notes(xI1).VPosition <= xLowerBorder And Notes(Notes(xI1).PairWithI).VPosition >= xLowerBorder) Then _
+                   (Notes(xI1).VPosition <= xLowerBorder And Notes(Notes(xI1).LNPair).VPosition >= xLowerBorder) Then _
                     DrawNote(Notes(xI1), e1, xHS, xVS, xTHeight)
             Next
         End If
@@ -444,24 +455,34 @@ Partial Public Class MainWindow
         Dim xBrush As Drawing2D.LinearGradientBrush
         Dim xBrush2 As SolidBrush
 
-        If Not sNote.LongNote Then
+        Dim bright As Color
+        Dim dark As Color
+        Dim p1 = New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS),
+                           VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight - 10)
+        Dim p2 = New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) + getColumnWidth(sNote.ColumnIndex), xHS),
+                           VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) + 10)
 
+        If Not sNote.LongNote Then
             xPen = New Pen(GetColumn(sNote.ColumnIndex).getBright(xAlpha))
-            xBrush = New Drawing2D.LinearGradientBrush(New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS), VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight - 10),
-                           New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) + getColumnWidth(sNote.ColumnIndex), xHS), VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) + 10),
-                           GetColumn(sNote.ColumnIndex).getBright(xAlpha),
-                           GetColumn(sNote.ColumnIndex).getDark(xAlpha))
+
+            bright = GetColumn(sNote.ColumnIndex).getBright(xAlpha)
+            dark = GetColumn(sNote.ColumnIndex).getDark(xAlpha)
+
             xBrush2 = New SolidBrush(GetColumn(sNote.ColumnIndex).cText)
         Else
+            bright = GetColumn(sNote.ColumnIndex).getLongBright(xAlpha)
+            dark = GetColumn(sNote.ColumnIndex).getLongDark(xAlpha)
 
-            xPen = New Pen(GetColumn(sNote.ColumnIndex).getLongBright(xAlpha))
-            xBrush = New Drawing2D.LinearGradientBrush(New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS), VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight - 10),
-                            New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) + getColumnWidth(sNote.ColumnIndex), xHS), VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) + 10),
-                            GetColumn(sNote.ColumnIndex).getLongBright(xAlpha),
-                            GetColumn(sNote.ColumnIndex).getLongDark(xAlpha))
+            If sNote.Landmine Then
+                bright = Color.Red
+                dark = Color.Red
+            End If
+
             xBrush2 = New SolidBrush(GetColumn(sNote.ColumnIndex).cLText)
-
         End If
+
+        xPen = New Pen(bright)
+        xBrush = New Drawing2D.LinearGradientBrush(p1, p2, bright, dark)
 
         ' Fill
         e.Graphics.FillRectangle(xBrush, HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS) + 2,
@@ -479,7 +500,7 @@ Partial Public Class MainWindow
         e.Graphics.DrawString(IIf(isColumnNumeric(sNote.ColumnIndex), sNote.Value / 10000, xLabel),
                         vo.kFont, xBrush2, HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS) + vo.kLabelHShift, VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight + vo.kLabelVShift)
 
-        If sNote.PairWithI <> 0 Then
+        If sNote.LNPair <> 0 Then
             DrawPairedLNBody(sNote, e, xHS, xVS, xHeight, xAlpha)
         End If
 
@@ -500,15 +521,15 @@ Partial Public Class MainWindow
         Dim xPen2 As New Pen(GetColumn(sNote.ColumnIndex).getLongBright(xAlpha))
         Dim xBrush3 As New Drawing2D.LinearGradientBrush(
                     New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) - 0.5 * getColumnWidth(sNote.ColumnIndex), xHS),
-                            VerticalPositiontoDisplay(Notes(sNote.PairWithI).VPosition, xVS, xHeight)),
+                            VerticalPositiontoDisplay(Notes(sNote.LNPair).VPosition, xVS, xHeight)),
                     New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) + 1.5 * getColumnWidth(sNote.ColumnIndex), xHS),
                             VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) + vo.kHeight),
                     GetColumn(sNote.ColumnIndex).getLongBright(xAlpha),
                     GetColumn(sNote.ColumnIndex).getLongDark(xAlpha))
-        e.Graphics.FillRectangle(xBrush3, HorizontalPositiontoDisplay(nLeft(Notes(sNote.PairWithI).ColumnIndex), xHS) + 3, VerticalPositiontoDisplay(Notes(sNote.PairWithI).VPosition, xVS, xHeight) + 1,
-                                        getColumnWidth(Notes(sNote.PairWithI).ColumnIndex) * gxWidth - 5, VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - VerticalPositiontoDisplay(Notes(sNote.PairWithI).VPosition, xVS, xHeight) - vo.kHeight - 1)
-        e.Graphics.DrawRectangle(xPen2, HorizontalPositiontoDisplay(nLeft(Notes(sNote.PairWithI).ColumnIndex), xHS) + 2, VerticalPositiontoDisplay(Notes(sNote.PairWithI).VPosition, xVS, xHeight),
-                                        getColumnWidth(Notes(sNote.PairWithI).ColumnIndex) * gxWidth - 4, VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - VerticalPositiontoDisplay(Notes(sNote.PairWithI).VPosition, xVS, xHeight) - vo.kHeight)
+        e.Graphics.FillRectangle(xBrush3, HorizontalPositiontoDisplay(nLeft(Notes(sNote.LNPair).ColumnIndex), xHS) + 3, VerticalPositiontoDisplay(Notes(sNote.LNPair).VPosition, xVS, xHeight) + 1,
+                                        getColumnWidth(Notes(sNote.LNPair).ColumnIndex) * gxWidth - 5, VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - VerticalPositiontoDisplay(Notes(sNote.LNPair).VPosition, xVS, xHeight) - vo.kHeight - 1)
+        e.Graphics.DrawRectangle(xPen2, HorizontalPositiontoDisplay(nLeft(Notes(sNote.LNPair).ColumnIndex), xHS) + 2, VerticalPositiontoDisplay(Notes(sNote.LNPair).VPosition, xVS, xHeight),
+                                        getColumnWidth(Notes(sNote.LNPair).ColumnIndex) * gxWidth - 4, VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - VerticalPositiontoDisplay(Notes(sNote.LNPair).VPosition, xVS, xHeight) - vo.kHeight)
     End Sub
 
     ''' <summary>
@@ -532,23 +553,41 @@ Partial Public Class MainWindow
         Dim xBrush As Drawing2D.LinearGradientBrush
         Dim xBrush2 As SolidBrush
 
+        Dim p1 As Point
+        Dim p2 As Point
+        Dim bright As Color
+        Dim dark As Color
+
         If sNote.Length = 0 Then
-            xPen1 = New Pen(GetColumn(sNote.ColumnIndex).getBright(xAlpha))
-            xBrush = New Drawing2D.LinearGradientBrush(
-                            New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS), VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight - 10),
-                            New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) + getColumnWidth(sNote.ColumnIndex), xHS), VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) + 10),
-                            GetColumn(sNote.ColumnIndex).getBright(xAlpha),
-                            GetColumn(sNote.ColumnIndex).getDark(xAlpha))
+            p1 = New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS),
+                           VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight - 10)
+
+            p2 = New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) + getColumnWidth(sNote.ColumnIndex), xHS),
+                           VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) + 10)
+
+            bright = GetColumn(sNote.ColumnIndex).getBright(xAlpha)
+            dark = GetColumn(sNote.ColumnIndex).getDark(xAlpha)
+
+            If sNote.Landmine Then
+                bright = Color.Red
+                dark = Color.Red
+            End If
+
             xBrush2 = New SolidBrush(GetColumn(sNote.ColumnIndex).cText)
         Else
-            xPen1 = New Pen(GetColumn(sNote.ColumnIndex).getLongBright(xAlpha))
-            xBrush = New Drawing2D.LinearGradientBrush(
-                            New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) - 0.5 * getColumnWidth(sNote.ColumnIndex), xHS), VerticalPositiontoDisplay(sNote.VPosition + sNote.Length, xVS, xHeight) - vo.kHeight),
-                            New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) + 1.5 * getColumnWidth(sNote.ColumnIndex), xHS), VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight)),
-                            GetColumn(sNote.ColumnIndex).getLongBright(xAlpha),
-                            GetColumn(sNote.ColumnIndex).getLongDark(xAlpha))
+            p1 = New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) - 0.5 * getColumnWidth(sNote.ColumnIndex), xHS),
+                           VerticalPositiontoDisplay(sNote.VPosition + sNote.Length, xVS, xHeight) - vo.kHeight)
+            p2 = New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) + 1.5 * getColumnWidth(sNote.ColumnIndex), xHS),
+                                      VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight))
+
+            bright = GetColumn(sNote.ColumnIndex).getLongBright(xAlpha)
+            dark = GetColumn(sNote.ColumnIndex).getLongDark(xAlpha)
+
             xBrush2 = New SolidBrush(GetColumn(sNote.ColumnIndex).cLText)
         End If
+
+        xPen1 = New Pen(bright)
+        xBrush = New Drawing2D.LinearGradientBrush(p1, p2, bright, dark)
 
         ' Note gradient
         e.Graphics.FillRectangle(xBrush,
@@ -569,7 +608,7 @@ Partial Public Class MainWindow
                               VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight + vo.kLabelVShift)
 
         ' Draw paired body
-        If sNote.Length = 0 And sNote.PairWithI <> 0 Then
+        If sNote.Length = 0 And sNote.LNPair <> 0 Then
             DrawPairedLNBody(sNote, e, xHS, xVS, xHeight, xAlpha)
         End If
 

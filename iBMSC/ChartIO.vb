@@ -185,8 +185,9 @@ AddExpansion:       xExpansion &= sLine & vbCrLf
                 With Notes(UBound(Notes))
                     .ColumnIndex = BMSChannelToColumn(Channel) +
                                         IIf(Channel = "01", 1, 0) * (mColumn(xMeasure) - 1)
-                    .LongNote = IdentifiertoLongNote(Channel)
+                    .LongNote = IsChannelLongNote(Channel)
                     .Hidden = IsChannelHidden(Channel)
+                    .Landmine = IsChannelLandmine(Channel)
                     .Selected = False
                     .VPosition = MeasureBottom(xMeasure) + MeasureLength(xMeasure) * (xI1 / 2 - 4) / ((Len(sLineTrim) - 7) / 2)
                     .Value = C36to10(Mid(sLineTrim, xI1, 2)) * 10000
@@ -226,8 +227,12 @@ AddExpansion:       xExpansion &= sLine & vbCrLf
                                        "41", "42", "43", "44", "45", "46", "48", "49",
                                        "51", "52", "53", "54", "55", "56", "58", "59",
                                        "61", "62", "63", "64", "65", "66", "68", "69",
-                                       "71", "72", "73", "74", "75", "76", "78", "79",
-                                       "81", "82", "83", "84", "85", "86", "88", "89"}
+                                       "D1", "D2", "D3", "D4", "D5", "D6", "D8", "D9",
+                                       "E1", "E2", "E3", "E4", "E5", "E6", "E8", "E9"}
+    ' 71 through 89 are reserved
+    '"71", "72", "73", "74", "75", "76", "78", "79",
+    '"81", "82", "83", "84", "85", "86", "88", "89",
+
 
     Private Function SaveBMS() As String
         CalculateGreatestVPosition()
@@ -469,7 +474,7 @@ AddExpansion:       xExpansion &= sLine & vbCrLf
                     ReDim Preserve xprevNotes(UBound(xprevNotes) + 1)
                     With xprevNotes(UBound(xprevNotes))
                         .ColumnIndex = BMSChannelToColumn(BMSChannelList(CurrentBMSChannel))
-                        .LongNote = IdentifiertoLongNote(BMSChannelList(CurrentBMSChannel))
+                        .LongNote = IsChannelLongNote(BMSChannelList(CurrentBMSChannel))
                         .Hidden = IsChannelHidden(BMSChannelList(CurrentBMSChannel))
                         .VPosition = MeasureBottom(MeasureIndex)
                         .Value = C36to10(NoteStrings(i))

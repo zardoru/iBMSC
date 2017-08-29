@@ -151,6 +151,9 @@
     <Compile Include="Dialogs\SplashScreen1.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="EditorColumns.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="EditorRecent.vb">
       <SubType>Form</SubType>
     </Compile>
