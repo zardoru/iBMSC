@@ -468,15 +468,15 @@ Partial Public Class MainWindow
             bright = GetColumn(sNote.ColumnIndex).getBright(xAlpha)
             dark = GetColumn(sNote.ColumnIndex).getDark(xAlpha)
 
-            xBrush2 = New SolidBrush(GetColumn(sNote.ColumnIndex).cText)
-        Else
-            bright = GetColumn(sNote.ColumnIndex).getLongBright(xAlpha)
-            dark = GetColumn(sNote.ColumnIndex).getLongDark(xAlpha)
-
             If sNote.Landmine Then
                 bright = Color.Red
                 dark = Color.Red
             End If
+
+            xBrush2 = New SolidBrush(GetColumn(sNote.ColumnIndex).cText)
+        Else
+            bright = GetColumn(sNote.ColumnIndex).getLongBright(xAlpha)
+            dark = GetColumn(sNote.ColumnIndex).getLongDark(xAlpha)
 
             xBrush2 = New SolidBrush(GetColumn(sNote.ColumnIndex).cLText)
         End If
