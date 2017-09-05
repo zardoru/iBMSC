@@ -1,7 +1,7 @@
 ﻿Imports iBMSC.Editor
 
 Partial Public Class MainWindow
-    Private Sub Operate(ByVal sCmd As UndoRedo.LinkedURCmd)
+    Private Sub PerformCommand(ByVal sCmd As UndoRedo.LinkedURCmd)
         For xI2 As Integer = 1 To UBound(Notes)
             Notes(xI2).Selected = False
         Next
@@ -15,18 +15,10 @@ Partial Public Class MainWindow
                     Dim xCmd As UndoRedo.AddNote = sCmd
 
                     ReDim Preserve Notes(UBound(Notes) + 1)
-                    With Notes(UBound(Notes))
-                        .ColumnIndex = xCmd.ColumnIndex
-                        .VPosition = xCmd.VPosition
-                        .Value = xCmd.Value
-                        If NTInput Then .Length = xCmd.LongNote Else .LongNote = xCmd.LongNote
-                        .Hidden = xCmd.Hidden
-                        .Selected = xCmd.Selected And nEnabled(.ColumnIndex)
-                    End With
-
+                    Notes(UBound(Notes)) = xCmd.note
                 Case UndoRedo.opRemoveNote
                     Dim xCmd As UndoRedo.RemoveNote = sCmd
-                    Dim xI2 As Integer = FindNoteIndex(xCmd.ColumnIndex, xCmd.VPosition, xCmd.Value, xCmd.LongNote, xCmd.Hidden)
+                    Dim xI2 As Integer = FindNoteIndex(xCmd.note)
 
                     If xI2 < Notes.Length Then
                         For xI3 As Integer = xI2 + 1 To UBound(Notes)
@@ -37,34 +29,27 @@ Partial Public Class MainWindow
 
                 Case UndoRedo.opChangeNote
                     Dim xCmd As UndoRedo.ChangeNote = sCmd
-                    Dim xI2 As Integer = FindNoteIndex(xCmd.ColumnIndex, xCmd.VPosition, xCmd.Value, xCmd.LongNote, xCmd.Hidden)
+                    Dim xI2 As Integer = FindNoteIndex(xCmd.note)
 
                     If xI2 < Notes.Length Then
-                        With Notes(xI2)
-                            .ColumnIndex = xCmd.NColumnIndex
-                            .VPosition = xCmd.NVPosition
-                            .Value = xCmd.NValue
-                            If NTInput Then .Length = xCmd.NLongNote Else .LongNote = xCmd.LongNote
-                            .Hidden = xCmd.NHidden
-                            .Selected = xCmd.Selected And nEnabled(.ColumnIndex)
-                        End With
+                        Notes(xI2) = xCmd.note
                     End If
 
                 Case UndoRedo.opMoveNote
                     Dim xCmd As UndoRedo.MoveNote = sCmd
-                    Dim xI2 As Integer = FindNoteIndex(xCmd.ColumnIndex, xCmd.VPosition, xCmd.Value, xCmd.LongNote, xCmd.Hidden)
+                    Dim xI2 As Integer = FindNoteIndex(xCmd.note)
 
                     If xI2 < Notes.Length Then
                         With Notes(xI2)
                             .ColumnIndex = xCmd.NColumnIndex
                             .VPosition = xCmd.NVPosition
-                            .Selected = xCmd.Selected And nEnabled(.ColumnIndex)
+                            .Selected = xCmd.note.Selected And nEnabled(.ColumnIndex)
                         End With
                     End If
 
                 Case UndoRedo.opLongNoteModify
                     Dim xCmd As UndoRedo.LongNoteModify = sCmd
-                    Dim xI2 As Integer = FindNoteIndex(xCmd.ColumnIndex, xCmd.VPosition, xCmd.Value, xCmd.LongNote, xCmd.Hidden)
+                    Dim xI2 As Integer = FindNoteIndex(xCmd.note)
 
                     If xI2 < Notes.Length Then
                         With Notes(xI2)
@@ -74,26 +59,26 @@ Partial Public Class MainWindow
                             Else
                                 .LongNote = xCmd.NLongNote
                             End If
-                            .Selected = xCmd.Selected And nEnabled(.ColumnIndex)
+                            .Selected = xCmd.note.Selected And nEnabled(.ColumnIndex)
                         End With
                     End If
 
                 Case UndoRedo.opHiddenNoteModify
                     Dim xCmd As UndoRedo.HiddenNoteModify = sCmd
-                    Dim xI2 As Integer = FindNoteIndex(xCmd.ColumnIndex, xCmd.VPosition, xCmd.Value, xCmd.LongNote, xCmd.Hidden)
+                    Dim xI2 As Integer = FindNoteIndex(xCmd.note)
 
                     If xI2 < Notes.Length Then
                         Notes(xI2).Hidden = xCmd.NHidden
-                        Notes(xI2).Selected = xCmd.Selected And nEnabled(Notes(xI2).ColumnIndex)
+                        Notes(xI2).Selected = xCmd.note.Selected And nEnabled(Notes(xI2).ColumnIndex)
                     End If
 
                 Case UndoRedo.opRelabelNote
                     Dim xCmd As UndoRedo.RelabelNote = sCmd
-                    Dim xI2 As Integer = FindNoteIndex(xCmd.ColumnIndex, xCmd.VPosition, xCmd.Value, xCmd.LongNote, xCmd.Hidden)
+                    Dim xI2 As Integer = FindNoteIndex(xCmd.note)
 
                     If xI2 < Notes.Length Then
                         Notes(xI2).Value = xCmd.NValue
-                        Notes(xI2).Selected = xCmd.Selected And nEnabled(Notes(xI2).ColumnIndex)
+                        Notes(xI2).Selected = xCmd.note.Selected And nEnabled(Notes(xI2).ColumnIndex)
                     End If
 
                 Case UndoRedo.opRemoveAllNotes
@@ -200,36 +185,11 @@ Partial Public Class MainWindow
         mnRedo.Enabled = False
     End Sub
 
-    Private Sub RedoAddNote(ByVal xCol As Integer, ByVal xVPos As Double,
-                            ByVal xVal As Long,
-                            ByVal xLong As Double,
-                            ByVal xHide As Boolean,
-                            ByVal xSel As Boolean,
+    Private Sub RedoAddNote(ByVal note As Note,
                             ByRef BaseUndo As UndoRedo.LinkedURCmd,
                             ByRef BaseRedo As UndoRedo.LinkedURCmd)
-        Dim xUndo As New UndoRedo.RemoveNote(xCol, xVPos, xVal, xLong, xHide)
-        Dim xRedo As New UndoRedo.AddNote(xCol, xVPos, xVal, xLong, xHide, xSel)
-        xUndo.Next = BaseUndo
-        BaseUndo = xUndo
-        If BaseRedo IsNot Nothing Then BaseRedo.Next = xRedo
-        BaseRedo = xRedo
-    End Sub
-
-    Private Sub RedoAddNote(ByVal xN As Note,
-                            ByVal xSel As Boolean,
-                            ByRef BaseUndo As UndoRedo.LinkedURCmd,
-                            ByRef BaseRedo As UndoRedo.LinkedURCmd)
-        Dim xUndo As New UndoRedo.RemoveNote(xN.ColumnIndex,
-                                             xN.VPosition,
-                                             xN.Value,
-                                IIf(NTInput, xN.Length, xN.LongNote),
-                                             xN.Hidden)
-        Dim xRedo As New UndoRedo.AddNote(xN.ColumnIndex,
-                                          xN.VPosition,
-                                          xN.Value,
-                             IIf(NTInput, xN.Length, xN.LongNote),
-                                          xN.Hidden,
-                                          xSel)
+        Dim xUndo As New UndoRedo.RemoveNote(note)
+        Dim xRedo As New UndoRedo.AddNote(note)
         xUndo.Next = BaseUndo
         BaseUndo = xUndo
         If BaseRedo IsNot Nothing Then BaseRedo.Next = xRedo
@@ -238,149 +198,80 @@ Partial Public Class MainWindow
 
     Private Sub RedoAddNote(ByVal xIndices() As Integer, ByVal xSel As Boolean, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
         For xI1 As Integer = 0 To UBound(xIndices)
-            With Notes(xIndices(xI1))
-                Dim xUndo As New UndoRedo.RemoveNote(.ColumnIndex,
-                                                     .VPosition,
-                                                     .Value,
-                                        IIf(NTInput, .Length, .LongNote),
-                                                     .Hidden)
-                Dim xRedo As New UndoRedo.AddNote(.ColumnIndex,
-                                                  .VPosition,
-                                                  .Value,
-                                     IIf(NTInput, .Length, .LongNote),
-                                                  .Hidden,
-                                                  xSel)
-                xUndo.Next = BaseUndo
-                BaseUndo = xUndo
-                If BaseRedo IsNot Nothing Then BaseRedo.Next = xRedo
-                BaseRedo = xRedo
-            End With
+            Dim xUndo As New UndoRedo.RemoveNote(Notes(xI1))
+            Dim xRedo As New UndoRedo.AddNote(Notes(xI1))
+            xUndo.Next = BaseUndo
+            BaseUndo = xUndo
+            If BaseRedo IsNot Nothing Then BaseRedo.Next = xRedo
+            BaseRedo = xRedo
         Next
     End Sub
 
     Private Sub RedoAddNoteSelected(ByVal xSel As Boolean, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
         For xI1 As Integer = 1 To UBound(Notes)
             If Not Notes(xI1).Selected Then Continue For
-            With Notes(xI1)
-                Dim xUndo As New UndoRedo.RemoveNote(.ColumnIndex,
-                                                     .VPosition,
-                                                     .Value,
-                                        IIf(NTInput, .Length, .LongNote),
-                                                     .Hidden)
-                Dim xRedo As New UndoRedo.AddNote(.ColumnIndex,
-                                                  .VPosition,
-                                                  .Value,
-                                     IIf(NTInput, .Length, .LongNote),
-                                                  .Hidden,
-                                                  xSel)
-                xUndo.Next = BaseUndo
+
+            Dim xUndo As New UndoRedo.RemoveNote(Notes(xI1))
+            Dim xRedo As New UndoRedo.AddNote(Notes(xI1))
+            xUndo.Next = BaseUndo
                 BaseUndo = xUndo
                 If BaseRedo IsNot Nothing Then BaseRedo.Next = xRedo
                 BaseRedo = xRedo
-            End With
+
         Next
     End Sub
 
     Private Sub RedoAddNoteAll(ByVal xSel As Boolean, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
         For xI1 As Integer = 1 To UBound(Notes)
-            With Notes(xI1)
-                Dim xRedo As New UndoRedo.AddNote(.ColumnIndex,
-                                                  .VPosition,
-                                                  .Value,
-                                     IIf(NTInput, .Length, .LongNote),
-                                                  .Hidden,
-                                                  xSel)
-                If BaseRedo IsNot Nothing Then BaseRedo.Next = xRedo
+
+            Dim xRedo As New UndoRedo.AddNote(Notes(xI1))
+            If BaseRedo IsNot Nothing Then BaseRedo.Next = xRedo
                 BaseRedo = xRedo
-            End With
+
         Next
         Dim xUndo As New UndoRedo.RemoveAllNotes
         xUndo.Next = BaseUndo
         BaseUndo = xUndo
     End Sub
 
-    Private Sub RedoRemoveNote(ByVal xCol As Integer, ByVal xVPos As Double, ByVal xVal As Integer, ByVal xLong As Double, ByVal xHide As Boolean,
-    ByVal xSel As Boolean, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
-        Dim xUndo As New UndoRedo.AddNote(xCol, xVPos, xVal, xLong, xHide, xSel)
-        Dim xRedo As New UndoRedo.RemoveNote(xCol, xVPos, xVal, xLong, xHide)
+
+    Private Sub RedoRemoveNote(ByVal xN As Note, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
+        Dim xUndo As New UndoRedo.AddNote(xN)
+        Dim xRedo As New UndoRedo.RemoveNote(xN)
         xUndo.Next = BaseUndo
         BaseUndo = xUndo
         If BaseRedo IsNot Nothing Then BaseRedo.Next = xRedo
         BaseRedo = xRedo
     End Sub
 
-    Private Sub RedoRemoveNote(ByVal xN As Note, ByVal xSel As Boolean, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
-        Dim xUndo As New UndoRedo.AddNote(xN.ColumnIndex,
-                                          xN.VPosition,
-                                          xN.Value,
-                             IIf(NTInput, xN.Length, xN.LongNote),
-                                          xN.Hidden,
-                                          xSel)
-        Dim xRedo As New UndoRedo.RemoveNote(xN.ColumnIndex,
-                                             xN.VPosition,
-                                             xN.Value,
-                                IIf(NTInput, xN.Length, xN.LongNote),
-                                             xN.Hidden)
-        xUndo.Next = BaseUndo
-        BaseUndo = xUndo
-        If BaseRedo IsNot Nothing Then BaseRedo.Next = xRedo
-        BaseRedo = xRedo
-    End Sub
-
-    Private Sub RedoRemoveNote(ByVal xIndices() As Integer, ByVal xSel As Boolean, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
+    Private Sub RedoRemoveNote(ByVal xIndices() As Integer, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
         For xI1 As Integer = 0 To UBound(xIndices)
-            With Notes(xIndices(xI1))
-                Dim xUndo As New UndoRedo.AddNote(.ColumnIndex,
-                                                  .VPosition,
-                                                  .Value,
-                                     IIf(NTInput, .Length, .LongNote),
-                                                  .Hidden,
-                                                  xSel)
-                Dim xRedo As New UndoRedo.RemoveNote(.ColumnIndex,
-                                                     .VPosition,
-                                                     .Value,
-                                        IIf(NTInput, .Length, .LongNote),
-                                                     .Hidden)
-                xUndo.Next = BaseUndo
-                BaseUndo = xUndo
-                If BaseRedo IsNot Nothing Then BaseRedo.Next = xRedo
-                BaseRedo = xRedo
-            End With
+            Dim xUndo As New UndoRedo.AddNote(Notes(xIndices(xI1)))
+            Dim xRedo As New UndoRedo.RemoveNote(Notes(xIndices(xI1)))
+            xUndo.Next = BaseUndo
+            BaseUndo = xUndo
+            If BaseRedo IsNot Nothing Then BaseRedo.Next = xRedo
+            BaseRedo = xRedo
         Next
     End Sub
 
     Private Sub RedoRemoveNoteSelected(ByVal xSel As Boolean, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
         For xI1 As Integer = 1 To UBound(Notes)
             If Not Notes(xI1).Selected Then Continue For
-            With Notes(xI1)
-                Dim xUndo As New UndoRedo.AddNote(.ColumnIndex,
-                                                  .VPosition,
-                                                  .Value,
-                                     IIf(NTInput, .Length, .LongNote),
-                                                  .Hidden,
-                                                  xSel)
-                Dim xRedo As New UndoRedo.RemoveNote(.ColumnIndex,
-                                                     .VPosition,
-                                                     .Value,
-                                        IIf(NTInput, .Length, .LongNote),
-                                                     .Hidden)
+            Dim xUndo As New UndoRedo.AddNote(Notes(xI1))
+                Dim xRedo As New UndoRedo.RemoveNote(Notes(xI1))
                 xUndo.Next = BaseUndo
                 BaseUndo = xUndo
                 If BaseRedo IsNot Nothing Then BaseRedo.Next = xRedo
                 BaseRedo = xRedo
-            End With
+
         Next
     End Sub
 
     Private Sub RedoRemoveNoteAll(ByVal xSel As Boolean, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
         For xI1 As Integer = 1 To UBound(Notes)
             With Notes(xI1)
-                Dim xUndo As New UndoRedo.AddNote(.ColumnIndex,
-                                                  .VPosition,
-                                                  .Value,
-                                     IIf(NTInput, .Length, .LongNote),
-                                                  .Hidden,
-                                                  xSel)
+                Dim xUndo As New UndoRedo.AddNote(Notes(xI1))
                 xUndo.Next = BaseUndo
                 BaseUndo = xUndo
             End With
@@ -390,181 +281,59 @@ Partial Public Class MainWindow
         BaseRedo = xRedo
     End Sub
 
-    Private Sub RedoChangeNote(ByVal xCol As Integer, ByVal xVPos As Double, ByVal xVal As Integer, ByVal xLong As Double, ByVal xHide As Boolean,
-                               ByVal nCol As Integer, ByVal nVPos As Double, ByVal nVal As Integer, ByVal nLong As Double, ByVal nHide As Boolean,
-    ByVal xSel As Boolean, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
-        Dim xUndo As New UndoRedo.ChangeNote(nCol, nVPos, nVal, nLong, nHide, xCol, xVPos, xVal, xLong, xHide, xSel)
-        Dim xRedo As New UndoRedo.ChangeNote(xCol, xVPos, xVal, xLong, xHide, nCol, nVPos, nVal, nLong, nHide, xSel)
+    Private Sub RedoChangeNote(note1 As Note, note2 As Note, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
+        Dim xUndo As New UndoRedo.ChangeNote(note2, note1)
+        Dim xRedo As New UndoRedo.ChangeNote(note1, note2)
         xUndo.Next = BaseUndo
         BaseUndo = xUndo
         If BaseRedo IsNot Nothing Then BaseRedo.Next = xRedo
         BaseRedo = xRedo
     End Sub
 
-    Private Sub RedoChangeNote(ByVal xN As Note, ByVal nCol As Integer, ByVal nVPos As Double, ByVal nVal As Integer, ByVal nLong As Double, ByVal nHide As Boolean,
-    ByVal xSel As Boolean, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
-        Dim xUndo As New UndoRedo.ChangeNote(nCol, nVPos, nVal, nLong, nHide,
-                                             xN.ColumnIndex,
-                                             xN.VPosition,
-                                             xN.Value,
-                                IIf(NTInput, xN.Length, xN.LongNote),
-                                             xN.Hidden,
-                                             xSel)
-        Dim xRedo As New UndoRedo.ChangeNote(xN.ColumnIndex,
-                                             xN.VPosition,
-                                             xN.Value,
-                                IIf(NTInput, xN.Length, xN.LongNote),
-                                             xN.Hidden,
-                                             nCol, nVPos, nVal, nLong, nHide, xSel)
+
+    Private Sub RedoMoveNote(note As Note, nCol As Integer, nVPos As Double, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
+        Dim noteAfterModification = note
+        noteAfterModification.ColumnIndex = nCol
+        noteAfterModification.VPosition = nVPos
+        Dim xUndo As New UndoRedo.MoveNote(noteAfterModification, note.ColumnIndex, note.VPosition)
+        Dim xRedo As New UndoRedo.MoveNote(note, nCol, nVPos)
         xUndo.Next = BaseUndo
         BaseUndo = xUndo
         If BaseRedo IsNot Nothing Then BaseRedo.Next = xRedo
         BaseRedo = xRedo
     End Sub
 
-    Private Sub RedoChangeNote(ByVal xN As Note, ByVal nN As Note, ByVal xSel As Boolean, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
-        Dim xUndo As New UndoRedo.ChangeNote(nN.ColumnIndex,
-                                             nN.VPosition,
-                                             nN.Value,
-                                IIf(NTInput, nN.Length, nN.LongNote),
-                                             nN.Hidden,
-                                             xN.ColumnIndex,
-                                             xN.VPosition,
-                                             xN.Value,
-                                IIf(NTInput, xN.Length, xN.LongNote),
-                                             xN.Hidden,
-                                             xSel)
-        Dim xRedo As New UndoRedo.ChangeNote(xN.ColumnIndex,
-                                             xN.VPosition,
-                                             xN.Value,
-                                IIf(NTInput, xN.Length, xN.LongNote),
-                                             xN.Hidden,
-                                             nN.ColumnIndex,
-                                             nN.VPosition,
-                                             nN.Value,
-                                IIf(NTInput, nN.Length, nN.LongNote),
-                                             nN.Hidden,
-                                             xSel)
+
+    Private Sub RedoLongNoteModify(note As Note, nVPos As Double, nLong As Double, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
+        Dim n = note
+        n.VPosition = nVPos
+        n.Length = nLong
+
+        Dim xUndo As New UndoRedo.LongNoteModify(n, note.VPosition, note.Length)
+        Dim xRedo As New UndoRedo.LongNoteModify(note, nVPos, n.Length)
         xUndo.Next = BaseUndo
         BaseUndo = xUndo
         If BaseRedo IsNot Nothing Then BaseRedo.Next = xRedo
         BaseRedo = xRedo
     End Sub
 
-    Private Sub RedoMoveNote(ByVal xCol As Integer, ByVal xVPos As Double, ByVal xVal As Integer, ByVal xLong As Double, ByVal xHide As Boolean,
-                             ByVal nCol As Integer, ByVal nVPos As Double, ByVal xSel As Boolean, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
-        Dim xUndo As New UndoRedo.MoveNote(nCol, nVPos, xVal, xLong, xHide, xCol, xVPos, xSel)
-        Dim xRedo As New UndoRedo.MoveNote(xCol, xVPos, xVal, xLong, xHide, nCol, nVPos, xSel)
+    Private Sub RedoHiddenNoteModify(xN As Note, nHide As Boolean, xSel As Boolean, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
+        Dim noteAfterModification = xN
+        noteAfterModification.Hidden = nHide
+        Dim xUndo As New UndoRedo.HiddenNoteModify(noteAfterModification, xN.Hidden)
+        Dim xRedo As New UndoRedo.HiddenNoteModify(xN, nHide)
         xUndo.Next = BaseUndo
         BaseUndo = xUndo
         If BaseRedo IsNot Nothing Then BaseRedo.Next = xRedo
         BaseRedo = xRedo
     End Sub
 
-    Private Sub RedoMoveNote(ByVal xN As Note, ByVal nCol As Integer, ByVal nVPos As Double,
-    ByVal xSel As Boolean, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
-        Dim xUndo As New UndoRedo.MoveNote(nCol, nVPos,
-                                           xN.Value,
-                              IIf(NTInput, xN.Length, xN.LongNote),
-                                           xN.Hidden,
-                                           xN.ColumnIndex,
-                                           xN.VPosition,
-                                           xSel)
-        Dim xRedo As New UndoRedo.MoveNote(xN.ColumnIndex,
-                                           xN.VPosition,
-                                           xN.Value,
-                              IIf(NTInput, xN.Length, xN.LongNote),
-                                           xN.Hidden,
-                                           nCol, nVPos, xSel)
-        xUndo.Next = BaseUndo
-        BaseUndo = xUndo
-        If BaseRedo IsNot Nothing Then BaseRedo.Next = xRedo
-        BaseRedo = xRedo
-    End Sub
 
-    Private Sub RedoLongNoteModify(ByVal xCol As Integer, ByVal xVPos As Double, ByVal xVal As Integer, ByVal xLong As Double, ByVal xHide As Boolean,
-                                   ByVal nVPos As Double, ByVal nLong As Double, ByVal xSel As Boolean, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
-        Dim xUndo As New UndoRedo.LongNoteModify(xCol, nVPos, xVal, nLong, xHide, xVPos, xLong, xSel)
-        Dim xRedo As New UndoRedo.LongNoteModify(xCol, xVPos, xVal, xLong, xHide, nVPos, nLong, xSel)
-        xUndo.Next = BaseUndo
-        BaseUndo = xUndo
-        If BaseRedo IsNot Nothing Then BaseRedo.Next = xRedo
-        BaseRedo = xRedo
-    End Sub
-
-    Private Sub RedoLongNoteModify(ByVal xN As Note, ByVal nVPos As Double, ByVal nLong As Double,
-    ByVal xSel As Boolean, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
-        Dim xUndo As New UndoRedo.LongNoteModify(xN.ColumnIndex, nVPos, xN.Value, nLong, xN.Hidden,
-                                                                 xN.VPosition, IIf(NTInput, xN.Length, xN.LongNote), xSel)
-        Dim xRedo As New UndoRedo.LongNoteModify(xN.ColumnIndex,
-                                                 xN.VPosition,
-                                                 xN.Value,
-                                    IIf(NTInput, xN.Length, xN.LongNote),
-                                                 xN.Hidden,
-                                                 nVPos, nLong, xSel)
-        xUndo.Next = BaseUndo
-        BaseUndo = xUndo
-        If BaseRedo IsNot Nothing Then BaseRedo.Next = xRedo
-        BaseRedo = xRedo
-    End Sub
-
-    Private Sub RedoHiddenNoteModify(ByVal xCol As Integer, ByVal xVPos As Double, ByVal xVal As Integer, ByVal xLong As Double, ByVal xHide As Boolean,
-    ByVal nHide As Boolean, ByVal xSel As Boolean, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
-        Dim xUndo As New UndoRedo.HiddenNoteModify(xCol, xVPos, xVal, xLong, nHide, xHide, xSel)
-        Dim xRedo As New UndoRedo.HiddenNoteModify(xCol, xVPos, xVal, xLong, xHide, nHide, xSel)
-        xUndo.Next = BaseUndo
-        BaseUndo = xUndo
-        If BaseRedo IsNot Nothing Then BaseRedo.Next = xRedo
-        BaseRedo = xRedo
-    End Sub
-
-    Private Sub RedoHiddenNoteModify(ByVal xN As Note, ByVal nHide As Boolean,
-    ByVal xSel As Boolean, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
-        Dim xUndo As New UndoRedo.HiddenNoteModify(xN.ColumnIndex,
-                                                   xN.VPosition,
-                                                   xN.Value,
-                                      IIf(NTInput, xN.Length, xN.LongNote),
-                                                   nHide,
-                                                   xN.Hidden,
-                                                   xSel)
-        Dim xRedo As New UndoRedo.HiddenNoteModify(xN.ColumnIndex,
-                                                   xN.VPosition,
-                                                   xN.Value,
-                                      IIf(NTInput, xN.Length, xN.LongNote),
-                                                   xN.Hidden,
-                                                   nHide,
-                                                   xSel)
-        xUndo.Next = BaseUndo
-        BaseUndo = xUndo
-        If BaseRedo IsNot Nothing Then BaseRedo.Next = xRedo
-        BaseRedo = xRedo
-    End Sub
-
-    Private Sub RedoRelabelNote(ByVal xCol As Integer, ByVal xVPos As Double, ByVal xVal As Integer, ByVal xLong As Double, ByVal xHide As Boolean,
-    ByVal nVal As Integer, ByVal xSel As Boolean, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
-        Dim xUndo As New UndoRedo.RelabelNote(xCol, xVPos, nVal, xLong, xHide, xVal, xSel)
-        Dim xRedo As New UndoRedo.RelabelNote(xCol, xVPos, xVal, xLong, xHide, nVal, xSel)
-        xUndo.Next = BaseUndo
-        BaseUndo = xUndo
-        If BaseRedo IsNot Nothing Then BaseRedo.Next = xRedo
-        BaseRedo = xRedo
-    End Sub
-
-    Private Sub RedoRelabelNote(ByVal xN As Note, ByVal nVal As Integer, ByVal xSel As Boolean, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
-        Dim xUndo As New UndoRedo.RelabelNote(xN.ColumnIndex,
-                                              xN.VPosition,
-                                              nVal,
-                                 IIf(NTInput, xN.Length, xN.LongNote),
-                                              xN.Hidden,
-                                              xN.Value,
-                                              xSel)
-        Dim xRedo As New UndoRedo.RelabelNote(xN.ColumnIndex,
-                                              xN.VPosition,
-                                              xN.Value,
-                                 IIf(NTInput, xN.Length, xN.LongNote),
-                                              xN.Hidden,
-                                              nVal,
-                                              xSel)
+    Private Sub RedoRelabelNote(ByVal xN As Note, ByVal nVal As Long, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
+        Dim noteAfterModification = xN
+        noteAfterModification.Value = nVal
+        Dim xUndo As New UndoRedo.RelabelNote(noteAfterModification, xN.Value)
+        Dim xRedo As New UndoRedo.RelabelNote(xN, nVal)
         xUndo.Next = BaseUndo
         BaseUndo = xUndo
         If BaseRedo IsNot Nothing Then BaseRedo.Next = xRedo

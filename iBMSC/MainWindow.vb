@@ -492,36 +492,29 @@ Public Class MainWindow
         Audio.Play(xFileLocation)
     End Sub
 
-    Private Sub AddNote(ByVal xVPosition As Double,
-                        ByVal xColumnIndex As Integer,
-                        ByVal xValue As Long,
-                        ByVal xLongNote As Boolean,
-                        ByVal xHidden As Boolean,
-                        ByVal xLandmine As Boolean,
+    Private Sub AddNote(note As Note,
                Optional ByVal xSelected As Boolean = False,
                Optional ByVal OverWrite As Boolean = True,
                Optional ByVal SortAndUpdatePairing As Boolean = True)
 
-        If xVPosition < 0 Or xVPosition >= VPosition1000() Then Exit Sub
+        If note.VPosition < 0 Or note.VPosition >= VPosition1000() Then Exit Sub
 
         Dim xI1 As Integer = 1
 
         If OverWrite Then
             Do While xI1 <= UBound(Notes)
-                If Notes(xI1).VPosition = xVPosition And Notes(xI1).ColumnIndex = xColumnIndex Then RemoveNote(xI1) Else xI1 += 1
+                If Notes(xI1).VPosition = note.VPosition And
+                    Notes(xI1).ColumnIndex = note.ColumnIndex Then
+                    RemoveNote(xI1)
+                Else
+                    xI1 += 1
+                End If
             Loop
         End If
 
         ReDim Preserve Notes(UBound(Notes) + 1)
-        With Notes(UBound(Notes))
-            .VPosition = xVPosition
-            .ColumnIndex = xColumnIndex
-            .Value = xValue
-            .LongNote = xLongNote
-            .Hidden = xHidden
-            .Landmine = xLandmine
-            .Selected = xSelected And nEnabled(xColumnIndex)
-        End With
+        note.Selected = note.Selected And nEnabled(note.ColumnIndex)
+        Notes(UBound(Notes)) = note
 
         If SortAndUpdatePairing Then SortByVPositionInsertion() : UpdatePairing()
         CalculateTotalPlayableNotes()
@@ -2248,7 +2241,7 @@ StartCount:     If Not NTInput Then
                 Case Else : Continue For
             End Select
 
-            Me.RedoMoveNote(Notes(xI1), xCol, Notes(xI1).VPosition, True, xUndo, xRedo)
+            Me.RedoMoveNote(Notes(xI1), xCol, Notes(xI1).VPosition, xUndo, xRedo)
             Notes(xI1).ColumnIndex = xCol
         Next
 
@@ -2293,11 +2286,6 @@ StartCount:     If Not NTInput Then
 
         Beep()
         TVCBPM.Focus()
-        'Select Case spFocus
-        '    Case 0 : PMainInL.Focus()
-        '    Case 1 : PMainIn.Focus()
-        '    Case 2 : PMainInR.Focus()
-        'End Select
     End Sub
 
     Private Sub ValidateSelection()
@@ -2371,8 +2359,8 @@ StartCount:     If Not NTInput Then
             Next
 
             'Add BPMs
-            AddNote(xVLower, niBPM, xValueL * xRatio, False, False, False, , , False)
-            AddNote(xVUpper + (xRatio - 1) * (xVUpper - xVLower), niBPM, xValueU, False, False, False, , , False)
+            AddNote(New Note(niBPM, xVLower, xValueL * xRatio), False, True, False)
+            AddNote(New Note(niBPM, xVUpper + (xRatio - 1) * (xVUpper - xVLower), xValueU), False, True, False)
 
         Else
             Dim xAddBPML As Boolean = True
@@ -2412,8 +2400,8 @@ StartCount:     If Not NTInput Then
             Next
 
             'Add BPMs
-            If xAddBPML Then AddNote(xVLower, niBPM, xValueL * xRatio, False, False, False, , , False)
-            If xAddBPMU Then AddNote((xVUpper - xVLower) * xRatio + xVLower, niBPM, xValueU, False, False, False, , , False)
+            If xAddBPML Then AddNote(New Note(niBPM, xVLower, xValueL * xRatio), False, True, False)
+            If xAddBPMU Then AddNote(New Note(niBPM, (xVUpper - xVLower) * xRatio + xVLower, xValueU), False, True, False)
         End If
 
         'Check BPM Overflow
@@ -2541,11 +2529,11 @@ EndofSub:
             'Add BPMs
             ' az: cond. removed; 
             ' IIf(xVHalf <> xVLower AndAlso xValueL * xRatio1 <= 655359999, xValueL * xRatio1, 655359999)
-            AddNote(xVLower, niBPM, xValueL * xRatio1, False, False, False, , , False)
+            AddNote(New Note(niBPM, xVLower, xValueL * xRatio1), False, True, False)
             ' az: cond removed;
             ' IIf(xVHalf <> xVUpper AndAlso xValueM * xRatio2 <= 655359999, xValueM * xRatio2, 655359999)
-            AddNote(xVHalf + dVPosition, niBPM, xValueM * xRatio2, False, False, False, , , False)
-            AddNote(xVUpper, niBPM, xValueU, False, False, False, , , False)
+            AddNote(New Note(niBPM, xVHalf + dVPosition, xValueM * xRatio2), False, True, False)
+            AddNote(New Note(niBPM, xVUpper, xValueU), False, True, False)
 
         Else
             Dim xAddBPML As Boolean = True
@@ -2633,10 +2621,10 @@ EndofSub:
 
             'Add BPMs
             ' IIf(xVHalf <> xVLower AndAlso xValueL * xRatio1 <= 655359999, xValueL * xRatio1, 655359999)
-            If xAddBPML Then AddNote(xVLower, niBPM, xValueL * xRatio1, False, False, False, , , False)
+            If xAddBPML Then AddNote(New Note(niBPM, xVLower, xValueL * xRatio1), False, True, False)
             ' IIf(xVHalf <> xVUpper AndAlso xValueM * xRatio2 <= 655359999, xValueM * xRatio2, 655359999)
-            If xAddBPMM Then AddNote(xVHalf + dVPosition, niBPM, xValueM * xRatio2, False, False, False, , , False)
-            If xAddBPMU Then AddNote(xVUpper, niBPM, xValueU, False, False, False, , , False)
+            If xAddBPMM Then AddNote(New Note(niBPM, xVHalf + dVPosition, xValueM * xRatio2), False, True, False)
+            If xAddBPMU Then AddNote(New Note(niBPM, xVUpper, xValueU), False, True, False)
         End If
 
         'Check BPM Overflow
@@ -2966,15 +2954,15 @@ EndOfAdjustment:
         End If
     End Sub
 
-    Private Function FindNoteIndex(ByVal nColumnIndex As Integer, ByVal nVposition As Double, ByVal nValue As Long, ByVal nLongNote As Double, ByVal nHidden As Boolean) As Integer
+    Private Function FindNoteIndex(note As Note) As Integer
         Dim xI1 As Integer
         If NTInput Then
             For xI1 = 1 To UBound(Notes)
-                If Notes(xI1).equalsNT(nColumnIndex, nVposition, nValue, nLongNote, nHidden) Then Return xI1
+                If Notes(xI1).equalsNT(note) Then Return xI1
             Next
         Else
             For xI1 = 1 To UBound(Notes)
-                If Notes(xI1).equalsBMSE(nColumnIndex, nVposition, nValue, nLongNote, nHidden) Then Return xI1
+                If Notes(xI1).equalsBMSE(note) Then Return xI1
             Next
         End If
         Return xI1
@@ -2998,7 +2986,7 @@ EndOfAdjustment:
         'KMouseDown = -1
         ReDim SelectedNotes(-1)
         If sUndo(sI).ofType = UndoRedo.opNoOperation Then Exit Sub
-        Operate(sUndo(sI))
+        PerformCommand(sUndo(sI))
         sI = sIM()
 
         TBUndo.Enabled = sUndo(sI).ofType <> UndoRedo.opNoOperation
@@ -3012,7 +3000,7 @@ EndOfAdjustment:
         'KMouseDown = -1
         ReDim SelectedNotes(-1)
         If sRedo(sIA).ofType = UndoRedo.opNoOperation Then Exit Sub
-        Operate(sRedo(sIA))
+        PerformCommand(sRedo(sIA))
         sI = sIA()
 
         TBUndo.Enabled = sUndo(sI).ofType <> UndoRedo.opNoOperation
@@ -3488,7 +3476,7 @@ EndOfAdjustment:
         For xI1 As Integer = 1 To UBound(Notes)
             If Not Notes(xI1).Selected Then Continue For
 
-            Me.RedoLongNoteModify(Notes(xI1), Notes(xI1).VPosition, True, True, xUndo, xRedo)
+            Me.RedoLongNoteModify(Notes(xI1), Notes(xI1).VPosition, True, xUndo, xRedo)
             Notes(xI1).LongNote = True
         Next
         AddUndo(xUndo, xBaseRedo.Next)
@@ -3506,7 +3494,7 @@ EndOfAdjustment:
             For xI1 As Integer = 1 To UBound(Notes)
                 If Not Notes(xI1).Selected Then Continue For
 
-                Me.RedoLongNoteModify(Notes(xI1), Notes(xI1).VPosition, 0, True, xUndo, xRedo)
+                Me.RedoLongNoteModify(Notes(xI1), Notes(xI1).VPosition, 0, xUndo, xRedo)
                 Notes(xI1).LongNote = False
             Next
 
@@ -3514,7 +3502,7 @@ EndOfAdjustment:
             For xI1 As Integer = 1 To UBound(Notes)
                 If Not Notes(xI1).Selected Then Continue For
 
-                Me.RedoLongNoteModify(Notes(xI1), Notes(xI1).VPosition, 0, True, xUndo, xRedo)
+                Me.RedoLongNoteModify(Notes(xI1), Notes(xI1).VPosition, 0, xUndo, xRedo)
                 Notes(xI1).Length = 0
             Next
         End If
@@ -3535,7 +3523,7 @@ EndOfAdjustment:
         For xI1 As Integer = 1 To UBound(Notes)
             If Not Notes(xI1).Selected Then Continue For
 
-            Me.RedoLongNoteModify(Notes(xI1), Notes(xI1).VPosition, Not Notes(xI1).LongNote, True, xUndo, xRedo)
+            Me.RedoLongNoteModify(Notes(xI1), Notes(xI1).VPosition, Not Notes(xI1).LongNote, xUndo, xRedo)
             Notes(xI1).LongNote = Not Notes(xI1).LongNote
         Next
 
@@ -3622,7 +3610,7 @@ EndOfAdjustment:
                     If Not isColumnNumeric(Notes(xI1).ColumnIndex) Then Continue For
                     If Not Notes(xI1).Selected Then Continue For
 
-                    Me.RedoRelabelNote(Notes(xI1), xD1, True, xUndo, xRedo)
+                    Me.RedoRelabelNote(Notes(xI1), xD1, xUndo, xRedo)
                     Notes(xI1).Value = xD1
                 Next
                 AddUndo(xUndo, xBaseRedo.Next)
@@ -3652,7 +3640,7 @@ EndOfAdjustment:
                 If isColumnNumeric(Notes(xI1).ColumnIndex) Then Continue For
                 If Not Notes(xI1).Selected Then Continue For
 
-                Me.RedoRelabelNote(Notes(xI1), xVal, True, xUndo, xRedo)
+                Me.RedoRelabelNote(Notes(xI1), xVal, xUndo, xRedo)
                 Notes(xI1).Value = xVal
             Next
             AddUndo(xUndo, xBaseRedo.Next)
@@ -3801,9 +3789,7 @@ Jump2:
         Do While xI1 <= UBound(Notes)
             If ((xbSel And Notes(xI1).Selected) Or (xbUnsel And Not Notes(xI1).Selected)) AndAlso
                         fdrCheck(Notes(xI1)) AndAlso nEnabled(Notes(xI1).ColumnIndex) AndAlso fdrRangeS(xbShort, xbLong, IIf(NTInput, Notes(xI1).Length, Notes(xI1).LongNote)) And fdrRangeS(xbVisible, xbHidden, Notes(xI1).Hidden) Then
-                'xUndo &= sCmdK(K(xI1).ColumnIndex, K(xI1).VPosition, K(xI1).Value, IIf(NTInput, K(xI1).Length, K(xI1).LongNote), K(xI1).Hidden, True) & vbCrLf
-                'xRedo &= sCmdKD(K(xI1).ColumnIndex, K(xI1).VPosition, K(xI1).Value, IIf(NTInput, K(xI1).Length, K(xI1).LongNote), K(xI1).Hidden) & vbCrLf
-                Me.RedoRemoveNote(Notes(xI1), True, xUndo, xRedo)
+                RedoRemoveNote(Notes(xI1), xUndo, xRedo)
                 RemoveNote(xI1, False)
             Else
                 xI1 += 1
@@ -3851,7 +3837,7 @@ Jump2:
                     fdrCheck(Notes(xI1)) AndAlso nEnabled(Notes(xI1).ColumnIndex) And Not isColumnNumeric(Notes(xI1).ColumnIndex) AndAlso fdrRangeS(xbShort, xbLong, IIf(NTInput, Notes(xI1).Length, Notes(xI1).LongNote)) And fdrRangeS(xbVisible, xbHidden, Notes(xI1).Hidden) Then
                 'xUndo &= sCmdKC(K(xI1).ColumnIndex, K(xI1).VPosition, xxLbl, IIf(NTInput, K(xI1).Length, K(xI1).LongNote), K(xI1).Hidden, 0, 0, K(xI1).Value, IIf(NTInput, K(xI1).Length, K(xI1).LongNote), K(xI1).Hidden, True) & vbCrLf
                 'xRedo &= sCmdKC(K(xI1).ColumnIndex, K(xI1).VPosition, K(xI1).Value, IIf(NTInput, K(xI1).Length, K(xI1).LongNote), K(xI1).Hidden, 0, 0, xxLbl, IIf(NTInput, K(xI1).Length, K(xI1).LongNote), K(xI1).Hidden, True) & vbCrLf
-                Me.RedoRelabelNote(Notes(xI1), xxLbl, True, xUndo, xRedo)
+                Me.RedoRelabelNote(Notes(xI1), xxLbl, xUndo, xRedo)
                 Notes(xI1).Value = xxLbl
             End If
         Next
@@ -3892,7 +3878,7 @@ Jump2:
                     fdrCheck(Notes(xI1)) AndAlso nEnabled(Notes(xI1).ColumnIndex) And isColumnNumeric(Notes(xI1).ColumnIndex) AndAlso fdrRangeS(xbShort, xbLong, IIf(NTInput, Notes(xI1).Length, Notes(xI1).LongNote)) And fdrRangeS(xbVisible, xbHidden, Notes(xI1).Hidden) Then
                 'xUndo &= sCmdKC(K(xI1).ColumnIndex, K(xI1).VPosition, xReplaceVal, IIf(NTInput, K(xI1).Length, K(xI1).LongNote), K(xI1).Hidden, 0, 0, K(xI1).Value, IIf(NTInput, K(xI1).Length, K(xI1).LongNote), K(xI1).Hidden, True) & vbCrLf
                 'xRedo &= sCmdKC(K(xI1).ColumnIndex, K(xI1).VPosition, K(xI1).Value, IIf(NTInput, K(xI1).Length, K(xI1).LongNote), K(xI1).Hidden, 0, 0, xReplaceVal, IIf(NTInput, K(xI1).Length, K(xI1).LongNote), K(xI1).Hidden, True) & vbCrLf
-                Me.RedoRelabelNote(Notes(xI1), xReplaceVal, True, xUndo, xRedo)
+                Me.RedoRelabelNote(Notes(xI1), xReplaceVal, xUndo, xRedo)
                 Notes(xI1).Value = xReplaceVal
             End If
         Next
@@ -3915,7 +3901,7 @@ Jump2:
             Dim xI1 As Integer = 1
             Do While xI1 <= UBound(Notes)
                 If MeasureAtDisplacement(Notes(xI1).VPosition) >= 999 Then
-                    Me.RedoRemoveNote(Notes(xI1), True, xUndo, xRedo)
+                    Me.RedoRemoveNote(Notes(xI1), xUndo, xRedo)
                     RemoveNote(xI1, False)
                 Else
                     xI1 += 1
@@ -3925,18 +3911,18 @@ Jump2:
             Dim xdVP As Double
             For xI1 = 1 To UBound(Notes)
                 If Notes(xI1).VPosition >= xVP And Notes(xI1).VPosition + Notes(xI1).Length <= MeasureBottom(999) Then
-                    Me.RedoMoveNote(Notes(xI1), Notes(xI1).ColumnIndex, Notes(xI1).VPosition + xMLength, True, xUndo, xRedo)
+                    Me.RedoMoveNote(Notes(xI1), Notes(xI1).ColumnIndex, Notes(xI1).VPosition + xMLength, xUndo, xRedo)
                     Notes(xI1).VPosition += xMLength
 
                 ElseIf Notes(xI1).VPosition >= xVP Then
                     xdVP = MeasureBottom(999) - 1 - Notes(xI1).VPosition - Notes(xI1).Length
-                    Me.RedoLongNoteModify(Notes(xI1), Notes(xI1).VPosition + xMLength, Notes(xI1).Length + xdVP, True, xUndo, xRedo)
+                    Me.RedoLongNoteModify(Notes(xI1), Notes(xI1).VPosition + xMLength, Notes(xI1).Length + xdVP, xUndo, xRedo)
                     Notes(xI1).VPosition += xMLength
                     Notes(xI1).Length += xdVP
 
                 ElseIf Notes(xI1).VPosition + Notes(xI1).Length >= xVP Then
                     xdVP = IIf(Notes(xI1).VPosition + Notes(xI1).Length > MeasureBottom(999) - 1, VPosition1000() - 1 - Notes(xI1).VPosition - Notes(xI1).Length, xMLength)
-                    Me.RedoLongNoteModify(Notes(xI1), Notes(xI1).VPosition, Notes(xI1).Length + xdVP, True, xUndo, xRedo)
+                    Me.RedoLongNoteModify(Notes(xI1), Notes(xI1).VPosition, Notes(xI1).Length + xdVP, xUndo, xRedo)
                     Notes(xI1).Length += xdVP
                 End If
             Next
@@ -3945,7 +3931,7 @@ Jump2:
             Dim xI1 As Integer = 1
             Do While xI1 <= UBound(Notes)
                 If MeasureAtDisplacement(Notes(xI1).VPosition) >= 999 Then
-                    Me.RedoRemoveNote(Notes(xI1), True, xUndo, xRedo)
+                    Me.RedoRemoveNote(Notes(xI1), xUndo, xRedo)
                     RemoveNote(xI1, False)
                 Else
                     xI1 += 1
@@ -3954,7 +3940,7 @@ Jump2:
 
             For xI1 = 1 To UBound(Notes)
                 If Notes(xI1).VPosition >= xVP Then
-                    Me.RedoMoveNote(Notes(xI1), Notes(xI1).ColumnIndex, Notes(xI1).VPosition + xMLength, True, xUndo, xRedo)
+                    Me.RedoMoveNote(Notes(xI1), Notes(xI1).ColumnIndex, Notes(xI1).VPosition + xMLength, xUndo, xRedo)
                     Notes(xI1).VPosition += xMLength
                 End If
             Next
@@ -3985,7 +3971,7 @@ Jump2:
             Dim xI1 As Integer = 1
             Do While xI1 <= UBound(Notes)
                 If MeasureAtDisplacement(Notes(xI1).VPosition) = xMeasure And MeasureAtDisplacement(Notes(xI1).VPosition + Notes(xI1).Length) = xMeasure Then
-                    Me.RedoRemoveNote(Notes(xI1), True, xUndo, xRedo)
+                    Me.RedoRemoveNote(Notes(xI1), xUndo, xRedo)
                     RemoveNote(xI1, False)
                 Else
                     xI1 += 1
@@ -3996,18 +3982,18 @@ Jump2:
             xVP = MeasureBottom(xMeasure)
             For xI1 = 1 To UBound(Notes)
                 If Notes(xI1).VPosition >= xVP + xMLength Then
-                    Me.RedoMoveNote(Notes(xI1), Notes(xI1).ColumnIndex, Notes(xI1).VPosition - xMLength, True, xUndo, xRedo)
+                    Me.RedoMoveNote(Notes(xI1), Notes(xI1).ColumnIndex, Notes(xI1).VPosition - xMLength, xUndo, xRedo)
                     Notes(xI1).VPosition -= xMLength
 
                 ElseIf Notes(xI1).VPosition >= xVP Then
                     xdVP = xMLength + xVP - Notes(xI1).VPosition
-                    Me.RedoLongNoteModify(Notes(xI1), Notes(xI1).VPosition + xdVP - xMLength, Notes(xI1).Length - xdVP, True, xUndo, xRedo)
+                    Me.RedoLongNoteModify(Notes(xI1), Notes(xI1).VPosition + xdVP - xMLength, Notes(xI1).Length - xdVP, xUndo, xRedo)
                     Notes(xI1).VPosition += xdVP - xMLength
                     Notes(xI1).Length -= xdVP
 
                 ElseIf Notes(xI1).VPosition + Notes(xI1).Length >= xVP Then
                     xdVP = IIf(Notes(xI1).VPosition + Notes(xI1).Length >= xVP + xMLength, xMLength, Notes(xI1).VPosition + Notes(xI1).Length - xVP + 1)
-                    Me.RedoLongNoteModify(Notes(xI1), Notes(xI1).VPosition, Notes(xI1).Length - xdVP, True, xUndo, xRedo)
+                    Me.RedoLongNoteModify(Notes(xI1), Notes(xI1).VPosition, Notes(xI1).Length - xdVP, xUndo, xRedo)
                     Notes(xI1).Length -= xdVP
                 End If
             Next
@@ -4016,7 +4002,7 @@ Jump2:
             Dim xI1 As Integer = 1
             Do While xI1 <= UBound(Notes)
                 If MeasureAtDisplacement(Notes(xI1).VPosition) = xMeasure Then
-                    Me.RedoRemoveNote(Notes(xI1), True, xUndo, xRedo)
+                    Me.RedoRemoveNote(Notes(xI1), xUndo, xRedo)
                     RemoveNote(xI1, False)
                 Else
                     xI1 += 1
@@ -4026,7 +4012,7 @@ Jump2:
             xVP = MeasureBottom(xMeasure)
             For xI1 = 1 To UBound(Notes)
                 If Notes(xI1).VPosition >= xVP Then
-                    Me.RedoMoveNote(Notes(xI1), Notes(xI1).ColumnIndex, Notes(xI1).VPosition - xMLength, True, xUndo, xRedo)
+                    Me.RedoMoveNote(Notes(xI1), Notes(xI1).ColumnIndex, Notes(xI1).VPosition - xMLength, xUndo, xRedo)
                     Notes(xI1).VPosition -= xMLength
                 End If
             Next
@@ -4211,11 +4197,11 @@ Jump2:
                     If isColumnNumeric(Notes(xI2).ColumnIndex) Then Continue For
 
                     If C10to36(Notes(xI2).Value \ 10000) = xL1 Then
-                        Me.RedoRelabelNote(Notes(xI2), xI1 * 10000 + 10000, True, xUndo, xRedo)
+                        Me.RedoRelabelNote(Notes(xI2), xI1 * 10000 + 10000, xUndo, xRedo)
                         Notes(xI2).Value = xI1 * 10000 + 10000
 
                     ElseIf C10to36(Notes(xI2).Value \ 10000) = xL2 Then
-                        Me.RedoRelabelNote(Notes(xI2), xI1 * 10000, True, xUndo, xRedo)
+                        Me.RedoRelabelNote(Notes(xI2), xI1 * 10000, xUndo, xRedo)
                         Notes(xI2).Value = xI1 * 10000
 
                     End If
@@ -4270,11 +4256,11 @@ Jump2:
                     If isColumnNumeric(Notes(xI2).ColumnIndex) Then Continue For
 
                     If C10to36(Notes(xI2).Value \ 10000) = xL1 Then
-                        Me.RedoRelabelNote(Notes(xI2), xI1 * 10000 + 10000, True, xUndo, xRedo)
+                        Me.RedoRelabelNote(Notes(xI2), xI1 * 10000 + 10000, xUndo, xRedo)
                         Notes(xI2).Value = xI1 * 10000 + 10000
 
                     ElseIf C10to36(Notes(xI2).Value \ 10000) = xL2 Then
-                        Me.RedoRelabelNote(Notes(xI2), xI1 * 10000 + 20000, True, xUndo, xRedo)
+                        Me.RedoRelabelNote(Notes(xI2), xI1 * 10000 + 20000, xUndo, xRedo)
                         Notes(xI2).Value = xI1 * 10000 + 20000
 
                     End If
@@ -4572,7 +4558,7 @@ case2:              Dim xI0 As Integer
                         For xI0 = 1 To UBound(Notes)
                             If Notes(xI0).VPosition >= xUpBefore Then Exit For
                             If Notes(xI0).VPosition + Notes(xI0).Length >= xUpBefore Then
-                                Me.RedoLongNoteModify(Notes(xI0), Notes(xI0).VPosition, Notes(xI0).Length + dLength, False, xUndo, xRedo)
+                                Me.RedoLongNoteModify(Notes(xI0), Notes(xI0).VPosition, Notes(xI0).Length + dLength, xUndo, xRedo)
                                 Notes(xI0).Length += dLength
                             End If
                         Next
@@ -4583,7 +4569,7 @@ case2:              Dim xI0 As Integer
                     End If
 
                     For xI9 As Integer = xI0 To UBound(Notes)
-                        Me.RedoLongNoteModify(Notes(xI9), Notes(xI9).VPosition + dLength, Notes(xI9).Length, False, xUndo, xRedo)
+                        Me.RedoLongNoteModify(Notes(xI9), Notes(xI9).VPosition + dLength, Notes(xI9).Length, xUndo, xRedo)
                         Notes(xI9).VPosition += dLength
                     Next
 
@@ -4596,18 +4582,18 @@ case2:              Dim xI0 As Integer
                                 If Notes(xI0).VPosition < xUpAfter Then
                                     If Notes(xI0).VPosition + Notes(xI0).Length >= xUpAfter And Notes(xI0).VPosition + Notes(xI0).Length < xUpBefore Then
                                         Dim nLen As Double = xUpAfter - Notes(xI0).VPosition - 1.0R
-                                        Me.RedoLongNoteModify(Notes(xI0), Notes(xI0).VPosition, nLen, False, xUndo, xRedo)
+                                        Me.RedoLongNoteModify(Notes(xI0), Notes(xI0).VPosition, nLen, xUndo, xRedo)
                                         Notes(xI0).Length = nLen
                                     End If
                                 ElseIf Notes(xI0).VPosition < xUpBefore Then
                                     If Notes(xI0).VPosition + Notes(xI0).Length < xUpBefore Then
-                                        Me.RedoRemoveNote(Notes(xI0), False, xUndo, xRedo)
+                                        Me.RedoRemoveNote(Notes(xI0), xUndo, xRedo)
                                         RemoveNote(xI0)
                                         xI0 -= 1
                                         xU -= 1
                                     Else
                                         Dim nLen As Double = Notes(xI0).Length - xUpBefore + Notes(xI0).VPosition
-                                        Me.RedoLongNoteModify(Notes(xI0), xUpBefore, nLen, False, xUndo, xRedo)
+                                        Me.RedoLongNoteModify(Notes(xI0), xUpBefore, nLen, xUndo, xRedo)
                                         Notes(xI0).Length = nLen
                                         Notes(xI0).VPosition = xUpBefore
                                     End If
@@ -4625,7 +4611,7 @@ case2:              Dim xI0 As Integer
                             Next
 
                             For xI8 As Integer = xI0 To xI9 - 1
-                                Me.RedoRemoveNote(Notes(xI8), False, xUndo, xRedo)
+                                Me.RedoRemoveNote(Notes(xI8), xUndo, xRedo)
                             Next
                             For xI8 As Integer = xI9 To UBound(Notes)
                                 Notes(xI8 - xI9 + xI0) = Notes(xI8)
@@ -4641,29 +4627,29 @@ case2:              Dim xI0 As Integer
                         For xI0 As Integer = 1 To UBound(Notes)
                             If Notes(xI0).VPosition < xBottom Then
                                 If Notes(xI0).VPosition + Notes(xI0).Length > xUpBefore Then
-                                    Me.RedoLongNoteModify(Notes(xI0), Notes(xI0).VPosition, Notes(xI0).Length + dLength, False, xUndo, xRedo)
+                                    Me.RedoLongNoteModify(Notes(xI0), Notes(xI0).VPosition, Notes(xI0).Length + dLength, xUndo, xRedo)
                                     Notes(xI0).Length += dLength
                                 ElseIf Notes(xI0).VPosition + Notes(xI0).Length > xBottom Then
                                     Dim nLen As Double = (Notes(xI0).Length + Notes(xI0).VPosition - xBottom) * dRatio + xBottom - Notes(xI0).VPosition
-                                    Me.RedoLongNoteModify(Notes(xI0), Notes(xI0).VPosition, nLen, False, xUndo, xRedo)
+                                    Me.RedoLongNoteModify(Notes(xI0), Notes(xI0).VPosition, nLen, xUndo, xRedo)
                                     Notes(xI0).Length = nLen
                                 End If
                             ElseIf Notes(xI0).VPosition < xUpBefore Then
                                 If Notes(xI0).VPosition + Notes(xI0).Length > xUpBefore Then
                                     Dim nLen As Double = (xUpBefore - Notes(xI0).VPosition) * dRatio + Notes(xI0).VPosition + Notes(xI0).Length - xUpBefore
                                     Dim nVPos As Double = (Notes(xI0).VPosition - xBottom) * dRatio + xBottom
-                                    Me.RedoLongNoteModify(Notes(xI0), nVPos, nLen, False, xUndo, xRedo)
+                                    Me.RedoLongNoteModify(Notes(xI0), nVPos, nLen, xUndo, xRedo)
                                     Notes(xI0).Length = nLen
                                     Notes(xI0).VPosition = nVPos
                                 Else
                                     Dim nLen As Double = Notes(xI0).Length * dRatio
                                     Dim nVPos As Double = (Notes(xI0).VPosition - xBottom) * dRatio + xBottom
-                                    Me.RedoLongNoteModify(Notes(xI0), nVPos, nLen, False, xUndo, xRedo)
+                                    Me.RedoLongNoteModify(Notes(xI0), nVPos, nLen, xUndo, xRedo)
                                     Notes(xI0).Length = nLen
                                     Notes(xI0).VPosition = nVPos
                                 End If
                             Else
-                                Me.RedoLongNoteModify(Notes(xI0), Notes(xI0).VPosition + dLength, Notes(xI0).Length, False, xUndo, xRedo)
+                                Me.RedoLongNoteModify(Notes(xI0), Notes(xI0).VPosition + dLength, Notes(xI0).Length, xUndo, xRedo)
                                 Notes(xI0).VPosition += dLength
                             End If
                         Next
@@ -4679,14 +4665,14 @@ case2:              Dim xI0 As Integer
 
                         For xI8 As Integer = xI0 To xI9 - 1
                             Dim nVP As Double = (Notes(xI8).VPosition - xBottom) * dRatio + xBottom
-                            Me.RedoLongNoteModify(Notes(xI0), nVP, Notes(xI0).Length, False, xUndo, xRedo)
+                            Me.RedoLongNoteModify(Notes(xI0), nVP, Notes(xI0).Length, xUndo, xRedo)
                             Notes(xI8).VPosition = nVP
                         Next
 
                         'GoTo case2
 
                         For xI8 As Integer = xI9 To UBound(Notes)
-                            Me.RedoLongNoteModify(Notes(xI8), Notes(xI8).VPosition + dLength, Notes(xI8).Length, False, xUndo, xRedo)
+                            Me.RedoLongNoteModify(Notes(xI8), Notes(xI8).VPosition + dLength, Notes(xI8).Length, xUndo, xRedo)
                             Notes(xI8).VPosition += dLength
                         Next
                     End If

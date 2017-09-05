@@ -77,7 +77,9 @@ Partial Public Class MainWindow
         Dim xValue As Integer = (LWAV.SelectedIndex + 1) * 10000
 
         Dim xAlpha As Single = 1.0F
-        If ModifierHiddenActive() Then xAlpha = vo.kOpacity
+        If ModifierHiddenActive() Then
+            xAlpha = vo.kOpacity
+        End If
 
         Dim xText As String = C10to36(xValue \ 10000)
         If isColumnNumeric(SelectedColumn) Then
@@ -449,7 +451,9 @@ Partial Public Class MainWindow
         If sNote.Hidden Then xAlpha = vo.kOpacity
 
         Dim xLabel As String = C10to36(sNote.Value \ 10000)
-        If ShowFileName AndAlso hWAV(C36to10(xLabel)) <> "" Then xLabel = Path.GetFileNameWithoutExtension(hWAV(C36to10(xLabel)))
+        If ShowFileName AndAlso hWAV(C36to10(xLabel)) <> "" Then
+            xLabel = Path.GetFileNameWithoutExtension(hWAV(C36to10(xLabel)))
+        End If
 
         Dim xPen As Pen
         Dim xBrush As Drawing2D.LinearGradientBrush
@@ -486,23 +490,28 @@ Partial Public Class MainWindow
 
         ' Fill
         e.Graphics.FillRectangle(xBrush, HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS) + 2,
-                                     VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight + 1,
-                                     getColumnWidth(sNote.ColumnIndex) * gxWidth - 3,
-                                     vo.kHeight - 1)
+                                 VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight + 1,
+                                 getColumnWidth(sNote.ColumnIndex) * gxWidth - 3,
+                                 vo.kHeight - 1)
         ' Outline
         e.Graphics.DrawRectangle(xPen,
-                                     HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS) + 1,
-                                     VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight,
-                                     getColumnWidth(sNote.ColumnIndex) * gxWidth - 2,
-                                     vo.kHeight)
+                                 HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS) + 1,
+                                 VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight,
+                                 getColumnWidth(sNote.ColumnIndex) * gxWidth - 2,
+                                 vo.kHeight)
 
         ' Label
         e.Graphics.DrawString(IIf(isColumnNumeric(sNote.ColumnIndex), sNote.Value / 10000, xLabel),
-                        vo.kFont, xBrush2, HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS) + vo.kLabelHShift, VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight + vo.kLabelVShift)
+                              vo.kFont, xBrush2,
+                              HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS) + vo.kLabelHShift,
+                              VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight + vo.kLabelVShift)
 
-        If sNote.LNPair <> 0 Then
-            DrawPairedLNBody(sNote, e, xHS, xVS, xHeight, xAlpha)
+        If sNote.ColumnIndex < niB Then
+            If sNote.LNPair <> 0 Then
+                DrawPairedLNBody(sNote, e, xHS, xVS, xHeight, xAlpha)
+            End If
         End If
+
 
         'e.Graphics.DrawString(sNote.TimeOffset.ToString("0.##"), New Font("Verdana", 9), Brushes.Cyan, _
         '                      New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex + 1), xHS), VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight - 2))
@@ -608,9 +617,12 @@ Partial Public Class MainWindow
                               VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight + vo.kLabelVShift)
 
         ' Draw paired body
-        If sNote.Length = 0 And sNote.LNPair <> 0 Then
-            DrawPairedLNBody(sNote, e, xHS, xVS, xHeight, xAlpha)
+        If sNote.ColumnIndex < niB Then
+            If sNote.Length = 0 And sNote.LNPair <> 0 Then
+                DrawPairedLNBody(sNote, e, xHS, xVS, xHeight, xAlpha)
+            End If
         End If
+
 
         ' Select Box
         If sNote.Selected Then

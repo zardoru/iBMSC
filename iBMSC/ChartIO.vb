@@ -824,7 +824,7 @@ Jump1:
                     THTitle.Text = br.ReadString
                     THArtist.Text = br.ReadString
                     THGenre.Text = br.ReadString
-                    Notes(0).Value = br.ReadInt32
+                    Notes(0).Value = br.ReadInt64
                     Dim xPlayerRank As Integer = br.ReadByte
                     THPlayLevel.Text = br.ReadString
 
@@ -887,17 +887,7 @@ Jump1:
                     Dim xNoteUbound As Integer = br.ReadInt32
                     ReDim Preserve Notes(xNoteUbound)
                     For i As Integer = 1 To UBound(Notes)
-                        Notes(i).VPosition = br.ReadDouble
-                        Notes(i).ColumnIndex = br.ReadInt32
-                        Notes(i).Value = br.ReadInt64
-
-                        Dim xFormat As Integer = br.ReadByte
-
-                        Notes(i).Length = br.ReadDouble
-
-                        Notes(i).LongNote = xFormat And &H1
-                        Notes(i).Hidden = xFormat And &H2
-                        Notes(i).Selected = xFormat And &H4
+                        Notes(i).FromBinReader(br)
                     Next
 
                 Case &H6F646E55     'Undo / Redo Commands
@@ -1092,16 +1082,7 @@ EndOfSub:
             bw.Write(&H65746F4E)
             bw.Write(UBound(Notes))
             For i As Integer = 1 To UBound(Notes)
-                Dim xFormat As Integer = 0
-                If Notes(i).LongNote Then xFormat = xFormat Or &H1
-                If Notes(i).Hidden Then xFormat = xFormat Or &H2
-                If Notes(i).Selected Then xFormat = xFormat Or &H4
-
-                bw.Write(Notes(i).VPosition)
-                bw.Write(Notes(i).ColumnIndex)
-                bw.Write(Notes(i).Value)
-                bw.Write(CByte(xFormat))
-                bw.Write(Notes(i).Length)
+                Notes(i).WriteBinWriter(bw)
             Next
 
             'Undo / Redo Commands

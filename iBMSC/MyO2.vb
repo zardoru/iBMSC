@@ -88,7 +88,7 @@
         '        "SA_" & vSelStart & "_" & vSelLength & "_" & vSelHalf & "_1"
 
         Me.RedoAddNoteAll(False, xUndo, xRedo)
-        Me.RedoRelabelNote(Notes(0), vBPM, False, xUndo, xRedo)
+        Me.RedoRelabelNote(Notes(0), vBPM, xUndo, xRedo)
 
         AddUndo(xUndo, xBaseRedo.Next)
         SortByVPositionInsertion()

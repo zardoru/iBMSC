@@ -235,7 +235,11 @@ Partial Public Class MainWindow
             XMLLoadAttribute(n.GetAttribute("Width"), .Width)
             XMLLoadAttribute(n.GetAttribute("Title"), .Title)
             'XMLLoadAttribute(n.GetAttribute("Text"), .Text)
-            'XMLLoadAttribute(n.GetAttribute("Enabled"), .Enabled)
+            Dim Display As Boolean
+            Dim attr = n.GetAttribute("Display")
+            XMLLoadAttribute(attr, Display)
+            .isVisible = IIf(String.IsNullOrEmpty(attr), .isVisible, Display)
+
             'XMLLoadAttribute(n.GetAttribute("isNumeric"), .isNumeric)
             'XMLLoadAttribute(n.GetAttribute("Visible"), .Visible)
             'XMLLoadAttribute(n.GetAttribute("Identifier"), .Identifier)

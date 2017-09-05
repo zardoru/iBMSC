@@ -1,3 +1,5 @@
+Imports iBMSC.Editor
+
 Public Class UndoRedo
     Public Const opVoid As Byte = 0
     Public Const opAddNote As Byte = 1
@@ -69,48 +71,49 @@ Public Class UndoRedo
         End Function
     End Class
 
+    Public MustInherit Class LinkedURNoteCmd : Inherits LinkedURCmd
+        Public note As Note
 
+        Public Sub New()
 
-    Public Class AddNote : Inherits LinkedURCmd
-        '1 + 25 + 1 = 27
-        Public ColumnIndex As Integer = 0
-        Public VPosition As Double = 0
-        Public Value As Long = 10000
-        Public LongNote As Double = 0
-        Public Hidden As Boolean = False
-        Public Selected As Boolean = False
-
-        Public Overrides Function toBytes() As Byte()
-            Dim xCol() As Byte = BitConverter.GetBytes(ColumnIndex)
-            Dim xVPos() As Byte = BitConverter.GetBytes(VPosition)
-            Dim xVal() As Byte = BitConverter.GetBytes(Value)
-            Dim xLong() As Byte = BitConverter.GetBytes(LongNote)
-            toBytes = New Byte() {opAddNote, _
-                                  xCol(0), xCol(1), xCol(2), xCol(3), _
-                                  xVPos(0), xVPos(1), xVPos(2), xVPos(3), xVPos(4), xVPos(5), xVPos(6), xVPos(7), _
-                                  xVal(0), xVal(1), xVal(2), xVal(3), _
-                                  xLong(0), xLong(1), xLong(2), xLong(3), xLong(4), xLong(5), xLong(6), xLong(7), _
-                                  IIf(Hidden, trueByte, falseByte), _
-                                  IIf(Selected, trueByte, falseByte)}
-        End Function
-
-        Public Sub New(ByVal b() As Byte)
-            ColumnIndex = BitConverter.ToInt32(b, 1)
-            VPosition = BitConverter.ToDouble(b, 5)
-            Value = BitConverter.ToInt64(b, 13)
-            LongNote = BitConverter.ToDouble(b, 21)
-            Hidden = CBool(b(29))
-            Selected = CBool(b(30))
         End Sub
 
-        Public Sub New(ByVal xColumnIndex As Integer, ByVal xVPosition As Double, ByVal xValue As Long, ByVal xLongNote As Double, ByVal xHidden As Boolean,
-        ByVal xSelected As Boolean)
-            ColumnIndex = xColumnIndex
-            VPosition = xVPosition
-            Value = xValue
-            LongNote = xLongNote
-            Hidden = xHidden
-            Selected = xSelected
+        Public Sub New(ByVal b As Note)
+            note = b
+        End Sub
+
+        Public Sub New(ByVal b() As Byte)
+            FromBinaryReader(New BinaryReader(New MemoryStream(b)))
+        End Sub
+
+        Public Sub FromBinaryReader(ByRef br As BinaryReader)
+            br.ReadByte()
+            note.FromBinReader(br)
+        End Sub
+
+        Public Sub WriteBinWriter(ByRef bw As BinaryWriter)
+            bw.Write(ofType())
+            bw.Write(note.ToBytes())
+        End Sub
+
+        Public MustOverride Overrides Function ofType() As Byte
+
+        Public Overrides Function toBytes() As Byte()
+            Dim ms = New MemoryStream()
+            Dim bw As New BinaryWriter(ms)
+            WriteBinWriter(bw)
+
+            Return ms.GetBuffer()
+        End Function
+    End Class
+
+    Public Class AddNote : Inherits LinkedURNoteCmd
+        Public Sub New(_note As Note)
+            note = _note
+        End Sub
+
+        Public Sub New(ByVal b() As Byte)
+            MyBase.New(b)
         End Sub
 
         Public Overrides Function ofType() As Byte
@@ -120,41 +123,13 @@ Public Class UndoRedo
 
 
 
-    Public Class RemoveNote : Inherits LinkedURCmd
-        '1 + 25 = 26
-        Public ColumnIndex As Integer = 0
-        Public VPosition As Double = 0
-        Public Value As Long = 10000
-        Public LongNote As Double = 0
-        Public Hidden As Boolean = False
-
-        Public Overrides Function toBytes() As Byte()
-            Dim xCol() As Byte = BitConverter.GetBytes(ColumnIndex)
-            Dim xVPos() As Byte = BitConverter.GetBytes(VPosition)
-            Dim xVal() As Byte = BitConverter.GetBytes(Value)
-            Dim xLong() As Byte = BitConverter.GetBytes(LongNote)
-            toBytes = New Byte() {opRemoveNote, _
-                                  xCol(0), xCol(1), xCol(2), xCol(3), _
-                                  xVPos(0), xVPos(1), xVPos(2), xVPos(3), xVPos(4), xVPos(5), xVPos(6), xVPos(7), _
-                                  xVal(0), xVal(1), xVal(2), xVal(3), _
-                                  xLong(0), xLong(1), xLong(2), xLong(3), xLong(4), xLong(5), xLong(6), xLong(7), _
-                                  IIf(Hidden, trueByte, falseByte)}
-        End Function
-
-        Public Sub New(ByVal b() As Byte)
-            ColumnIndex = BitConverter.ToInt32(b, 1)
-            VPosition = BitConverter.ToDouble(b, 5)
-            Value = BitConverter.ToInt64(b, 13)
-            LongNote = BitConverter.ToDouble(b, 21)
-            Hidden = CBool(b(29))
+    Public Class RemoveNote : Inherits LinkedURNoteCmd
+        Public Sub New(_note As Note)
+            note = _note
         End Sub
 
-        Public Sub New(ByVal xColumnIndex As Integer, ByVal xVPosition As Double, ByVal xValue As Long, ByVal xLongNote As Double, ByVal xHidden As Boolean)
-            ColumnIndex = xColumnIndex
-            VPosition = xVPosition
-            Value = xValue
-            LongNote = xLongNote
-            Hidden = xHidden
+        Public Sub New(ByVal b() As Byte)
+            MyBase.New(b)
         End Sub
 
         Public Overrides Function ofType() As Byte
@@ -164,72 +139,26 @@ Public Class UndoRedo
 
 
 
-    Public Class ChangeNote : Inherits LinkedURCmd
-        '1 + 25 + 25 + 1 = 52
-        Public ColumnIndex As Integer = 0
-        Public VPosition As Double = 0
-        Public Value As Integer = 10000
-        Public LongNote As Double = 0
-        Public Hidden As Boolean = False
-
-        Public NColumnIndex As Integer = 0
-        Public NVPosition As Double = 0
-        Public NValue As Integer = 10000
-        Public NLongNote As Double = 0
-        Public NHidden As Boolean = False
-
-        Public Selected As Boolean = False
+    Public Class ChangeNote : Inherits LinkedURNoteCmd
+        Public NNote As Note
 
         Public Overrides Function toBytes() As Byte()
-            Dim xCol() As Byte = BitConverter.GetBytes(ColumnIndex)
-            Dim xVPos() As Byte = BitConverter.GetBytes(VPosition)
-            Dim xVal() As Byte = BitConverter.GetBytes(Value)
-            Dim xLong() As Byte = BitConverter.GetBytes(LongNote)
-            Dim xNCol() As Byte = BitConverter.GetBytes(NColumnIndex)
-            Dim xNVPos() As Byte = BitConverter.GetBytes(NVPosition)
-            Dim xNVal() As Byte = BitConverter.GetBytes(NValue)
-            Dim xNLong() As Byte = BitConverter.GetBytes(NLongNote)
-            toBytes = New Byte() {opChangeNote, _
-                                  xCol(0), xCol(1), xCol(2), xCol(3), _
-                                  xVPos(0), xVPos(1), xVPos(2), xVPos(3), xVPos(4), xVPos(5), xVPos(6), xVPos(7), _
-                                  xVal(0), xVal(1), xVal(2), xVal(3), _
-                                  xLong(0), xLong(1), xLong(2), xLong(3), xLong(4), xLong(5), xLong(6), xLong(7), _
-                                  IIf(Hidden, trueByte, falseByte), _
-                                  xNCol(0), xNCol(1), xNCol(2), xNCol(3), _
-                                  xNVPos(0), xNVPos(1), xNVPos(2), xNVPos(3), xNVPos(4), xNVPos(5), xNVPos(6), xNVPos(7), _
-                                  xNVal(0), xNVal(1), xNVal(2), xNVal(3), _
-                                  xNLong(0), xNLong(1), xNLong(2), xNLong(3), xNLong(4), xNLong(5), xNLong(6), xNLong(7), _
-                                  IIf(NHidden, trueByte, falseByte), _
-                                  IIf(Selected, trueByte, falseByte)}
+            Dim ms = New MemoryStream(MyBase.toBytes)
+            Dim bw = New BinaryWriter(ms)
+            WriteBinWriter(bw)
+            NNote.WriteBinWriter(bw)
+            Return ms.GetBuffer()
         End Function
 
         Public Sub New(ByVal b() As Byte)
-            ColumnIndex = BitConverter.ToInt32(b, 1)
-            VPosition = BitConverter.ToDouble(b, 5)
-            Value = BitConverter.ToInt32(b, 13)
-            LongNote = BitConverter.ToDouble(b, 17)
-            Hidden = CBool(b(25))
-            NColumnIndex = BitConverter.ToInt32(b, 26)
-            NVPosition = BitConverter.ToDouble(b, 30)
-            NValue = BitConverter.ToInt32(b, 38)
-            NLongNote = BitConverter.ToDouble(b, 42)
-            NHidden = CBool(b(50))
-            Selected = CBool(b(51))
+            Dim br = New BinaryReader(New MemoryStream(b))
+            FromBinaryReader(br)
+            NNote.FromBinReader(br)
         End Sub
 
-        Public Sub New(ByVal xColumnIndex As Integer, ByVal xVPosition As Double, ByVal xValue As Integer, ByVal xLongNote As Double, ByVal xHidden As Boolean, _
-        ByVal xNColumnIndex As Integer, ByVal xNVPosition As Double, ByVal xNValue As Integer, ByVal xNLongNote As Double, ByVal xNHidden As Boolean, ByVal xSelected As Boolean)
-            ColumnIndex = xColumnIndex
-            VPosition = xVPosition
-            Value = xValue
-            LongNote = xLongNote
-            Hidden = xHidden
-            NColumnIndex = xNColumnIndex
-            NVPosition = xNVPosition
-            NValue = xNValue
-            NLongNote = xNLongNote
-            NHidden = xNHidden
-            Selected = xSelected
+        Public Sub New(note1 As Note, note2 As Note)
+            note = note1
+            NNote = note2
         End Sub
 
         Public Overrides Function ofType() As Byte
@@ -239,58 +168,31 @@ Public Class UndoRedo
 
 
 
-    Public Class MoveNote : Inherits LinkedURCmd
-        '1 + 25 + 4 + 8 + 1 = 39
-        Public ColumnIndex As Integer = 0
-        Public VPosition As Double = 0
-        Public Value As Integer = 10000
-        Public LongNote As Double = 0
-        Public Hidden As Boolean = False
-
+    Public Class MoveNote : Inherits LinkedURNoteCmd
         Public NColumnIndex As Integer = 0
         Public NVPosition As Double = 0
 
-        Public Selected As Boolean = False
-
         Public Overrides Function toBytes() As Byte()
-            Dim xCol() As Byte = BitConverter.GetBytes(ColumnIndex)
-            Dim xVPos() As Byte = BitConverter.GetBytes(VPosition)
-            Dim xVal() As Byte = BitConverter.GetBytes(Value)
-            Dim xLong() As Byte = BitConverter.GetBytes(LongNote)
-            Dim xNCol() As Byte = BitConverter.GetBytes(NColumnIndex)
-            Dim xNVPos() As Byte = BitConverter.GetBytes(NVPosition)
-            toBytes = New Byte() {opMoveNote, _
-                                  xCol(0), xCol(1), xCol(2), xCol(3), _
-                                  xVPos(0), xVPos(1), xVPos(2), xVPos(3), xVPos(4), xVPos(5), xVPos(6), xVPos(7), _
-                                  xVal(0), xVal(1), xVal(2), xVal(3), _
-                                  xLong(0), xLong(1), xLong(2), xLong(3), xLong(4), xLong(5), xLong(6), xLong(7), _
-                                  IIf(Hidden, trueByte, falseByte), _
-                                  xNCol(0), xNCol(1), xNCol(2), xNCol(3), _
-                                  xNVPos(0), xNVPos(1), xNVPos(2), xNVPos(3), xNVPos(4), xNVPos(5), xNVPos(6), xNVPos(7), _
-                                  IIf(Selected, trueByte, falseByte)}
+            Dim ms = New MemoryStream()
+            Dim bw As New BinaryWriter(ms)
+            WriteBinWriter(bw)
+            bw.Write(NColumnIndex)
+            bw.Write(NVPosition)
+
+            Return ms.GetBuffer()
         End Function
 
         Public Sub New(ByVal b() As Byte)
-            ColumnIndex = BitConverter.ToInt32(b, 1)
-            VPosition = BitConverter.ToDouble(b, 5)
-            Value = BitConverter.ToInt32(b, 13)
-            LongNote = BitConverter.ToDouble(b, 17)
-            Hidden = CBool(b(25))
-            NColumnIndex = BitConverter.ToInt32(b, 26)
-            NVPosition = BitConverter.ToDouble(b, 30)
-            Selected = CBool(b(38))
+            Dim br As New BinaryReader(New MemoryStream(b))
+            FromBinaryReader(br)
+            NColumnIndex = br.ReadInt32()
+            NVPosition = br.ReadDouble()
         End Sub
 
-        Public Sub New(ByVal xColumnIndex As Integer, ByVal xVPosition As Double, ByVal xValue As Integer, ByVal xLongNote As Double, ByVal xHidden As Boolean, _
-        ByVal xNColumnIndex As Integer, ByVal xNVPosition As Double, ByVal xSelected As Boolean)
-            ColumnIndex = xColumnIndex
-            VPosition = xVPosition
-            Value = xValue
-            LongNote = xLongNote
-            Hidden = xHidden
-            NColumnIndex = xNColumnIndex
-            NVPosition = xNVPosition
-            Selected = xSelected
+        Public Sub New(_note As Note, _ColIndex As Integer, _VPos As Double)
+            note = _note
+            NColumnIndex = _ColIndex
+            NVPosition = _VPos
         End Sub
 
         Public Overrides Function ofType() As Byte
@@ -300,58 +202,31 @@ Public Class UndoRedo
 
 
 
-    Public Class LongNoteModify : Inherits LinkedURCmd
-        '1 + 25 + 8 + 8 + 1 = 43
-        Public ColumnIndex As Integer = 0
-        Public VPosition As Double = 0
-        Public Value As Integer = 10000
-        Public LongNote As Double = 0
-        Public Hidden As Boolean = False
-
+    Public Class LongNoteModify : Inherits LinkedURNoteCmd
         Public NVPosition As Double = 0
         Public NLongNote As Double = 0
 
-        Public Selected As Boolean = False
-
         Public Overrides Function toBytes() As Byte()
-            Dim xCol() As Byte = BitConverter.GetBytes(ColumnIndex)
-            Dim xVPos() As Byte = BitConverter.GetBytes(VPosition)
-            Dim xVal() As Byte = BitConverter.GetBytes(Value)
-            Dim xLong() As Byte = BitConverter.GetBytes(LongNote)
-            Dim xNVPos() As Byte = BitConverter.GetBytes(NVPosition)
-            Dim xNLong() As Byte = BitConverter.GetBytes(NLongNote)
-            toBytes = New Byte() {opLongNoteModify, _
-                                  xCol(0), xCol(1), xCol(2), xCol(3), _
-                                  xVPos(0), xVPos(1), xVPos(2), xVPos(3), xVPos(4), xVPos(5), xVPos(6), xVPos(7), _
-                                  xVal(0), xVal(1), xVal(2), xVal(3), _
-                                  xLong(0), xLong(1), xLong(2), xLong(3), xLong(4), xLong(5), xLong(6), xLong(7), _
-                                  IIf(Hidden, trueByte, falseByte), _
-                                  xNLong(0), xNLong(1), xNLong(2), xNLong(3), xNLong(4), xNLong(5), xNLong(6), xNLong(7), _
-                                  xNVPos(0), xNVPos(1), xNVPos(2), xNVPos(3), xNVPos(4), xNVPos(5), xNVPos(6), xNVPos(7), _
-                                  IIf(Selected, trueByte, falseByte)}
+            Dim ms = New MemoryStream()
+            Dim bw = New BinaryWriter(ms)
+            WriteBinWriter(bw)
+            bw.Write(NVPosition)
+            bw.Write(NLongNote)
+
+            Return ms.GetBuffer()
         End Function
 
         Public Sub New(ByVal b() As Byte)
-            ColumnIndex = BitConverter.ToInt32(b, 1)
-            VPosition = BitConverter.ToDouble(b, 5)
-            Value = BitConverter.ToInt32(b, 13)
-            LongNote = BitConverter.ToDouble(b, 17)
-            Hidden = CBool(b(25))
-            NLongNote = BitConverter.ToDouble(b, 26)
-            NVPosition = BitConverter.ToDouble(b, 34)
-            Selected = CBool(b(35))
+            Dim br = New BinaryReader(New MemoryStream(b))
+            FromBinaryReader(br)
+            NLongNote = br.ReadDouble()
+            NVPosition = br.ReadDouble()
         End Sub
 
-        Public Sub New(ByVal xColumnIndex As Integer, ByVal xVPosition As Double, ByVal xValue As Integer, ByVal xLongNote As Double, ByVal xHidden As Boolean, _
-        ByVal xNVPosition As Double, ByVal xNLongNote As Double, ByVal xSelected As Boolean)
-            ColumnIndex = xColumnIndex
-            VPosition = xVPosition
-            Value = xValue
-            LongNote = xLongNote
-            Hidden = xHidden
+        Public Sub New(_note As Note, ByVal xNVPosition As Double, ByVal xNLongNote As Double)
+            note = _note
             NVPosition = xNVPosition
             NLongNote = xNLongNote
-            Selected = xSelected
         End Sub
 
         Public Overrides Function ofType() As Byte
@@ -361,52 +236,26 @@ Public Class UndoRedo
 
 
 
-    Public Class HiddenNoteModify : Inherits LinkedURCmd
-        '1 + 25 + 1 + 1 = 28
-        Public ColumnIndex As Integer = 0
-        Public VPosition As Double = 0
-        Public Value As Integer = 10000
-        Public LongNote As Double = 0
-        Public Hidden As Boolean = False
-
+    Public Class HiddenNoteModify : Inherits LinkedURNoteCmd
         Public NHidden As Boolean = False
 
-        Public Selected As Boolean = False
-
         Public Overrides Function toBytes() As Byte()
-            Dim xCol() As Byte = BitConverter.GetBytes(ColumnIndex)
-            Dim xVPos() As Byte = BitConverter.GetBytes(VPosition)
-            Dim xVal() As Byte = BitConverter.GetBytes(Value)
-            Dim xLong() As Byte = BitConverter.GetBytes(LongNote)
-            toBytes = New Byte() {opHiddenNoteModify, _
-                                  xCol(0), xCol(1), xCol(2), xCol(3), _
-                                  xVPos(0), xVPos(1), xVPos(2), xVPos(3), xVPos(4), xVPos(5), xVPos(6), xVPos(7), _
-                                  xVal(0), xVal(1), xVal(2), xVal(3), _
-                                  xLong(0), xLong(1), xLong(2), xLong(3), xLong(4), xLong(5), xLong(6), xLong(7), _
-                                  IIf(Hidden, trueByte, falseByte), _
-                                  IIf(NHidden, trueByte, falseByte), _
-                                  IIf(Selected, trueByte, falseByte)}
+            Dim MS = New MemoryStream()
+            Dim bw = New BinaryWriter(MS)
+            WriteBinWriter(bw)
+            bw.Write(NHidden)
+            Return MS.GetBuffer()
         End Function
 
         Public Sub New(ByVal b() As Byte)
-            ColumnIndex = BitConverter.ToInt32(b, 1)
-            VPosition = BitConverter.ToDouble(b, 5)
-            Value = BitConverter.ToInt32(b, 13)
-            LongNote = BitConverter.ToDouble(b, 17)
-            Hidden = CBool(b(25))
-            NHidden = CBool(b(26))
-            Selected = CBool(b(27))
+            Dim br = New BinaryReader(New MemoryStream(b))
+            FromBinaryReader(br)
+            NHidden = br.ReadBoolean()
         End Sub
 
-        Public Sub New(ByVal xColumnIndex As Integer, ByVal xVPosition As Double, ByVal xValue As Integer, ByVal xLongNote As Double, ByVal xHidden As Boolean, _
-        ByVal xNHidden As Boolean, ByVal xSelected As Boolean)
-            ColumnIndex = xColumnIndex
-            VPosition = xVPosition
-            Value = xValue
-            LongNote = xLongNote
-            Hidden = xHidden
+        Public Sub New(_note As Note, ByVal xNHidden As Boolean)
+            note = _note
             NHidden = xNHidden
-            Selected = xSelected
         End Sub
 
         Public Overrides Function ofType() As Byte
@@ -416,53 +265,29 @@ Public Class UndoRedo
 
 
 
-    Public Class RelabelNote : Inherits LinkedURCmd
+    Public Class RelabelNote : Inherits LinkedURNoteCmd
         '1 + 25 + 4 + 1 = 31
-        Public ColumnIndex As Integer = 0
-        Public VPosition As Double = 0
-        Public Value As Integer = 10000
-        Public LongNote As Double = 0
-        Public Hidden As Boolean = False
 
-        Public NValue As Integer = 10000
-
-        Public Selected As Boolean = False
+        Public NValue As Long = 10000
 
         Public Overrides Function toBytes() As Byte()
-            Dim xCol() As Byte = BitConverter.GetBytes(ColumnIndex)
-            Dim xVPos() As Byte = BitConverter.GetBytes(VPosition)
-            Dim xVal() As Byte = BitConverter.GetBytes(Value)
-            Dim xLong() As Byte = BitConverter.GetBytes(LongNote)
-            Dim xNVal() As Byte = BitConverter.GetBytes(NValue)
-            toBytes = New Byte() {opRelabelNote, _
-                                  xCol(0), xCol(1), xCol(2), xCol(3), _
-                                  xVPos(0), xVPos(1), xVPos(2), xVPos(3), xVPos(4), xVPos(5), xVPos(6), xVPos(7), _
-                                  xVal(0), xVal(1), xVal(2), xVal(3), _
-                                  xLong(0), xLong(1), xLong(2), xLong(3), xLong(4), xLong(5), xLong(6), xLong(7), _
-                                  IIf(Hidden, trueByte, falseByte), _
-                                  xNVal(0), xNVal(1), xNVal(2), xNVal(3), _
-                                  IIf(Selected, trueByte, falseByte)}
+            Dim ms = New MemoryStream()
+            Dim bw = New BinaryWriter(ms)
+            WriteBinWriter(bw)
+            bw.Write(NValue)
+
+            Return ms.GetBuffer()
         End Function
 
         Public Sub New(ByVal b() As Byte)
-            ColumnIndex = BitConverter.ToInt32(b, 1)
-            VPosition = BitConverter.ToDouble(b, 5)
-            Value = BitConverter.ToInt32(b, 13)
-            LongNote = BitConverter.ToDouble(b, 17)
-            Hidden = CBool(b(25))
-            NValue = BitConverter.ToInt32(b, 26)
-            Selected = CBool(b(30))
+            Dim br = New BinaryReader(New MemoryStream(b))
+            FromBinaryReader(br)
+            NValue = br.ReadInt64
         End Sub
 
-        Public Sub New(ByVal xColumnIndex As Integer, ByVal xVPosition As Double, ByVal xValue As Integer, ByVal xLongNote As Double, ByVal xHidden As Boolean, _
-        ByVal xNValue As Integer, ByVal xSelected As Boolean)
-            ColumnIndex = xColumnIndex
-            VPosition = xVPosition
-            Value = xValue
-            LongNote = xLongNote
-            Hidden = xHidden
+        Public Sub New(_note As Note, ByVal xNValue As Long)
+            note = _note
             NValue = xNValue
-            Selected = xSelected
         End Sub
 
         Public Overrides Function ofType() As Byte
@@ -499,8 +324,8 @@ Public Class UndoRedo
         Public Overrides Function toBytes() As Byte()
             Dim xVal() As Byte = BitConverter.GetBytes(Value)
             Dim xUbound() As Byte = BitConverter.GetBytes(UBound(Indices))
-            Dim xToBytes() As Byte = {opChangeMeasureLength, _
-                                      xVal(0), xVal(1), xVal(2), xVal(3), xVal(4), xVal(5), xVal(6), xVal(7), _
+            Dim xToBytes() As Byte = {opChangeMeasureLength,
+                                      xVal(0), xVal(1), xVal(2), xVal(3), xVal(4), xVal(5), xVal(6), xVal(7),
                                       xUbound(0), xUbound(1), xUbound(2), xUbound(3)}
             ReDim Preserve xToBytes(12 + 4 * Indices.Length)
             For xI1 As Integer = 13 To UBound(xToBytes) Step 4
@@ -545,10 +370,10 @@ Public Class UndoRedo
             Dim xSta() As Byte = BitConverter.GetBytes(SelStart)
             Dim xLen() As Byte = BitConverter.GetBytes(SelLength)
             Dim xHalf() As Byte = BitConverter.GetBytes(SelLength)
-            toBytes = New Byte() {opChangeTimeSelection, _
-                                  xSta(0), xSta(1), xSta(2), xSta(3), xSta(4), xSta(5), xSta(6), xSta(7), _
-                                  xLen(0), xLen(1), xLen(2), xLen(3), xLen(4), xLen(5), xLen(6), xLen(7), _
-                                  xHalf(0), xHalf(1), xHalf(2), xHalf(3), xHalf(4), xHalf(5), xHalf(6), xHalf(7), _
+            toBytes = New Byte() {opChangeTimeSelection,
+                                  xSta(0), xSta(1), xSta(2), xSta(3), xSta(4), xSta(5), xSta(6), xSta(7),
+                                  xLen(0), xLen(1), xLen(2), xLen(3), xLen(4), xLen(5), xLen(6), xLen(7),
+                                  xHalf(0), xHalf(1), xHalf(2), xHalf(3), xHalf(4), xHalf(5), xHalf(6), xHalf(7),
                                   IIf(Selected, trueByte, falseByte)}
         End Function
 
@@ -579,8 +404,8 @@ Public Class UndoRedo
         Public AutoConvert As Boolean = False
 
         Public Overrides Function toBytes() As Byte()
-            toBytes = New Byte() {opNT, _
-                                  IIf(BecomeNT, trueByte, falseByte), _
+            toBytes = New Byte() {opNT,
+                                  IIf(BecomeNT, trueByte, falseByte),
                                   IIf(AutoConvert, trueByte, falseByte)}
         End Function
 
@@ -598,39 +423,6 @@ Public Class UndoRedo
             Return opNT
         End Function
     End Class
-
-
-
-    'Public Class ChangeVisibleColumns : Inherits LinkedURCmd
-    '    '1 + 1 + 1 + 4 = 7
-    '    Public CGBLP As Boolean = False
-    '    Public CGSTOP As Boolean = False
-    '    Public CHPlayer As Integer = 0
-    '
-    '    Public Overrides Function toBytes() As Byte()
-    '        Dim xCHP() As Byte = BitConverter.GetBytes(CHPlayer)
-    '        toBytes = New Byte() {opChangeVisibleColumns, _
-    '                              IIf(CGBLP, trueByte, falseByte), _
-    '                              IIf(CGSTOP, trueByte, falseByte), _
-    '                              xCHP(0), xCHP(1), xCHP(2), xCHP(3)}
-    '    End Function
-    '
-    '    Public Sub New(ByVal b() As Byte)
-    '        CGBLP = CBool(b(1))
-    '        CGSTOP = CBool(b(2))
-    '        CHPlayer = BitConverter.ToInt32(b, 3)
-    '    End Sub
-    '
-    '    Public Sub New(ByVal xCGBLP As Boolean, ByVal xCGSTOP As Boolean, ByVal xCHPlayer As Integer)
-    '        CGBLP = xCGBLP
-    '        CGSTOP = xCGSTOP
-    '        CHPlayer = xCHPlayer
-    '    End Sub
-    '
-    '    Public Overrides Function ofType() As Byte
-    '        Return opChangeVisibleColumns
-    '    End Function
-    'End Class
 
 
 

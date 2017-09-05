@@ -42,7 +42,7 @@ Partial Public Class MainWindow
                     If Not Notes(xI1).Selected Then Continue For
 
                     xVPos = Notes(xI1).VPosition + xVPosition - muVPosition
-                    Me.RedoMoveNote(Notes(xI1), Notes(xI1).ColumnIndex, xVPos, True, xUndo, xRedo)
+                    Me.RedoMoveNote(Notes(xI1), Notes(xI1).ColumnIndex, xVPos, xUndo, xRedo)
                     Notes(xI1).VPosition = xVPos
                 Next
                 'xUndo = sCmdKMs(0, -xVPosition + muVPosition, True)
@@ -75,7 +75,7 @@ Partial Public Class MainWindow
                     If Not Notes(xI1).Selected Then Continue For
 
                     xVPos = Notes(xI1).VPosition + xVPosition - mVPosition
-                    Me.RedoMoveNote(Notes(xI1), Notes(xI1).ColumnIndex, xVPos, True, xUndo, xRedo)
+                    Me.RedoMoveNote(Notes(xI1), Notes(xI1).ColumnIndex, xVPos, xUndo, xRedo)
                     Notes(xI1).VPosition = xVPos
                 Next
                 'xUndo = sCmdKMs(0, -xVPosition + mVPosition, True)
@@ -105,7 +105,7 @@ Partial Public Class MainWindow
                     If Not Notes(xI1).Selected Then Continue For
 
                     xCol = EnabledColumnToReal(RealColumnToEnabled(Notes(xI1).ColumnIndex) - 1 - mLeft)
-                    Me.RedoMoveNote(Notes(xI1), xCol, Notes(xI1).VPosition, True, xUndo, xRedo)
+                    Me.RedoMoveNote(Notes(xI1), xCol, Notes(xI1).VPosition, xUndo, xRedo)
                     Notes(xI1).ColumnIndex = xCol
                 Next
                 'xUndo = sCmdKMs(1 + mLeft, 0, True)
@@ -122,7 +122,7 @@ Partial Public Class MainWindow
                     If Not Notes(xI1).Selected Then Continue For
 
                     xCol = EnabledColumnToReal(RealColumnToEnabled(Notes(xI1).ColumnIndex) + 1)
-                    Me.RedoMoveNote(Notes(xI1), xCol, Notes(xI1).VPosition, True, xUndo, xRedo)
+                    Me.RedoMoveNote(Notes(xI1), xCol, Notes(xI1).VPosition, xUndo, xRedo)
                     Notes(xI1).ColumnIndex = xCol
                 Next
                 'xUndo = sCmdKMs(-1, 0, True)
@@ -243,7 +243,7 @@ Partial Public Class MainWindow
                             Next
                         End If
 
-                        Me.RedoMoveNote(Notes(xI2), xxCol, .VPosition, True, xUndo, xRedo)
+                        Me.RedoMoveNote(Notes(xI2), xxCol, .VPosition, xUndo, xRedo)
                         .ColumnIndex = xxCol
                     End With
                 Next
@@ -267,7 +267,7 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
                 For xI2 As Integer = 1 To UBound(Notes)
                     If Not Notes(xI2).Selected Then Continue For
 
-                    RedoMoveNote(Notes(xI2), xTargetColumn, Notes(xI2).VPosition, True, xUndo, xRedo)
+                    RedoMoveNote(Notes(xI2), xTargetColumn, Notes(xI2).VPosition, xUndo, xRedo)
                     Notes(xI2).ColumnIndex = xTargetColumn
                 Next
                 AddUndo(xUndo, xBaseRedo.Next)
@@ -402,7 +402,7 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
                         Dim xUndo As UndoRedo.LinkedURCmd = Nothing
                         Dim xRedo As UndoRedo.LinkedURCmd = Nothing
 
-                        Me.RedoRemoveNote(Notes(xI1), True, xUndo, xRedo)
+                        Me.RedoRemoveNote(Notes(xI1), xUndo, xRedo)
                         RemoveNote(xI1)
 
                         AddUndo(xUndo, xRedo)
@@ -490,7 +490,9 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
 
                 Dim xUndo As UndoRedo.LinkedURCmd = Nothing
                 Dim xRedo As UndoRedo.LinkedURCmd = Nothing
-                Me.RedoLongNoteModify(SelectedNotes(0), Notes(NoteIndex).VPosition, Notes(NoteIndex).Length, True, xUndo, xRedo)
+
+
+                Me.RedoLongNoteModify(SelectedNotes(0), Notes(NoteIndex).VPosition, Notes(NoteIndex).Length, xUndo, xRedo)
                 AddUndo(xUndo, xRedo)
                 'With uNote
                 '    AddUndo(sCmdKL(.ColumnIndex, .VPosition, .Value, K(xITemp).Length, .Hidden, .Length, True, True), _
@@ -514,11 +516,13 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
 
                     For xI1 = 1 To UBound(Notes)
                         If Notes(xI1).VPosition = xVPosition AndAlso Notes(xI1).ColumnIndex = xColumn Then _
-                            Me.RedoRemoveNote(Notes(xI1), True, xUndo, xRedo)
+                            RedoRemoveNote(Notes(xI1), xUndo, xRedo)
                     Next
-                    Me.RedoAddNote(xColumn, xVPosition, value, 0, Hidden, True, xUndo, xRedo)
 
-                    AddNote(xVPosition, xColumn, value, 0, Hidden, False)
+                    Dim n = New Note(xColumn, xVPosition, value, 0, Hidden)
+                    Me.RedoAddNote(n, xUndo, xRedo)
+
+                    AddNote(n)
                     AddUndo(xUndo, xBaseRedo.Next)
                 End If
 
@@ -551,7 +555,7 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
 
                 Dim xUndo As UndoRedo.LinkedURCmd = Nothing
                 Dim xRedo As UndoRedo.LinkedURCmd = Nothing
-                Me.RedoAddNote(Notes(UBound(Notes)), True, xUndo, xRedo)
+                RedoAddNote(Notes(UBound(Notes)), xUndo, xRedo)
                 AddUndo(xUndo, xRedo)
             End If
 
@@ -753,9 +757,12 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
 
                 Dim xUndo As UndoRedo.LinkedURCmd = Nothing
                 Dim xRedo As UndoRedo.LinkedURCmd = Nothing
-                RedoRelabelNote(Note, PromptValue, NoteIndex, xUndo, xRedo)
-                Note.Value = PromptValue
-                If NoteIndex = 0 Then THBPM.Value = PromptValue / 10000
+                RedoRelabelNote(Note, PromptValue, xUndo, xRedo)
+                If NoteIndex = 0 Then
+                    THBPM.Value = PromptValue / 10000
+                Else
+                    Notes(NoteIndex).Value = PromptValue
+                End If
                 AddUndo(xUndo, xRedo)
             End If
         Else
@@ -767,8 +774,8 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
             If IsBase36(xStr) And Not (xStr = "00" Or xStr = "0") Then
                 Dim xUndo As UndoRedo.LinkedURCmd = Nothing
                 Dim xRedo As UndoRedo.LinkedURCmd = Nothing
-                RedoRelabelNote(Note, C36to10(xStr) * 10000, True, xUndo, xRedo)
-                Note.Value = C36to10(xStr) * 10000
+                RedoRelabelNote(Note, C36to10(xStr) * 10000, xUndo, xRedo)
+                Notes(NoteIndex).Value = C36to10(xStr) * 10000
                 AddUndo(xUndo, xRedo)
                 Return
             Else
@@ -1012,7 +1019,7 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
 
                                 xCol = EnabledColumnToReal(RealColumnToEnabled(Notes(xI1).ColumnIndex) + dColumn - mLeft)
                                 xVPos = Notes(xI1).VPosition + dVPosition - mVPosition - muVPosition
-                                Me.RedoMoveNote(SelectedNotes(Notes(xI1).TempIndex), xCol, xVPos, True, xUndo, xRedo)
+                                Me.RedoMoveNote(SelectedNotes(Notes(xI1).TempIndex), xCol, xVPos, xUndo, xRedo)
 
                                 Notes(xI1).ColumnIndex = xCol
                                 Notes(xI1).VPosition = xVPos
@@ -1048,7 +1055,7 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
                                 If Not Notes(xI1).Selected Then Continue For
 
                                 xLen = Notes(xI1).Length + dVPosition - minLength - maxHeight
-                                Me.RedoLongNoteModify(SelectedNotes(Notes(xI1).TempIndex), Notes(xI1).VPosition, xLen, True, xUndo, xRedo)
+                                Me.RedoLongNoteModify(SelectedNotes(Notes(xI1).TempIndex), Notes(xI1).VPosition, xLen, xUndo, xRedo)
 
                                 Notes(xI1).Length = xLen
                             Next
@@ -1083,7 +1090,7 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
 
                                 xVPos = Notes(xI1).VPosition + dVPosition + minLength - minVPosition
                                 xLen = Notes(xI1).Length - dVPosition - minLength + minVPosition
-                                Me.RedoLongNoteModify(SelectedNotes(Notes(xI1).TempIndex), xVPos, xLen, True, xUndo, xRedo)
+                                Me.RedoLongNoteModify(SelectedNotes(Notes(xI1).TempIndex), xVPos, xLen, xUndo, xRedo)
 
                                 Notes(xI1).VPosition = xVPos
                                 Notes(xI1).Length = xLen
@@ -1156,7 +1163,7 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
                                 xTempNotes(xI2) = Notes(i)
                                 xTempNotes(xI2).ColumnIndex = EnabledColumnToReal(RealColumnToEnabled(Notes(i).ColumnIndex) + dColumn - mLeft)
                                 xTempNotes(xI2).VPosition = Notes(i).VPosition + dVPosition - mVPosition - muVPosition
-                                Me.RedoAddNote(xTempNotes(xI2), True, xUndo, xRedo)
+                                Me.RedoAddNote(xTempNotes(xI2), xUndo, xRedo)
 
                                 Notes(i).Selected = False
                                 xI2 += 1
@@ -1181,7 +1188,7 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
 
                                 Notes(i).ColumnIndex = EnabledColumnToReal(RealColumnToEnabled(Notes(i).ColumnIndex) + dColumn - mLeft)
                                 Notes(i).VPosition = Notes(i).VPosition + dVPosition - mVPosition - muVPosition
-                                Me.RedoAddNote(Notes(i), True, xUndo, xRedo)
+                                Me.RedoAddNote(Notes(i), xUndo, xRedo)
                             Next
 
                             AddUndo(xUndo, xBaseRedo.Next, True)
@@ -1231,13 +1238,13 @@ EndCtrlOpn:         End If
                                 If SelectedNotes(0).LNPair = -1 Then 'If new note
                                     Dim xUndo As UndoRedo.LinkedURCmd = Nothing
                                     Dim xRedo As UndoRedo.LinkedURCmd = Nothing
-                                    Me.RedoAddNote(Notes(xITemp), True, xUndo, xRedo)
+                                    Me.RedoAddNote(Notes(xITemp), xUndo, xRedo)
                                     AddUndo(xUndo, xRedo, True)
 
                                 Else 'If existing note
                                     Dim xUndo As UndoRedo.LinkedURCmd = Nothing
                                     Dim xRedo As UndoRedo.LinkedURCmd = Nothing
-                                    Me.RedoLongNoteModify(SelectedNotes(0), .VPosition, .Length, True, xUndo, xRedo)
+                                    Me.RedoLongNoteModify(SelectedNotes(0), .VPosition, .Length, xUndo, xRedo)
                                     AddUndo(xUndo, xRedo, True)
                                     'AddUndo(sCmdKC(.ColumnIndex, .VPosition, .Value, .Length, .Hidden, 0, uNote.VPosition - .VPosition, .Value, uNote.Length, .Hidden, True), _
                                     '        sCmdKC(.ColumnIndex, uNote.VPosition, .Value, uNote.Length, .Hidden, 0, .VPosition - uNote.VPosition, .Value, .Length, .Hidden, True), _
@@ -1510,25 +1517,29 @@ EndCtrlOpn:         End If
                         If value <> 0 Then
                             For xI1 = 1 To UBound(Notes)
                                 If Notes(xI1).VPosition = xVPosition AndAlso Notes(xI1).ColumnIndex = xColumn Then _
-                            RedoRemoveNote(Notes(xI1), True, xUndo, xRedo)
+                            RedoRemoveNote(Notes(xI1), xUndo, xRedo)
                             Next
 
-                            RedoAddNote(xColumn, xVPosition, value, LongNote, HiddenNote, True, xUndo, xRedo)
-                            AddNote(xVPosition, xColumn, value, LongNote, HiddenNote, False)
+                            Dim n = New Note(xColumn, xVPosition, value, LongNote, HiddenNote)
+                            RedoAddNote(n, xUndo, xRedo)
+                            AddNote(n)
 
                             AddUndo(xUndo, xBaseRedo.Next)
                         End If
 
                     Else
-                        Dim xUI1 As Integer = (LWAV.SelectedIndex + 1) * 10000
+                        Dim xValue As Integer = (LWAV.SelectedIndex + 1) * 10000
 
                         For xI1 = 1 To UBound(Notes)
                             If Notes(xI1).VPosition = xVPosition AndAlso Notes(xI1).ColumnIndex = xColumn Then _
-                            RedoRemoveNote(Notes(xI1), True, xUndo, xRedo)
+                            RedoRemoveNote(Notes(xI1), xUndo, xRedo)
                         Next
 
-                        RedoAddNote(xColumn, xVPosition, xUI1, LongNote, HiddenNote, True, xUndo, xRedo)
-                        AddNote(xVPosition, xColumn, xUI1, LongNote, HiddenNote, Landmine)
+                        Dim n = New Note(xColumn, xVPosition, xValue,
+                                         LongNote, HiddenNote, True, Landmine)
+
+                        RedoAddNote(n, xUndo, xRedo)
+                        AddNote(n)
 
                         AddUndo(xUndo, xRedo)
                     End If
