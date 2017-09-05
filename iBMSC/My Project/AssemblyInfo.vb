@@ -11,7 +11,7 @@ Imports System.Runtime.InteropServices
 ' Review the values of the assembly attributes
 
 <Assembly: AssemblyTitle("μBMSC Editor")>
-<Assembly: AssemblyDescription("iBMS by [4th Age].Doaz Patched by zardoru")>
+<Assembly: AssemblyDescription("iBMS by Doaz Patched by zardoru")>
 <Assembly: AssemblyCompany("iBMS")>
 <Assembly: AssemblyProduct("μBMSC")>
 <Assembly: AssemblyCopyright("Copyright (C) [4th Age]")>
@@ -33,7 +33,7 @@ Imports System.Runtime.InteropServices
 ' by using the '*' as shown below:
 ' <Assembly: AssemblyVersion("1.0.*")> 
 
-<Assembly: AssemblyVersion("3.1.0.0")>
-<Assembly: AssemblyFileVersion("3.1.0.0")>
+<Assembly: AssemblyVersion("3.2.0.0")>
+<Assembly: AssemblyFileVersion("3.2.0.0")>
 
 <Assembly: NeutralResourcesLanguageAttribute("en")> 
