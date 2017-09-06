@@ -85,7 +85,7 @@ Partial Public Class MainWindow
             End If
         End If
 
-        Return xI
+        Return Add2Zeros(xI)
     End Function
 
     Private Function nLeft(ByVal iCol As Integer) As Integer
