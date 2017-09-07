@@ -552,7 +552,7 @@ Public Class MainWindow
                 If xStrLine(xI1).Trim = "" Then Continue For
                 xStrSub = Split(xStrLine(xI1), " ")
                 xTempVP = Val(xStrSub(1)) + MeasureBottom(MeasureAtDisplacement(-xVS) + 1)
-                If UBound(xStrSub) = 4 And xTempVP >= 0 And xTempVP < VPosition1000() Then
+                If UBound(xStrSub) = 5 And xTempVP >= 0 And xTempVP < VPosition1000() Then
                     ReDim Preserve Notes(UBound(Notes) + 1)
                     With Notes(UBound(Notes))
                         .ColumnIndex = Val(xStrSub(0))
@@ -560,6 +560,7 @@ Public Class MainWindow
                         .Value = Val(xStrSub(2))
                         .LongNote = CBool(Val(xStrSub(3)))
                         .Hidden = CBool(Val(xStrSub(4)))
+                        .Landmine = CBool(Val(xStrSub(5)))
                         .Selected = xSelected
                     End With
                 End If
@@ -594,7 +595,7 @@ Public Class MainWindow
                 If xStrLine(xI1).Trim = "" Then Continue For
                 xStrSub = Split(xStrLine(xI1), " ")
                 xTempVP = Val(xStrSub(1)) + MeasureBottom(MeasureAtDisplacement(-xVS) + 1)
-                If UBound(xStrSub) = 4 And xTempVP >= 0 And xTempVP < VPosition1000() Then
+                If UBound(xStrSub) = 5 And xTempVP >= 0 And xTempVP < VPosition1000() Then
                     ReDim Preserve Notes(UBound(Notes) + 1)
                     With Notes(UBound(Notes))
                         .ColumnIndex = Val(xStrSub(0))
@@ -602,6 +603,7 @@ Public Class MainWindow
                         .Value = Val(xStrSub(2))
                         .Length = Val(xStrSub(3))
                         .Hidden = CBool(Val(xStrSub(4)))
+                        .Landmine = CBool(Val(xStrSub(5)))
                         .Selected = xSelected
                     End With
                 End If
@@ -701,7 +703,8 @@ Public Class MainWindow
                                        (Notes(xI1).VPosition - MinMeasure).ToString & " " &
                                         Notes(xI1).Value.ToString & " " &
                                    CInt(Notes(xI1).LongNote).ToString & " " &
-                                   CInt(Notes(xI1).Hidden).ToString
+                                   CInt(Notes(xI1).Hidden).ToString & " " &
+                                   CInt(Notes(xI1).Landmine).ToString
                     Notes(xI1).Selected = Not Unselect
                 End If
             Next
@@ -713,7 +716,8 @@ Public Class MainWindow
                                        (Notes(xI1).VPosition - MinMeasure).ToString & " " &
                                         Notes(xI1).Value.ToString & " " &
                                         Notes(xI1).Length.ToString & " " &
-                                   CInt(Notes(xI1).Hidden).ToString
+                                   CInt(Notes(xI1).Hidden).ToString & " " &
+                                   CInt(Notes(xI1).Landmine).ToString
                     Notes(xI1).Selected = Not Unselect
                 End If
             Next
