@@ -2,6 +2,12 @@
 
 Namespace Editor
     Public Module Functions
+        Public Function WriteDecimalWithDot(v As Double) As String
+            Static nfi As New System.Globalization.NumberFormatInfo()
+            nfi.NumberDecimalSeparator = "."
+            Return v.ToString(nfi)
+        End Function
+
         Public Function Add3Zeros(ByVal xNum As Integer) As String
             Dim xStr1 As String = "000" & xNum
             Return Mid(xStr1, Len(xStr1) - 2)

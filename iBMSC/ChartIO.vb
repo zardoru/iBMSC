@@ -553,12 +553,6 @@ AddExpansion:       xExpansion &= sLine & vbCrLf
         Return Ret
     End Function
 
-    Private Function WriteDecimalWithDot(v As Double) As String
-        Static nfi As New System.Globalization.NumberFormatInfo()
-        nfi.NumberDecimalSeparator = "."
-        Return v.ToString(nfi)
-    End Function
-
     Private Function OpenSM(ByVal xStrAll As String) As Boolean
         KMouseOver = -1
 

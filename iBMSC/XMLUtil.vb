@@ -1,7 +1,7 @@
 ﻿Module XMLUtil
     Public Sub XMLWriteValue(ByVal w As XmlTextWriter, ByVal local As String, ByVal val As String)
         w.WriteStartElement(local)
-        w.WriteAttributeString("Value", val)
+        w.WriteAttributeString("Value", Editor.WriteDecimalWithDot(val))
         w.WriteEndElement()
     End Sub
 
@@ -19,11 +19,17 @@
     End Sub
     Public Sub XMLLoadAttribute(ByVal s As String, ByRef v As Single)
         If s.Length = 0 Then Exit Sub
-        v = CSng(s)
+
+        Static nfi As New System.Globalization.NumberFormatInfo()
+        nfi.NumberDecimalSeparator = "."
+        v = Double.Parse(s, nfi)
     End Sub
     Public Sub XMLLoadAttribute(ByVal s As String, ByRef v As Double)
         If s.Length = 0 Then Exit Sub
-        v = CDbl(s)
+
+        Static nfi As New System.Globalization.NumberFormatInfo()
+        nfi.NumberDecimalSeparator = "."
+        v = Double.Parse(s, nfi)
     End Sub
     Public Sub XMLLoadAttribute(ByVal s As String, ByRef v As Long)
         If s.Length = 0 Then Exit Sub
