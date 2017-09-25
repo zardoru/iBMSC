@@ -339,17 +339,17 @@ Partial Class MainWindow
         Me.PMain = New System.Windows.Forms.Panel()
         Me.PMainIn = New System.Windows.Forms.Panel()
         Me.ttlIcon = New System.Windows.Forms.PictureBox()
-        Me.VS = New System.Windows.Forms.VScrollBar()
+        Me.MainPanelScroll = New System.Windows.Forms.VScrollBar()
         Me.HS = New System.Windows.Forms.HScrollBar()
         Me.SpR = New System.Windows.Forms.Button()
         Me.SpL = New System.Windows.Forms.Button()
         Me.PMainR = New System.Windows.Forms.Panel()
         Me.PMainInR = New System.Windows.Forms.Panel()
-        Me.VSR = New System.Windows.Forms.VScrollBar()
+        Me.RightPanelScroll = New System.Windows.Forms.VScrollBar()
         Me.HSR = New System.Windows.Forms.HScrollBar()
         Me.PMainL = New System.Windows.Forms.Panel()
         Me.PMainInL = New System.Windows.Forms.Panel()
-        Me.VSL = New System.Windows.Forms.VScrollBar()
+        Me.LeftPanelScroll = New System.Windows.Forms.VScrollBar()
         Me.HSL = New System.Windows.Forms.HScrollBar()
         Me.POptionsResizer = New System.Windows.Forms.Button()
         Me.ToolTipUniversal = New System.Windows.Forms.ToolTip(Me.components)
@@ -3781,7 +3781,7 @@ Partial Class MainWindow
         '
         Me.PMain.BackColor = System.Drawing.Color.Black
         Me.PMain.Controls.Add(Me.PMainIn)
-        Me.PMain.Controls.Add(Me.VS)
+        Me.PMain.Controls.Add(Me.MainPanelScroll)
         Me.PMain.Controls.Add(Me.HS)
         Me.PMain.Dock = System.Windows.Forms.DockStyle.Fill
         Me.PMain.Font = New System.Drawing.Font("Verdana", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -3820,17 +3820,17 @@ Partial Class MainWindow
         '
         'VS
         '
-        Me.VS.AccessibleRole = System.Windows.Forms.AccessibleRole.ScrollBar
-        Me.VS.Dock = System.Windows.Forms.DockStyle.Right
-        Me.VS.LargeChange = 592
-        Me.VS.Location = New System.Drawing.Point(850, 0)
-        Me.VS.Maximum = 591
-        Me.VS.Minimum = -10000
-        Me.VS.Name = "VS"
-        Me.VS.Size = New System.Drawing.Size(17, 643)
-        Me.VS.SmallChange = 12
-        Me.VS.TabIndex = 2
-        Me.VS.Tag = "1"
+        Me.MainPanelScroll.AccessibleRole = System.Windows.Forms.AccessibleRole.ScrollBar
+        Me.MainPanelScroll.Dock = System.Windows.Forms.DockStyle.Right
+        Me.MainPanelScroll.LargeChange = 592
+        Me.MainPanelScroll.Location = New System.Drawing.Point(850, 0)
+        Me.MainPanelScroll.Maximum = 591
+        Me.MainPanelScroll.Minimum = -10000
+        Me.MainPanelScroll.Name = "VS"
+        Me.MainPanelScroll.Size = New System.Drawing.Size(17, 643)
+        Me.MainPanelScroll.SmallChange = 12
+        Me.MainPanelScroll.TabIndex = 2
+        Me.MainPanelScroll.Tag = "1"
         '
         'HS
         '
@@ -3874,7 +3874,7 @@ Partial Class MainWindow
         '
         Me.PMainR.BackColor = System.Drawing.Color.Black
         Me.PMainR.Controls.Add(Me.PMainInR)
-        Me.PMainR.Controls.Add(Me.VSR)
+        Me.PMainR.Controls.Add(Me.RightPanelScroll)
         Me.PMainR.Controls.Add(Me.HSR)
         Me.PMainR.Dock = System.Windows.Forms.DockStyle.Right
         Me.PMainR.Font = New System.Drawing.Font("Verdana", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -3900,16 +3900,16 @@ Partial Class MainWindow
         '
         'VSR
         '
-        Me.VSR.Dock = System.Windows.Forms.DockStyle.Right
-        Me.VSR.LargeChange = 592
-        Me.VSR.Location = New System.Drawing.Point(-17, 0)
-        Me.VSR.Maximum = 591
-        Me.VSR.Minimum = -10000
-        Me.VSR.Name = "VSR"
-        Me.VSR.Size = New System.Drawing.Size(17, 643)
-        Me.VSR.SmallChange = 12
-        Me.VSR.TabIndex = 2
-        Me.VSR.Tag = "2"
+        Me.RightPanelScroll.Dock = System.Windows.Forms.DockStyle.Right
+        Me.RightPanelScroll.LargeChange = 592
+        Me.RightPanelScroll.Location = New System.Drawing.Point(-17, 0)
+        Me.RightPanelScroll.Maximum = 591
+        Me.RightPanelScroll.Minimum = -10000
+        Me.RightPanelScroll.Name = "VSR"
+        Me.RightPanelScroll.Size = New System.Drawing.Size(17, 643)
+        Me.RightPanelScroll.SmallChange = 12
+        Me.RightPanelScroll.TabIndex = 2
+        Me.RightPanelScroll.Tag = "2"
         '
         'HSR
         '
@@ -3926,7 +3926,7 @@ Partial Class MainWindow
         '
         Me.PMainL.BackColor = System.Drawing.Color.Black
         Me.PMainL.Controls.Add(Me.PMainInL)
-        Me.PMainL.Controls.Add(Me.VSL)
+        Me.PMainL.Controls.Add(Me.LeftPanelScroll)
         Me.PMainL.Controls.Add(Me.HSL)
         Me.PMainL.Dock = System.Windows.Forms.DockStyle.Left
         Me.PMainL.Font = New System.Drawing.Font("Verdana", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -3952,16 +3952,16 @@ Partial Class MainWindow
         '
         'VSL
         '
-        Me.VSL.Dock = System.Windows.Forms.DockStyle.Right
-        Me.VSL.LargeChange = 592
-        Me.VSL.Location = New System.Drawing.Point(-17, 0)
-        Me.VSL.Maximum = 591
-        Me.VSL.Minimum = -10000
-        Me.VSL.Name = "VSL"
-        Me.VSL.Size = New System.Drawing.Size(17, 643)
-        Me.VSL.SmallChange = 12
-        Me.VSL.TabIndex = 2
-        Me.VSL.Tag = "0"
+        Me.LeftPanelScroll.Dock = System.Windows.Forms.DockStyle.Right
+        Me.LeftPanelScroll.LargeChange = 592
+        Me.LeftPanelScroll.Location = New System.Drawing.Point(-17, 0)
+        Me.LeftPanelScroll.Maximum = 591
+        Me.LeftPanelScroll.Minimum = -10000
+        Me.LeftPanelScroll.Name = "VSL"
+        Me.LeftPanelScroll.Size = New System.Drawing.Size(17, 643)
+        Me.LeftPanelScroll.SmallChange = 12
+        Me.LeftPanelScroll.TabIndex = 2
+        Me.LeftPanelScroll.Tag = "0"
         '
         'HSL
         '
@@ -4295,15 +4295,15 @@ Partial Class MainWindow
     Friend WithEvents PMain As System.Windows.Forms.Panel
     Friend WithEvents PMainIn As System.Windows.Forms.Panel
     Friend WithEvents ttlIcon As System.Windows.Forms.PictureBox
-    Friend WithEvents VS As System.Windows.Forms.VScrollBar
+    Friend WithEvents MainPanelScroll As System.Windows.Forms.VScrollBar
     Friend WithEvents HS As System.Windows.Forms.HScrollBar
     Friend WithEvents PMainR As System.Windows.Forms.Panel
     Friend WithEvents PMainInR As System.Windows.Forms.Panel
-    Friend WithEvents VSR As System.Windows.Forms.VScrollBar
+    Friend WithEvents RightPanelScroll As System.Windows.Forms.VScrollBar
     Friend WithEvents HSR As System.Windows.Forms.HScrollBar
     Friend WithEvents PMainL As System.Windows.Forms.Panel
     Friend WithEvents PMainInL As System.Windows.Forms.Panel
-    Friend WithEvents VSL As System.Windows.Forms.VScrollBar
+    Friend WithEvents LeftPanelScroll As System.Windows.Forms.VScrollBar
     Friend WithEvents HSL As System.Windows.Forms.HScrollBar
     Friend WithEvents POConvert As System.Windows.Forms.ToolStripDropDownButton
     Friend WithEvents TBLanguage As System.Windows.Forms.ToolStripDropDownButton

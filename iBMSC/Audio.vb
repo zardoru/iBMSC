@@ -4,11 +4,11 @@ Imports CSCore.Codecs
 Imports CSCore.SoundOut
 
 Module Audio
-    Dim Output As DirectSoundOut
+    Dim Output As WasapiOut
     Dim Source As IWaveSource
 
     Public Sub Initialize()
-        Output = New DirectSoundOut()
+        Output = New WasapiOut()
         CodecFactory.Instance.Register("ogg", New CodecFactoryEntry(Function(s)
                                                                         Return New NVorbisSource(s).ToWaveSource()
                                                                     End Function, ".ogg"))

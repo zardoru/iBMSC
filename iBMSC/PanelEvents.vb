@@ -95,8 +95,8 @@ Partial Public Class MainWindow
                 'Ks cannot be beyond the left boundary
                 Dim mLeft As Integer = 0
                 For xI1 = 1 To UBound(Notes)
-                    If Notes(xI1).Selected Then mLeft = IIf(RealColumnToEnabled(Notes(xI1).ColumnIndex) - 1 < mLeft,
-                                                        RealColumnToEnabled(Notes(xI1).ColumnIndex) - 1,
+                    If Notes(xI1).Selected Then mLeft = IIf(ColumnArrayIndexToEnabledColumnIndex(Notes(xI1).ColumnIndex) - 1 < mLeft,
+                                                        ColumnArrayIndexToEnabledColumnIndex(Notes(xI1).ColumnIndex) - 1,
                                                         mLeft)
                 Next
                 'xRedo = sCmdKMs(-1 - mLeft, 0, True)
@@ -104,7 +104,7 @@ Partial Public Class MainWindow
                 For xI1 = 1 To UBound(Notes)
                     If Not Notes(xI1).Selected Then Continue For
 
-                    xCol = EnabledColumnToReal(RealColumnToEnabled(Notes(xI1).ColumnIndex) - 1 - mLeft)
+                    xCol = EnabledColumnIndexToColumnArrayIndex(ColumnArrayIndexToEnabledColumnIndex(Notes(xI1).ColumnIndex) - 1 - mLeft)
                     Me.RedoMoveNote(Notes(xI1), xCol, Notes(xI1).VPosition, xUndo, xRedo)
                     Notes(xI1).ColumnIndex = xCol
                 Next
@@ -121,7 +121,7 @@ Partial Public Class MainWindow
                 For xI1 = 1 To UBound(Notes)
                     If Not Notes(xI1).Selected Then Continue For
 
-                    xCol = EnabledColumnToReal(RealColumnToEnabled(Notes(xI1).ColumnIndex) + 1)
+                    xCol = EnabledColumnIndexToColumnArrayIndex(ColumnArrayIndexToEnabledColumnIndex(Notes(xI1).ColumnIndex) + 1)
                     Me.RedoMoveNote(Notes(xI1), xCol, Notes(xI1).VPosition, xUndo, xRedo)
                     Notes(xI1).ColumnIndex = xCol
                 Next
@@ -136,24 +136,24 @@ Partial Public Class MainWindow
                 mnDelete_Click(mnDelete, New System.EventArgs)
 
             Case Keys.Home
-                If PanelFocus = 0 Then VSL.Value = 0
-                If PanelFocus = 1 Then VS.Value = 0
-                If PanelFocus = 2 Then VSR.Value = 0
+                If PanelFocus = 0 Then LeftPanelScroll.Value = 0
+                If PanelFocus = 1 Then MainPanelScroll.Value = 0
+                If PanelFocus = 2 Then RightPanelScroll.Value = 0
 
             Case Keys.End
-                If PanelFocus = 0 Then VSL.Value = VSL.Minimum
-                If PanelFocus = 1 Then VS.Value = VS.Minimum
-                If PanelFocus = 2 Then VSR.Value = VSR.Minimum
+                If PanelFocus = 0 Then LeftPanelScroll.Value = LeftPanelScroll.Minimum
+                If PanelFocus = 1 Then MainPanelScroll.Value = MainPanelScroll.Minimum
+                If PanelFocus = 2 Then RightPanelScroll.Value = RightPanelScroll.Minimum
 
             Case Keys.PageUp
-                If PanelFocus = 0 Then VSL.Value = IIf(VSL.Value - gPgUpDn > VSL.Minimum, VSL.Value - gPgUpDn, VSL.Minimum)
-                If PanelFocus = 1 Then VS.Value = IIf(VS.Value - gPgUpDn > VS.Minimum, VS.Value - gPgUpDn, VS.Minimum)
-                If PanelFocus = 2 Then VSR.Value = IIf(VSR.Value - gPgUpDn > VSR.Minimum, VSR.Value - gPgUpDn, VSR.Minimum)
+                If PanelFocus = 0 Then LeftPanelScroll.Value = IIf(LeftPanelScroll.Value - gPgUpDn > LeftPanelScroll.Minimum, LeftPanelScroll.Value - gPgUpDn, LeftPanelScroll.Minimum)
+                If PanelFocus = 1 Then MainPanelScroll.Value = IIf(MainPanelScroll.Value - gPgUpDn > MainPanelScroll.Minimum, MainPanelScroll.Value - gPgUpDn, MainPanelScroll.Minimum)
+                If PanelFocus = 2 Then RightPanelScroll.Value = IIf(RightPanelScroll.Value - gPgUpDn > RightPanelScroll.Minimum, RightPanelScroll.Value - gPgUpDn, RightPanelScroll.Minimum)
 
             Case Keys.PageDown
-                If PanelFocus = 0 Then VSL.Value = IIf(VSL.Value + gPgUpDn < 0, VSL.Value + gPgUpDn, 0)
-                If PanelFocus = 1 Then VS.Value = IIf(VS.Value + gPgUpDn < 0, VS.Value + gPgUpDn, 0)
-                If PanelFocus = 2 Then VSR.Value = IIf(VSR.Value + gPgUpDn < 0, VSR.Value + gPgUpDn, 0)
+                If PanelFocus = 0 Then LeftPanelScroll.Value = IIf(LeftPanelScroll.Value + gPgUpDn < 0, LeftPanelScroll.Value + gPgUpDn, 0)
+                If PanelFocus = 1 Then MainPanelScroll.Value = IIf(MainPanelScroll.Value + gPgUpDn < 0, MainPanelScroll.Value + gPgUpDn, 0)
+                If PanelFocus = 2 Then RightPanelScroll.Value = IIf(RightPanelScroll.Value + gPgUpDn < 0, RightPanelScroll.Value + gPgUpDn, 0)
 
             Case Keys.Oemcomma
                 If gDivide * 2 <= CGDivide.Maximum Then CGDivide.Value = gDivide * 2
@@ -304,18 +304,18 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
 
         Select Case iI
             Case 0
-                VSL.LargeChange = sender.Height * 0.9
-                VSL.Maximum = VSL.LargeChange - 1
+                LeftPanelScroll.LargeChange = sender.Height * 0.9
+                LeftPanelScroll.Maximum = LeftPanelScroll.LargeChange - 1
                 HSL.LargeChange = sender.Width / gxWidth
                 If HSL.Value > HSL.Maximum - HSL.LargeChange + 1 Then HSL.Value = HSL.Maximum - HSL.LargeChange + 1
             Case 1
-                VS.LargeChange = sender.Height * 0.9
-                VS.Maximum = VS.LargeChange - 1
+                MainPanelScroll.LargeChange = sender.Height * 0.9
+                MainPanelScroll.Maximum = MainPanelScroll.LargeChange - 1
                 HS.LargeChange = sender.Width / gxWidth
                 If HS.Value > HS.Maximum - HS.LargeChange + 1 Then HS.Value = HS.Maximum - HS.LargeChange + 1
             Case 2
-                VSR.LargeChange = sender.Height * 0.9
-                VSR.Maximum = VSR.LargeChange - 1
+                RightPanelScroll.LargeChange = sender.Height * 0.9
+                RightPanelScroll.Maximum = RightPanelScroll.LargeChange - 1
                 HSR.LargeChange = sender.Width / gxWidth
                 If HSR.Value > HSR.Maximum - HSR.LargeChange + 1 Then HSR.Value = HSR.Maximum - HSR.LargeChange + 1
         End Select
@@ -335,7 +335,7 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
         VSValue = PanelDisplacement(PanelFocus)
 
         If NTInput Then bAdjustUpper = False : bAdjustLength = False
-        Me.ctrlPressed = False : Me.ctrlForDuplicate = False
+        Me.ctrlPressed = False : Me.DuplicatedSelectedNotes = False
 
         If MiddleButtonClicked Then MiddleButtonClicked = False : Exit Sub
 
@@ -978,14 +978,12 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
                             Dim mLeft As Integer = e.X / gxWidth + xHS 'horizontal position of the mouse
                             If mLeft >= 0 Then
                                 Do
-                                    If mLeft < nLeft(xI1 + 1) Or xI1 >= gColumns Then mouseColumn = RealColumnToEnabled(xI1) : Exit Do 'get the column where mouse is 
+                                    If mLeft < nLeft(xI1 + 1) Or xI1 >= gColumns Then mouseColumn = ColumnArrayIndexToEnabledColumnIndex(xI1) : Exit Do 'get the column where mouse is 
                                     xI1 += 1
                                 Loop
                             End If
 
-                            dColumn = mouseColumn - RealColumnToEnabled(Notes(xITemp).ColumnIndex) 'get the enabled delta column where mouse is 
-
-                            dColumn = mouseColumn - RealColumnToEnabled(Notes(xITemp).ColumnIndex) 'get the enabled delta column where mouse is 
+                            dColumn = mouseColumn - ColumnArrayIndexToEnabledColumnIndex(Notes(xITemp).ColumnIndex) 'get the enabled delta column where mouse is 
 
                             'Ks cannot be beyond the left, the upper and the lower boundary
                             mLeft = 0
@@ -993,8 +991,8 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
                             Dim muVPosition As Double = 191999
                             For xI1 = 1 To UBound(Notes)
                                 If Notes(xI1).Selected Then
-                                    mLeft = IIf(RealColumnToEnabled(Notes(xI1).ColumnIndex) + dColumn < mLeft,
-                                                RealColumnToEnabled(Notes(xI1).ColumnIndex) + dColumn,
+                                    mLeft = IIf(ColumnArrayIndexToEnabledColumnIndex(Notes(xI1).ColumnIndex) + dColumn < mLeft,
+                                                ColumnArrayIndexToEnabledColumnIndex(Notes(xI1).ColumnIndex) + dColumn,
                                                 mLeft)
                                     mVPosition = IIf(Notes(xI1).VPosition + dVPosition < mVPosition,
                                                      Notes(xI1).VPosition + dVPosition,
@@ -1017,7 +1015,7 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
                             For xI1 = 1 To UBound(Notes)
                                 If Not Notes(xI1).Selected Then Continue For
 
-                                xCol = EnabledColumnToReal(RealColumnToEnabled(Notes(xI1).ColumnIndex) + dColumn - mLeft)
+                                xCol = EnabledColumnIndexToColumnArrayIndex(ColumnArrayIndexToEnabledColumnIndex(Notes(xI1).ColumnIndex) + dColumn - mLeft)
                                 xVPos = Notes(xI1).VPosition + dVPosition - mVPosition - muVPosition
                                 Me.RedoMoveNote(SelectedNotes(Notes(xI1).TempIndex), xCol, xVPos, xUndo, xRedo)
 
@@ -1110,83 +1108,57 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
                         'Label1.Text = KInfo(KMouseDown)
 
                     ElseIf ctrlPressed Then
-                        Dim xITemp As Integer
-                        For xITemp = 1 To UBound(Notes)
-                            If Notes(xITemp).TempMouseDown Then Exit For
+                        Dim tempNoteIndex As Integer
+                        For tempNoteIndex = 1 To UBound(Notes)
+                            If Notes(tempNoteIndex).TempMouseDown Then Exit For
                         Next
 
                         Dim mouseVPosition As Double = (xHeight - xVS * gxHeight - e.Y - 1) / gxHeight - deltaVPosition
                         If gSnap Then mouseVPosition = SnapToGrid(mouseVPosition)
-                        If DisableVerticalMove Then mouseVPosition = Notes(xITemp).VPosition
+                        If DisableVerticalMove Then mouseVPosition = Notes(tempNoteIndex).VPosition
 
-                        Dim dVPosition As Double = mouseVPosition - Notes(xITemp).VPosition  'delta VPosition
+                        Dim dVPosition As Double = mouseVPosition - Notes(tempNoteIndex).VPosition  'delta VPosition
 
-                        Dim dColumn As Integer = GetColumnAtEvent(e, xHS) - RealColumnToEnabled(Notes(xITemp).ColumnIndex) 'delta Column
+                        Dim currCol = ColumnArrayIndexToEnabledColumnIndex(GetColumnAtEvent(e, xHS))
+                        Dim noteCol = ColumnArrayIndexToEnabledColumnIndex(Notes(tempNoteIndex).ColumnIndex)
+                        Dim colChange As Integer = currCol - noteCol 'delta Column
 
                         'Ks cannot be beyond the left, the upper and the lower boundary
-                        Dim mLeft = 0
+                        Dim dstColumn As Integer = 0
                         Dim mVPosition As Double = 0
                         Dim muVPosition As Double = 191999
                         For xI1 = 1 To UBound(Notes)
                             If Not Notes(xI1).Selected Then Continue For
 
-                            If RealColumnToEnabled(Notes(xI1).ColumnIndex) + dColumn < mLeft Then _
-                                mLeft = RealColumnToEnabled(Notes(xI1).ColumnIndex) + dColumn
+                            If ColumnArrayIndexToEnabledColumnIndex(Notes(xI1).ColumnIndex) + colChange < dstColumn Then _
+                                dstColumn = ColumnArrayIndexToEnabledColumnIndex(Notes(xI1).ColumnIndex) + colChange
+
                             If Notes(xI1).VPosition + dVPosition < mVPosition Then _
                                 mVPosition = Notes(xI1).VPosition + dVPosition
+
                             If Notes(xI1).VPosition + IIf(NTInput, Notes(xI1).Length, 0) + dVPosition > muVPosition Then _
                                 muVPosition = Notes(xI1).VPosition + IIf(NTInput, Notes(xI1).Length, 0) + dVPosition
+
                         Next
                         muVPosition -= 191999
 
                         'If not moving then exit
-                        If (Not ctrlForDuplicate) And dColumn - mLeft = 0 And dVPosition - mVPosition - muVPosition = 0 Then _
-                            GoTo EndCtrlOpn
+                        If (Not DuplicatedSelectedNotes) And colChange - dstColumn = 0 And dVPosition - mVPosition - muVPosition = 0 Then _
+                            Return
 
                         Dim xUndo As UndoRedo.LinkedURCmd = Nothing
                         Dim xRedo As UndoRedo.LinkedURCmd = New UndoRedo.Void
                         Dim xBaseRedo As UndoRedo.LinkedURCmd = xRedo
 
-                        If Not ctrlForDuplicate Then     'If uAdded = False
-                            Notes(xITemp).Selected = True
-
-                            Dim xSelectedNotesCount As Integer = 0
-                            For i As Integer = 1 To UBound(Notes)
-                                If Notes(i).Selected Then xSelectedNotesCount += 1
-                            Next
-
-                            Dim xTempNotes(xSelectedNotesCount - 1) As Note
-                            Dim xI2 As Integer = 0
-                            For i As Integer = 1 To UBound(Notes)
-                                If Not Notes(i).Selected Then Continue For
-
-                                xTempNotes(xI2) = Notes(i)
-                                xTempNotes(xI2).ColumnIndex = EnabledColumnToReal(RealColumnToEnabled(Notes(i).ColumnIndex) + dColumn - mLeft)
-                                xTempNotes(xI2).VPosition = Notes(i).VPosition + dVPosition - mVPosition - muVPosition
-                                Me.RedoAddNote(xTempNotes(xI2), xUndo, xRedo)
-
-                                Notes(i).Selected = False
-                                xI2 += 1
-                            Next
-                            Notes(xITemp).TempMouseDown = False
-
-                            'copy to K
-                            Dim xOrigUBound As Integer = UBound(Notes)
-                            ReDim Preserve Notes(xOrigUBound + xSelectedNotesCount)
-                            xI2 = 0
-                            For i As Integer = xOrigUBound + 1 To UBound(Notes)
-                                Notes(i) = xTempNotes(xI2)
-                                xI2 += 1
-                            Next
-
-                            AddUndo(xUndo, xBaseRedo.Next)
-                            ctrlForDuplicate = True
+                        If Not DuplicatedSelectedNotes Then     'If uAdded = False
+                            DuplicateSelectedNotes(tempNoteIndex, dVPosition, colChange, dstColumn, mVPosition, muVPosition)
+                            DuplicatedSelectedNotes = True
 
                         Else
                             For i As Integer = 1 To UBound(Notes)
                                 If Not Notes(i).Selected Then Continue For
 
-                                Notes(i).ColumnIndex = EnabledColumnToReal(RealColumnToEnabled(Notes(i).ColumnIndex) + dColumn - mLeft)
+                                Notes(i).ColumnIndex = EnabledColumnIndexToColumnArrayIndex(ColumnArrayIndexToEnabledColumnIndex(Notes(i).ColumnIndex) + colChange - dstColumn)
                                 Notes(i).VPosition = Notes(i).VPosition + dVPosition - mVPosition - muVPosition
                                 Me.RedoAddNote(Notes(i), xUndo, xRedo)
                             Next
@@ -1197,7 +1169,7 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
                         SortByVPositionInsertion()
                         UpdatePairing()
                         CalculateTotalPlayableNotes()
-EndCtrlOpn:         End If
+                    End If
 
                 ElseIf TBWrite.Checked Then
 
@@ -1387,22 +1359,22 @@ EndCtrlOpn:         End If
 
                     Select Case PanelFocus
                         Case 0
-                            If xI1 < VSL.Minimum Then xI1 = VSL.Minimum
-                            VSL.Value = xI1
+                            If xI1 < LeftPanelScroll.Minimum Then xI1 = LeftPanelScroll.Minimum
+                            LeftPanelScroll.Value = xI1
 
                             If xI2 > HSL.Maximum - HSL.LargeChange + 1 Then xI2 = HSL.Maximum - HSL.LargeChange + 1
                             HSL.Value = xI2
 
                         Case 1
-                            If xI1 < VS.Minimum Then xI1 = VS.Minimum
-                            VS.Value = xI1
+                            If xI1 < MainPanelScroll.Minimum Then xI1 = MainPanelScroll.Minimum
+                            MainPanelScroll.Value = xI1
 
                             If xI2 > HS.Maximum - HS.LargeChange + 1 Then xI2 = HS.Maximum - HS.LargeChange + 1
                             HS.Value = xI2
 
                         Case 2
-                            If xI1 < VSR.Minimum Then xI1 = VSR.Minimum
-                            VSR.Value = xI1
+                            If xI1 < RightPanelScroll.Minimum Then xI1 = RightPanelScroll.Minimum
+                            RightPanelScroll.Value = xI1
 
                             If xI2 > HSR.Maximum - HSR.LargeChange + 1 Then xI2 = HSR.Maximum - HSR.LargeChange + 1
                             HSR.Value = xI2
@@ -1411,6 +1383,45 @@ EndCtrlOpn:         End If
                 End If
         End Select
         POStatusRefresh()
+    End Sub
+
+    Private Sub DuplicateSelectedNotes(tempNoteIndex As Integer, dVPosition As Double, dColumn As Integer, mLeft As Integer, mVPosition As Double, muVPosition As Double)
+        Dim xUndo As UndoRedo.LinkedURCmd = Nothing
+        Dim xRedo As UndoRedo.LinkedURCmd = New UndoRedo.Void
+        Dim xBaseRedo As UndoRedo.LinkedURCmd = xRedo
+
+        Notes(tempNoteIndex).Selected = True
+
+        Dim xSelectedNotesCount As Integer = 0
+        For i As Integer = 1 To UBound(Notes)
+            If Notes(i).Selected Then xSelectedNotesCount += 1
+        Next
+
+        Dim xTempNotes(xSelectedNotesCount - 1) As Note
+        Dim xI2 As Integer = 0
+        For i As Integer = 1 To UBound(Notes)
+            If Not Notes(i).Selected Then Continue For
+
+            xTempNotes(xI2) = Notes(i)
+            xTempNotes(xI2).ColumnIndex = EnabledColumnIndexToColumnArrayIndex(ColumnArrayIndexToEnabledColumnIndex(Notes(i).ColumnIndex) + dColumn - mLeft)
+            xTempNotes(xI2).VPosition = Notes(i).VPosition + dVPosition - mVPosition - muVPosition
+            Me.RedoAddNote(xTempNotes(xI2), xUndo, xRedo)
+
+            Notes(i).Selected = False
+            xI2 += 1
+        Next
+        Notes(tempNoteIndex).TempMouseDown = False
+
+        'copy to K
+        Dim xOrigUBound As Integer = UBound(Notes)
+        ReDim Preserve Notes(xOrigUBound + xSelectedNotesCount)
+        xI2 = 0
+        For i As Integer = xOrigUBound + 1 To UBound(Notes)
+            Notes(i) = xTempNotes(xI2)
+            xI2 += 1
+        Next
+
+        AddUndo(xUndo, xBaseRedo.Next)
     End Sub
 
     Private Sub DrawNoteHoverHighlight(iI As Integer, xHS As Long, xVS As Long, xHeight As Integer, foundNoteIndex As Integer)
@@ -1445,7 +1456,7 @@ EndCtrlOpn:         End If
             Loop
         End If
 
-        Return EnabledColumnToReal(RealColumnToEnabled(xColumn))  'get the enabled column where mouse is 
+        Return EnabledColumnIndexToColumnArrayIndex(ColumnArrayIndexToEnabledColumnIndex(xColumn))  'get the enabled column where mouse is 
     End Function
 
     ' az: Handle zoom in/out. Should work with any of the three splitters.
@@ -1479,14 +1490,14 @@ EndCtrlOpn:         End If
             LastMouseDownLocation = New Point(-1, -1)
             pMouseMove = New Point(-1, -1)
 
-            If ctrlPressed And Not ctrlForDuplicate Then
+            If ctrlPressed And Not DuplicatedSelectedNotes Then
                 For i As Integer = 1 To UBound(Notes)
                     If Notes(i).TempMouseDown Then Notes(i).Selected = Not Notes(i).Selected : Exit For
                 Next
             End If
 
             ctrlPressed = False
-            ctrlForDuplicate = False
+            DuplicatedSelectedNotes = False
 
         ElseIf TBWrite.Checked Then
 
@@ -1564,20 +1575,20 @@ EndCtrlOpn:         End If
                 'xI1 = spV(iI) - Math.Sign(e.Delta) * VSL.SmallChange * 5 / gxHeight
                 xI1 = PanelDisplacement(spMouseOver) - Math.Sign(e.Delta) * gWheel
                 If xI1 > 0 Then xI1 = 0
-                If xI1 < VSL.Minimum Then xI1 = VSL.Minimum
-                VSL.Value = xI1
+                If xI1 < LeftPanelScroll.Minimum Then xI1 = LeftPanelScroll.Minimum
+                LeftPanelScroll.Value = xI1
             Case 1
                 'xI1 = spV(iI) - Math.Sign(e.Delta) * VS.SmallChange * 5 / gxHeight
                 xI1 = PanelDisplacement(spMouseOver) - Math.Sign(e.Delta) * gWheel
                 If xI1 > 0 Then xI1 = 0
-                If xI1 < VS.Minimum Then xI1 = VS.Minimum
-                VS.Value = xI1
+                If xI1 < MainPanelScroll.Minimum Then xI1 = MainPanelScroll.Minimum
+                MainPanelScroll.Value = xI1
             Case 2
                 'xI1 = spV(iI) - Math.Sign(e.Delta) * VSR.SmallChange * 5 / gxHeight
                 xI1 = PanelDisplacement(spMouseOver) - Math.Sign(e.Delta) * gWheel
                 If xI1 > 0 Then xI1 = 0
-                If xI1 < VSR.Minimum Then xI1 = VSR.Minimum
-                VSR.Value = xI1
+                If xI1 < RightPanelScroll.Minimum Then xI1 = RightPanelScroll.Minimum
+                RightPanelScroll.Value = xI1
         End Select
     End Sub
 

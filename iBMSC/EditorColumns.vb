@@ -69,23 +69,38 @@ Partial Public Class MainWindow
         Dim xVal = note.Value
         Dim xLong = note.LongNote
         Dim xHidden = note.Hidden
-        Dim xI As Integer = GetColumn(iCol).Identifier
+        Dim bmsBaseChannel As Integer = GetColumn(iCol).Identifier
         Dim xLandmine = note.Landmine
 
-        If iCol = niBPM AndAlso (xVal / 10000 <> xVal \ 10000 Or xVal >= 2560000 Or xVal < 0) Then xI += idflBPM
-        If (iCol >= niA1 And iCol <= niA8) Or (iCol >= niD1 And iCol <= niD8) Then
+        If iCol = niBPM AndAlso (xVal / 10000 <> xVal \ 10000 Or xVal >= 2560000 Or xVal < 0) Then bmsBaseChannel += idflBPM
+
+        ' p1 side
+        If iCol >= niA1 And iCol <= niA8 Then
             If xLong Then
-                Return Hex(xI + Convert.ToInt32("50", 16) - 10)
+                Return Hex(bmsBaseChannel + Convert.ToInt32("50", 16) - 10)
             End If
             If xHidden Then
-                Return Hex(xI + Convert.ToInt32("30", 16) - 10)
+                Return Hex(bmsBaseChannel + Convert.ToInt32("30", 16) - 10)
             End If
             If xLandmine Then
-                Return Hex(xI + Convert.ToInt32("D0", 16) - 10)
+                Return Hex(bmsBaseChannel + Convert.ToInt32("D0", 16) - 10)
             End If
         End If
 
-        Return Add2Zeros(xI)
+        ' p2 side
+        If iCol >= niD1 And iCol <= niD8 Then
+            If xLong Then
+                Return Hex(bmsBaseChannel + Convert.ToInt32("60", 16) - 20)
+            End If
+            If xHidden Then
+                Return Hex(bmsBaseChannel + Convert.ToInt32("40", 16) - 20)
+            End If
+            If xLandmine Then
+                Return Hex(bmsBaseChannel + Convert.ToInt32("E0", 16) - 20)
+            End If
+        End If
+
+        Return Add2Zeros(bmsBaseChannel)
     End Function
 
     Private Function nLeft(ByVal iCol As Integer) As Integer

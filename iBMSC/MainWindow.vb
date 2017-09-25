@@ -119,7 +119,7 @@ Public Class MainWindow
     'Dim uNote As Note           'temp variables for undo, original note
     Dim SelectedNotes(-1) As Note        'temp notes for undo
     Dim ctrlPressed As Boolean = False          'Indicates if the CTRL key is pressed while mousedown
-    Dim ctrlForDuplicate As Boolean = False     'Indicates if duplicate notes of select/unselect note
+    Dim DuplicatedSelectedNotes As Boolean = False     'Indicates if duplicate notes of select/unselect note
 
     'Variables for write tool
     Dim ShouldDrawTempNote As Boolean = False
@@ -307,9 +307,9 @@ Public Class MainWindow
         End If
 
         Dim xI2 As Integer = -CInt(IIf(GreatestVPosition + 2000 > VPosition1000(), VPosition1000, GreatestVPosition + 2000))
-        VS.Minimum = xI2
-        VSL.Minimum = xI2
-        VSR.Minimum = xI2
+        MainPanelScroll.Minimum = xI2
+        LeftPanelScroll.Minimum = xI2
+        RightPanelScroll.Minimum = xI2
     End Sub
 
 
@@ -746,7 +746,7 @@ Public Class MainWindow
         CalculateTotalPlayableNotes()
     End Sub
 
-    Private Function EnabledColumnToReal(ByVal cEnabled As Integer) As Integer
+    Private Function EnabledColumnIndexToColumnArrayIndex(ByVal cEnabled As Integer) As Integer
         Dim xI1 As Integer = 0
         Do
             If xI1 >= gColumns Then Exit Do
@@ -757,7 +757,7 @@ Public Class MainWindow
         Return cEnabled
     End Function
 
-    Private Function RealColumnToEnabled(ByVal cReal As Integer) As Integer
+    Private Function ColumnArrayIndexToEnabledColumnIndex(ByVal cReal As Integer) As Integer
         Dim xI1 As Integer
         For xI1 = 0 To cReal - 1
             If Not nEnabled(xI1) Then cReal -= 1
@@ -1527,12 +1527,12 @@ EndSearch:
 
 
 
-    Private Sub VSGotFocus(ByVal sender As Object, ByVal e As System.EventArgs) Handles VS.GotFocus, VSL.GotFocus, VSR.GotFocus
+    Private Sub VSGotFocus(ByVal sender As Object, ByVal e As System.EventArgs) Handles MainPanelScroll.GotFocus, LeftPanelScroll.GotFocus, RightPanelScroll.GotFocus
         PanelFocus = sender.Tag
         spMain(PanelFocus).Focus()
     End Sub
 
-    Private Sub VSValueChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles VS.ValueChanged, VSL.ValueChanged, VSR.ValueChanged
+    Private Sub VSValueChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles MainPanelScroll.ValueChanged, LeftPanelScroll.ValueChanged, RightPanelScroll.ValueChanged
         Dim iI As Integer = sender.Tag
 
         ' az: We got a wheel event when we're zooming in/out
@@ -1547,22 +1547,22 @@ EndSearch:
         If spLock((iI + 1) Mod 3) Then
             Dim xVS As Integer = PanelDisplacement(iI) + spDiff(iI)
             If xVS > 0 Then xVS = 0
-            If xVS < VS.Minimum Then xVS = VS.Minimum
+            If xVS < MainPanelScroll.Minimum Then xVS = MainPanelScroll.Minimum
             Select Case iI
-                Case 0 : VS.Value = xVS
-                Case 1 : VSR.Value = xVS
-                Case 2 : VSL.Value = xVS
+                Case 0 : MainPanelScroll.Value = xVS
+                Case 1 : RightPanelScroll.Value = xVS
+                Case 2 : LeftPanelScroll.Value = xVS
             End Select
         End If
 
         If spLock((iI + 2) Mod 3) Then
             Dim xVS As Integer = PanelDisplacement(iI) - spDiff((iI + 2) Mod 3)
             If xVS > 0 Then xVS = 0
-            If xVS < VS.Minimum Then xVS = VS.Minimum
+            If xVS < MainPanelScroll.Minimum Then xVS = MainPanelScroll.Minimum
             Select Case iI
-                Case 0 : VSR.Value = xVS
-                Case 1 : VSL.Value = xVS
-                Case 2 : VS.Value = xVS
+                Case 0 : RightPanelScroll.Value = xVS
+                Case 1 : LeftPanelScroll.Value = xVS
+                Case 2 : MainPanelScroll.Value = xVS
             End Select
         End If
 
@@ -1724,7 +1724,7 @@ EndSearch:
 
         Select Case PanelFocus
             Case 0
-                With VSL
+                With LeftPanelScroll
                     xI1 = .Value + (tempY / 5) / gxHeight
                     If xI1 > 0 Then xI1 = 0
                     If xI1 < .Minimum Then xI1 = .Minimum
@@ -1738,7 +1738,7 @@ EndSearch:
                 End With
 
             Case 1
-                With VS
+                With MainPanelScroll
                     xI1 = .Value + (tempY / 5) / gxHeight
                     If xI1 > 0 Then xI1 = 0
                     If xI1 < .Minimum Then xI1 = .Minimum
@@ -1752,7 +1752,7 @@ EndSearch:
                 End With
 
             Case 2
-                With VSR
+                With RightPanelScroll
                     xI1 = .Value + (tempY / 5) / gxHeight
                     If xI1 > 0 Then xI1 = 0
                     If xI1 < .Minimum Then xI1 = .Minimum
@@ -1778,7 +1778,7 @@ EndSearch:
 
         Select Case PanelFocus
             Case 0
-                With VSL
+                With LeftPanelScroll
                     xI1 = .Value + (Cursor.Position.Y - MiddleButtonLocation.Y) / 5 / gxHeight
                     If xI1 > 0 Then xI1 = 0
                     If xI1 < .Minimum Then xI1 = .Minimum
@@ -1792,7 +1792,7 @@ EndSearch:
                 End With
 
             Case 1
-                With VS
+                With MainPanelScroll
                     xI1 = .Value + (Cursor.Position.Y - MiddleButtonLocation.Y) / 5 / gxHeight
                     If xI1 > 0 Then xI1 = 0
                     If xI1 < .Minimum Then xI1 = .Minimum
@@ -1806,7 +1806,7 @@ EndSearch:
                 End With
 
             Case 2
-                With VSR
+                With RightPanelScroll
                     xI1 = .Value + (Cursor.Position.Y - MiddleButtonLocation.Y) / 5 / gxHeight
                     If xI1 > 0 Then xI1 = 0
                     If xI1 < .Minimum Then xI1 = .Minimum
@@ -2152,7 +2152,7 @@ StartCount:     If Not NTInput Then
                         xI1 += 1
                     Loop
                 End If
-                SelectedColumn = EnabledColumnToReal(RealColumnToEnabled(SelectedColumn))  'get the enabled column where mouse is 
+                SelectedColumn = EnabledColumnIndexToColumnArrayIndex(ColumnArrayIndexToEnabledColumnIndex(SelectedColumn))  'get the enabled column where mouse is 
 
                 Dim xMeasure As Integer = MeasureAtDisplacement(TempVPosition)
                 Dim xMLength As Double = MeasureLength(xMeasure)
