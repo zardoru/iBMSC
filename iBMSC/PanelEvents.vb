@@ -263,7 +263,7 @@ Partial Public Class MainWindow
 
 MoveToColumn:   If xTargetColumn = -1 Then Exit Select
                 If Not nEnabled(xTargetColumn) Then Exit Select
-                Dim bDeselectFirstNote = My.Computer.Keyboard.ShiftKeyDown
+                Dim bMoveAndDeselectFirstNote = My.Computer.Keyboard.ShiftKeyDown
 
                 For xI2 As Integer = 1 To UBound(Notes)
                     If Not Notes(xI2).Selected Then Continue For
@@ -271,9 +271,9 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
                     RedoMoveNote(Notes(xI2), xTargetColumn, Notes(xI2).VPosition, xUndo, xRedo)
                     Notes(xI2).ColumnIndex = xTargetColumn
 
-                    If bDeselectFirstNote Then
-                        bDeselectFirstNote = False
+                    If bMoveAndDeselectFirstNote Then
                         Notes(xI2).Selected = False
+                        Exit For
                     End If
                 Next
                 AddUndo(xUndo, xBaseRedo.Next)
