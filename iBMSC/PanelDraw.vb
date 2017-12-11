@@ -448,7 +448,7 @@ Partial Public Class MainWindow
             xLabel = Path.GetFileNameWithoutExtension(hWAV(C36to10(xLabel)))
         End If
         If xContinue Then
-            xLabel = "C:" & xLabel
+            xLabel = ">" & xLabel
         End If
         Return xLabel
     End Function
