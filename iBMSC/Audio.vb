@@ -7,6 +7,15 @@ Module Audio
     Dim Output As WasapiOut
     Dim Source As IWaveSource
 
+    Public Structure BMSONSliceResult
+        Public Found As Boolean
+        Public Start As Double
+        Public Length As Double
+        Public Overrides Function ToString() As String
+            Return "Slice result " & Found & " - " & Start & " => " & Length
+        End Function
+    End Structure
+
     Public Sub Initialize()
         Output = New WasapiOut()
         CodecFactory.Instance.Register("ogg", New CodecFactoryEntry(Function(s)
@@ -36,7 +45,7 @@ Module Audio
         Return filename
     End Function
 
-    Public Sub Play(ByVal filename As String)
+    Public Sub Play(ByVal filename As String, ByVal slice As BMSONSliceResult)
 
         If Source IsNot Nothing Then
             Output.Stop()
@@ -55,8 +64,17 @@ Module Audio
         End If
 
         Source = CodecFactory.Instance.GetCodec(fn)
+        If slice.Found Then
+            Source.Position = Source.WaveFormat.MillisecondsToBytes(Conversion.Int(slice.Start))
+            ' I cannot set the length of the source file :(
+        End If
         Output.Initialize(Source)
         Output.Play()
+    End Sub
+
+    Public Sub Play(ByVal filename As String)
+        Dim slice As BMSONSliceResult
+        Play(filename, slice)
     End Sub
 
     Public Sub StopPlaying()
