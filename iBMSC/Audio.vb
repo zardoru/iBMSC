@@ -16,6 +16,28 @@ Module Audio
         End Function
     End Structure
 
+    ' https://github.com/filoe/cscore/blob/master/CSCore.Test/utils/TrimmedWaveSource.cs
+    Public Class TrimmedWaveSource
+        Inherits WaveAggregatorBase
+        Private mSource As IWaveSource
+        Private mMaxLength As Integer
+        Private mRead As Integer
+        Public Sub New(Source As IWaveSource, MaxLength As Integer)
+            MyBase.New(Source)
+            mSource = Source
+            mMaxLength = MaxLength
+        End Sub
+        Public Overrides Function Read(buffer() As Byte, offset As Integer, count As Integer) As Integer
+            Dim ReadBytes = MyBase.Read(buffer, offset, count)
+            mRead = mRead + ReadBytes
+            If mRead > mMaxLength Then
+                ReadBytes = ReadBytes - (mRead - mMaxLength)
+                mRead = mMaxLength
+            End If
+            Return ReadBytes
+        End Function
+    End Class
+
     Public Sub Initialize()
         Output = New WasapiOut()
         CodecFactory.Instance.Register("ogg", New CodecFactoryEntry(Function(s)
@@ -66,7 +88,9 @@ Module Audio
         Source = CodecFactory.Instance.GetCodec(fn)
         If slice.Found Then
             Source.Position = Source.WaveFormat.MillisecondsToBytes(Conversion.Int(slice.Start))
-            ' I cannot set the length of the source file :(
+            If slice.Length > 0 Then
+                Source = New TrimmedWaveSource(Source, Source.WaveFormat.MillisecondsToBytes(Conversion.Int(slice.Length)))
+            End If
         End If
         Output.Initialize(Source)
         Output.Play()
