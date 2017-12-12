@@ -273,6 +273,7 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
 
                     If bMoveAndDeselectFirstNote Then
                         Notes(xI2).Selected = False
+                        PanelPreviewNoteIndex(xI2)
                         Exit For
                     End If
                 Next
