@@ -25,16 +25,16 @@ Partial Class MainWindow
         Me.TBLangDef = New System.Windows.Forms.ToolStripMenuItem()
         Me.TBLangRefresh = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator9 = New System.Windows.Forms.ToolStripSeparator()
-        Me.mnLanguage = New System.Windows.Forms.ToolStripMenuItem()
         Me.TBLanguage = New System.Windows.Forms.ToolStripDropDownButton()
+        Me.mnLanguage = New System.Windows.Forms.ToolStripMenuItem()
         Me.cmnTheme = New System.Windows.Forms.ContextMenuStrip(Me.components)
         Me.TBThemeDef = New System.Windows.Forms.ToolStripMenuItem()
         Me.TBThemeSave = New System.Windows.Forms.ToolStripMenuItem()
         Me.TBThemeRefresh = New System.Windows.Forms.ToolStripMenuItem()
         Me.TBThemeLoadComptability = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator6 = New System.Windows.Forms.ToolStripSeparator()
-        Me.mnTheme = New System.Windows.Forms.ToolStripMenuItem()
         Me.TBTheme = New System.Windows.Forms.ToolStripDropDownButton()
+        Me.mnTheme = New System.Windows.Forms.ToolStripMenuItem()
         Me.POptionsScroll = New System.Windows.Forms.Panel()
         Me.POptions = New System.Windows.Forms.Panel()
         Me.POExpansion = New System.Windows.Forms.Panel()
@@ -261,11 +261,11 @@ Partial Class MainWindow
         Me.ToolStripSeparator11 = New System.Windows.Forms.ToolStripSeparator()
         Me.POBModify = New System.Windows.Forms.ToolStripMenuItem()
         Me.POBMirror = New System.Windows.Forms.ToolStripMenuItem()
-        Me.POConvert = New System.Windows.Forms.ToolStripDropDownButton()
         Me.mnPreview = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnPlayB = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnPlay = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnStop = New System.Windows.Forms.ToolStripMenuItem()
+        Me.POConvert = New System.Windows.Forms.ToolStripDropDownButton()
         Me.TBMain = New System.Windows.Forms.ToolStrip()
         Me.TBNew = New System.Windows.Forms.ToolStripButton()
         Me.TBOpen = New System.Windows.Forms.ToolStripSplitButton()
@@ -353,6 +353,7 @@ Partial Class MainWindow
         Me.HSL = New System.Windows.Forms.HScrollBar()
         Me.POptionsResizer = New System.Windows.Forms.Button()
         Me.ToolTipUniversal = New System.Windows.Forms.ToolTip(Me.components)
+        Me.TimeStatusLabel = New System.Windows.Forms.ToolStripStatusLabel()
         Me.cmnLanguage.SuspendLayout()
         Me.cmnTheme.SuspendLayout()
         Me.POptionsScroll.SuspendLayout()
@@ -439,7 +440,7 @@ Partial Class MainWindow
         '
         Me.cmnLanguage.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.TBLangDef, Me.TBLangRefresh, Me.ToolStripSeparator9})
         Me.cmnLanguage.Name = "cmnLanguage"
-        Me.cmnLanguage.OwnerItem = Me.TBLanguage
+        Me.cmnLanguage.OwnerItem = Me.mnLanguage
         Me.cmnLanguage.Size = New System.Drawing.Size(121, 54)
         '
         'TBLangDef
@@ -460,14 +461,6 @@ Partial Class MainWindow
         Me.ToolStripSeparator9.Name = "ToolStripSeparator9"
         Me.ToolStripSeparator9.Size = New System.Drawing.Size(117, 6)
         '
-        'mnLanguage
-        '
-        Me.mnLanguage.DropDown = Me.cmnLanguage
-        Me.mnLanguage.Image = Global.iBMSC.My.Resources.Resources.x16Language
-        Me.mnLanguage.Name = "mnLanguage"
-        Me.mnLanguage.Size = New System.Drawing.Size(229, 22)
-        Me.mnLanguage.Text = "&Language"
-        '
         'TBLanguage
         '
         Me.TBLanguage.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
@@ -478,11 +471,19 @@ Partial Class MainWindow
         Me.TBLanguage.Size = New System.Drawing.Size(29, 22)
         Me.TBLanguage.Text = "Language"
         '
+        'mnLanguage
+        '
+        Me.mnLanguage.DropDown = Me.cmnLanguage
+        Me.mnLanguage.Image = Global.iBMSC.My.Resources.Resources.x16Language
+        Me.mnLanguage.Name = "mnLanguage"
+        Me.mnLanguage.Size = New System.Drawing.Size(229, 22)
+        Me.mnLanguage.Text = "&Language"
+        '
         'cmnTheme
         '
         Me.cmnTheme.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.TBThemeDef, Me.TBThemeSave, Me.TBThemeRefresh, Me.TBThemeLoadComptability, Me.ToolStripSeparator6})
         Me.cmnTheme.Name = "cmnLanguage"
-        Me.cmnTheme.OwnerItem = Me.TBTheme
+        Me.cmnTheme.OwnerItem = Me.mnTheme
         Me.cmnTheme.Size = New System.Drawing.Size(246, 98)
         '
         'TBThemeDef
@@ -516,14 +517,6 @@ Partial Class MainWindow
         Me.ToolStripSeparator6.Name = "ToolStripSeparator6"
         Me.ToolStripSeparator6.Size = New System.Drawing.Size(242, 6)
         '
-        'mnTheme
-        '
-        Me.mnTheme.DropDown = Me.cmnTheme
-        Me.mnTheme.Image = Global.iBMSC.My.Resources.Resources.x16Theme
-        Me.mnTheme.Name = "mnTheme"
-        Me.mnTheme.Size = New System.Drawing.Size(229, 22)
-        Me.mnTheme.Text = "&Theme"
-        '
         'TBTheme
         '
         Me.TBTheme.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
@@ -533,6 +526,14 @@ Partial Class MainWindow
         Me.TBTheme.Name = "TBTheme"
         Me.TBTheme.Size = New System.Drawing.Size(29, 22)
         Me.TBTheme.Text = "Theme"
+        '
+        'mnTheme
+        '
+        Me.mnTheme.DropDown = Me.cmnTheme
+        Me.mnTheme.Image = Global.iBMSC.My.Resources.Resources.x16Theme
+        Me.mnTheme.Name = "mnTheme"
+        Me.mnTheme.Size = New System.Drawing.Size(229, 22)
+        Me.mnTheme.Text = "&Theme"
         '
         'POptionsScroll
         '
@@ -1585,9 +1586,9 @@ Partial Class MainWindow
         Me.FlowLayoutPanel2.Controls.Add(Me.cVSLockL)
         Me.FlowLayoutPanel2.Controls.Add(Me.cVSLock)
         Me.FlowLayoutPanel2.Controls.Add(Me.cVSLockR)
-        Me.FlowLayoutPanel2.Location = New System.Drawing.Point(114, 3)
+        Me.FlowLayoutPanel2.Location = New System.Drawing.Point(115, 3)
         Me.FlowLayoutPanel2.Name = "FlowLayoutPanel2"
-        Me.FlowLayoutPanel2.Size = New System.Drawing.Size(66, 23)
+        Me.FlowLayoutPanel2.Size = New System.Drawing.Size(65, 23)
         Me.FlowLayoutPanel2.TabIndex = 72
         Me.FlowLayoutPanel2.WrapContents = False
         '
@@ -1636,7 +1637,7 @@ Partial Class MainWindow
         Me.Label5.Dock = System.Windows.Forms.DockStyle.Fill
         Me.Label5.Location = New System.Drawing.Point(3, 0)
         Me.Label5.Name = "Label5"
-        Me.Label5.Size = New System.Drawing.Size(105, 29)
+        Me.Label5.Size = New System.Drawing.Size(106, 29)
         Me.Label5.TabIndex = 39
         Me.Label5.Text = "Vertical Scroll Lock"
         Me.Label5.TextAlign = System.Drawing.ContentAlignment.MiddleRight
@@ -2133,9 +2134,9 @@ Partial Class MainWindow
         '
         Me.Label20.Anchor = System.Windows.Forms.AnchorStyles.Right
         Me.Label20.AutoSize = True
-        Me.Label20.Location = New System.Drawing.Point(31, 168)
+        Me.Label20.Location = New System.Drawing.Point(30, 168)
         Me.Label20.Name = "Label20"
-        Me.Label20.Size = New System.Drawing.Size(33, 15)
+        Me.Label20.Size = New System.Drawing.Size(34, 15)
         Me.Label20.TabIndex = 5
         Me.Label20.Text = "Total"
         Me.Label20.TextAlign = System.Drawing.ContentAlignment.MiddleRight
@@ -3045,8 +3046,8 @@ Partial Class MainWindow
         '
         Me.cmnConversion.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.POBLong, Me.POBShort, Me.POBLongShort, Me.ToolStripSeparator10, Me.POBHidden, Me.POBVisible, Me.POBHiddenVisible, Me.ToolStripSeparator11, Me.POBModify, Me.POBMirror})
         Me.cmnConversion.Name = "cmnLanguage"
-        Me.cmnConversion.OwnerItem = Me.mnConversion
-        Me.cmnConversion.Size = New System.Drawing.Size(222, 214)
+        Me.cmnConversion.OwnerItem = Me.POConvert
+        Me.cmnConversion.Size = New System.Drawing.Size(222, 192)
         '
         'POBLong
         '
@@ -3116,16 +3117,6 @@ Partial Class MainWindow
         Me.POBMirror.Size = New System.Drawing.Size(221, 22)
         Me.POBMirror.Text = "Mi&rror"
         '
-        'POConvert
-        '
-        Me.POConvert.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
-        Me.POConvert.DropDown = Me.cmnConversion
-        Me.POConvert.Image = Global.iBMSC.My.Resources.Resources.ConvertNotes
-        Me.POConvert.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me.POConvert.Name = "POConvert"
-        Me.POConvert.Size = New System.Drawing.Size(29, 22)
-        Me.POConvert.Text = "Convert Notes"
-        '
         'mnPreview
         '
         Me.mnPreview.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnPlayB, Me.mnPlay, Me.mnStop})
@@ -3156,6 +3147,16 @@ Partial Class MainWindow
         Me.mnStop.ShortcutKeys = System.Windows.Forms.Keys.F7
         Me.mnStop.Size = New System.Drawing.Size(201, 22)
         Me.mnStop.Text = "&Stop"
+        '
+        'POConvert
+        '
+        Me.POConvert.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.POConvert.DropDown = Me.cmnConversion
+        Me.POConvert.Image = Global.iBMSC.My.Resources.Resources.ConvertNotes
+        Me.POConvert.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.POConvert.Name = "POConvert"
+        Me.POConvert.Size = New System.Drawing.Size(29, 22)
+        Me.POConvert.Text = "Convert Notes"
         '
         'TBMain
         '
@@ -3650,13 +3651,13 @@ Partial Class MainWindow
         Me.BVCCalculate.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
         Me.BVCCalculate.ImageTransparentColor = System.Drawing.Color.Magenta
         Me.BVCCalculate.Name = "BVCCalculate"
-        Me.BVCCalculate.Size = New System.Drawing.Size(55, 20)
+        Me.BVCCalculate.Size = New System.Drawing.Size(56, 20)
         Me.BVCCalculate.Text = "By Value"
         '
         'FStatus
         '
         Me.FStatus.AccessibleRole = System.Windows.Forms.AccessibleRole.StatusBar
-        Me.FStatus.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.FSC, Me.FSW, Me.FSM, Me.FSP1, Me.FSP3, Me.FSP2, Me.FSP4, Me.FST, Me.FSH, Me.FSE})
+        Me.FStatus.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.FSC, Me.FSW, Me.FSM, Me.FSP1, Me.FSP3, Me.FSP2, Me.FSP4, Me.TimeStatusLabel, Me.FST, Me.FSH, Me.FSE})
         Me.FStatus.Location = New System.Drawing.Point(0, 0)
         Me.FStatus.Name = "FStatus"
         Me.FStatus.ShowItemToolTips = True
@@ -3818,7 +3819,7 @@ Partial Class MainWindow
         Me.ttlIcon.TabStop = False
         Me.ToolTipUniversal.SetToolTip(Me.ttlIcon, "Show / Hide")
         '
-        'VS
+        'MainPanelScroll
         '
         Me.MainPanelScroll.AccessibleRole = System.Windows.Forms.AccessibleRole.ScrollBar
         Me.MainPanelScroll.Dock = System.Windows.Forms.DockStyle.Right
@@ -3826,7 +3827,7 @@ Partial Class MainWindow
         Me.MainPanelScroll.Location = New System.Drawing.Point(850, 0)
         Me.MainPanelScroll.Maximum = 591
         Me.MainPanelScroll.Minimum = -10000
-        Me.MainPanelScroll.Name = "VS"
+        Me.MainPanelScroll.Name = "MainPanelScroll"
         Me.MainPanelScroll.Size = New System.Drawing.Size(17, 643)
         Me.MainPanelScroll.SmallChange = 12
         Me.MainPanelScroll.TabIndex = 2
@@ -3898,14 +3899,14 @@ Partial Class MainWindow
         Me.PMainInR.TabStop = True
         Me.PMainInR.Tag = "2"
         '
-        'VSR
+        'RightPanelScroll
         '
         Me.RightPanelScroll.Dock = System.Windows.Forms.DockStyle.Right
         Me.RightPanelScroll.LargeChange = 592
         Me.RightPanelScroll.Location = New System.Drawing.Point(-17, 0)
         Me.RightPanelScroll.Maximum = 591
         Me.RightPanelScroll.Minimum = -10000
-        Me.RightPanelScroll.Name = "VSR"
+        Me.RightPanelScroll.Name = "RightPanelScroll"
         Me.RightPanelScroll.Size = New System.Drawing.Size(17, 643)
         Me.RightPanelScroll.SmallChange = 12
         Me.RightPanelScroll.TabIndex = 2
@@ -3950,14 +3951,14 @@ Partial Class MainWindow
         Me.PMainInL.TabStop = True
         Me.PMainInL.Tag = "0"
         '
-        'VSL
+        'LeftPanelScroll
         '
         Me.LeftPanelScroll.Dock = System.Windows.Forms.DockStyle.Right
         Me.LeftPanelScroll.LargeChange = 592
         Me.LeftPanelScroll.Location = New System.Drawing.Point(-17, 0)
         Me.LeftPanelScroll.Maximum = 591
         Me.LeftPanelScroll.Minimum = -10000
-        Me.LeftPanelScroll.Name = "VSL"
+        Me.LeftPanelScroll.Name = "LeftPanelScroll"
         Me.LeftPanelScroll.Size = New System.Drawing.Size(17, 643)
         Me.LeftPanelScroll.SmallChange = 12
         Me.LeftPanelScroll.TabIndex = 2
@@ -3985,6 +3986,12 @@ Partial Class MainWindow
         Me.POptionsResizer.TabIndex = 67
         Me.POptionsResizer.TabStop = False
         Me.POptionsResizer.UseVisualStyleBackColor = True
+        '
+        'TimeStatusLabel
+        '
+        Me.TimeStatusLabel.Name = "TimeStatusLabel"
+        Me.TimeStatusLabel.Size = New System.Drawing.Size(55, 17)
+        Me.TimeStatusLabel.Text = "00:00:000"
         '
         'MainWindow
         '
@@ -4451,4 +4458,5 @@ Partial Class MainWindow
     Friend WithEvents BGSlash As System.Windows.Forms.Button
     Friend WithEvents FSM As System.Windows.Forms.ToolStripStatusLabel
     Friend WithEvents mnGotoMeasure As ToolStripMenuItem
+    Friend WithEvents TimeStatusLabel As ToolStripStatusLabel
 End Class
