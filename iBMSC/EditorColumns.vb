@@ -106,7 +106,7 @@ Partial Public Class MainWindow
     Private Function nLeft(ByVal iCol As Integer) As Integer
         If iCol < niB Then Return column(iCol).Left Else Return column(niB).Left + (iCol - niB) * column(niB).Width
     End Function
-    Private Function getColumnWidth(ByVal iCol As Integer) As Integer
+    Private Function GetColumnWidth(ByVal iCol As Integer) As Integer
         If Not GetColumn(iCol).isVisible Then Return 0
         If iCol < niB Then Return column(iCol).Width Else Return column(niB).Width
     End Function

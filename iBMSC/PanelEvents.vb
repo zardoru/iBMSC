@@ -434,8 +434,8 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
                 deltaVPosition = IIf(NTInput, (xHeight - e.Y - gxHeight * xVS - 1) / gxHeight - Notes(xI1).VPosition, 0)
 
                 If NTInput And My.Computer.Keyboard.ShiftKeyDown Then
-                    bAdjustUpper = e.Y <= VerticalPositiontoDisplay(Notes(xI1).VPosition + Notes(xI1).Length, xVS, xHeight)
-                    bAdjustLength = e.Y >= VerticalPositiontoDisplay(Notes(xI1).VPosition, xVS, xHeight) - vo.kHeight Or bAdjustUpper
+                    bAdjustUpper = e.Y <= NoteRowToPanelHeight(Notes(xI1).VPosition + Notes(xI1).Length, xVS, xHeight)
+                    bAdjustLength = e.Y >= NoteRowToPanelHeight(Notes(xI1).VPosition, xVS, xHeight) - vo.kHeight Or bAdjustUpper
                 End If
 
                 Exit For
@@ -579,11 +579,11 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
             vSelAdjust = ModifierLongNoteActive()
 
             vSelMouseOverLine = 0
-            If Math.Abs(e.Y - VerticalPositiontoDisplay(vSelStart + vSelLength, xVS, xHeight)) <= vo.PEDeltaMouseOver Then
+            If Math.Abs(e.Y - NoteRowToPanelHeight(vSelStart + vSelLength, xVS, xHeight)) <= vo.PEDeltaMouseOver Then
                 vSelMouseOverLine = 3
-            ElseIf Math.Abs(e.Y - VerticalPositiontoDisplay(vSelStart + vSelHalf, xVS, xHeight)) <= vo.PEDeltaMouseOver Then
+            ElseIf Math.Abs(e.Y - NoteRowToPanelHeight(vSelStart + vSelHalf, xVS, xHeight)) <= vo.PEDeltaMouseOver Then
                 vSelMouseOverLine = 2
-            ElseIf Math.Abs(e.Y - VerticalPositiontoDisplay(vSelStart, xVS, xHeight)) <= vo.PEDeltaMouseOver Then
+            ElseIf Math.Abs(e.Y - NoteRowToPanelHeight(vSelStart, xVS, xHeight)) <= vo.PEDeltaMouseOver Then
                 vSelMouseOverLine = 1
             End If
 
@@ -794,9 +794,9 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
 
     Private Function MouseInNote(e As MouseEventArgs, xHS As Long, xVS As Long, xHeight As Integer, note As Note) As Boolean
         Return e.X >= HorizontalPositiontoDisplay(nLeft(note.ColumnIndex), xHS) + 1 And
-               e.X <= HorizontalPositiontoDisplay(nLeft(note.ColumnIndex) + getColumnWidth(note.ColumnIndex), xHS) - 1 And
-               e.Y >= VerticalPositiontoDisplay(note.VPosition + IIf(NTInput, note.Length, 0), xVS, xHeight) - vo.kHeight And
-               e.Y <= VerticalPositiontoDisplay(note.VPosition, xVS, xHeight)
+               e.X <= HorizontalPositiontoDisplay(nLeft(note.ColumnIndex) + GetColumnWidth(note.ColumnIndex), xHS) - 1 And
+               e.Y >= NoteRowToPanelHeight(note.VPosition + IIf(NTInput, note.Length, 0), xVS, xHeight) - vo.kHeight And
+               e.Y <= NoteRowToPanelHeight(note.VPosition, xVS, xHeight)
     End Function
 
     Private Sub PMainInMouseEnter(ByVal sender As Object, ByVal e As System.EventArgs) Handles PMainIn.MouseEnter, PMainInL.MouseEnter, PMainInR.MouseEnter
@@ -849,7 +849,7 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
 
                         xMouseRemainInSameRegion = foundNoteIndex = KMouseOver
                         If NTInput Then
-                            Dim vy = VerticalPositiontoDisplay(Notes(noteIndex).VPosition + Notes(noteIndex).Length,
+                            Dim vy = NoteRowToPanelHeight(Notes(noteIndex).VPosition + Notes(noteIndex).Length,
                                                                                              xVS, xHeight)
 
                             Dim xbAdjustUpper As Boolean = (e.Y <= vy) And ModifierLongNoteActive()
@@ -875,11 +875,11 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
                         Dim xMouseOverLine As Integer = vSelMouseOverLine
                         vSelMouseOverLine = 0
 
-                        If Math.Abs(e.Y - VerticalPositiontoDisplay(vSelStart + vSelLength, xVS, xHeight)) <= vo.PEDeltaMouseOver Then
+                        If Math.Abs(e.Y - NoteRowToPanelHeight(vSelStart + vSelLength, xVS, xHeight)) <= vo.PEDeltaMouseOver Then
                             vSelMouseOverLine = 3
-                        ElseIf Math.Abs(e.Y - VerticalPositiontoDisplay(vSelStart + vSelHalf, xVS, xHeight)) <= vo.PEDeltaMouseOver Then
+                        ElseIf Math.Abs(e.Y - NoteRowToPanelHeight(vSelStart + vSelHalf, xVS, xHeight)) <= vo.PEDeltaMouseOver Then
                             vSelMouseOverLine = 2
-                        ElseIf Math.Abs(e.Y - VerticalPositiontoDisplay(vSelStart, xVS, xHeight)) <= vo.PEDeltaMouseOver Then
+                        ElseIf Math.Abs(e.Y - NoteRowToPanelHeight(vSelStart, xVS, xHeight)) <= vo.PEDeltaMouseOver Then
                             vSelMouseOverLine = 1
                         End If
 
@@ -936,8 +936,8 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
                         Dim xI1 As Integer
                         For xI1 = 1 To UBound(Notes)
                             NoteRect = New Rectangle(HorizontalPositiontoDisplay(nLeft(Notes(xI1).ColumnIndex), xHS) + 1,
-                                                  VerticalPositiontoDisplay(Notes(xI1).VPosition + IIf(NTInput, Notes(xI1).Length, 0), xVS, xHeight) - vo.kHeight,
-                                                  getColumnWidth(Notes(xI1).ColumnIndex) * gxWidth - 2,
+                                                  NoteRowToPanelHeight(Notes(xI1).VPosition + IIf(NTInput, Notes(xI1).Length, 0), xVS, xHeight) - vo.kHeight,
+                                                  GetColumnWidth(Notes(xI1).ColumnIndex) * gxWidth - 2,
                                                   vo.kHeight + IIf(NTInput, Notes(xI1).Length * gxHeight, 0))
 
 
@@ -1255,9 +1255,9 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
                     If Notes IsNot Nothing Then
                         For xI1 = UBound(Notes) To 0 Step -1 ' az: MouseInNote implied, but I'm not sure yet
                             If e.X >= HorizontalPositiontoDisplay(nLeft(Notes(xI1).ColumnIndex), xHS) + 1 And
-                               e.X <= HorizontalPositiontoDisplay(nLeft(Notes(xI1).ColumnIndex) + getColumnWidth(Notes(xI1).ColumnIndex), xHS) - 1 And
-                               e.Y >= VerticalPositiontoDisplay(Notes(xI1).VPosition, xVS, xHeight) - vo.kHeight And
-                               e.Y <= VerticalPositiontoDisplay(Notes(xI1).VPosition, xVS, xHeight) Then
+                               e.X <= HorizontalPositiontoDisplay(nLeft(Notes(xI1).ColumnIndex) + GetColumnWidth(Notes(xI1).ColumnIndex), xHS) - 1 And
+                               e.Y >= NoteRowToPanelHeight(Notes(xI1).VPosition, xVS, xHeight) - vo.kHeight And
+                               e.Y <= NoteRowToPanelHeight(Notes(xI1).VPosition, xVS, xHeight) Then
                                 xITemp = xI1
                                 Exit For
                             End If
@@ -1356,7 +1356,7 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
                 End If
                 RefreshPanelAll()
 
-            Case Windows.Forms.MouseButtons.Middle
+            Case MouseButtons.Middle
 
                 If MiddleButtonMoveMethod = 1 Then
                     Dim xI1 As Integer = tempV + (tempY - e.Y) / gxHeight
@@ -1390,6 +1390,7 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
                 End If
         End Select
         POStatusRefresh()
+        RefreshPanelAll() 'az: refreshing the line is important now...
     End Sub
 
     Private Sub DuplicateSelectedNotes(tempNoteIndex As Integer, dVPosition As Double, dColumn As Integer, mLeft As Integer, mVPosition As Double, muVPosition As Double)
@@ -1434,9 +1435,9 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
     Private Sub DrawNoteHoverHighlight(iI As Integer, xHS As Long, xVS As Long, xHeight As Integer, foundNoteIndex As Integer)
         Dim xDispX As Integer = HorizontalPositiontoDisplay(nLeft(Notes(foundNoteIndex).ColumnIndex), xHS)
         Dim xDispY As Integer = IIf(Not NTInput Or (bAdjustLength And Not bAdjustUpper),
-                                    VerticalPositiontoDisplay(Notes(foundNoteIndex).VPosition, xVS, xHeight) - vo.kHeight - 1,
-                                    VerticalPositiontoDisplay(Notes(foundNoteIndex).VPosition + Notes(foundNoteIndex).Length, xVS, xHeight) - vo.kHeight - 1)
-        Dim xDispW As Integer = getColumnWidth(Notes(foundNoteIndex).ColumnIndex) * gxWidth + 1
+                                    NoteRowToPanelHeight(Notes(foundNoteIndex).VPosition, xVS, xHeight) - vo.kHeight - 1,
+                                    NoteRowToPanelHeight(Notes(foundNoteIndex).VPosition + Notes(foundNoteIndex).Length, xVS, xHeight) - vo.kHeight - 1)
+        Dim xDispW As Integer = GetColumnWidth(Notes(foundNoteIndex).ColumnIndex) * gxWidth + 1
         Dim xDispH As Integer = IIf(Not NTInput Or bAdjustLength,
                                     vo.kHeight + 3,
                                     Notes(foundNoteIndex).Length * gxHeight + vo.kHeight + 3)
@@ -1452,9 +1453,9 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
         e1.Dispose()
     End Sub
 
-    Private Function GetColumnAtEvent(e As MouseEventArgs, xHS As Integer)
+    Private Function GetColumnAtX(x As Integer, xHS As Integer) As Integer
         Dim xI1 As Integer = 0
-        Dim mLeft As Integer = e.X / gxWidth + xHS 'horizontal position of the mouse
+        Dim mLeft As Integer = x / gxWidth + xHS 'horizontal position of the mouse
         Dim xColumn = 0
         If mLeft >= 0 Then
             Do
@@ -1464,6 +1465,10 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
         End If
 
         Return EnabledColumnIndexToColumnArrayIndex(ColumnArrayIndexToEnabledColumnIndex(xColumn))  'get the enabled column where mouse is 
+    End Function
+
+    Private Function GetColumnAtEvent(e As MouseEventArgs, xHS As Integer)
+        Return GetColumnAtX(e.X, xHS)
     End Function
 
     ' az: Handle zoom in/out. Should work with any of the three splitters.

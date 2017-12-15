@@ -19,8 +19,8 @@ Partial Public Class MainWindow
 
         Dim xTHeight As Integer = spMain(xIndex).Height
         Dim xTWidth As Integer = spMain(xIndex).Width
-        Dim xHS As Integer = PanelHeight(xIndex)
-        Dim xVS As Integer = PanelDisplacement(xIndex)
+        Dim xPanelHeight As Integer = PanelHeight(xIndex)
+        Dim xPanelDisplacement As Integer = PanelDisplacement(xIndex)
         Dim xVSR As Integer = -PanelDisplacement(xIndex)
         Dim xVSu As Integer = IIf(xVSR + xTHeight / gxHeight > VPosition1000(), VPosition1000(), xVSR + xTHeight / gxHeight)
 
@@ -28,19 +28,19 @@ Partial Public Class MainWindow
         Dim xI1 As Integer
 
         'Bg color
-        DrawBackgroundColor(e1, xTHeight, xTWidth, xHS, xI1)
+        DrawBackgroundColor(e1, xTHeight, xTWidth, xPanelHeight, xI1)
 
-        xI1 = DrawLines(e1, xTHeight, xTWidth, xHS, xVS, xVSR, xVSu)
+        xI1 = DrawPanelLines(e1, xTHeight, xTWidth, xPanelHeight, xPanelDisplacement, xVSu)
 
         'Column Caption
-        xI1 = DrawColumnCaptions(e1, xTWidth, xHS, xI1)
+        xI1 = DrawColumnCaptions(e1, xTWidth, xPanelHeight, xI1)
 
         'WaveForm
         DrawWaveform(e1, xTHeight, xVSR, xI1)
 
         'K
         'If Not K Is Nothing Then
-        DrawNotes(e1, xTHeight, xHS, xVS)
+        DrawNotes(e1, xTHeight, xPanelHeight, xPanelDisplacement)
 
         'End If
 
@@ -49,16 +49,16 @@ Partial Public Class MainWindow
 
         'Mouse Over
         If TBSelect.Checked AndAlso Not KMouseOver = -1 Then
-            DrawMouseOver(e1, xTHeight, xHS, xVS)
+            DrawMouseOver(e1, xTHeight, xPanelHeight, xPanelDisplacement)
         End If
 
         If ShouldDrawTempNote AndAlso (SelectedColumn > -1 And TempVPosition > -1) Then
-            DrawTempNote(e1, xTHeight, xHS, xVS)
+            DrawTempNote(e1, xTHeight, xPanelHeight, xPanelDisplacement)
         End If
 
         'Time Selection
         If TBTimeSelect.Checked Then
-            DrawTimeSelection(e1, xTHeight, xTWidth, xHS, xVS)
+            DrawTimeSelection(e1, xTHeight, xTWidth, xPanelHeight, xPanelDisplacement)
         End If
 
         'Middle button: CLick and Scroll
@@ -90,9 +90,9 @@ Partial Public Class MainWindow
         Dim xBrush As Drawing2D.LinearGradientBrush
         Dim xBrush2 As SolidBrush
         Dim point1 As New Point(HorizontalPositiontoDisplay(nLeft(SelectedColumn), xHS),
-                                VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight - 10)
-        Dim point2 As New Point(HorizontalPositiontoDisplay(nLeft(SelectedColumn) + getColumnWidth(SelectedColumn), xHS),
-                                VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) + 10)
+                                NoteRowToPanelHeight(TempVPosition, xVS, xTHeight) - vo.kHeight - 10)
+        Dim point2 As New Point(HorizontalPositiontoDisplay(nLeft(SelectedColumn) + GetColumnWidth(SelectedColumn), xHS),
+                                NoteRowToPanelHeight(TempVPosition, xVS, xTHeight) + 10)
 
         Dim bright As Color
         Dim dark As Color
@@ -119,18 +119,18 @@ Partial Public Class MainWindow
         xBrush = New Drawing2D.LinearGradientBrush(point1, point2, bright, dark)
 
         e1.Graphics.FillRectangle(xBrush, HorizontalPositiontoDisplay(nLeft(SelectedColumn), xHS) + 2,
-                                  VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight + 1,
-                                  getColumnWidth(SelectedColumn) * gxWidth - 3,
+                                  NoteRowToPanelHeight(TempVPosition, xVS, xTHeight) - vo.kHeight + 1,
+                                  GetColumnWidth(SelectedColumn) * gxWidth - 3,
                                   vo.kHeight - 1)
         e1.Graphics.DrawRectangle(xPen,
                                   HorizontalPositiontoDisplay(nLeft(SelectedColumn), xHS) + 1,
-                                  VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight,
-                                  getColumnWidth(SelectedColumn) * gxWidth - 2,
+                                  NoteRowToPanelHeight(TempVPosition, xVS, xTHeight) - vo.kHeight,
+                                  GetColumnWidth(SelectedColumn) * gxWidth - 2,
                                   vo.kHeight)
 
         e1.Graphics.DrawString(xText, vo.kFont, xBrush2,
                         HorizontalPositiontoDisplay(nLeft(SelectedColumn), xHS) + vo.kLabelHShiftL - 2,
-                        VerticalPositiontoDisplay(TempVPosition, xVS, xTHeight) - vo.kHeight + vo.kLabelVShift)
+                        NoteRowToPanelHeight(TempVPosition, xVS, xTHeight) - vo.kHeight + vo.kLabelVShift)
     End Sub
 
     Private Sub DrawDragAndDrop(xIndex As Integer, e1 As BufferedGraphics)
@@ -154,13 +154,34 @@ Partial Public Class MainWindow
         End If
     End Sub
 
+    Function GetColumnHighlightColor(col As Color, Optional factor As Double = 2.0)
+        Dim clamp = Function(x) IIf(x > 255, 255, x)
+        Return Color.FromArgb(
+                clamp(col.A * factor),
+                clamp(col.R * factor),
+                clamp(col.G * factor),
+                clamp(col.B * factor))
+    End Function
+
     Private Sub DrawBackgroundColor(e1 As BufferedGraphics, xTHeight As Integer, xTWidth As Integer, xHS As Integer, xI1 As Integer)
         If gShowBG Then
             For xI1 = 0 To gColumns
                 If nLeft(xI1 + 1) * gxWidth - xHS * gxWidth + 1 < 0 Then Continue For
                 If nLeft(xI1) * gxWidth - xHS * gxWidth + 1 > xTWidth Then Exit For
-                If Not GetColumn(xI1).cBG.GetBrightness = 0 And getColumnWidth(xI1) > 0 Then _
-                    e1.Graphics.FillRectangle(New SolidBrush(GetColumn(xI1).cBG), nLeft(xI1) * gxWidth - xHS * gxWidth + 1, 0, getColumnWidth(xI1) * gxWidth, xTHeight)
+                If Not GetColumn(xI1).cBG.GetBrightness = 0 And GetColumnWidth(xI1) > 0 Then
+                    Dim col = GetColumn(xI1).cBG
+                    If xI1 = GetColumnAtX(MouseMoveStatus.X, xHS) Then
+                        Dim bf = 1.2
+                        col = GetColumnHighlightColor(col)
+                    End If
+                    Dim brush = New SolidBrush(col)
+
+                    e1.Graphics.FillRectangle(brush,
+                                              nLeft(xI1) * gxWidth - xHS * gxWidth + 1,
+                                              0,
+                                              GetColumnWidth(xI1) * gxWidth,
+                                              xTHeight)
+                End If
             Next
         End If
     End Sub
@@ -170,24 +191,24 @@ Partial Public Class MainWindow
             For xI1 = 0 To gColumns
                 If nLeft(xI1 + 1) * gxWidth - xHS * gxWidth + 1 < 0 Then Continue For
                 If nLeft(xI1) * gxWidth - xHS * gxWidth + 1 > xTWidth Then Exit For
-                If getColumnWidth(xI1) > 0 Then e1.Graphics.DrawString(nTitle(xI1), vo.ColumnTitleFont, vo.ColumnTitle, nLeft(xI1) * gxWidth - xHS * gxWidth, 0)
+                If GetColumnWidth(xI1) > 0 Then e1.Graphics.DrawString(nTitle(xI1), vo.ColumnTitleFont, vo.ColumnTitle, nLeft(xI1) * gxWidth - xHS * gxWidth, 0)
             Next
         End If
 
         Return xI1
     End Function
 
-    Private Function DrawLines(e1 As BufferedGraphics,
+    Private Function DrawPanelLines(e1 As BufferedGraphics,
                                xTHeight As Integer, xTWidth As Integer,
                                xHS As Integer, xVS As Integer,
-                               xVSR As Integer, xVSu As Integer) As Integer
+                               xVSu As Integer) As Integer
         'Vertical line
         If gShowVerticalLine Then
             For xI1 = 0 To gColumns
                 Dim xpos = nLeft(xI1) * gxWidth - xHS * gxWidth
                 If xpos + 1 < 0 Then Continue For
                 If xpos + 1 > xTWidth Then Exit For
-                If getColumnWidth(xI1) > 0 Then e1.Graphics.DrawLine(vo.pVLine,
+                If GetColumnWidth(xI1) > 0 Then e1.Graphics.DrawLine(vo.pVLine,
                                                               xpos, 0,
                                                               xpos, xTHeight)
             Next
@@ -195,7 +216,7 @@ Partial Public Class MainWindow
 
         'Grid, Sub, Measure
         Dim Measure
-        For Measure = MeasureAtDisplacement(xVSR) To MeasureAtDisplacement(xVSu)
+        For Measure = MeasureAtDisplacement(-xVS) To MeasureAtDisplacement(xVSu)
             'grid
             If gShowGrid Then DrawGridLines(e1,
                                         xTHeight, xTWidth,
@@ -211,13 +232,18 @@ Partial Public Class MainWindow
 
             'measure and measurebar
             Dim xCurr = MeasureBottom(Measure)
-            Dim Height = VerticalPositiontoDisplay(xCurr, xVS, xTHeight)
+            Dim Height = NoteRowToPanelHeight(xCurr, xVS, xTHeight)
             If gShowMeasureBar Then e1.Graphics.DrawLine(vo.pMLine, 0, Height,
                                                  xTWidth, Height)
             If gShowMeasureNumber Then e1.Graphics.DrawString("[" & Add3Zeros(Measure).ToString & "]", vo.kMFont,
                                                   New SolidBrush(GetColumn(0).cText), -xHS * gxWidth,
                                                   Height - vo.kMFont.Height)
         Next
+
+        Dim vpos = IIf(gSnap, SnapToGrid(GetMouseVPosition()), GetMouseVPosition())
+        Dim mouseLineHeight = NoteRowToPanelHeight(vpos, xVS, xTHeight)
+        Dim p = New Pen(Color.White)
+        e1.Graphics.DrawLine(p, 0, mouseLineHeight, xTWidth, mouseLineHeight)
 
         Return Measure
     End Function
@@ -231,7 +257,7 @@ Partial Public Class MainWindow
         Dim xCurr = MeasureBottom(measureIndex)
         Dim xDiff = 192 / divisions
         Do While xCurr < xUpper
-            Dim Height = VerticalPositiontoDisplay(xCurr, xVS, xTHeight)
+            Dim Height = NoteRowToPanelHeight(xCurr, xVS, xTHeight)
             e1.Graphics.DrawLine(pen, 0, Height,
                                       xTWidth, Height)
             Line += 1
@@ -271,9 +297,9 @@ Partial Public Class MainWindow
         If NTInput Then
             Dim xDispX As Integer = HorizontalPositiontoDisplay(nLeft(Notes(KMouseOver).ColumnIndex), xHS)
             Dim xDispY As Integer = IIf(Not NTInput Or (bAdjustLength And Not bAdjustUpper),
-                                        VerticalPositiontoDisplay(Notes(KMouseOver).VPosition, xVS, xTHeight) - vo.kHeight - 1,
-                                        VerticalPositiontoDisplay(Notes(KMouseOver).VPosition + Notes(KMouseOver).Length, xVS, xTHeight) - vo.kHeight - 1)
-            Dim xDispW As Integer = getColumnWidth(Notes(KMouseOver).ColumnIndex) * gxWidth + 1
+                                        NoteRowToPanelHeight(Notes(KMouseOver).VPosition, xVS, xTHeight) - vo.kHeight - 1,
+                                        NoteRowToPanelHeight(Notes(KMouseOver).VPosition + Notes(KMouseOver).Length, xVS, xTHeight) - vo.kHeight - 1)
+            Dim xDispW As Integer = GetColumnWidth(Notes(KMouseOver).ColumnIndex) * gxWidth + 1
             Dim xDispH As Integer = IIf(Not NTInput Or bAdjustLength,
                                         vo.kHeight + 3,
                                         Notes(KMouseOver).Length * gxHeight + vo.kHeight + 3)
@@ -285,8 +311,8 @@ Partial Public Class MainWindow
             DrawNote(Notes(KMouseOver), e1, xHS, xVS, xTHeight)
             e1.Graphics.DrawRectangle(vo.kMouseOver,
                                       HorizontalPositiontoDisplay(nLeft(Notes(KMouseOver).ColumnIndex), xHS),
-                                      VerticalPositiontoDisplay(Notes(KMouseOver).VPosition, xVS, xTHeight) - vo.kHeight - 1,
-                                      getColumnWidth(Notes(KMouseOver).ColumnIndex) * gxWidth,
+                                      NoteRowToPanelHeight(Notes(KMouseOver).VPosition, xVS, xTHeight) - vo.kHeight - 1,
+                                      GetColumnWidth(Notes(KMouseOver).ColumnIndex) * gxWidth,
                                       vo.kHeight + 2)
         End If
     End Sub
@@ -309,49 +335,49 @@ Partial Public Class MainWindow
         'Selection area
         e1.Graphics.FillRectangle(vo.PESel,
                                   0,
-                                  VerticalPositiontoDisplay(vSelStart + IIf(vSelLength > 0, vSelLength, 0), xVS, xTHeight) + Math.Abs(CInt(vSelLength <> 0)),
+                                  NoteRowToPanelHeight(vSelStart + IIf(vSelLength > 0, vSelLength, 0), xVS, xTHeight) + Math.Abs(CInt(vSelLength <> 0)),
                                   xTWidth,
                                   CInt(Math.Abs(vSelLength) * gxHeight))
         'End Cursor
         e1.Graphics.DrawLine(vo.PECursor,
                              0,
-                             VerticalPositiontoDisplay(vSelStart + vSelLength, xVS, xTHeight),
+                             NoteRowToPanelHeight(vSelStart + vSelLength, xVS, xTHeight),
                              xTWidth,
-                             VerticalPositiontoDisplay(vSelStart + vSelLength, xVS, xTHeight))
+                             NoteRowToPanelHeight(vSelStart + vSelLength, xVS, xTHeight))
         'Half Cursor
         e1.Graphics.DrawLine(vo.PEHalf,
                              0,
-                             VerticalPositiontoDisplay(vSelStart + vSelHalf, xVS, xTHeight),
+                             NoteRowToPanelHeight(vSelStart + vSelHalf, xVS, xTHeight),
                              xTWidth,
-                             VerticalPositiontoDisplay(vSelStart + vSelHalf, xVS, xTHeight))
+                             NoteRowToPanelHeight(vSelStart + vSelHalf, xVS, xTHeight))
         'Start BPM
         e1.Graphics.DrawString(xBPMStart / 10000,
                                vo.PEBPMFont, vo.PEBPM,
                                (-xHS + nLeft(niBPM)) * gxWidth,
-                               VerticalPositiontoDisplay(vSelStart, xVS, xTHeight) - vo.PEBPMFont.Height + 3)
+                               NoteRowToPanelHeight(vSelStart, xVS, xTHeight) - vo.PEBPMFont.Height + 3)
         'Half BPM
         e1.Graphics.DrawString(xBPMHalf / 10000,
                                vo.PEBPMFont, vo.PEBPM,
                                (-xHS + nLeft(niBPM)) * gxWidth,
-                               VerticalPositiontoDisplay(vSelStart + vSelHalf, xVS, xTHeight) - vo.PEBPMFont.Height + 3)
+                               NoteRowToPanelHeight(vSelStart + vSelHalf, xVS, xTHeight) - vo.PEBPMFont.Height + 3)
         'End BPM
         e1.Graphics.DrawString(xBPMEnd / 10000,
                                vo.PEBPMFont, vo.PEBPM,
                                (-xHS + nLeft(niBPM)) * gxWidth,
-                               VerticalPositiontoDisplay(vSelStart + vSelLength, xVS, xTHeight) - vo.PEBPMFont.Height + 3)
+                               NoteRowToPanelHeight(vSelStart + vSelLength, xVS, xTHeight) - vo.PEBPMFont.Height + 3)
 
         'SelLine
         If vSelMouseOverLine = 1 Then 'Start Cursor
             e1.Graphics.DrawRectangle(vo.PEMouseOver,
-                                      0, VerticalPositiontoDisplay(vSelStart, xVS, xTHeight) - 1,
+                                      0, NoteRowToPanelHeight(vSelStart, xVS, xTHeight) - 1,
                                       xTWidth - 1, 2)
         ElseIf vSelMouseOverLine = 2 Then 'Half Cursor
             e1.Graphics.DrawRectangle(vo.PEMouseOver,
-                                      0, VerticalPositiontoDisplay(vSelStart + vSelHalf, xVS, xTHeight) - 1,
+                                      0, NoteRowToPanelHeight(vSelStart + vSelHalf, xVS, xTHeight) - 1,
                                       xTWidth - 1, 2)
         ElseIf vSelMouseOverLine = 3 Then 'End Cursor
             e1.Graphics.DrawRectangle(vo.PEMouseOver,
-                                      0, VerticalPositiontoDisplay(vSelStart + vSelLength, xVS, xTHeight) - 1,
+                                      0, NoteRowToPanelHeight(vSelStart + vSelLength, xVS, xTHeight) - 1,
                                       xTWidth - 1, 2)
         End If
     End Sub
@@ -462,9 +488,9 @@ Partial Public Class MainWindow
         Dim bright As Color
         Dim dark As Color
         Dim p1 = New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS),
-                           VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight - 10)
-        Dim p2 = New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) + getColumnWidth(sNote.ColumnIndex), xHS),
-                           VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) + 10)
+                           NoteRowToPanelHeight(sNote.VPosition, xVS, xHeight) - vo.kHeight - 10)
+        Dim p2 = New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) + GetColumnWidth(sNote.ColumnIndex), xHS),
+                           NoteRowToPanelHeight(sNote.VPosition, xVS, xHeight) + 10)
 
         If Not sNote.LongNote Then
             xPen = New Pen(GetColumn(sNote.ColumnIndex).getBright(xAlpha))
@@ -490,21 +516,21 @@ Partial Public Class MainWindow
 
         ' Fill
         e.Graphics.FillRectangle(xBrush, HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS) + 2,
-                                 VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight + 1,
-                                 getColumnWidth(sNote.ColumnIndex) * gxWidth - 3,
+                                 NoteRowToPanelHeight(sNote.VPosition, xVS, xHeight) - vo.kHeight + 1,
+                                 GetColumnWidth(sNote.ColumnIndex) * gxWidth - 3,
                                  vo.kHeight - 1)
         ' Outline
         e.Graphics.DrawRectangle(xPen,
                                  HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS) + 1,
-                                 VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight,
-                                 getColumnWidth(sNote.ColumnIndex) * gxWidth - 2,
+                                 NoteRowToPanelHeight(sNote.VPosition, xVS, xHeight) - vo.kHeight,
+                                 GetColumnWidth(sNote.ColumnIndex) * gxWidth - 2,
                                  vo.kHeight)
 
         ' Label
         e.Graphics.DrawString(IIf(isColumnNumeric(sNote.ColumnIndex), sNote.Value / 10000, xLabel),
                               vo.kFont, xBrush2,
                               HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS) + vo.kLabelHShift,
-                              VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight + vo.kLabelVShift)
+                              NoteRowToPanelHeight(sNote.VPosition, xVS, xHeight) - vo.kHeight + vo.kLabelVShift)
 
         If sNote.ColumnIndex < niB Then
             If sNote.LNPair <> 0 Then
@@ -518,27 +544,27 @@ Partial Public Class MainWindow
 
         'If ErrorCheck AndAlso (sNote.LongNote Xor sNote.PairWithI <> 0) Then e.Graphics.DrawImage(My.Resources.ImageError, _
         If ErrorCheck AndAlso sNote.HasError Then e.Graphics.DrawImage(My.Resources.ImageError,
-                                                            CInt(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) + getColumnWidth(sNote.ColumnIndex) / 2, xHS) - 12),
-                                                            CInt(VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight / 2 - 12),
+                                                            CInt(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) + GetColumnWidth(sNote.ColumnIndex) / 2, xHS) - 12),
+                                                            CInt(NoteRowToPanelHeight(sNote.VPosition, xVS, xHeight) - vo.kHeight / 2 - 12),
                                                             24, 24)
 
-        If sNote.Selected Then e.Graphics.DrawRectangle(vo.kSelected, HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS), VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight - 1, getColumnWidth(sNote.ColumnIndex) * gxWidth, vo.kHeight + 2)
+        If sNote.Selected Then e.Graphics.DrawRectangle(vo.kSelected, HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS), NoteRowToPanelHeight(sNote.VPosition, xVS, xHeight) - vo.kHeight - 1, GetColumnWidth(sNote.ColumnIndex) * gxWidth, vo.kHeight + 2)
 
     End Sub
 
     Private Sub DrawPairedLNBody(sNote As Note, e As BufferedGraphics, xHS As Long, xVS As Long, xHeight As Integer, xAlpha As Single)
         Dim xPen2 As New Pen(GetColumn(sNote.ColumnIndex).getLongBright(xAlpha))
         Dim xBrush3 As New Drawing2D.LinearGradientBrush(
-                    New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) - 0.5 * getColumnWidth(sNote.ColumnIndex), xHS),
-                            VerticalPositiontoDisplay(Notes(sNote.LNPair).VPosition, xVS, xHeight)),
-                    New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) + 1.5 * getColumnWidth(sNote.ColumnIndex), xHS),
-                            VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) + vo.kHeight),
+                    New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) - 0.5 * GetColumnWidth(sNote.ColumnIndex), xHS),
+                            NoteRowToPanelHeight(Notes(sNote.LNPair).VPosition, xVS, xHeight)),
+                    New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) + 1.5 * GetColumnWidth(sNote.ColumnIndex), xHS),
+                            NoteRowToPanelHeight(sNote.VPosition, xVS, xHeight) + vo.kHeight),
                     GetColumn(sNote.ColumnIndex).getLongBright(xAlpha),
                     GetColumn(sNote.ColumnIndex).getLongDark(xAlpha))
-        e.Graphics.FillRectangle(xBrush3, HorizontalPositiontoDisplay(nLeft(Notes(sNote.LNPair).ColumnIndex), xHS) + 3, VerticalPositiontoDisplay(Notes(sNote.LNPair).VPosition, xVS, xHeight) + 1,
-                                        getColumnWidth(Notes(sNote.LNPair).ColumnIndex) * gxWidth - 5, VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - VerticalPositiontoDisplay(Notes(sNote.LNPair).VPosition, xVS, xHeight) - vo.kHeight - 1)
-        e.Graphics.DrawRectangle(xPen2, HorizontalPositiontoDisplay(nLeft(Notes(sNote.LNPair).ColumnIndex), xHS) + 2, VerticalPositiontoDisplay(Notes(sNote.LNPair).VPosition, xVS, xHeight),
-                                        getColumnWidth(Notes(sNote.LNPair).ColumnIndex) * gxWidth - 4, VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - VerticalPositiontoDisplay(Notes(sNote.LNPair).VPosition, xVS, xHeight) - vo.kHeight)
+        e.Graphics.FillRectangle(xBrush3, HorizontalPositiontoDisplay(nLeft(Notes(sNote.LNPair).ColumnIndex), xHS) + 3, NoteRowToPanelHeight(Notes(sNote.LNPair).VPosition, xVS, xHeight) + 1,
+                                        GetColumnWidth(Notes(sNote.LNPair).ColumnIndex) * gxWidth - 5, NoteRowToPanelHeight(sNote.VPosition, xVS, xHeight) - NoteRowToPanelHeight(Notes(sNote.LNPair).VPosition, xVS, xHeight) - vo.kHeight - 1)
+        e.Graphics.DrawRectangle(xPen2, HorizontalPositiontoDisplay(nLeft(Notes(sNote.LNPair).ColumnIndex), xHS) + 2, NoteRowToPanelHeight(Notes(sNote.LNPair).VPosition, xVS, xHeight),
+                                        GetColumnWidth(Notes(sNote.LNPair).ColumnIndex) * gxWidth - 4, NoteRowToPanelHeight(sNote.VPosition, xVS, xHeight) - NoteRowToPanelHeight(Notes(sNote.LNPair).VPosition, xVS, xHeight) - vo.kHeight)
     End Sub
 
     ''' <summary>
@@ -569,10 +595,10 @@ Partial Public Class MainWindow
 
         If sNote.Length = 0 Then
             p1 = New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS),
-                           VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight - 10)
+                           NoteRowToPanelHeight(sNote.VPosition, xVS, xHeight) - vo.kHeight - 10)
 
-            p2 = New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) + getColumnWidth(sNote.ColumnIndex), xHS),
-                           VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) + 10)
+            p2 = New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) + GetColumnWidth(sNote.ColumnIndex), xHS),
+                           NoteRowToPanelHeight(sNote.VPosition, xVS, xHeight) + 10)
 
             bright = GetColumn(sNote.ColumnIndex).getBright(xAlpha)
             dark = GetColumn(sNote.ColumnIndex).getDark(xAlpha)
@@ -584,10 +610,10 @@ Partial Public Class MainWindow
 
             xBrush2 = New SolidBrush(GetColumn(sNote.ColumnIndex).cText)
         Else
-            p1 = New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) - 0.5 * getColumnWidth(sNote.ColumnIndex), xHS),
-                           VerticalPositiontoDisplay(sNote.VPosition + sNote.Length, xVS, xHeight) - vo.kHeight)
-            p2 = New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) + 1.5 * getColumnWidth(sNote.ColumnIndex), xHS),
-                                      VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight))
+            p1 = New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) - 0.5 * GetColumnWidth(sNote.ColumnIndex), xHS),
+                           NoteRowToPanelHeight(sNote.VPosition + sNote.Length, xVS, xHeight) - vo.kHeight)
+            p2 = New Point(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) + 1.5 * GetColumnWidth(sNote.ColumnIndex), xHS),
+                                      NoteRowToPanelHeight(sNote.VPosition, xVS, xHeight))
 
             bright = GetColumn(sNote.ColumnIndex).getLongBright(xAlpha)
             dark = GetColumn(sNote.ColumnIndex).getLongDark(xAlpha)
@@ -601,20 +627,20 @@ Partial Public Class MainWindow
         ' Note gradient
         e.Graphics.FillRectangle(xBrush,
                                      HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS) + 1,
-                                     VerticalPositiontoDisplay(sNote.VPosition + sNote.Length, xVS, xHeight) - vo.kHeight + 1,
-                                     getColumnWidth(sNote.ColumnIndex) * gxWidth - 1,
+                                     NoteRowToPanelHeight(sNote.VPosition + sNote.Length, xVS, xHeight) - vo.kHeight + 1,
+                                     GetColumnWidth(sNote.ColumnIndex) * gxWidth - 1,
                                      CInt(sNote.Length * gxHeight) + vo.kHeight - 1)
 
         ' Outline
         e.Graphics.DrawRectangle(xPen1, HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS) + 1,
-                                     VerticalPositiontoDisplay(sNote.VPosition + sNote.Length, xVS, xHeight) - vo.kHeight,
-                                            getColumnWidth(sNote.ColumnIndex) * gxWidth - 3, CInt(sNote.Length * gxHeight) + vo.kHeight)
+                                     NoteRowToPanelHeight(sNote.VPosition + sNote.Length, xVS, xHeight) - vo.kHeight,
+                                            GetColumnWidth(sNote.ColumnIndex) * gxWidth - 3, CInt(sNote.Length * gxHeight) + vo.kHeight)
 
         ' Note B36
         e.Graphics.DrawString(IIf(isColumnNumeric(sNote.ColumnIndex), sNote.Value / 10000, xLabel),
                               vo.kFont, xBrush2,
                               HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS) + vo.kLabelHShiftL - 2,
-                              VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight + vo.kLabelVShift)
+                              NoteRowToPanelHeight(sNote.VPosition, xVS, xHeight) - vo.kHeight + vo.kLabelVShift)
 
         ' Draw paired body
         If sNote.ColumnIndex < niB Then
@@ -628,16 +654,16 @@ Partial Public Class MainWindow
         If sNote.Selected Then
             e.Graphics.DrawRectangle(vo.kSelected,
                                     HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS),
-                                    VerticalPositiontoDisplay(sNote.VPosition + sNote.Length, xVS, xHeight) - vo.kHeight - 1,
-                                    getColumnWidth(sNote.ColumnIndex) * gxWidth,
+                                    NoteRowToPanelHeight(sNote.VPosition + sNote.Length, xVS, xHeight) - vo.kHeight - 1,
+                                    GetColumnWidth(sNote.ColumnIndex) * gxWidth,
                                     CInt(sNote.Length * gxHeight) + vo.kHeight + 2)
         End If
 
         ' Errors
         If ErrorCheck AndAlso sNote.HasError Then
             e.Graphics.DrawImage(My.Resources.ImageError,
-                                 CInt(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) + getColumnWidth(sNote.ColumnIndex) / 2, xHS) - 12),
-                                 CInt(VerticalPositiontoDisplay(sNote.VPosition, xVS, xHeight) - vo.kHeight / 2 - 12),
+                                 CInt(HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex) + GetColumnWidth(sNote.ColumnIndex) / 2, xHS) - 12),
+                                 CInt(NoteRowToPanelHeight(sNote.VPosition, xVS, xHeight) - vo.kHeight / 2 - 12),
                                  24, 24)
         End If
 

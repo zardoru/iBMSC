@@ -267,7 +267,7 @@ Public Class MainWindow
     ''' <param name="xTHeight">Height of the panel. (DisplayRectangle, but not ClipRectangle)</param>
 
 
-    Private Function VerticalPositiontoDisplay(ByVal xVPosition As Double, ByVal xVSVal As Long, ByVal xTHeight As Integer) As Integer
+    Private Function NoteRowToPanelHeight(ByVal xVPosition As Double, ByVal xVSVal As Long, ByVal xTHeight As Integer) As Integer
         Return xTHeight - CInt((xVPosition + xVSVal) * gxHeight) - 1
     End Function
 
@@ -2135,24 +2135,22 @@ StartCount:     If Not NTInput Then
         TBStatistics.Text = xIAll
     End Sub
 
+    Public Function GetMouseVPosition()
+        Dim panHeight = spMain(PanelFocus).Height
+        Dim panDisplacement = PanelDisplacement(PanelFocus)
+        Return (panHeight - panDisplacement * gxHeight - MouseMoveStatus.Y - 1) / gxHeight 'VPosition of the mouse
+    End Function
+
     Private Sub POStatusRefresh()
 
         If TBSelect.Checked Then
             Dim xI1 As Integer = KMouseOver
             If xI1 < 0 Then
 
-                TempVPosition = (spMain(PanelFocus).Height - PanelDisplacement(PanelFocus) * gxHeight - MouseMoveStatus.Y - 1) / gxHeight 'VPosition of the mouse
+                TempVPosition = GetMouseVPosition()
                 If gSnap Then TempVPosition = SnapToGrid(TempVPosition)
 
-                xI1 = 0
-                Dim mLeft As Integer = MouseMoveStatus.X / gxWidth + PanelHeight(PanelFocus) 'horizontal position of the mouse
-                If mLeft >= 0 Then
-                    Do
-                        If mLeft < nLeft(xI1 + 1) Or xI1 >= gColumns Then SelectedColumn = xI1 : Exit Do 'get the column where mouse is 
-                        xI1 += 1
-                    Loop
-                End If
-                SelectedColumn = EnabledColumnIndexToColumnArrayIndex(ColumnArrayIndexToEnabledColumnIndex(SelectedColumn))  'get the enabled column where mouse is 
+                SelectedColumn = GetColumnAtX(MouseMoveStatus.X, PanelDisplacement(PanelFocus))
 
                 Dim xMeasure As Integer = MeasureAtDisplacement(TempVPosition)
                 Dim xMLength As Double = MeasureLength(xMeasure)
