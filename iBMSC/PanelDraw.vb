@@ -19,28 +19,28 @@ Partial Public Class MainWindow
 
         Dim xTHeight As Integer = spMain(xIndex).Height
         Dim xTWidth As Integer = spMain(xIndex).Width
-        Dim xPanelHeight As Integer = PanelHeight(xIndex)
-        Dim xPanelDisplacement As Integer = PanelDisplacement(xIndex)
-        Dim xVSR As Integer = -PanelDisplacement(xIndex)
+        Dim xPanelHScroll As Integer = PanelHScroll(xIndex)
+        Dim xPanelDisplacement As Integer = PanelVScroll(xIndex)
+        Dim xVSR As Integer = -PanelVScroll(xIndex)
         Dim xVSu As Integer = IIf(xVSR + xTHeight / gxHeight > VPosition1000(), VPosition1000(), xVSR + xTHeight / gxHeight)
 
         'e1.Graphics.SmoothingMode = Drawing2D.SmoothingMode.AntiAlias
         Dim xI1 As Integer
 
         'Bg color
-        DrawBackgroundColor(e1, xTHeight, xTWidth, xPanelHeight, xI1)
+        DrawBackgroundColor(e1, xTHeight, xTWidth, xPanelHScroll, xI1)
 
-        xI1 = DrawPanelLines(e1, xTHeight, xTWidth, xPanelHeight, xPanelDisplacement, xVSu)
+        xI1 = DrawPanelLines(e1, xTHeight, xTWidth, xPanelHScroll, xPanelDisplacement, xVSu)
 
         'Column Caption
-        xI1 = DrawColumnCaptions(e1, xTWidth, xPanelHeight, xI1)
+        xI1 = DrawColumnCaptions(e1, xTWidth, xPanelHScroll, xI1)
 
         'WaveForm
         DrawWaveform(e1, xTHeight, xVSR, xI1)
 
         'K
         'If Not K Is Nothing Then
-        DrawNotes(e1, xTHeight, xPanelHeight, xPanelDisplacement)
+        DrawNotes(e1, xTHeight, xPanelHScroll, xPanelDisplacement)
 
         'End If
 
@@ -49,16 +49,16 @@ Partial Public Class MainWindow
 
         'Mouse Over
         If TBSelect.Checked AndAlso Not KMouseOver = -1 Then
-            DrawMouseOver(e1, xTHeight, xPanelHeight, xPanelDisplacement)
+            DrawMouseOver(e1, xTHeight, xPanelHScroll, xPanelDisplacement)
         End If
 
         If ShouldDrawTempNote AndAlso (SelectedColumn > -1 And TempVPosition > -1) Then
-            DrawTempNote(e1, xTHeight, xPanelHeight, xPanelDisplacement)
+            DrawTempNote(e1, xTHeight, xPanelHScroll, xPanelDisplacement)
         End If
 
         'Time Selection
         If TBTimeSelect.Checked Then
-            DrawTimeSelection(e1, xTHeight, xTWidth, xPanelHeight, xPanelDisplacement)
+            DrawTimeSelection(e1, xTHeight, xTWidth, xPanelHScroll, xPanelDisplacement)
         End If
 
         'Middle button: CLick and Scroll

@@ -339,15 +339,15 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
         PanelFocus = sender.Tag
         sender.Focus()
         LastMouseDownLocation = New Point(-1, -1)
-        VSValue = PanelDisplacement(PanelFocus)
+        VSValue = PanelVScroll(PanelFocus)
 
         If NTInput Then bAdjustUpper = False : bAdjustLength = False
         Me.ctrlPressed = False : Me.DuplicatedSelectedNotes = False
 
         If MiddleButtonClicked Then MiddleButtonClicked = False : Exit Sub
 
-        Dim xHS As Long = PanelHeight(PanelFocus)
-        Dim xVS As Long = PanelDisplacement(PanelFocus)
+        Dim xHS As Long = PanelHScroll(PanelFocus)
+        Dim xVS As Long = PanelVScroll(PanelFocus)
         Dim xHeight As Integer = spMain(PanelFocus).Height
 
         Select Case e.Button
@@ -825,8 +825,8 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
 
         Dim iI As Integer = sender.Tag
 
-        Dim xHS As Long = PanelHeight(iI)
-        Dim xVS As Long = PanelDisplacement(iI)
+        Dim xHS As Long = PanelHScroll(iI)
+        Dim xVS As Long = PanelVScroll(iI)
         Dim xHeight As Integer = spMain(iI).Height
         Dim xWidth As Integer = spMain(iI).Width
 
@@ -1517,10 +1517,10 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
                 Dim xVPosition As Double
 
 
-                xVPosition = (sender.Height - PanelDisplacement(iI) * gxHeight - e.Y - 1) / gxHeight 'VPosition of the mouse
+                xVPosition = (sender.Height - PanelVScroll(iI) * gxHeight - e.Y - 1) / gxHeight 'VPosition of the mouse
                 If gSnap Then xVPosition = SnapToGrid(xVPosition)
 
-                Dim xColumn = GetColumnAtEvent(e, PanelHeight(iI))
+                Dim xColumn = GetColumnAtEvent(e, PanelHScroll(iI))
 
                 If e.Button = Windows.Forms.MouseButtons.Left Then
                     Dim HiddenNote As Boolean = ModifierHiddenActive()
@@ -1585,19 +1585,19 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
         Select Case spMouseOver
             Case 0
                 'xI1 = spV(iI) - Math.Sign(e.Delta) * VSL.SmallChange * 5 / gxHeight
-                xI1 = PanelDisplacement(spMouseOver) - Math.Sign(e.Delta) * gWheel
+                xI1 = PanelVScroll(spMouseOver) - Math.Sign(e.Delta) * gWheel
                 If xI1 > 0 Then xI1 = 0
                 If xI1 < LeftPanelScroll.Minimum Then xI1 = LeftPanelScroll.Minimum
                 LeftPanelScroll.Value = xI1
             Case 1
                 'xI1 = spV(iI) - Math.Sign(e.Delta) * VS.SmallChange * 5 / gxHeight
-                xI1 = PanelDisplacement(spMouseOver) - Math.Sign(e.Delta) * gWheel
+                xI1 = PanelVScroll(spMouseOver) - Math.Sign(e.Delta) * gWheel
                 If xI1 > 0 Then xI1 = 0
                 If xI1 < MainPanelScroll.Minimum Then xI1 = MainPanelScroll.Minimum
                 MainPanelScroll.Value = xI1
             Case 2
                 'xI1 = spV(iI) - Math.Sign(e.Delta) * VSR.SmallChange * 5 / gxHeight
-                xI1 = PanelDisplacement(spMouseOver) - Math.Sign(e.Delta) * gWheel
+                xI1 = PanelVScroll(spMouseOver) - Math.Sign(e.Delta) * gWheel
                 If xI1 > 0 Then xI1 = 0
                 If xI1 < RightPanelScroll.Minimum Then xI1 = RightPanelScroll.Minimum
                 RightPanelScroll.Value = xI1

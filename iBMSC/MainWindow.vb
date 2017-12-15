@@ -220,8 +220,8 @@ Public Class MainWindow
 
     '----Split Panel Options
     Dim PanelWidth() As Single = {0, 100, 0}
-    Dim PanelHeight() As Integer = {0, 0, 0}
-    Dim PanelDisplacement() As Integer = {0, 0, 0}
+    Dim PanelHScroll() As Integer = {0, 0, 0}
+    Dim PanelVScroll() As Integer = {0, 0, 0}
     Dim spLock() As Boolean = {False, False, False}
     Dim spDiff() As Integer = {0, 0, 0}
     Dim PanelFocus As Integer = 1 '0 = Left, 1 = Middle, 2 = Right
@@ -463,7 +463,7 @@ Public Class MainWindow
                                         IIf(InitPath = "", My.Application.Info.DirectoryPath, InitPath),
                                         ExcludeFileName(FileName)) _
                                         & "\___TempBMS.bms"
-        Dim xMeasure As Integer = MeasureAtDisplacement(Math.Abs(PanelDisplacement(PanelFocus)))
+        Dim xMeasure As Integer = MeasureAtDisplacement(Math.Abs(PanelVScroll(PanelFocus)))
         Dim xS1 As String = Replace(InitStr, "<apppath>", My.Application.Info.DirectoryPath)
         Dim xS2 As String = Replace(xS1, "<measure>", xMeasure)
         Dim xS3 As String = Replace(xS2, "<filename>", xFileName)
@@ -539,7 +539,7 @@ Public Class MainWindow
             Notes(xI1).Selected = False
         Next
 
-        Dim xVS As Long = PanelDisplacement(PanelFocus)
+        Dim xVS As Long = PanelVScroll(PanelFocus)
         Dim xTempVP As Double
         Dim xKbu() As Note = Notes
 
@@ -1542,10 +1542,10 @@ EndSearch:
         End If
 
         If iI = PanelFocus And Not LastMouseDownLocation = New Point(-1, -1) And Not VSValue = -1 Then LastMouseDownLocation.Y += (VSValue - sender.Value) * gxHeight
-        PanelDisplacement(iI) = sender.Value
+        PanelVScroll(iI) = sender.Value
 
         If spLock((iI + 1) Mod 3) Then
-            Dim xVS As Integer = PanelDisplacement(iI) + spDiff(iI)
+            Dim xVS As Integer = PanelVScroll(iI) + spDiff(iI)
             If xVS > 0 Then xVS = 0
             If xVS < MainPanelScroll.Minimum Then xVS = MainPanelScroll.Minimum
             Select Case iI
@@ -1556,7 +1556,7 @@ EndSearch:
         End If
 
         If spLock((iI + 2) Mod 3) Then
-            Dim xVS As Integer = PanelDisplacement(iI) - spDiff((iI + 2) Mod 3)
+            Dim xVS As Integer = PanelVScroll(iI) - spDiff((iI + 2) Mod 3)
             If xVS > 0 Then xVS = 0
             If xVS < MainPanelScroll.Minimum Then xVS = MainPanelScroll.Minimum
             Select Case iI
@@ -1566,8 +1566,8 @@ EndSearch:
             End Select
         End If
 
-        spDiff(iI) = PanelDisplacement((iI + 1) Mod 3) - PanelDisplacement(iI)
-        spDiff((iI + 2) Mod 3) = PanelDisplacement(iI) - PanelDisplacement((iI + 2) Mod 3)
+        spDiff(iI) = PanelVScroll((iI + 1) Mod 3) - PanelVScroll(iI)
+        spDiff((iI + 2) Mod 3) = PanelVScroll(iI) - PanelVScroll((iI + 2) Mod 3)
 
         VSValue = sender.Value
         RefreshPanel(iI, spMain(iI).DisplayRectangle)
@@ -1578,8 +1578,8 @@ EndSearch:
         spLock(iI) = sender.Checked
         If Not spLock(iI) Then Return
 
-        spDiff(iI) = PanelDisplacement((iI + 1) Mod 3) - PanelDisplacement(iI)
-        spDiff((iI + 2) Mod 3) = PanelDisplacement(iI) - PanelDisplacement((iI + 2) Mod 3)
+        spDiff(iI) = PanelVScroll((iI + 1) Mod 3) - PanelVScroll(iI)
+        spDiff((iI + 2) Mod 3) = PanelVScroll(iI) - PanelVScroll((iI + 2) Mod 3)
 
         'POHeaderB.Text = spDiff(0) & "_" & spDiff(1) & "_" & spDiff(2)
     End Sub
@@ -1592,7 +1592,7 @@ EndSearch:
     Private Sub HSValueChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles HS.ValueChanged, HSL.ValueChanged, HSR.ValueChanged
         Dim iI As Integer = sender.Tag
         If Not LastMouseDownLocation = New Point(-1, -1) And Not HSValue = -1 Then LastMouseDownLocation.X += (HSValue - sender.Value) * gxWidth
-        PanelHeight(iI) = sender.Value
+        PanelHScroll(iI) = sender.Value
         HSValue = sender.Value
         RefreshPanel(iI, spMain(iI).DisplayRectangle)
     End Sub
@@ -1613,7 +1613,7 @@ EndSearch:
         TempVPosition = -1
         TempLength = 0
 
-        vSelStart = MeasureBottom(MeasureAtDisplacement(-PanelDisplacement(PanelFocus)) + 1)
+        vSelStart = MeasureBottom(MeasureAtDisplacement(-PanelVScroll(PanelFocus)) + 1)
         vSelLength = 0
 
         RefreshPanelAll()
@@ -1636,7 +1636,7 @@ EndSearch:
         TempVPosition = -1
         TempLength = 0
 
-        vSelStart = MeasureBottom(MeasureAtDisplacement(-PanelDisplacement(PanelFocus)) + 1)
+        vSelStart = MeasureBottom(MeasureAtDisplacement(-PanelVScroll(PanelFocus)) + 1)
         vSelLength = 0
 
         RefreshPanelAll()
@@ -2137,7 +2137,7 @@ StartCount:     If Not NTInput Then
 
     Public Function GetMouseVPosition()
         Dim panHeight = spMain(PanelFocus).Height
-        Dim panDisplacement = PanelDisplacement(PanelFocus)
+        Dim panDisplacement = PanelVScroll(PanelFocus)
         Return (panHeight - panDisplacement * gxHeight - MouseMoveStatus.Y - 1) / gxHeight 'VPosition of the mouse
     End Function
 
@@ -2150,7 +2150,7 @@ StartCount:     If Not NTInput Then
                 TempVPosition = GetMouseVPosition()
                 If gSnap Then TempVPosition = SnapToGrid(TempVPosition)
 
-                SelectedColumn = GetColumnAtX(MouseMoveStatus.X, PanelDisplacement(PanelFocus))
+                SelectedColumn = GetColumnAtX(MouseMoveStatus.X, PanelHScroll(PanelFocus))
 
                 Dim xMeasure As Integer = MeasureAtDisplacement(TempVPosition)
                 Dim xMLength As Double = MeasureLength(xMeasure)
@@ -4899,7 +4899,7 @@ case2:              Dim xI0 As Integer
                 Exit Sub
             End If
 
-            PanelDisplacement(PanelFocus) = -MeasureBottom(i)
+            PanelVScroll(PanelFocus) = -MeasureBottom(i)
         End If
     End Sub
 End Class
