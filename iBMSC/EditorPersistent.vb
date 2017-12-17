@@ -358,15 +358,17 @@ Partial Public Class MainWindow
         If eSave IsNot Nothing Then
             With eSave
                 Select Case UCase(.GetAttribute("TextEncoding"))
-                    Case "ANSI" : TextEncoding = System.Text.Encoding.Default
-                    Case "UNICODE" : TextEncoding = System.Text.Encoding.Unicode
+                    Case "SYSTEM ANSI" : TextEncoding = System.Text.Encoding.Default
+                    Case "LITTLE ENDIAN UTF16" : TextEncoding = System.Text.Encoding.Unicode
                     Case "ASCII" : TextEncoding = System.Text.Encoding.ASCII
-                    Case "BIGENDIAN" : TextEncoding = System.Text.Encoding.BigEndianUnicode
-                    Case "UTF32" : TextEncoding = System.Text.Encoding.UTF32
+                    Case "BIG ENDIAN UTF16" : TextEncoding = System.Text.Encoding.BigEndianUnicode
+                    Case "LITTLE ENDIAN UTF32" : TextEncoding = System.Text.Encoding.UTF32
                     Case "UTF7" : TextEncoding = System.Text.Encoding.UTF7
                     Case "UTF8" : TextEncoding = System.Text.Encoding.UTF8
                     Case "SJIS" : TextEncoding = System.Text.Encoding.GetEncoding(932)
                     Case "EUC-KR" : TextEncoding = System.Text.Encoding.GetEncoding(51949)
+                        ' leave current encoding
+                        ' Case Else 
                 End Select
 
                 XMLLoadAttribute(.GetAttribute("BMSGridLimit"), BMSGridLimit)

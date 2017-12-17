@@ -108,7 +108,7 @@ Partial Class OpGeneral
         '
         Me.CTextEncoding.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.CTextEncoding.FormattingEnabled = True
-        Me.CTextEncoding.Items.AddRange(New Object() {"ANSI (Locale dependant)", "Unicode", "ASCII", "Big Endian Unicode", "UTF32", "UTF7", "UTF8", "Shift-JIS", "EUC-KR"})
+        Me.CTextEncoding.Items.AddRange(New Object() {"ANSI (Locale dependant)", "Little Endian UTF16", "ASCII", "Big Endian UTF16", "Little Endian UTF32", "UTF7", "UTF8", "Shift-JIS", "EUC-KR"})
         Me.CTextEncoding.Location = New System.Drawing.Point(137, 18)
         Me.CTextEncoding.Name = "CTextEncoding"
         Me.CTextEncoding.Size = New System.Drawing.Size(254, 23)
@@ -186,7 +186,7 @@ Partial Class OpGeneral
         Me.cStop1296.AutoSize = True
         Me.cStop1296.Location = New System.Drawing.Point(32, 219)
         Me.cStop1296.Name = "cStop1296"
-        Me.cStop1296.Size = New System.Drawing.Size(197, 19)
+        Me.cStop1296.Size = New System.Drawing.Size(198, 19)
         Me.cStop1296.TabIndex = 10
         Me.cStop1296.Text = "Extend number of STOPs to 1296"
         Me.cStop1296.UseVisualStyleBackColor = True

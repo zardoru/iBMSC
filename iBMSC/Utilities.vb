@@ -41,16 +41,16 @@ Namespace Editor
         End Function
 
         Public Function EncodingToString(TextEncoding As System.Text.Encoding) As String
-            If TextEncoding Is System.Text.Encoding.Default Then Return "ANSI (Locale dependant)"
-            If TextEncoding Is System.Text.Encoding.Unicode Then Return "Unicode"
+            If TextEncoding Is System.Text.Encoding.Default Then Return "System Ansi"
+            If TextEncoding Is System.Text.Encoding.Unicode Then Return "Little Endian UTF16"
             If TextEncoding Is System.Text.Encoding.ASCII Then Return "ASCII"
-            If TextEncoding Is System.Text.Encoding.BigEndianUnicode Then Return "BigEndian"
-            If TextEncoding Is System.Text.Encoding.UTF32 Then Return "UTF32"
+            If TextEncoding Is System.Text.Encoding.BigEndianUnicode Then Return "Big Endian UTF16"
+            If TextEncoding Is System.Text.Encoding.UTF32 Then Return "Little Endian UTF32"
             If TextEncoding Is System.Text.Encoding.UTF7 Then Return "UTF7"
             If TextEncoding Is System.Text.Encoding.UTF8 Then Return "UTF8"
             If TextEncoding Is System.Text.Encoding.GetEncoding(932) Then Return "SJIS"
             If TextEncoding Is System.Text.Encoding.GetEncoding(51949) Then Return "EUC-KR"
-            Return "ANSI (" & TextEncoding.EncodingName & ")"
+            Return "ANSI (" & TextEncoding.EncodingName & ")" & (TextEncoding Is System.Text.Encoding.Default)
         End Function
 
         ''' <summary>

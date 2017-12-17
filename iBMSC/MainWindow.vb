@@ -3431,11 +3431,11 @@ EndOfAdjustment:
     Private Sub TBGOptions_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TBGOptions.Click, mnGOptions.Click
         Dim xTE As Integer
         Select Case UCase(EncodingToString(TextEncoding)) ' az: wow seriously? is there really no better way? 
-            Case "ANSI" : xTE = 0
-            Case "UNICODE" : xTE = 1
+            Case "SYSTEM ANSI" : xTE = 0
+            Case "LITTLE ENDIAN UTF16" : xTE = 1
             Case "ASCII" : xTE = 2
-            Case "BIGENDIAN" : xTE = 3
-            Case "UTF32" : xTE = 4
+            Case "BIG ENDIAN UTF16" : xTE = 3
+            Case "LITTLE ENDIAN UTF32" : xTE = 4
             Case "UTF7" : xTE = 5
             Case "UTF8" : xTE = 6
             Case "SJIS" : xTE = 7
