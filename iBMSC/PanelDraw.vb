@@ -22,7 +22,7 @@ Partial Public Class MainWindow
         Dim xPanelHScroll As Integer = PanelHScroll(xIndex)
         Dim xPanelDisplacement As Integer = PanelVScroll(xIndex)
         Dim xVSR As Integer = -PanelVScroll(xIndex)
-        Dim xVSu As Integer = IIf(xVSR + xTHeight / gxHeight > VPosition1000(), VPosition1000(), xVSR + xTHeight / gxHeight)
+        Dim xVSu As Integer = IIf(xVSR + xTHeight / gxHeight > GetMaxVPosition(), GetMaxVPosition(), xVSR + xTHeight / gxHeight)
 
         'e1.Graphics.SmoothingMode = Drawing2D.SmoothingMode.AntiAlias
         Dim xI1 As Integer

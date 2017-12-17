@@ -25,7 +25,7 @@ Partial Public Class MainWindow
                 If My.Computer.Keyboard.CtrlKeyDown Then xVPosition = 1
 
                 'Ks cannot be beyond the upper boundary
-                Dim muVPosition As Double = VPosition1000() - 1
+                Dim muVPosition As Double = GetMaxVPosition() - 1
                 For xI1 = 1 To UBound(Notes)
                     If Notes(xI1).Selected Then
                         'K(xI1).VPosition = Math.Floor(K(xI1).VPosition / (192 / gDivide)) * 192 / gDivide
@@ -473,7 +473,7 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
 
             Dim xVPosition As Double = (xHeight - xVS * gxHeight - e.Y - 1) / gxHeight 'VPosition of the mouse
             If gSnap Then xVPosition = SnapToGrid(xVPosition)
-            If xVPosition < 0 Or xVPosition >= VPosition1000() Then Exit Sub
+            If xVPosition < 0 Or xVPosition >= GetMaxVPosition() Then Exit Sub
 
             Dim xColumn = GetColumnAtEvent(e, xHS)
 
@@ -1212,7 +1212,7 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
                                 End If
 
                                 If .VPosition < 0 Then .Length += .VPosition : .VPosition = 0
-                                If .VPosition + .Length >= VPosition1000() Then .Length = VPosition1000() - 1 - .VPosition
+                                If .VPosition + .Length >= GetMaxVPosition() Then .Length = GetMaxVPosition() - 1 - .VPosition
 
                                 If SelectedNotes(0).LNPair = -1 Then 'If new note
                                     Dim xUndo As UndoRedo.LinkedURCmd = Nothing

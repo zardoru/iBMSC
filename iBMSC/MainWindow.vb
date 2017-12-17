@@ -281,7 +281,7 @@ Public Class MainWindow
         Return xI1 - 1
     End Function
 
-    Private Function VPosition1000() As Double
+    Private Function GetMaxVPosition() As Double
         Return MeasureUpper(999)
     End Function
 
@@ -306,7 +306,7 @@ Public Class MainWindow
             Next
         End If
 
-        Dim xI2 As Integer = -CInt(IIf(GreatestVPosition + 2000 > VPosition1000(), VPosition1000, GreatestVPosition + 2000))
+        Dim xI2 As Integer = -CInt(IIf(GreatestVPosition + 2000 > GetMaxVPosition(), GetMaxVPosition, GreatestVPosition + 2000))
         MainPanelScroll.Minimum = xI2
         LeftPanelScroll.Minimum = xI2
         RightPanelScroll.Minimum = xI2
@@ -497,7 +497,7 @@ Public Class MainWindow
                Optional ByVal OverWrite As Boolean = True,
                Optional ByVal SortAndUpdatePairing As Boolean = True)
 
-        If note.VPosition < 0 Or note.VPosition >= VPosition1000() Then Exit Sub
+        If note.VPosition < 0 Or note.VPosition >= GetMaxVPosition() Then Exit Sub
 
         Dim xI1 As Integer = 1
 
@@ -552,7 +552,7 @@ Public Class MainWindow
                 If xStrLine(xI1).Trim = "" Then Continue For
                 xStrSub = Split(xStrLine(xI1), " ")
                 xTempVP = Val(xStrSub(1)) + MeasureBottom(MeasureAtDisplacement(-xVS) + 1)
-                If UBound(xStrSub) = 5 And xTempVP >= 0 And xTempVP < VPosition1000() Then
+                If UBound(xStrSub) = 5 And xTempVP >= 0 And xTempVP < GetMaxVPosition() Then
                     ReDim Preserve Notes(UBound(Notes) + 1)
                     With Notes(UBound(Notes))
                         .ColumnIndex = Val(xStrSub(0))
@@ -595,7 +595,7 @@ Public Class MainWindow
                 If xStrLine(xI1).Trim = "" Then Continue For
                 xStrSub = Split(xStrLine(xI1), " ")
                 xTempVP = Val(xStrSub(1)) + MeasureBottom(MeasureAtDisplacement(-xVS) + 1)
-                If UBound(xStrSub) = 5 And xTempVP >= 0 And xTempVP < VPosition1000() Then
+                If UBound(xStrSub) = 5 And xTempVP >= 0 And xTempVP < GetMaxVPosition() Then
                     ReDim Preserve Notes(UBound(Notes) + 1)
                     With Notes(UBound(Notes))
                         .ColumnIndex = Val(xStrSub(0))
@@ -645,9 +645,9 @@ Public Class MainWindow
 
                 Dim attribute = Mid(xStrLine(xI1), 4, 1)
 
-                If Len(xStrLine(xI1)) > 11 And ' Valid length
-                    lineCol > 0 And  ' Valid column 
-                    vPos >= 0 And vPos < VPosition1000() Then ' In range
+                Dim validCol = Len(xStrLine(xI1)) > 11 And lineCol > 0
+                Dim inRange = vPos >= 0 And vPos < GetMaxVPosition()
+                If validCol And inRange Then
                     ReDim Preserve Notes(UBound(Notes) + 1)
 
                     With Notes(UBound(Notes))
@@ -2292,9 +2292,9 @@ StartCount:     If Not NTInput Then
 
     Private Sub ValidateSelection()
         If vSelStart < 0 Then vSelLength += vSelStart : vSelHalf += vSelStart : vSelStart = 0
-        If vSelStart > VPosition1000() - 1 Then vSelLength += vSelStart - VPosition1000() + 1 : vSelHalf += vSelStart - VPosition1000() + 1 : vSelStart = VPosition1000() - 1
+        If vSelStart > GetMaxVPosition() - 1 Then vSelLength += vSelStart - GetMaxVPosition() + 1 : vSelHalf += vSelStart - GetMaxVPosition() + 1 : vSelStart = GetMaxVPosition() - 1
         If vSelStart + vSelLength < 0 Then vSelLength = -vSelStart
-        If vSelStart + vSelLength > VPosition1000() - 1 Then vSelLength = VPosition1000() - 1 - vSelStart
+        If vSelStart + vSelLength > GetMaxVPosition() - 1 Then vSelLength = GetMaxVPosition() - 1 - vSelStart
 
         If Math.Sign(vSelHalf) <> Math.Sign(vSelLength) Then vSelHalf = 0
         If Math.Abs(vSelHalf) > Math.Abs(vSelLength) Then vSelHalf = vSelLength
@@ -2313,7 +2313,7 @@ StartCount:     If Not NTInput Then
         Dim xVLower As Double = IIf(vSelLength > 0, vSelStart, vSelStart + vSelLength)
         Dim xVUpper As Double = IIf(vSelLength < 0, vSelStart, vSelStart + vSelLength)
         If xVLower < 0 Then xVLower = 0
-        If xVUpper >= VPosition1000() Then xVUpper = VPosition1000() - 1
+        If xVUpper >= GetMaxVPosition() Then xVUpper = GetMaxVPosition() - 1
 
         Dim xBPM As Integer = Notes(0).Value
         Dim xI1 As Integer
@@ -2464,7 +2464,7 @@ EndofSub:
         If dVPosition + xVHalf <= xVLower Or dVPosition + xVHalf >= xVUpper Then GoTo EndofSub
 
         If xVLower < 0 Then xVLower = 0
-        If xVUpper >= VPosition1000() Then xVUpper = VPosition1000() - 1
+        If xVUpper >= GetMaxVPosition() Then xVUpper = GetMaxVPosition() - 1
         If xVHalf > xVUpper Then xVHalf = xVUpper
         If xVHalf < xVLower Then xVHalf = xVLower
 
@@ -2681,7 +2681,7 @@ EndofSub:
         'If dVPosition + xVHalf <= xVLower Or dVPosition + xVHalf >= xVUpper Then GoTo EndofSub
 
         If xVLower < 0 Then xVLower = 0
-        If xVUpper >= VPosition1000() Then xVUpper = VPosition1000() - 1
+        If xVUpper >= GetMaxVPosition() Then xVUpper = GetMaxVPosition() - 1
         If xVHalf > xVUpper Then xVHalf = xVUpper
         If xVHalf < xVLower Then xVHalf = xVLower
 
@@ -3923,7 +3923,7 @@ Jump2:
                     Notes(xI1).Length += xdVP
 
                 ElseIf Notes(xI1).VPosition + Notes(xI1).Length >= xVP Then
-                    xdVP = IIf(Notes(xI1).VPosition + Notes(xI1).Length > MeasureBottom(999) - 1, VPosition1000() - 1 - Notes(xI1).VPosition - Notes(xI1).Length, xMLength)
+                    xdVP = IIf(Notes(xI1).VPosition + Notes(xI1).Length > MeasureBottom(999) - 1, GetMaxVPosition() - 1 - Notes(xI1).VPosition - Notes(xI1).Length, xMLength)
                     Me.RedoLongNoteModify(Notes(xI1), Notes(xI1).VPosition, Notes(xI1).Length + xdVP, xUndo, xRedo)
                     Notes(xI1).Length += xdVP
                 End If
@@ -4094,7 +4094,7 @@ Jump2:
     End Function
 
     Private Sub FSSS_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles FSSS.Click
-        Dim xMax As Double = IIf(vSelLength > 0, VPosition1000() - vSelLength, VPosition1000)
+        Dim xMax As Double = IIf(vSelLength > 0, GetMaxVPosition() - vSelLength, GetMaxVPosition)
         Dim xMin As Double = IIf(vSelLength < 0, -vSelLength, 0)
         Dim xDouble As Double = InputBoxDouble("Please enter a number between " & xMin & " and " & xMax & ".", xMin, xMax, , vSelStart)
         If xDouble = Double.PositiveInfinity Then Return
@@ -4106,7 +4106,7 @@ Jump2:
     End Sub
 
     Private Sub FSSL_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles FSSL.Click
-        Dim xMax As Double = VPosition1000() - vSelStart
+        Dim xMax As Double = GetMaxVPosition() - vSelStart
         Dim xMin As Double = -vSelStart
         Dim xDouble As Double = InputBoxDouble("Please enter a number between " & xMin & " and " & xMax & ".", xMin, xMax, , vSelLength)
         If xDouble = Double.PositiveInfinity Then Return
