@@ -212,85 +212,16 @@ Partial Public Class MainWindow
                 CGDisableVertical.Checked = Not CGDisableVertical.Checked
 
             Case Keys.NumPad0, Keys.D0
-                For xI2 As Integer = 1 To UBound(Notes)
-                    If Not Notes(xI2).Selected Then Continue For
+                MoveToBGM(xUndo, xRedo)
 
-                    With Notes(xI2)
-                        Dim xxCol As Integer = niB
-
-                        'TODO: optimize the for loops below
-                        If NTInput Then
-                            For xI0 As Integer = 1 To UBound(Notes)
-                                If Notes(xI0).ColumnIndex = xxCol AndAlso
-                                    Notes(xI0).VPosition <= Notes(xI2).VPosition + Notes(xI2).Length And Notes(xI0).VPosition + Notes(xI0).Length >= Notes(xI2).VPosition Then _
-                                    xxCol += 1 : xI0 = 1
-                                'If K(xI0).ColumnIndex = xxCol AndAlso _
-                                'IIf(K(xI0).Length > 0, _
-                                '    IIf(.Length = 0, _
-                                '        K(xI0).VPosition <= K(xI2).VPosition And K(xI0).VPosition + K(xI0).Length >= K(xI2).VPosition, _
-                                '        K(xI0).VPosition <= K(xI2).VPosition + K(xI2).Length And K(xI0).VPosition + K(xI0).Length >= K(xI2).VPosition), _
-                                '    IIf(.Length = 0, _
-                                '        K(xI0).VPosition = K(xI2).VPosition, _
-                                '        K(xI2).VPosition <= K(xI0).VPosition And K(xI2).VPosition + K(xI2).Length >= K(xI0).VPosition)) Then _
-                                'xxCol += 1 : xI0 = 1
-                                'If K(xI0).VPosition > K(xI2).VPosition + IIf(K(xI2).Length > 0.0#, K(xI2).Length, 0.0#) Then Exit For
-                            Next
-                        Else
-                            For xI0 As Integer = 1 To UBound(Notes)
-                                If Notes(xI0).ColumnIndex = xxCol AndAlso Notes(xI0).VPosition = Notes(xI2).VPosition Then _
-                                    xxCol += 1 : xI0 = 1
-                                'If K(xI0).VPosition > K(xI2).VPosition Then Exit For
-                            Next
-                        End If
-
-                        Me.RedoMoveNote(Notes(xI2), xxCol, .VPosition, xUndo, xRedo)
-                        .ColumnIndex = xxCol
-                    End With
-                Next
-                AddUndo(xUndo, xBaseRedo.Next)
-                UpdatePairing()
-                CalculateTotalPlayableNotes()
-                RefreshPanelAll()
-
-            Case Keys.Oem1, Keys.NumPad1, Keys.D1 : xTargetColumn = niA1 : GoTo MoveToColumn
-            Case Keys.Oem2, Keys.NumPad2, Keys.D2 : xTargetColumn = niA2 : GoTo MoveToColumn
-            Case Keys.Oem3, Keys.NumPad3, Keys.D3 : xTargetColumn = niA3 : GoTo MoveToColumn
-            Case Keys.Oem4, Keys.NumPad4, Keys.D4 : xTargetColumn = niA4 : GoTo MoveToColumn
-            Case Keys.Oem5, Keys.NumPad5, Keys.D5 : xTargetColumn = niA5 : GoTo MoveToColumn
-            Case Keys.Oem6, Keys.NumPad6, Keys.D6 : xTargetColumn = niA6 : GoTo MoveToColumn
-            Case Keys.Oem7, Keys.NumPad7, Keys.D7 : xTargetColumn = niA7 : GoTo MoveToColumn
-            Case Keys.Oem8, Keys.NumPad8, Keys.D8 : xTargetColumn = niA8 : GoTo MoveToColumn
-
-MoveToColumn:   If xTargetColumn = -1 Then Exit Select
-                If Not nEnabled(xTargetColumn) Then Exit Select
-                Dim bMoveAndDeselectFirstNote = My.Computer.Keyboard.ShiftKeyDown
-
-                For xI2 As Integer = 1 To UBound(Notes)
-                    If Not Notes(xI2).Selected Then Continue For
-
-                    RedoMoveNote(Notes(xI2), xTargetColumn, Notes(xI2).VPosition, xUndo, xRedo)
-                    Notes(xI2).ColumnIndex = xTargetColumn
-
-                    If bMoveAndDeselectFirstNote Then
-                        Notes(xI2).Selected = False
-                        PanelPreviewNoteIndex(xI2)
-
-                        ' az: Add selected notes to undo
-                        ' to preserve selection status
-                        For xI3 As Integer = 1 To UBound(Notes)
-                            If xI3 = xI2 Then Continue For
-                            If Notes(xI3).Selected Then
-                                RedoMoveNote(Notes(xI3), Notes(xI3).ColumnIndex, Notes(xI3).VPosition, xUndo, xRedo)
-                            End If
-                        Next
-
-                        Exit For
-                    End If
-                Next
-                AddUndo(xUndo, xBaseRedo.Next)
-                UpdatePairing()
-                CalculateTotalPlayableNotes()
-                RefreshPanelAll()
+            Case Keys.Oem1, Keys.NumPad1, Keys.D1 : MoveToColumn(niA1, xUndo, xRedo)
+            Case Keys.Oem2, Keys.NumPad2, Keys.D2 : MoveToColumn(niA2, xUndo, xRedo)
+            Case Keys.Oem3, Keys.NumPad3, Keys.D3 : MoveToColumn(niA3, xUndo, xRedo)
+            Case Keys.Oem4, Keys.NumPad4, Keys.D4 : MoveToColumn(niA4, xUndo, xRedo)
+            Case Keys.Oem5, Keys.NumPad5, Keys.D5 : MoveToColumn(niA5, xUndo, xRedo)
+            Case Keys.Oem6, Keys.NumPad6, Keys.D6 : MoveToColumn(niA6, xUndo, xRedo)
+            Case Keys.Oem7, Keys.NumPad7, Keys.D7 : MoveToColumn(niA7, xUndo, xRedo)
+            Case Keys.Oem8, Keys.NumPad8, Keys.D8 : MoveToColumn(niA8, xUndo, xRedo)
 
         End Select
 
@@ -309,6 +240,79 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
 
         PMainInMouseMove(sender)
         POStatusRefresh()
+    End Sub
+
+    Private Sub MoveToBGM(xUndo As UndoRedo.LinkedURCmd, xRedo As UndoRedo.LinkedURCmd)
+        Dim xBaseRedo As UndoRedo.LinkedURCmd = xRedo
+
+        For xI2 As Integer = 1 To UBound(Notes)
+            If Not Notes(xI2).Selected Then Continue For
+
+            With Notes(xI2)
+                Dim currentBGMColumn As Integer = niB
+
+                'TODO: optimize the for loops below
+                If NTInput Then
+                    For xI0 As Integer = 1 To UBound(Notes)
+                        Dim IntersectA = Notes(xI0).VPosition <= Notes(xI2).VPosition + Notes(xI2).Length
+                        Dim IntersectB = Notes(xI0).VPosition + Notes(xI0).Length >= Notes(xI2).VPosition
+                        If Notes(xI0).ColumnIndex = currentBGMColumn AndAlso IntersectA And IntersectB Then
+                            currentBGMColumn += 1 : xI0 = 1
+                        End If
+                    Next
+                Else
+                    For xI0 As Integer = 1 To UBound(Notes)
+                        If Notes(xI0).ColumnIndex = currentBGMColumn AndAlso Notes(xI0).VPosition = Notes(xI2).VPosition Then
+                            currentBGMColumn += 1 : xI0 = 1
+                        End If
+                    Next
+                End If
+
+                Me.RedoMoveNote(Notes(xI2), currentBGMColumn, .VPosition, xUndo, xRedo)
+                .ColumnIndex = currentBGMColumn
+            End With
+        Next
+        AddUndo(xUndo, xBaseRedo.Next)
+        UpdatePairing()
+        CalculateTotalPlayableNotes()
+        RefreshPanelAll()
+    End Sub
+
+    Private Sub MoveToColumn(xTargetColumn As Integer, xUndo As UndoRedo.LinkedURCmd, xRedo As UndoRedo.LinkedURCmd)
+        Dim xBaseRedo As UndoRedo.LinkedURCmd = xRedo
+        If xTargetColumn = -1 Then Return
+        If Not nEnabled(xTargetColumn) Then Return
+        Dim bMoveAndDeselectFirstNote = My.Computer.Keyboard.ShiftKeyDown
+
+        For xI2 As Integer = 1 To UBound(Notes)
+            If Not Notes(xI2).Selected Then Continue For
+
+            RedoMoveNote(Notes(xI2), xTargetColumn, Notes(xI2).VPosition, xUndo, xRedo)
+            Notes(xI2).ColumnIndex = xTargetColumn
+
+            If bMoveAndDeselectFirstNote Then
+                Notes(xI2).Selected = False
+                PanelPreviewNoteIndex(xI2)
+
+                ' az: Add selected notes to undo
+                ' to preserve selection status
+                ' this works because the note find
+                ' does not account for selection status
+                ' when checking equality! (equalsBMSE, equalsNT)
+                For xI3 As Integer = 1 To UBound(Notes)
+                    If xI3 = xI2 Then Continue For
+                    If Notes(xI3).Selected Then
+                        RedoMoveNote(Notes(xI3), Notes(xI3).ColumnIndex, Notes(xI3).VPosition, xUndo, xRedo)
+                    End If
+                Next
+
+                Exit For
+            End If
+        Next
+        AddUndo(xUndo, xBaseRedo.Next)
+        UpdatePairing()
+        CalculateTotalPlayableNotes()
+        RefreshPanelAll()
     End Sub
 
     Private Sub PMainInResize(ByVal sender As Object, ByVal e As System.EventArgs) Handles PMainIn.Resize, PMainInL.Resize, PMainInR.Resize
