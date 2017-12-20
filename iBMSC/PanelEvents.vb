@@ -274,6 +274,16 @@ MoveToColumn:   If xTargetColumn = -1 Then Exit Select
                     If bMoveAndDeselectFirstNote Then
                         Notes(xI2).Selected = False
                         PanelPreviewNoteIndex(xI2)
+
+                        ' az: Add selected notes to undo
+                        ' to preserve selection status
+                        For xI3 As Integer = 1 To UBound(Notes)
+                            If xI3 = xI2 Then Continue For
+                            If Notes(xI3).Selected Then
+                                RedoMoveNote(Notes(xI3), Notes(xI3).ColumnIndex, Notes(xI3).VPosition, xUndo, xRedo)
+                            End If
+                        Next
+
                         Exit For
                     End If
                 Next
