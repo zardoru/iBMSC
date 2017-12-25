@@ -82,7 +82,7 @@ Partial Public Class MainWindow
         End If
 
         Dim xText As String = C10to36(xValue \ 10000)
-        If isColumnNumeric(SelectedColumn) Then
+        If IsColumnNumeric(SelectedColumn) Then
             xText = GetColumn(SelectedColumn).Title
         End If
 
@@ -240,7 +240,7 @@ Partial Public Class MainWindow
                                                   Height - vo.kMFont.Height)
         Next
 
-        Dim vpos = IIf(gSnap, SnapToGrid(GetMouseVPosition()), GetMouseVPosition())
+        Dim vpos = GetMouseVPosition(gSnap)
         Dim mouseLineHeight = NoteRowToPanelHeight(vpos, xVS, xTHeight)
         Dim p = New Pen(Color.White)
         e1.Graphics.DrawLine(p, 0, mouseLineHeight, xTWidth, mouseLineHeight)
@@ -319,9 +319,9 @@ Partial Public Class MainWindow
 
     Private Sub DrawTimeSelection(e1 As BufferedGraphics, xTHeight As Integer, xTWidth As Integer, xHS As Integer, xVS As Integer)
         Dim xI1 As Integer
-        Dim xBPMStart As Integer = Notes(0).Value
-        Dim xBPMHalf As Integer = Notes(0).Value
-        Dim xBPMEnd As Integer = Notes(0).Value
+        Dim xBPMStart = Notes(0).Value
+        Dim xBPMHalf = Notes(0).Value
+        Dim xBPMEnd = Notes(0).Value
 
         For xI1 = 1 To UBound(Notes)
             If Notes(xI1).ColumnIndex = niBPM Then
@@ -527,7 +527,7 @@ Partial Public Class MainWindow
                                  vo.kHeight)
 
         ' Label
-        e.Graphics.DrawString(IIf(isColumnNumeric(sNote.ColumnIndex), sNote.Value / 10000, xLabel),
+        e.Graphics.DrawString(IIf(IsColumnNumeric(sNote.ColumnIndex), sNote.Value / 10000, xLabel),
                               vo.kFont, xBrush2,
                               HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS) + vo.kLabelHShift,
                               NoteRowToPanelHeight(sNote.VPosition, xVS, xHeight) - vo.kHeight + vo.kLabelVShift)
@@ -637,7 +637,7 @@ Partial Public Class MainWindow
                                             GetColumnWidth(sNote.ColumnIndex) * gxWidth - 3, CInt(sNote.Length * gxHeight) + vo.kHeight)
 
         ' Note B36
-        e.Graphics.DrawString(IIf(isColumnNumeric(sNote.ColumnIndex), sNote.Value / 10000, xLabel),
+        e.Graphics.DrawString(IIf(IsColumnNumeric(sNote.ColumnIndex), sNote.Value / 10000, xLabel),
                               vo.kFont, xBrush2,
                               HorizontalPositiontoDisplay(nLeft(sNote.ColumnIndex), xHS) + vo.kLabelHShiftL - 2,
                               NoteRowToPanelHeight(sNote.VPosition, xVS, xHeight) - vo.kHeight + vo.kLabelVShift)

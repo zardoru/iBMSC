@@ -117,7 +117,7 @@ Partial Public Class MainWindow
         'If iCol < niB Then Return col(iCol).Enabled And col(iCol).Visible Else Return col(niB).Enabled And col(niB).Visible
         If iCol < niB Then Return column(iCol).isEnabledAfterAll Else Return column(niB).isEnabledAfterAll
     End Function
-    Private Function isColumnNumeric(ByVal iCol As Integer) As Boolean
+    Private Function IsColumnNumeric(ByVal iCol As Integer) As Boolean
         If iCol < niB Then Return column(iCol).isNumeric Else Return column(niB).isNumeric
     End Function
 

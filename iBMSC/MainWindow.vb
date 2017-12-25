@@ -1149,7 +1149,7 @@ Public Class MainWindow
                         If Notes(j).ColumnIndex = Notes(i).ColumnIndex Then Notes(j).HasError = True
                     Next
 
-                    If Notes(i).Value \ 10000 = LnObj AndAlso Not isColumnNumeric(Notes(i).ColumnIndex) Then
+                    If Notes(i).Value \ 10000 = LnObj AndAlso Not IsColumnNumeric(Notes(i).ColumnIndex) Then
                         For j = i - 1 To 1 Step -1
                             If Notes(j).ColumnIndex <> Notes(i).ColumnIndex Then Continue For
                             If Notes(j).Hidden Then Continue For
@@ -1212,7 +1212,7 @@ Public Class MainWindow
 EndSearch:
 
                 ElseIf Notes(i).Value \ 10000 = LnObj And
-                    Not isColumnNumeric(Notes(i).ColumnIndex) Then
+                    Not IsColumnNumeric(Notes(i).ColumnIndex) Then
                     'LnObj: Match anything below.
                     '           If matching a LongNote not matching back, then error on below.
                     '           If overlapping a note, then error.
@@ -1824,7 +1824,7 @@ EndSearch:
         PMainInMouseMove(spMain(PanelFocus), xMEArgs)
     End Sub
 
-    Private Sub validate_LWAV_view()
+    Private Sub ValidateWavListView()
         Try
             Dim xRect As Rectangle = LWAV.GetItemRectangle(LWAV.SelectedIndex)
             If xRect.Top + xRect.Height > LWAV.DisplayRectangle.Height Then SendMessage(LWAV.Handle, &H115, 1, 0)
@@ -2135,10 +2135,15 @@ StartCount:     If Not NTInput Then
         TBStatistics.Text = xIAll
     End Sub
 
-    Public Function GetMouseVPosition()
+    Public Function GetMouseVPosition(Optional snap As Boolean = True)
         Dim panHeight = spMain(PanelFocus).Height
         Dim panDisplacement = PanelVScroll(PanelFocus)
-        Return (panHeight - panDisplacement * gxHeight - MouseMoveStatus.Y - 1) / gxHeight 'VPosition of the mouse
+        Dim vpos = (panHeight - panDisplacement * gxHeight - MouseMoveStatus.Y - 1) / gxHeight
+        If snap Then
+            Return SnapToGrid(vpos)
+        Else
+            Return vpos
+        End If
     End Function
 
     Private Sub POStatusRefresh()
@@ -2147,8 +2152,7 @@ StartCount:     If Not NTInput Then
             Dim xI1 As Integer = KMouseOver
             If xI1 < 0 Then
 
-                TempVPosition = GetMouseVPosition()
-                If gSnap Then TempVPosition = SnapToGrid(TempVPosition)
+                TempVPosition = GetMouseVPosition(gSnap)
 
                 SelectedColumn = GetColumnAtX(MouseMoveStatus.X, PanelHScroll(PanelFocus))
 
@@ -2179,7 +2183,7 @@ StartCount:     If Not NTInput Then
                 FSP3.Text = CInt(xVposMod / xGCD).ToString & " / " & CInt(xMLength / xGCD).ToString & "  "
                 FSP4.Text = Notes(xI1).VPosition.ToString() & "  "
                 FSC.Text = nTitle(Notes(xI1).ColumnIndex)
-                FSW.Text = IIf(isColumnNumeric(Notes(xI1).ColumnIndex),
+                FSW.Text = IIf(IsColumnNumeric(Notes(xI1).ColumnIndex),
                                Notes(xI1).Value / 10000,
                                C10to36(Notes(xI1).Value \ 10000))
                 FSM.Text = Add3Zeros(xMeasure)
@@ -2630,12 +2634,12 @@ EndofSub:
         End If
 
         'Check BPM Overflow
-        For xI3 = 1 To UBound(Notes)
-            If Notes(xI3).ColumnIndex = niBPM Then
-                If Notes(xI3).Value > 655359999 Then Notes(xI3).Value = 655359999
-                If Notes(xI3).Value < 1 Then Notes(xI3).Value = 1
-            End If
-        Next
+        'For xI3 = 1 To UBound(Notes)
+        '    If Notes(xI3).ColumnIndex = niBPM Then
+        '        If Notes(xI3).Value > 655359999 Then Notes(xI3).Value = 655359999
+        '        If Notes(xI3).Value < 1 Then Notes(xI3).Value = 1
+        '    End If
+        'Next
 
         'Restore selection
         'If vSelLength < 0 Then vSelStart += (xRatio - 1) * (xVUpper - xVLower)
@@ -2685,7 +2689,7 @@ EndofSub:
         If xVHalf > xVUpper Then xVHalf = xVUpper
         If xVHalf < xVLower Then xVHalf = xVLower
 
-        Dim xBPM As Integer = Notes(0).Value
+        Dim xBPM = Notes(0).Value
         Dim xI1 As Integer
         Dim xI2 As Integer
         Dim xI3 As Integer
@@ -2699,7 +2703,7 @@ EndofSub:
         Next
         xI2 = xI1
         Dim xVPos() As Double = {xVLower}
-        Dim xVal() As Integer = {xBPM}
+        Dim xVal() = {xBPM}
 
         'Within Selection
         Dim xU As Integer = 0
@@ -2724,23 +2728,22 @@ EndofSub:
         xConstBPM = (xVUpper - xVLower) / xConstBPM
 
         'Compare BPM        '(xVHalf - xVLower) / xValue + (xVUpper - xVHalf) / xResult = (xVUpper - xVLower) / xConstBPM
-        If (xVUpper - xVLower) / xConstBPM < (xVHalf - xVLower) / xValue Then _
-            MsgBox("Please enter a value that is at least " & ((xVHalf - xVLower) * xConstBPM / (xVUpper - xVLower) / 10000) & ".", MsgBoxStyle.Critical, Strings.Messages.Err) : Return
-        Dim xResult As Integer
-        Dim xTempDivider As Double = xConstBPM * xVHalf - xConstBPM * xVLower - xValue * xVUpper + xValue * xVLower
-        Dim xTemp001 As Double = (xVHalf - xVUpper) * xValue * xConstBPM / xTempDivider
+        If (xVUpper - xVLower) / xConstBPM <= (xVHalf - xVLower) / xValue Then
+            Dim Limit = ((xVHalf - xVLower) * xConstBPM / (xVUpper - xVLower) / 10000)
+            MsgBox("Please enter a value that is greater than " & Limit & ".", MsgBoxStyle.Critical, Strings.Messages.Err)
+            Return
+        End If
+        Dim xTempDivider As Double = xConstBPM * (xVHalf - xVLower) - xValue * (xVUpper - xVLower)
 
-        xResult = (xVHalf - xVUpper) * xValue * xConstBPM / xTempDivider
+        ' az: I want to allow negative values, maybe...
+        If xTempDivider = 0 Then
+            Return ' nullop this
+        End If
 
-        'Save undo
-        'For xI3 = 1 To UBound(K)
-        ' K(xI3).Selected = True
-        ' Next
-        ' xUndo = "KZ" & vbCrLf & _
-        '         sCmdKs(False) & vbCrLf & _
-        '         "SA_" & vSelStart & "_" & vSelLength & "_" & vSelHalf & "_1"
+        ' apply div. by 10k to nullify mult. caused by divider being divided by 10k
+        Dim xResult = (xVHalf - xVUpper) * xValue / xTempDivider * xConstBPM ' order here is important to avoid an overflow
 
-        Me.RedoRemoveNoteAll(False, xUndo, xRedo)
+        RedoRemoveNoteAll(False, xUndo, xRedo)
 
         'Adjust note
         If Not NTInput Then
@@ -3592,10 +3595,10 @@ EndOfAdjustment:
         Dim xI1 As Integer
 
         For xI1 = 1 To UBound(Notes)
-            If Notes(xI1).Selected AndAlso isColumnNumeric(Notes(xI1).ColumnIndex) Then xNum = True : Exit For
+            If Notes(xI1).Selected AndAlso IsColumnNumeric(Notes(xI1).ColumnIndex) Then xNum = True : Exit For
         Next
         For xI1 = 1 To UBound(Notes)
-            If Notes(xI1).Selected AndAlso Not isColumnNumeric(Notes(xI1).ColumnIndex) Then xLbl = True : Exit For
+            If Notes(xI1).Selected AndAlso Not IsColumnNumeric(Notes(xI1).ColumnIndex) Then xLbl = True : Exit For
         Next
         If Not (xNum Or xLbl) Then Exit Sub
 
@@ -3609,7 +3612,7 @@ EndOfAdjustment:
                 Dim xBaseRedo As UndoRedo.LinkedURCmd = xRedo
 
                 For xI1 = 1 To UBound(Notes)
-                    If Not isColumnNumeric(Notes(xI1).ColumnIndex) Then Continue For
+                    If Not IsColumnNumeric(Notes(xI1).ColumnIndex) Then Continue For
                     If Not Notes(xI1).Selected Then Continue For
 
                     Me.RedoRelabelNote(Notes(xI1), xD1, xUndo, xRedo)
@@ -3639,7 +3642,7 @@ EndOfAdjustment:
             Dim xBaseRedo As UndoRedo.LinkedURCmd = xRedo
 
             For xI1 = 1 To UBound(Notes)
-                If isColumnNumeric(Notes(xI1).ColumnIndex) Then Continue For
+                If IsColumnNumeric(Notes(xI1).ColumnIndex) Then Continue For
                 If Not Notes(xI1).Selected Then Continue For
 
                 Me.RedoRelabelNote(Notes(xI1), xVal, xUndo, xRedo)
@@ -3668,7 +3671,7 @@ Jump2:
 
     Private Function fdrCheck(ByVal xNote As Note) As Boolean
         Return xNote.VPosition >= MeasureBottom(fdriMesL) And xNote.VPosition < MeasureBottom(fdriMesU) + MeasureLength(fdriMesU) AndAlso
-               IIf(isColumnNumeric(xNote.ColumnIndex),
+               IIf(IsColumnNumeric(xNote.ColumnIndex),
                    xNote.Value >= fdriValL And xNote.Value <= fdriValU,
                    xNote.Value >= fdriLblL And xNote.Value <= fdriLblU) AndAlso
                Array.IndexOf(fdriCol, xNote.ColumnIndex) <> -1
@@ -3836,7 +3839,7 @@ Jump2:
         'Main process
         For xI1 As Integer = 1 To UBound(Notes)
             If ((xbSel And Notes(xI1).Selected) Or (xbUnsel And Not Notes(xI1).Selected)) AndAlso
-                    fdrCheck(Notes(xI1)) AndAlso nEnabled(Notes(xI1).ColumnIndex) And Not isColumnNumeric(Notes(xI1).ColumnIndex) AndAlso fdrRangeS(xbShort, xbLong, IIf(NTInput, Notes(xI1).Length, Notes(xI1).LongNote)) And fdrRangeS(xbVisible, xbHidden, Notes(xI1).Hidden) Then
+                    fdrCheck(Notes(xI1)) AndAlso nEnabled(Notes(xI1).ColumnIndex) And Not IsColumnNumeric(Notes(xI1).ColumnIndex) AndAlso fdrRangeS(xbShort, xbLong, IIf(NTInput, Notes(xI1).Length, Notes(xI1).LongNote)) And fdrRangeS(xbVisible, xbHidden, Notes(xI1).Hidden) Then
                 'xUndo &= sCmdKC(K(xI1).ColumnIndex, K(xI1).VPosition, xxLbl, IIf(NTInput, K(xI1).Length, K(xI1).LongNote), K(xI1).Hidden, 0, 0, K(xI1).Value, IIf(NTInput, K(xI1).Length, K(xI1).LongNote), K(xI1).Hidden, True) & vbCrLf
                 'xRedo &= sCmdKC(K(xI1).ColumnIndex, K(xI1).VPosition, K(xI1).Value, IIf(NTInput, K(xI1).Length, K(xI1).LongNote), K(xI1).Hidden, 0, 0, xxLbl, IIf(NTInput, K(xI1).Length, K(xI1).LongNote), K(xI1).Hidden, True) & vbCrLf
                 Me.RedoRelabelNote(Notes(xI1), xxLbl, xUndo, xRedo)
@@ -3877,7 +3880,7 @@ Jump2:
         'Main process
         For xI1 As Integer = 1 To UBound(Notes)
             If ((xbSel And Notes(xI1).Selected) Or (xbUnsel And Not Notes(xI1).Selected)) AndAlso
-                    fdrCheck(Notes(xI1)) AndAlso nEnabled(Notes(xI1).ColumnIndex) And isColumnNumeric(Notes(xI1).ColumnIndex) AndAlso fdrRangeS(xbShort, xbLong, IIf(NTInput, Notes(xI1).Length, Notes(xI1).LongNote)) And fdrRangeS(xbVisible, xbHidden, Notes(xI1).Hidden) Then
+                    fdrCheck(Notes(xI1)) AndAlso nEnabled(Notes(xI1).ColumnIndex) And IsColumnNumeric(Notes(xI1).ColumnIndex) AndAlso fdrRangeS(xbShort, xbLong, IIf(NTInput, Notes(xI1).Length, Notes(xI1).LongNote)) And fdrRangeS(xbVisible, xbHidden, Notes(xI1).Hidden) Then
                 'xUndo &= sCmdKC(K(xI1).ColumnIndex, K(xI1).VPosition, xReplaceVal, IIf(NTInput, K(xI1).Length, K(xI1).LongNote), K(xI1).Hidden, 0, 0, K(xI1).Value, IIf(NTInput, K(xI1).Length, K(xI1).LongNote), K(xI1).Hidden, True) & vbCrLf
                 'xRedo &= sCmdKC(K(xI1).ColumnIndex, K(xI1).VPosition, K(xI1).Value, IIf(NTInput, K(xI1).Length, K(xI1).LongNote), K(xI1).Hidden, 0, 0, xReplaceVal, IIf(NTInput, K(xI1).Length, K(xI1).LongNote), K(xI1).Hidden, True) & vbCrLf
                 Me.RedoRelabelNote(Notes(xI1), xReplaceVal, xUndo, xRedo)
@@ -4196,7 +4199,7 @@ Jump2:
                 Dim xL1 As String = C10to36(xI1)
                 Dim xL2 As String = C10to36(xI1 + 1)
                 For xI2 As Integer = 1 To UBound(Notes)
-                    If isColumnNumeric(Notes(xI2).ColumnIndex) Then Continue For
+                    If IsColumnNumeric(Notes(xI2).ColumnIndex) Then Continue For
 
                     If C10to36(Notes(xI2).Value \ 10000) = xL1 Then
                         Me.RedoRelabelNote(Notes(xI2), xI1 * 10000 + 10000, xUndo, xRedo)
@@ -4255,7 +4258,7 @@ Jump2:
                 Dim xL1 As String = C10to36(xI1 + 2)
                 Dim xL2 As String = C10to36(xI1 + 1)
                 For xI2 As Integer = 1 To UBound(Notes)
-                    If isColumnNumeric(Notes(xI2).ColumnIndex) Then Continue For
+                    If IsColumnNumeric(Notes(xI2).ColumnIndex) Then Continue For
 
                     If C10to36(Notes(xI2).Value \ 10000) = xL1 Then
                         Me.RedoRelabelNote(Notes(xI2), xI1 * 10000 + 10000, xUndo, xRedo)
