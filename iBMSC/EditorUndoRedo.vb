@@ -16,6 +16,10 @@ Partial Public Class MainWindow
 
                     ReDim Preserve Notes(UBound(Notes) + 1)
                     Notes(UBound(Notes)) = xCmd.note
+
+                    If TBWavIncrease.Checked Then
+                        IncreaseCurrentWav()
+                    End If
                 Case UndoRedo.opRemoveNote
                     Dim xCmd As UndoRedo.RemoveNote = sCmd
                     Dim xI2 As Integer = FindNoteIndex(xCmd.note)
@@ -25,6 +29,10 @@ Partial Public Class MainWindow
                             Notes(xI3 - 1) = Notes(xI3)
                         Next
                         ReDim Preserve Notes(UBound(Notes) - 1)
+                    End If
+
+                    If TBWavIncrease.Checked Then
+                        DecreaseCurrentWav()
                     End If
 
                 Case UndoRedo.opChangeNote
@@ -125,6 +133,9 @@ Partial Public Class MainWindow
                     If xCmd.AutoConvert Then
                         If NTInput Then ConvertBMSE2NT() Else ConvertNT2BMSE()
                     End If
+                Case UndoRedo.opWavAutoincFlag
+                    Dim xcmd As UndoRedo.WavAutoincFlag = sCmd
+                    TBWavIncrease.Checked = xcmd.Checked
 
                 Case UndoRedo.opVoid
 
@@ -187,7 +198,8 @@ Partial Public Class MainWindow
 
     Private Sub RedoAddNote(ByVal note As Note,
                             ByRef BaseUndo As UndoRedo.LinkedURCmd,
-                            ByRef BaseRedo As UndoRedo.LinkedURCmd)
+                            ByRef BaseRedo As UndoRedo.LinkedURCmd,
+                            Optional autoinc As Boolean = False)
         Dim xUndo As New UndoRedo.RemoveNote(note)
         Dim xRedo As New UndoRedo.AddNote(note)
         xUndo.Next = BaseUndo
@@ -259,12 +271,11 @@ Partial Public Class MainWindow
         For xI1 As Integer = 1 To UBound(Notes)
             If Not Notes(xI1).Selected Then Continue For
             Dim xUndo As New UndoRedo.AddNote(Notes(xI1))
-                Dim xRedo As New UndoRedo.RemoveNote(Notes(xI1))
-                xUndo.Next = BaseUndo
-                BaseUndo = xUndo
-                If BaseRedo IsNot Nothing Then BaseRedo.Next = xRedo
-                BaseRedo = xRedo
-
+            Dim xRedo As New UndoRedo.RemoveNote(Notes(xI1))
+            xUndo.Next = BaseUndo
+            BaseUndo = xUndo
+            If BaseRedo IsNot Nothing Then BaseRedo.Next = xRedo
+            BaseRedo = xRedo
         Next
     End Sub
 
@@ -393,12 +404,21 @@ Partial Public Class MainWindow
     '    BaseRedo = xRedo
     'End Sub
 
-    Private Sub RedoNT(ByVal becomeNT As Boolean, ByVal autoConvert As Boolean, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
+    Private Sub RedoNT(becomeNT As Boolean, autoConvert As Boolean, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
         Dim xUndo As New UndoRedo.NT(Not becomeNT, autoConvert)
         Dim xRedo As New UndoRedo.NT(becomeNT, autoConvert)
         xUndo.Next = BaseUndo
         BaseUndo = xUndo
         If BaseRedo IsNot Nothing Then BaseRedo.Next = xRedo
+        BaseRedo = xRedo
+    End Sub
+
+    Private Sub RedoWavIncrease(wavinc As Boolean, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
+        Dim xUndo As New UndoRedo.WavAutoincFlag(Not wavinc)
+        Dim xRedo As New UndoRedo.WavAutoincFlag(wavinc)
+        xUndo.Next = BaseUndo
+        BaseUndo = xUndo
+        If BaseUndo IsNot Nothing Then BaseRedo.Next = xRedo
         BaseRedo = xRedo
     End Sub
 End Class

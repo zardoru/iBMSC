@@ -14,6 +14,8 @@ Public Class UndoRedo
     Public Const opChangeTimeSelection As Byte = 17
     Public Const opNT As Byte = 18
     'Public Const opChangeVisibleColumns As Byte = 19
+    Public Const opWavAutoincFlag As Byte = 20
+
     Public Const opNoOperation As Byte = 255
 
     Private Const trueByte As Byte = 1
@@ -48,6 +50,7 @@ Public Class UndoRedo
             Case opChangeTimeSelection : Return New ChangeTimeSelection(b)
             Case opNT : Return New NT(b)
                 'Case opChangeVisibleColumns : Return New ChangeVisibleColumns(b)
+            Case opWavAutoincFlag : Return New WavAutoincFlag(b)
             Case opNoOperation : Return New NoOperation(b)
             Case Else : Return Nothing
         End Select
@@ -423,6 +426,28 @@ Public Class UndoRedo
             Return opNT
         End Function
     End Class
+
+    Public Class WavAutoincFlag : Inherits LinkedURCmd
+        Public Checked As Boolean = False
+
+        Public Sub New(ByVal _checked As Boolean)
+            Checked = _checked
+        End Sub
+        Public Overrides Function toBytes() As Byte()
+            toBytes = New Byte() {opWavAutoincFlag,
+                                  IIf(Checked, trueByte, falseByte)}
+        End Function
+
+        Public Sub New(ByVal b() As Byte)
+            Checked = CBool(b(1))
+        End Sub
+
+        Public Overrides Function ofType() As Byte
+            Return opWavAutoincFlag
+        End Function
+
+    End Class
+
 
 
 

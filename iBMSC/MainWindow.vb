@@ -523,12 +523,19 @@ Public Class MainWindow
     Private Sub RemoveNote(ByVal I As Integer, Optional ByVal SortAndUpdatePairing As Boolean = True)
         KMouseOver = -1
         Dim xI2 As Integer
+
+        If TBWavIncrease.Checked Then
+            If Notes(I).Value = LWAV.SelectedIndex * 10000 Then
+                DecreaseCurrentWav()
+            End If
+        End If
+
         For xI2 = I + 1 To UBound(Notes)
             Notes(xI2 - 1) = Notes(xI2)
         Next
         ReDim Preserve Notes(UBound(Notes) - 1)
         If SortAndUpdatePairing Then SortByVPositionInsertion() : UpdatePairing()
-        'CalculateTotalNotes()
+
     End Sub
 
     Private Sub AddNotesFromClipboard(Optional ByVal xSelected As Boolean = True, Optional ByVal SortAndUpdatePairing As Boolean = True)
@@ -3042,7 +3049,7 @@ EndOfAdjustment:
 
 
 
-    Private Sub TBAbout_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TBAbout.Click
+    Private Sub TBAbout_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
         Dim Aboutboxx1 As New AboutBox1()
         'If My.Computer.FileSystem.FileExists(My.Application.Info.DirectoryPath & "\About.png") Then
         Aboutboxx1.bBitmap = My.Resources.About0
@@ -3266,6 +3273,16 @@ EndOfAdjustment:
         SortByVPositionInsertion()
         UpdatePairing()
         CalculateTotalPlayableNotes()
+    End Sub
+
+    Private Sub TBWavIncrease_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TBWavIncrease.Click
+        Dim xUndo As UndoRedo.LinkedURCmd = Nothing
+        Dim xRedo As UndoRedo.LinkedURCmd = New UndoRedo.Void
+        Dim xBaseRedo As UndoRedo.LinkedURCmd = xRedo
+
+        TBWavIncrease.Checked = Not sender.Checked
+        Me.RedoWavIncrease(TBWavIncrease.Checked, xUndo, xRedo)
+        AddUndo(xUndo, xBaseRedo.Next)
     End Sub
 
     Private Sub TBNTInput_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TBNTInput.Click, mnNTInput.Click
@@ -4402,15 +4419,15 @@ Jump2:
         Next
     End Sub
 
-    Private Sub ttlIcon_MouseDown(ByVal sender As Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles ttlIcon.MouseDown
-        ttlIcon.Image = My.Resources.icon2_16
+    Private Sub ttlIcon_MouseDown(ByVal sender As Object, ByVal e As System.Windows.Forms.MouseEventArgs)
+        'ttlIcon.Image = My.Resources.icon2_16
         'mnSys.Show(ttlIcon, 0, ttlIcon.Height)
     End Sub
-    Private Sub ttlIcon_MouseEnter(ByVal sender As Object, ByVal e As System.EventArgs) Handles ttlIcon.MouseEnter
-        ttlIcon.Image = My.Resources.icon2_16_highlight
+    Private Sub ttlIcon_MouseEnter(ByVal sender As Object, ByVal e As System.EventArgs)
+        'ttlIcon.Image = My.Resources.icon2_16_highlight
     End Sub
-    Private Sub ttlIcon_MouseLeave(ByVal sender As Object, ByVal e As System.EventArgs) Handles ttlIcon.MouseLeave
-        ttlIcon.Image = My.Resources.icon2_16
+    Private Sub ttlIcon_MouseLeave(ByVal sender As Object, ByVal e As System.EventArgs)
+        'ttlIcon.Image = My.Resources.icon2_16
     End Sub
 
     Private Sub mnSMenu_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnSMenu.CheckedChanged

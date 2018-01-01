@@ -178,25 +178,9 @@ Partial Public Class MainWindow
                 End With
 
             Case Keys.Add
-                If LWAV.SelectedIndex = -1 Then
-                    LWAV.SelectedIndex = 0
-                Else
-                    Dim newIndex As Integer = LWAV.SelectedIndex + 1
-                    If newIndex > LWAV.Items.Count - 1 Then newIndex = LWAV.Items.Count - 1
-                    LWAV.SelectedIndices.Clear()
-                    LWAV.SelectedIndex = newIndex
-                    ValidateWavListView()
-                End If
-
+                IncreaseCurrentWav()
             Case Keys.Subtract
-                If LWAV.SelectedIndex = -1 Then
-                    LWAV.SelectedIndex = 0
-                Else
-                    Dim newIndex As Integer = LWAV.SelectedIndex - 1
-                    If newIndex < 0 Then newIndex = 0
-                    LWAV.SelectedIndices.Clear()
-                    LWAV.SelectedIndex = newIndex
-                End If
+                DecreaseCurrentWav()
 
             Case Keys.G
                 'az: don't trigger when we use Go To Measure
@@ -240,6 +224,29 @@ Partial Public Class MainWindow
 
         PMainInMouseMove(sender)
         POStatusRefresh()
+    End Sub
+
+    Private Sub DecreaseCurrentWav()
+        If LWAV.SelectedIndex = -1 Then
+            LWAV.SelectedIndex = 0
+        Else
+            Dim newIndex As Integer = LWAV.SelectedIndex - 1
+            If newIndex < 0 Then newIndex = 0
+            LWAV.SelectedIndices.Clear()
+            LWAV.SelectedIndex = newIndex
+        End If
+    End Sub
+
+    Private Sub IncreaseCurrentWav()
+        If LWAV.SelectedIndex = -1 Then
+            LWAV.SelectedIndex = 0
+        Else
+            Dim newIndex As Integer = LWAV.SelectedIndex + 1
+            If newIndex > LWAV.Items.Count - 1 Then newIndex = LWAV.Items.Count - 1
+            LWAV.SelectedIndices.Clear()
+            LWAV.SelectedIndex = newIndex
+            ValidateWavListView()
+        End If
     End Sub
 
     Private Sub MoveToBGM(xUndo As UndoRedo.LinkedURCmd, xRedo As UndoRedo.LinkedURCmd)
@@ -568,6 +575,10 @@ Partial Public Class MainWindow
                 SelectedNotes(0) = Notes(UBound(Notes))
                 SelectedNotes(0).LNPair = -1
 
+                If TBWavIncrease.Checked Then
+                    IncreaseCurrentWav()
+                End If
+
                 'KMouseDown = 1
 
                 'uNote.Value = 0
@@ -576,7 +587,7 @@ Partial Public Class MainWindow
 
                 Dim xUndo As UndoRedo.LinkedURCmd = Nothing
                 Dim xRedo As UndoRedo.LinkedURCmd = Nothing
-                RedoAddNote(Notes(UBound(Notes)), xUndo, xRedo)
+                RedoAddNote(Notes(UBound(Notes)), xUndo, xRedo, TBWavIncrease.Checked)
                 AddUndo(xUndo, xRedo)
             End If
 
@@ -1058,7 +1069,7 @@ Partial Public Class MainWindow
         Dim xITemp As Integer = -1
         If Notes IsNot Nothing Then
             For xI1 = UBound(Notes) To 0 Step -1 ' az: MouseInNote implied, but I'm not sure yet
-                If MouseInNote(e, xhs, xvs, xheight, Notes(xI1)) Then
+                If MouseInNote(e, xHS, xvs, xHeight, Notes(xI1)) Then
                     xITemp = xI1
                     Exit For
                 End If

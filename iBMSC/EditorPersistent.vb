@@ -726,7 +726,7 @@ EndOfSub:
                 XMLLoadLocale(eToolBar.Item("GeneralOptions"), TBGOptions.Text)
                 XMLLoadLocale(eToolBar.Item("Language"), TBLanguage.Text)
                 XMLLoadLocale(eToolBar.Item("Theme"), TBTheme.Text)
-                XMLLoadLocale(eToolBar.Item("About"), TBAbout.Text)
+                ' XMLLoadLocale(eToolBar.Item("About"), TBAbout.Text)
             End If
 
             Dim eStatusBar As XmlElement = Root.Item("StatusBar")
@@ -755,9 +755,9 @@ EndOfSub:
 
                 Dim eShowHide As XmlElement = eSubMenu.Item("ShowHide")
                 If eShowHide IsNot Nothing Then
-                    Dim xToolTip As String = ToolTipUniversal.GetToolTip(ttlIcon)
-                    XMLLoadLocaleMenu(eShowHide.Item("ToolTip"), xToolTip)
-                    ToolTipUniversal.SetToolTip(ttlIcon, xToolTip)
+                    'Dim xToolTip As String = ToolTipUniversal.GetToolTip(ttlIcon)
+                    'XMLLoadLocaleMenu(eShowHide.Item("ToolTip"), xToolTip)
+                    'ToolTipUniversal.SetToolTip(ttlIcon, xToolTip)
 
                     XMLLoadLocaleMenu(eShowHide.Item("Menu"), mnSMenu.Text)
                     XMLLoadLocaleMenu(eShowHide.Item("ToolBar"), mnSTB.Text)
