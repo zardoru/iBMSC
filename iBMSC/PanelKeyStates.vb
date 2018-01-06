@@ -13,4 +13,8 @@
         Return My.Computer.Keyboard.CtrlKeyDown And
                My.Computer.Keyboard.ShiftKeyDown
     End Function
+
+    Public Function ModifierMultiselectActive() As Boolean
+        Return My.Computer.Keyboard.ShiftKeyDown And My.Computer.Keyboard.CtrlKeyDown
+    End Function
 End Module

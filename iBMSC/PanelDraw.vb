@@ -265,56 +265,84 @@ Partial Public Class MainWindow
         Loop
     End Sub
 
+    Private Function IsNoteVisible(note As Note, xTHeight As Integer, xVS As Integer) As Boolean
+        Dim xUpperBorder As Single = Math.Abs(xVS) + xTHeight / gxHeight
+        Dim xLowerBorder As Single = Math.Abs(xVS) - vo.kHeight / gxHeight
+
+        Dim AboveLower = note.VPosition >= xLowerBorder
+        Dim HeadBelow = note.VPosition <= xLowerBorder
+        Dim TailAbove = note.VPosition + note.Length >= xLowerBorder
+        Dim IntersectsNT = HeadBelow And TailAbove
+        Dim Intersecs = (note.VPosition <= xLowerBorder And Notes(note.LNPair).VPosition >= xLowerBorder)
+        Dim AboveUpper = note.VPosition > xUpperBorder
+
+        Dim NoteInside = (Not AboveUpper) And AboveLower
+
+        Return NoteInside OrElse IntersectsNT OrElse IntersectsNT
+    End Function
+
+    Private Function IsNoteVisible(noteindex As Integer, xTHeight As Integer, xVS As Integer) As Boolean
+        Return IsNoteVisible(Notes(noteindex), xTHeight, xVS)
+    End Function
+
     Private Sub DrawNotes(e1 As BufferedGraphics, xTHeight As Integer, xHS As Integer, xVS As Integer)
         Dim xI1 As Integer
         Dim xUpperBorder As Single = Math.Abs(xVS) + xTHeight / gxHeight
         Dim xLowerBorder As Single = Math.Abs(xVS) - vo.kHeight / gxHeight
 
-        If NTInput Then
-            For xI1 = 0 To UBound(Notes)
-                If Notes(xI1).VPosition > xUpperBorder Then Exit For
-                'If the K is inside the visible area or
-                '   the K is below the visible area but has an end point above the lower border
-                If Notes(xI1).VPosition >= xLowerBorder OrElse
-                   (Notes(xI1).VPosition <= xLowerBorder And Notes(xI1).VPosition + Notes(xI1).Length >= xLowerBorder) OrElse
-                   (Notes(xI1).VPosition <= xLowerBorder And Notes(Notes(xI1).LNPair).VPosition >= xLowerBorder) Then _
-                    DrawNoteNT(Notes(xI1), e1, xHS, xVS, xTHeight)
-            Next
-
-        Else
-            For xI1 = 0 To UBound(Notes)
-                If Notes(xI1).VPosition > xUpperBorder Then Exit For
-                'If the K is inside the visible area or
-                '   the K is below the visible area but is paired with another K above the lower border
-                If Notes(xI1).VPosition >= xLowerBorder OrElse
-                   (Notes(xI1).VPosition <= xLowerBorder And Notes(Notes(xI1).LNPair).VPosition >= xLowerBorder) Then _
-                    DrawNote(Notes(xI1), e1, xHS, xVS, xTHeight)
-            Next
-        End If
+        For xI1 = 0 To UBound(Notes)
+            If Notes(xI1).VPosition > xUpperBorder Then Exit For
+            If Not IsNoteVisible(xI1, xTHeight, xVS) Then Continue For
+            If NTInput Then
+                DrawNoteNT(Notes(xI1), e1, xHS, xVS, xTHeight)
+            Else
+                DrawNote(Notes(xI1), e1, xHS, xVS, xTHeight)
+            End If
+        Next
     End Sub
+
+    Private Function GetNoteRectangle(note As Note, xTHeight As Integer, xHS As Integer, xVS As Integer) As Rectangle
+        Dim xDispX As Integer = HorizontalPositiontoDisplay(nLeft(note.ColumnIndex), xHS)
+
+        Dim xDispY As Integer = IIf(Not NTInput Or (bAdjustLength And Not bAdjustUpper),
+                                    NoteRowToPanelHeight(note.VPosition, xVS, xTHeight) - vo.kHeight - 1,
+                                    NoteRowToPanelHeight(note.VPosition +
+                                    note.Length, xVS, xTHeight) -
+                                    vo.kHeight - 1)
+
+        Dim xDispW As Integer = GetColumnWidth(note.ColumnIndex) * gxWidth + 1
+        Dim xDispH As Integer = IIf(Not NTInput Or bAdjustLength,
+                                    vo.kHeight + 3,
+                                    note.Length * gxHeight + vo.kHeight + 3)
+
+        Return New Rectangle(xDispX, xDispY, xDispW, xDispH)
+    End Function
+
+    Private Function GetNoteRectangle(noteIndex As Integer, xTHeight As Integer, xHS As Integer, xVS As Integer) As Rectangle
+        Return GetNoteRectangle(Notes(noteIndex), xTHeight, xHS, xVS)
+    End Function
+
 
     Private Sub DrawMouseOver(e1 As BufferedGraphics, xTHeight As Integer, xHS As Integer, xVS As Integer)
         If NTInput Then
-            Dim xDispX As Integer = HorizontalPositiontoDisplay(nLeft(Notes(KMouseOver).ColumnIndex), xHS)
-            Dim xDispY As Integer = IIf(Not NTInput Or (bAdjustLength And Not bAdjustUpper),
-                                        NoteRowToPanelHeight(Notes(KMouseOver).VPosition, xVS, xTHeight) - vo.kHeight - 1,
-                                        NoteRowToPanelHeight(Notes(KMouseOver).VPosition + Notes(KMouseOver).Length, xVS, xTHeight) - vo.kHeight - 1)
-            Dim xDispW As Integer = GetColumnWidth(Notes(KMouseOver).ColumnIndex) * gxWidth + 1
-            Dim xDispH As Integer = IIf(Not NTInput Or bAdjustLength,
-                                        vo.kHeight + 3,
-                                        Notes(KMouseOver).Length * gxHeight + vo.kHeight + 3)
-
             If Not bAdjustLength Then DrawNoteNT(Notes(KMouseOver), e1, xHS, xVS, xTHeight)
-            e1.Graphics.DrawRectangle(IIf(bAdjustLength, vo.kMouseOverE, vo.kMouseOver), xDispX, xDispY, xDispW - 1, xDispH - 1)
-
         Else
             DrawNote(Notes(KMouseOver), e1, xHS, xVS, xTHeight)
-            e1.Graphics.DrawRectangle(vo.kMouseOver,
-                                      HorizontalPositiontoDisplay(nLeft(Notes(KMouseOver).ColumnIndex), xHS),
-                                      NoteRowToPanelHeight(Notes(KMouseOver).VPosition, xVS, xTHeight) - vo.kHeight - 1,
-                                      GetColumnWidth(Notes(KMouseOver).ColumnIndex) * gxWidth,
-                                      vo.kHeight + 2)
         End If
+
+        Dim rect = GetNoteRectangle(KMouseOver, xTHeight, xHS, xVS)
+        Dim pen = IIf(bAdjustLength, vo.kMouseOverE, vo.kMouseOver)
+        e1.Graphics.DrawRectangle(pen, rect.X, rect.Y, rect.Width - 1, rect.Height - 1)
+
+        If ModifierMultiselectActive() Then
+            For Each note In Notes
+                If IsNoteVisible(note, xTHeight, xVS) And note.Value = Notes(KMouseOver).Value Then
+                    Dim nrect = GetNoteRectangle(note, xTHeight, xHS, xVS)
+                    e1.Graphics.DrawRectangle(pen, nrect.X, nrect.Y, nrect.Width - 1, nrect.Height - 1)
+                End If
+            Next
+        End If
+
     End Sub
 
     Private Sub DrawTimeSelection(e1 As BufferedGraphics, xTHeight As Integer, xTWidth As Integer, xHS As Integer, xVS As Integer)

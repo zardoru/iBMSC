@@ -1,3 +1,4 @@
+Imports System.Linq
 Imports iBMSC.Editor
 
 
@@ -2172,6 +2173,7 @@ StartCount:     If Not NTInput Then
                 FSP2.Text = xVposMod.ToString & " / " & xMLength & "  "
                 FSP3.Text = CInt(xVposMod / xGCD).ToString & " / " & CInt(xMLength / xGCD).ToString & "  "
                 FSP4.Text = TempVPosition.ToString() & "  "
+                TimeStatusLabel.Text = GetTimeFromVPosition(TempVPosition).ToString("F4")
                 FSC.Text = nTitle(SelectedColumn)
                 FSW.Text = ""
                 FSM.Text = Add3Zeros(xMeasure)
@@ -2226,6 +2228,48 @@ StartCount:     If Not NTInput Then
         End If
 
     End Sub
+
+    Private Function GetTimeFromVPosition(vpos As Double) As Double
+        Dim bpm_notes = From note In Notes
+                        Where note.ColumnIndex = niBPM And
+                            note.VPosition < vpos
+                        Order By note.VPosition
+
+        Dim stop_notes = From note In Notes
+                         Where note.ColumnIndex = niSTOP And
+                             note.VPosition < vpos
+                         Order By note.VPosition
+
+        Dim stop_contrib As Double
+        Dim bpm_contrib As Double
+
+        For i = 0 To bpm_notes.Count() - 1
+            ' az: sum bpm contribution first
+            Dim duration = 0.0
+            Dim current_note = bpm_notes.ElementAt(i)
+            Dim notevpos = Math.Max(0, current_note.VPosition)
+
+            If i + 1 <> bpm_notes.Count() Then
+                Dim next_note = bpm_notes.ElementAt(i + 1)
+                duration = next_note.VPosition - notevpos
+            Else
+                duration = vpos - notevpos
+            End If
+
+            Dim current_bps = 60 / (current_note.Value / 10000)
+            bpm_contrib += current_bps * duration / 48
+
+            Dim stops = From stp In stop_notes
+                        Where stp.VPosition >= notevpos And
+                            stp.VPosition < notevpos + duration
+
+            Dim stop_beats = stops.Sum(Function(x) x.Value / 10000.0) / 48
+            stop_contrib += current_bps * stop_beats
+
+        Next
+
+        Return stop_contrib + bpm_contrib
+    End Function
 
     Private Sub POBStorm_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles POBStorm.Click
 

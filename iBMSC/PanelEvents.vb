@@ -222,8 +222,22 @@ Partial Public Class MainWindow
             End Select
         End If
 
+        If ModifierMultiselectActive() Then
+            If e.KeyCode = Keys.A And KMouseOver <> -1 Then
+                SelectAllWithHoveredNoteLabel()
+            End If
+        End If
+
         PMainInMouseMove(sender)
         POStatusRefresh()
+    End Sub
+
+    Private Sub SelectAllWithHoveredNoteLabel()
+        For xI1 = 0 To UBound(Notes)
+            If Notes(xI1).Value = Notes(KMouseOver).Value Then
+                Notes(xI1).Selected = True
+            End If
+        Next
     End Sub
 
     Private Sub DecreaseCurrentWav()
@@ -486,7 +500,7 @@ Partial Public Class MainWindow
 
     Private Sub HandleCurrentModeOnClick(e As MouseEventArgs, xHS As Long, xVS As Long, xHeight As Integer, ByRef NoteIndex As Integer)
         If TBSelect.Checked Then
-            OnSelectModeLeftClick(e, NoteIndex)
+            OnSelectModeLeftClick(e, NoteIndex, xHeight, xVS)
         ElseIf NTInput And TBWrite.Checked Then
             TempVPosition = -1
             SelectedColumn = -1
@@ -696,7 +710,7 @@ Partial Public Class MainWindow
         End If
     End Sub
 
-    Private Sub OnSelectModeLeftClick(e As MouseEventArgs, NoteIndex As Integer)
+    Private Sub OnSelectModeLeftClick(e As MouseEventArgs, NoteIndex As Integer, xTHeight As Integer, xVS As Integer)
         If NoteIndex >= 0 And e.Clicks = 2 Then
             DoubleClickNoteIndex(NoteIndex)
         ElseIf NoteIndex > 0 Then
@@ -706,10 +720,16 @@ Partial Public Class MainWindow
             'KMouseDown = xITemp
             Notes(NoteIndex).TempMouseDown = True
 
-            If My.Computer.Keyboard.CtrlKeyDown Then
+            If My.Computer.Keyboard.CtrlKeyDown And Not ModifierMultiselectActive() Then
                 'If Not K(xITemp).Selected Then K(xITemp).Selected = True
                 ctrlPressed = True
 
+            ElseIf ModifierMultiselectActive() Then
+                For xI1 = 0 To UBound(Notes)
+                    If Notes(xI1).Value = Notes(NoteIndex).Value And IsNoteVisible(xI1, xTHeight, xVS) Then
+                        Notes(xI1).Selected = Not Notes(xI1).Selected
+                    End If
+                Next
             Else
                 ' az description: If the clicked note is not selected, select only this one.
                 'Otherwise, we clicked an already selected note
@@ -1557,7 +1577,7 @@ Partial Public Class MainWindow
             LastMouseDownLocation = New Point(-1, -1)
             pMouseMove = New Point(-1, -1)
 
-            If ctrlPressed And Not DuplicatedSelectedNotes Then
+            If ctrlPressed And Not DuplicatedSelectedNotes And Not ModifierMultiselectActive() Then
                 For i As Integer = 1 To UBound(Notes)
                     If Notes(i).TempMouseDown Then Notes(i).Selected = Not Notes(i).Selected : Exit For
                 Next
