@@ -2191,6 +2191,7 @@ StartCount:     If Not NTInput Then
                 FSP2.Text = xVposMod.ToString & " / " & xMLength & "  "
                 FSP3.Text = CInt(xVposMod / xGCD).ToString & " / " & CInt(xMLength / xGCD).ToString & "  "
                 FSP4.Text = Notes(xI1).VPosition.ToString() & "  "
+                TimeStatusLabel.Text = GetTimeFromVPosition(TempVPosition).ToString("F4")
                 FSC.Text = nTitle(Notes(xI1).ColumnIndex)
                 FSW.Text = IIf(IsColumnNumeric(Notes(xI1).ColumnIndex),
                                Notes(xI1).Value / 10000,
@@ -2214,6 +2215,7 @@ StartCount:     If Not NTInput Then
             FSP2.Text = xVposMod.ToString & " / " & xMLength & "  "
             FSP3.Text = CInt(xVposMod / xGCD).ToString & " / " & CInt(xMLength / xGCD).ToString & "  "
             FSP4.Text = TempVPosition.ToString() & "  "
+            TimeStatusLabel.Text = GetTimeFromVPosition(TempVPosition).ToString("F4")
             FSC.Text = nTitle(SelectedColumn)
             FSW.Text = C10to36(LWAV.SelectedIndex + 1)
             FSM.Text = Add3Zeros(xMeasure)
@@ -2226,7 +2228,7 @@ StartCount:     If Not NTInput Then
             FSSH.Text = vSelHalf
 
         End If
-
+        FStatus.Refresh()
     End Sub
 
     Private Function GetTimeFromVPosition(vpos As Double) As Double
