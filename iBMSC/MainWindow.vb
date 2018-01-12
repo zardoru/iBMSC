@@ -2232,15 +2232,19 @@ StartCount:     If Not NTInput Then
     End Sub
 
     Private Function GetTimeFromVPosition(vpos As Double) As Double
-        Dim bpm_notes = From note In Notes
-                        Where note.ColumnIndex = niBPM And
-                            note.VPosition < vpos
-                        Order By note.VPosition
+        Dim timing_notes = (From note In Notes
+                            Where note.ColumnIndex = niBPM Or note.ColumnIndex = niSTOP
+                            Group By Column = note.ColumnIndex
+                               Into NoteGroups = Group).ToDictionary(Function(x) x.Column, Function(x) x.NoteGroups)
 
-        Dim stop_notes = From note In Notes
-                         Where note.ColumnIndex = niSTOP And
-                             note.VPosition < vpos
-                         Order By note.VPosition
+        Dim bpm_notes = timing_notes.Item(niBPM)
+
+        Dim stop_notes As IEnumerable(Of Note) = Nothing
+
+        If timing_notes.ContainsKey(niSTOP) Then
+            stop_notes = timing_notes.Item(niSTOP)
+        End If
+
 
         Dim stop_contrib As Double
         Dim bpm_contrib As Double
@@ -2260,6 +2264,8 @@ StartCount:     If Not NTInput Then
 
             Dim current_bps = 60 / (current_note.Value / 10000)
             bpm_contrib += current_bps * duration / 48
+
+            If stop_notes Is Nothing Then Continue For
 
             Dim stops = From stp In stop_notes
                         Where stp.VPosition >= notevpos And
