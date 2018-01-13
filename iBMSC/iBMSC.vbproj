@@ -180,6 +180,9 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="PanelKeyStates.vb" />
+    <Compile Include="TimeSelectionOps.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Utilities.vb" />
     <Compile Include="Option Windows\Note.vb" />
     <Compile Include="Strings.vb" />
