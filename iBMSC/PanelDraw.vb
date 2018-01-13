@@ -9,13 +9,21 @@ Partial Public Class MainWindow
         RefreshPanel(2, PMainInR.DisplayRectangle)
     End Sub
 
-    Dim bufferlist = New Dictionary(Of Integer, BufferedGraphics)
+    Dim bufferlist As Dictionary(Of Integer, BufferedGraphics) = New Dictionary(Of Integer, BufferedGraphics)
+    Dim rectList As Dictionary(Of Integer, Rectangle) = New Dictionary(Of Integer, Rectangle)
     Private Function GetBuffer(xIndex As Integer, DisplayRect As Rectangle)
-        If bufferlist.ContainsKey(xIndex) Then
+        If bufferlist.ContainsKey(xIndex) AndAlso rectList.Item(xIndex) = DisplayRect Then
             Return bufferlist.Item(xIndex)
         Else
+            If bufferlist.ContainsKey(xIndex) Then
+                bufferlist.Item(xIndex).Dispose()
+                bufferlist.Remove(xIndex)
+                rectList.Remove(xIndex)
+            End If
+
             Dim gfx = BufferedGraphicsManager.Current.Allocate(spMain(xIndex).CreateGraphics, DisplayRect)
             bufferlist.Add(xIndex, gfx)
+            rectList.Add(xIndex, DisplayRect)
             Return gfx
         End If
     End Function

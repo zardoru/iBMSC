@@ -945,6 +945,8 @@ Partial Public Class MainWindow
 
                     TempLength = 0
                     If foundNoteIndex > -1 Then TempLength = Notes(foundNoteIndex).Length
+
+                    RefreshPanelAll()
                 End If
 
             Case MouseButtons.Left
@@ -998,9 +1000,19 @@ Partial Public Class MainWindow
             Case MouseButtons.Middle
                 OnPanelMousePan(e)
         End Select
-        POStatusRefresh()
-        RefreshPanelAll() 'az: refreshing the line is important now...
+        Dim col = GetColumnAtEvent(e, xHS)
+        Dim vps = GetMouseVPosition(gSnap)
+        If vps <> lastVPos Or col <> lastColumn Then
+            lastVPos = vps
+            lastColumn = col
+            POStatusRefresh()
+            RefreshPanelAll() 'az: refreshing the line is important now...
+        End If
+
     End Sub
+
+    Dim lastVPos = -1
+    Dim lastColumn = -1
 
     Private Sub UpdateSelectedNotes(xHeight As Double, xvs As Double, xhs As Double, e As MouseEventArgs)
         Dim mouseVPosition As Double
