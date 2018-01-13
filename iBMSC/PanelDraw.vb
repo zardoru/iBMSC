@@ -9,12 +9,23 @@ Partial Public Class MainWindow
         RefreshPanel(2, PMainInR.DisplayRectangle)
     End Sub
 
+    Dim bufferlist = New Dictionary(Of Integer, BufferedGraphics)
+    Private Function GetBuffer(xIndex As Integer, DisplayRect As Rectangle)
+        If bufferlist.ContainsKey(xIndex) Then
+            Return bufferlist.Item(xIndex)
+        Else
+            Dim gfx = BufferedGraphicsManager.Current.Allocate(spMain(xIndex).CreateGraphics, DisplayRect)
+            bufferlist.Add(xIndex, gfx)
+            Return gfx
+        End If
+    End Function
+
     Private Sub RefreshPanel(ByVal xIndex As Integer, ByVal DisplayRect As Rectangle)
         If Me.WindowState = FormWindowState.Minimized Then Return
         If DisplayRect.Width <= 0 Or DisplayRect.Height <= 0 Then Return
         'If spMain.Count = 0 Then Return
         'Dim currentContext As BufferedGraphicsContext = BufferedGraphicsManager.Current
-        Dim e1 As BufferedGraphics = BufferedGraphicsManager.Current.Allocate(spMain(xIndex).CreateGraphics, DisplayRect)
+        Dim e1 As BufferedGraphics = GetBuffer(xIndex, DisplayRect)
         e1.Graphics.FillRectangle(vo.Bg, DisplayRect)
 
         Dim xTHeight As Integer = spMain(xIndex).Height
@@ -70,7 +81,7 @@ Partial Public Class MainWindow
         DrawDragAndDrop(xIndex, e1)
 
         e1.Render(spMain(xIndex).CreateGraphics)
-        e1.Dispose()
+        'e1.Dispose()
     End Sub
 
     Private Sub DrawTempNote(e1 As BufferedGraphics, xTHeight As Integer, xHS As Integer, xVS As Integer)

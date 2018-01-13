@@ -2228,7 +2228,7 @@ StartCount:     If Not NTInput Then
             FSSH.Text = vSelHalf
 
         End If
-        FStatus.Refresh()
+        'FStatus.Invalidate()
     End Sub
 
     Private Function GetTimeFromVPosition(vpos As Double) As Double

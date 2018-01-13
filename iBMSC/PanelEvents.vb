@@ -913,7 +913,7 @@ Partial Public Class MainWindow
                 If TBSelect.Checked Or xTempbTimeSelectionMode Then
 
                     If xMouseRemainInSameRegion Then Exit Select
-                    If KMouseOver >= 0 Then KMouseOver = -1 : RefreshPanelAll()
+                    If KMouseOver >= 0 Then KMouseOver = -1
 
                     If xTempbTimeSelectionMode Then
 
@@ -928,7 +928,6 @@ Partial Public Class MainWindow
                             vSelMouseOverLine = 1
                         End If
 
-                        If xMouseOverLine <> vSelMouseOverLine Then RefreshPanelAll()
                     End If
 
                     ' draw green highlight
@@ -946,8 +945,6 @@ Partial Public Class MainWindow
 
                     TempLength = 0
                     If foundNoteIndex > -1 Then TempLength = Notes(foundNoteIndex).Length
-
-                    RefreshPanelAll()
                 End If
 
             Case MouseButtons.Left
@@ -997,7 +994,6 @@ Partial Public Class MainWindow
                 ElseIf TBTimeSelect.Checked Then
                     OnTimeSelectClick(xHeight, xHS, xVS, e)
                 End If
-                RefreshPanelAll()
 
             Case MouseButtons.Middle
                 OnPanelMousePan(e)
