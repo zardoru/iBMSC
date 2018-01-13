@@ -641,6 +641,8 @@ EndOfAdjustment:
             Return
         End If
 
+        RedoRemoveNoteAll(False, xUndo, xRedo)
+
         ' Translate notes
         For I = 1 To UBound(Notes)
             If Notes(I).VPosition > xVUpper Then
@@ -655,6 +657,10 @@ EndOfAdjustment:
             .VPosition = xVLower
             .Value = vSelLength * 10000
         End With
+
+        Me.RedoAddNoteAll(False, xUndo, xRedo)
+
+        AddUndo(xUndo, xBaseRedo.Next)
 
     End Sub
 
