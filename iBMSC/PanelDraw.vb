@@ -355,7 +355,7 @@ Partial Public Class MainWindow
 
         If ModifierMultiselectActive() Then
             For Each note In Notes
-                If IsNoteVisible(note, xTHeight, xVS) And note.Value = Notes(KMouseOver).Value Then
+                If IsNoteVisible(note, xTHeight, xVS) AndAlso IsLabelMatch(note, KMouseOver) Then
                     Dim nrect = GetNoteRectangle(note, xTHeight, xHS, xVS)
                     e1.Graphics.DrawRectangle(pen, nrect.X, nrect.Y, nrect.Width - 1, nrect.Height - 1)
                 End If

@@ -234,11 +234,25 @@ Partial Public Class MainWindow
 
     Private Sub SelectAllWithHoveredNoteLabel()
         For xI1 = 0 To UBound(Notes)
-            If Notes(xI1).Value = Notes(KMouseOver).Value Then
-                Notes(xI1).Selected = True
-            End If
+            Notes(xI1).Selected = IIf(IsLabelMatch(Notes(xI1), KMouseOver), True, Notes(xI1).Selected)
         Next
     End Sub
+
+    Private Function IsLabelMatch(note As Note, index As Integer) As Boolean
+        If TBShowFileName.Checked Then
+            Dim wavidx = Notes(index).Value / 10000
+            Dim wav = hWAV(wavidx)
+            If hWAV(note.Value / 10000) = wav Then
+                Return True
+            End If
+        Else
+            If note.Value = Notes(index).Value Then
+                Return True
+            End If
+        End If
+
+        Return False
+    End Function
 
     Private Sub DecreaseCurrentWav()
         If LWAV.SelectedIndex = -1 Then
@@ -726,8 +740,10 @@ Partial Public Class MainWindow
 
             ElseIf ModifierMultiselectActive() Then
                 For xI1 = 0 To UBound(Notes)
-                    If Notes(xI1).Value = Notes(NoteIndex).Value And IsNoteVisible(xI1, xTHeight, xVS) Then
-                        Notes(xI1).Selected = Not Notes(xI1).Selected
+                    If IsNoteVisible(xI1, xTHeight, xVS) Then
+                        If IsLabelMatch(Notes(xI1), NoteIndex) Then
+                            Notes(xI1).Selected = Not Notes(xI1).Selected
+                        End If
                     End If
                 Next
             Else
