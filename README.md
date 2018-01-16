@@ -19,6 +19,10 @@ Changes
 * BMSE clipboard input fixed
 * Huge BPM support (10e12)
 * Codebase reorganized for developers
+* Convert Area to Stop **Time select mode**
+* Select notes with labels on screen, all notes with labels (Shift+Ctrl+Click, Shift+Ctrl+A)
+* Autowav Increase functionality **Write mode only**
+* **dtinth** Move and Deselect (Shift+Number)
 
 Check appveyor for automated builds.
 [![Build status](https://ci.appveyor.com/api/projects/status/m7iygj9sje2yqf43?svg=true)](https://ci.appveyor.com/project/zardoru/ibmsc)
