@@ -2957,6 +2957,7 @@ Partial Class MainWindow
         '
         'CGBLP
         '
+        Me.CGBLP.Checked = True
         Me.CGBLP.CheckOnClick = True
         Me.CGBLP.Name = "CGBLP"
         Me.CGBLP.Size = New System.Drawing.Size(172, 22)
