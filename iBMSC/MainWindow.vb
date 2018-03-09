@@ -177,8 +177,8 @@ Public Class MainWindow
     Dim gWheel As Integer = 96
     Dim gPgUpDn As Integer = 384
 
-    Dim gDisplayBGAColumn As Boolean = False
-    Dim gSTOP As Boolean = False
+    Dim gDisplayBGAColumn As Boolean = True
+    Dim gSTOP As Boolean = True
     Dim gBPM As Boolean = True
     'Dim gA8 As Boolean = False
     Dim iPlayer As Integer = 0
