@@ -4,7 +4,7 @@ Imports iBMSC.Editor
 
 Public Class OpVisual
     Dim niB As Integer = MainWindow.niB
-    Dim lLeft() As Integer = {78, 110, 142, 174, 208, 240, 272, 304, 336, 368, 400, 432, 464, 498, 530, 562, 594, 626, 658, 690, 722, 754, 788, 820, 852, 884, 918}
+    Dim lLeft() As Integer = {78, 110, 142, 174, 208, 240, 272, 304, 336, 368, 400, 432, 464, 498, 530, 562, 594, 626, 658, 690, 722, 754, 788, 820, 852, 884, 918, 950}
 
     Structure ColumnOptionSet
         Public Width As NumericUpDown
