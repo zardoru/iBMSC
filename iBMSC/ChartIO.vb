@@ -16,6 +16,7 @@ Partial Public Class MainWindow
         ReDim hWAV(1295)
         ReDim hBPM(1295)    'x10000
         ReDim hSTOP(1295)
+        ReDim hSCROLL(1295)
         Me.InitializeNewBMS()
         Me.InitializeOpenBMS()
 
@@ -58,6 +59,9 @@ Partial Public Class MainWindow
                 'No limits on STOPs either.
             ElseIf sLineTrim.StartsWith("#STOP", StringComparison.CurrentCultureIgnoreCase) Then
                 hSTOP(C36to10(Mid(sLineTrim, Len("#STOP") + 1, 2))) = Val(Mid(sLineTrim, Len("#STOP") + 4)) * 10000
+
+            ElseIf sLineTrim.StartsWith("#SCROLL", StringComparison.CurrentCultureIgnoreCase) Then
+                hSCROLL(C36to10(Mid(sLineTrim, Len("#SCROLL") + 1, 2))) = Val(Mid(sLineTrim, Len("#SCROLL") + 4)) * 10000
 
 
             ElseIf sLineTrim.StartsWith("#TITLE", StringComparison.CurrentCultureIgnoreCase) Then
@@ -195,6 +199,7 @@ AddExpansion:       xExpansion &= sLine & vbCrLf
                     If Channel = "03" Then .Value = Convert.ToInt32(Mid(sLineTrim, xI1, 2), 16) * 10000
                     If Channel = "08" Then .Value = hBPM(C36to10(Mid(sLineTrim, xI1, 2)))
                     If Channel = "09" Then .Value = hSTOP(C36to10(Mid(sLineTrim, xI1, 2)))
+                    If Channel = "SC" Then .Value = hSCROLL(C36to10(Mid(sLineTrim, xI1, 2)))
                 End With
 
             Next
@@ -228,7 +233,8 @@ AddExpansion:       xExpansion &= sLine & vbCrLf
                                        "51", "52", "53", "54", "55", "56", "58", "59",
                                        "61", "62", "63", "64", "65", "66", "68", "69",
                                        "D1", "D2", "D3", "D4", "D5", "D6", "D8", "D9",
-                                       "E1", "E2", "E3", "E4", "E5", "E6", "E8", "E9"}
+                                       "E1", "E2", "E3", "E4", "E5", "E6", "E8", "E9",
+                                       "SC"}
     ' 71 through 89 are reserved
     '"71", "72", "73", "74", "75", "76", "78", "79",
     '"81", "82", "83", "84", "85", "86", "88", "89",
@@ -246,6 +252,7 @@ AddExpansion:       xExpansion &= sLine & vbCrLf
         ' We regenerate these when traversing the bms event list.
         ReDim hBPM(0)
         ReDim hSTOP(0)
+        ReDim hSCROLL(0)
 
         Dim xNTInput As Boolean = NTInput
         Dim xKBackUp() As Note = Notes
@@ -310,6 +317,9 @@ AddExpansion:       xExpansion &= sLine & vbCrLf
         If UBound(hSTOP) > IIf(STOPx1296, 1295, 255) Then MsgBox(Strings.Messages.SaveWarning & vbCrLf &
                                                            Strings.Messages.STOPOverflowError & UBound(hSTOP) & " > " & IIf(STOPx1296, 1295, 255) & vbCrLf &
                                                   Strings.Messages.SavedFileWillContainErrors, MsgBoxStyle.Exclamation)
+        If UBound(hSCROLL) > 1295 Then MsgBox(Strings.Messages.SaveWarning & vbCrLf &
+                                           Strings.Messages.SCROLLOverflowError & UBound(hSCROLL) & " > " & 1295 & vbCrLf &
+                                         Strings.Messages.SavedFileWillContainErrors, MsgBoxStyle.Exclamation)
 
         ' Add expansion text
         Dim xStrExp As String = vbCrLf & "*---------------------- EXPANSION FIELD" & vbCrLf & TExpansion.Text & vbCrLf & vbCrLf
@@ -374,6 +384,10 @@ AddExpansion:       xExpansion &= sLine & vbCrLf
             xStrHeader &= "#STOP" &
                 IIf(STOPx1296, C10to36(i), Mid("0" & Hex(i), Len(Hex(i)))) &
                 " " & WriteDecimalWithDot(hSTOP(i) / 10000) & vbCrLf
+        Next
+        For i = 1 To UBound(hSCROLL)
+            xStrHeader &= "#SCROLL" &
+                C10to36(i) & " " & WriteDecimalWithDot(hSCROLL(i) / 10000) & vbCrLf
         Next
 
         Return xStrHeader
@@ -446,10 +460,18 @@ AddExpansion:       xExpansion &= sLine & vbCrLf
                             ReDim Preserve hSTOP(UBound(hSTOP) + 1)
                             hSTOP(UBound(hSTOP)) = currentNote.Value
                         End If
+                        NoteStrings(UBound(NoteStrings)) = IIf(STOPx1296, C10to36(StopIndex), Mid("0" & Hex(StopIndex), Len(Hex(StopIndex))))
+                    ElseIf CurrentBMSChannel = "SC" Then 'If SCROLL
+                        Dim ScrollIndex
+                        For ScrollIndex = 1 To UBound(hSCROLL) ' find SCROLL value in existing array
+                            If currentNote.Value = hSCROLL(ScrollIndex) Then Exit For
+                        Next
 
-                        NoteStrings(UBound(NoteStrings)) = IIf(STOPx1296,
-                                                   C10to36(StopIndex),
-                                                   Mid("0" & Hex(StopIndex), Len(Hex(StopIndex))))
+                        If ScrollIndex > UBound(hSCROLL) Then ' Didn't find it, add it
+                            ReDim Preserve hSCROLL(UBound(hSCROLL) + 1)
+                            hSCROLL(UBound(hSCROLL)) = currentNote.Value
+                        End If
+                        NoteStrings(UBound(NoteStrings)) = C10to36(ScrollIndex)
                     Else
                         NoteStrings(UBound(NoteStrings)) = C10to36(currentNote.Value \ 10000)
                     End If
@@ -483,6 +505,8 @@ AddExpansion:       xExpansion &= sLine & vbCrLf
                         xprevNotes(UBound(xprevNotes)).Value = IIf(BPMx1296, hBPM(C36to10(NoteStrings(i))), hBPM(Convert.ToInt32(NoteStrings(i), 16)))
                     If BMSChannelList(CurrentBMSChannel) = "09" Then _
                         xprevNotes(UBound(xprevNotes)).Value = IIf(STOPx1296, hSTOP(C36to10(NoteStrings(i))), hSTOP(Convert.ToInt32(NoteStrings(i), 16)))
+                    If BMSChannelList(CurrentBMSChannel) = "SC" Then _
+                        xprevNotes(UBound(xprevNotes)).Value = hSCROLL(C36to10(NoteStrings(i)))
                     Continue For
                 End If
                 If xStrKey(CInt(relativeMeasurePos(i) / xGCD)) <> "00" Then
@@ -590,6 +614,7 @@ AddExpansion:       xExpansion &= sLine & vbCrLf
         ReDim hWAV(1295)
         ReDim hBPM(1295)    'x10000
         ReDim hSTOP(1295)
+        ReDim hSCROLL(1295)
         Me.InitializeNewBMS()
 
         With Notes(0)
@@ -799,6 +824,7 @@ Jump1:
                     CGShowC.Checked = xPref And &H100000
                     CGBLP.Checked = xPref And &H200000
                     CGSTOP.Checked = xPref And &H400000
+                    CGSCROLL.Checked = xPref And &H20000000
                     CGBPM.Checked = xPref And &H800000
 
                     CGSnap.Checked = xPref And &H1000000
@@ -983,6 +1009,7 @@ EndOfSub:
             If gDisplayBGAColumn Then xPref = xPref Or &H200000
             If gSTOP Then xPref = xPref Or &H400000
             If gBPM Then xPref = xPref Or &H800000
+            If gSCROLL Then xPref = xPref Or &H20000000
             If gSnap Then xPref = xPref Or &H1000000
             If DisableVerticalMove Then xPref = xPref Or &H2000000
             If spLock(0) Then xPref = xPref Or &H4000000

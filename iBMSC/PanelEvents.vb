@@ -560,11 +560,13 @@ Partial Public Class MainWindow
                 Dim xMessage As String = Strings.Messages.PromptEnterNumeric
                 If xColumn = niBPM Then xMessage = Strings.Messages.PromptEnterBPM
                 If xColumn = niSTOP Then xMessage = Strings.Messages.PromptEnterSTOP
+                If xColumn = niSCROLL Then xMessage = Strings.Messages.PromptEnterSCROLL
 
-                Dim value As Double = Val(InputBox(xMessage, Text)) * 10000
+                Dim valstr As String = InputBox(xMessage, Text)
+                Dim value As Double = Val(valstr) * 10000
 
-                If Not value = 0 Then
-                    If value <= 0 Then value = 1
+                If (xColumn = niSCROLL And valstr = "0") Or value <> 0 Then
+                    If xColumn <> niSCROLL And value <= 0 Then value = 1
 
                     Dim xUndo As UndoRedo.LinkedURCmd = Nothing
                     Dim xRedo As UndoRedo.LinkedURCmd = New UndoRedo.Void
@@ -819,9 +821,12 @@ Partial Public Class MainWindow
             Dim xMessage As String = Strings.Messages.PromptEnterNumeric
             If NoteColumn = niBPM Then xMessage = Strings.Messages.PromptEnterBPM
             If NoteColumn = niSTOP Then xMessage = Strings.Messages.PromptEnterSTOP
+            If NoteColumn = niSCROLL Then xMessage = Strings.Messages.PromptEnterSCROLL
 
-            Dim PromptValue As Double = Val(InputBox(xMessage, Me.Text)) * 10000
-            If Not PromptValue = 0 Then
+
+            Dim valstr As String = InputBox(xMessage, Me.Text)
+            Dim PromptValue As Double = Val(valstr) * 10000
+            If (NoteColumn = niSCROLL And valstr = "0") Or PromptValue <> 0 Then
 
                 Dim xUndo As UndoRedo.LinkedURCmd = Nothing
                 Dim xRedo As UndoRedo.LinkedURCmd = Nothing
@@ -1633,10 +1638,12 @@ Partial Public Class MainWindow
                         Dim xMessage As String = Strings.Messages.PromptEnterNumeric
                         If xColumn = niBPM Then xMessage = Strings.Messages.PromptEnterBPM
                         If xColumn = niSTOP Then xMessage = Strings.Messages.PromptEnterSTOP
+                        If xColumn = niSCROLL Then xMessage = Strings.Messages.PromptEnterSCROLL
 
-                        Dim value As Long = Val(InputBox(xMessage, Me.Text)) * 10000
+                        Dim valstr As String = InputBox(xMessage, Me.Text)
+                        Dim value As Long = Val(valstr) * 10000
 
-                        If value <> 0 Then
+                        If (xColumn = niSCROLL And valstr = "0") Or value <> 0 Then
                             For xI1 = 1 To UBound(Notes)
                                 If Notes(xI1).VPosition = xVPosition AndAlso Notes(xI1).ColumnIndex = xColumn Then _
                             RedoRemoveNote(Notes(xI1), xUndo, xRedo)

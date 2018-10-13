@@ -159,6 +159,7 @@ Public Class MainWindow
     Dim hWAV(1295) As String
     Dim hBPM(1295) As Long   'x10000
     Dim hSTOP(1295) As Long
+    Dim hSCROLL(1295) As Long
 
     '----Grid Options
     Dim gSnap As Boolean = True
@@ -178,6 +179,7 @@ Public Class MainWindow
     Dim gPgUpDn As Integer = 384
 
     Dim gDisplayBGAColumn As Boolean = True
+    Dim gSCROLL As Boolean = True
     Dim gSTOP As Boolean = True
     Dim gBPM As Boolean = True
     'Dim gA8 As Boolean = False
@@ -1331,6 +1333,7 @@ EndSearch:
         ReDim hWAV(1295)
         ReDim hBPM(1295)    'x10000
         ReDim hSTOP(1295)
+        ReDim hSCROLL(1295)
         THGenre.Text = ""
         THTitle.Text = ""
         THArtist.Text = ""
@@ -1375,6 +1378,7 @@ EndSearch:
         ReDim hWAV(1295)
         ReDim hBPM(1295)    'x10000
         ReDim hSTOP(1295)
+        ReDim hSCROLL(1295)
         THGenre.Text = ""
         THTitle.Text = ""
         THArtist.Text = ""
@@ -2076,17 +2080,18 @@ EndSearch:
         SortByVPositionInsertion()
         UpdatePairing()
 
-        Dim data(5, 5) As Integer
+        Dim data(6, 5) As Integer
         For i As Integer = 1 To UBound(Notes)
             With Notes(i)
                 Dim row As Integer = -1
                 Select Case .ColumnIndex
-                    Case niBPM : row = 0
-                    Case niSTOP : row = 1
-                    Case niA1, niA2, niA3, niA4, niA5, niA6, niA7, niA8 : row = 2
-                    Case niD1, niD2, niD3, niD4, niD5, niD6, niD7, niD8 : row = 3
-                    Case Is >= niB : row = 4
-                    Case Else : row = 5
+                    Case niSCROLL : row = 0
+                    Case niBPM : row = 1
+                    Case niSTOP : row = 2
+                    Case niA1, niA2, niA3, niA4, niA5, niA6, niA7, niA8 : row = 3
+                    Case niD1, niD2, niD3, niD4, niD5, niD6, niD7, niD8 : row = 4
+                    Case Is >= niB : row = 5
+                    Case Else : row = 6
                 End Select
 
 
@@ -2110,7 +2115,7 @@ StartCount:     If Not NTInput Then
 
                 End If
 
-                If row <> 5 Then row = 5 : GoTo StartCount
+                If row <> 6 Then row = 6 : GoTo StartCount
             End With
         Next
 
@@ -3922,6 +3927,19 @@ Jump2:
         column(niLAYER).isVisible = gDisplayBGAColumn
         column(niPOOR).isVisible = gDisplayBGAColumn
         column(niS4).isVisible = gDisplayBGAColumn
+
+        If IsInitializing Then Exit Sub
+        For xI1 As Integer = 1 To UBound(Notes)
+            Notes(xI1).Selected = Notes(xI1).Selected And nEnabled(Notes(xI1).ColumnIndex)
+        Next
+        'AddUndo(xUndo, xRedo)
+        UpdateColumnsX()
+        RefreshPanelAll()
+    End Sub
+    Private Sub CGSCROLL_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles CGSCROLL.CheckedChanged
+        gSCROLL = CGSCROLL.Checked
+
+        column(niSCROLL).isVisible = gSCROLL
 
         If IsInitializing Then Exit Sub
         For xI1 As Integer = 1 To UBound(Notes)

@@ -108,7 +108,7 @@ Partial Class OpVisual
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
         Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 0, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 1, 0)
-        Me.TableLayoutPanel1.Location = New System.Drawing.Point(836, 672)
+        Me.TableLayoutPanel1.Location = New System.Drawing.Point(868, 672)
         Me.TableLayoutPanel1.Name = "TableLayoutPanel1"
         Me.TableLayoutPanel1.RowCount = 1
         Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
@@ -145,7 +145,7 @@ Partial Class OpVisual
         Me.Panel1.Controls.Add(Me.Label4)
         Me.Panel1.Location = New System.Drawing.Point(10, 263)
         Me.Panel1.Name = "Panel1"
-        Me.Panel1.Size = New System.Drawing.Size(972, 402)
+        Me.Panel1.Size = New System.Drawing.Size(1004, 402)
         Me.Panel1.TabIndex = 87
         '
         'Label8
@@ -745,7 +745,7 @@ Partial Class OpVisual
         Me.PictureBox1.BackColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
         Me.PictureBox1.Location = New System.Drawing.Point(10, 259)
         Me.PictureBox1.Name = "PictureBox1"
-        Me.PictureBox1.Size = New System.Drawing.Size(972, 1)
+        Me.PictureBox1.Size = New System.Drawing.Size(1000, 1)
         Me.PictureBox1.TabIndex = 138
         Me.PictureBox1.TabStop = False
         '
@@ -754,7 +754,7 @@ Partial Class OpVisual
         Me.AcceptButton = Me.OK_Button
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None
         Me.CancelButton = Me.Cancel_Button
-        Me.ClientSize = New System.Drawing.Size(994, 713)
+        Me.ClientSize = New System.Drawing.Size(1026, 713)
         Me.Controls.Add(Me.Label14)
         Me.Controls.Add(Me.iMiddleSensitivity)
         Me.Controls.Add(Me.Label82)
