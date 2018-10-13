@@ -3,9 +3,9 @@
 Partial Public Class MainWindow
 
     Public Const niMeasure As Integer = 0
-    Public Const niBPM As Integer = 1
-    Public Const niSTOP As Integer = 2
-    Public Const niSCROLL As Integer = 3
+    Public Const niSCROLL As Integer = 1
+    Public Const niBPM As Integer = 2
+    Public Const niSTOP As Integer = 3
     Public Const niS1 As Integer = 4
 
     Public Const niA1 As Integer = 5
@@ -35,9 +35,9 @@ Partial Public Class MainWindow
     Public Const niB As Integer = 27
 
     Public column() As Column = {New Column(0, 50, "Measure", False, True, True, 0, 0, &HFF00FFFF, 0, &HFF00FFFF, 0),
-                              New Column(50, 60, "BPM", True, True, True, 3, 0, &HFFFF0000, 0, &HFFFF0000, 0),
-                              New Column(110, 50, "STOP", True, True, True, 9, 0, &HFFFF0000, 0, &HFFFF0000, 0),
-                              New Column(160, 60, "SCROLL", True, True, True, 99, 0, &HFFFF0000, 0, &HFFFF0000, 0),
+                              New Column(50, 60, "SCROLL", True, True, True, 99, 0, &HFFFF0000, 0, &HFFFF0000, 0),
+                              New Column(110, 60, "BPM", True, True, True, 3, 0, &HFFFF0000, 0, &HFFFF0000, 0),
+                              New Column(170, 50, "STOP", True, True, True, 9, 0, &HFFFF0000, 0, &HFFFF0000, 0),
                               New Column(220, 5, "", False, False, True, 0, 0, 0, 0, 0, 0),
                               New Column(225, 42, "A1", True, False, True, 16, &HFFB0B0B0, &HFF000000, &HFFC0C0C0, &HFF000000, &H14FFFFFF),
                               New Column(267, 30, "A2", True, False, True, 11, &HFF62B0FF, &HFF000000, &HFF6AB0F7, &HFF000000, &H140033FF),

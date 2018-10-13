@@ -2085,9 +2085,9 @@ EndSearch:
             With Notes(i)
                 Dim row As Integer = -1
                 Select Case .ColumnIndex
-                    Case niBPM : row = 0
-                    Case niSTOP : row = 1
-                    Case niSCROLL : row = 2
+                    Case niSCROLL : row = 0
+                    Case niBPM : row = 1
+                    Case niSTOP : row = 2
                     Case niA1, niA2, niA3, niA4, niA5, niA6, niA7, niA8 : row = 3
                     Case niD1, niD2, niD3, niD4, niD5, niD6, niD7, niD8 : row = 4
                     Case Is >= niB : row = 5

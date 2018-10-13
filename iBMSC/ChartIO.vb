@@ -460,7 +460,7 @@ AddExpansion:       xExpansion &= sLine & vbCrLf
                             ReDim Preserve hSTOP(UBound(hSTOP) + 1)
                             hSTOP(UBound(hSTOP)) = currentNote.Value
                         End If
-                        NoteStrings(UBound(NoteStrings)) = IIf(BPMx1296, C10to36(StopIndex), Mid("0" & Hex(StopIndex), Len(Hex(StopIndex))))
+                        NoteStrings(UBound(NoteStrings)) = IIf(STOPx1296, C10to36(StopIndex), Mid("0" & Hex(StopIndex), Len(Hex(StopIndex))))
                     ElseIf CurrentBMSChannel = "SC" Then 'If SCROLL
                         Dim ScrollIndex
                         For ScrollIndex = 1 To UBound(hSCROLL) ' find SCROLL value in existing array
