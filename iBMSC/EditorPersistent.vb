@@ -666,6 +666,11 @@ EndOfSub:
                     XMLLoadLocaleMenu(eEdit.Item("MyO2"), mnMyO2.Text)
                 End If
 
+                Dim eView As XmlElement = eMenu.Item("View")
+                If eView IsNot Nothing Then
+                    XMLLoadLocaleMenu(eView.Item("Title"), mnSys.Text)
+                End If
+
                 Dim eOptions As XmlElement = eMenu.Item("Options")
                 If eOptions IsNot Nothing Then
                     XMLLoadLocaleMenu(eOptions.Item("Title"), mnOptions.Text)
