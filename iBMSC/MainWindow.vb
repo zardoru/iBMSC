@@ -1917,9 +1917,7 @@ EndSearch:
         Dim xUndo As UndoRedo.LinkedURCmd = Nothing
         Dim xRedo As UndoRedo.LinkedURCmd = New UndoRedo.Void
         Dim xBaseRedo As UndoRedo.LinkedURCmd = xRedo
-        For xI1 As Integer = 1 To UBound(Notes)
-            Me.RedoRemoveNoteSelected(True, xUndo, xRedo)
-        Next
+        Me.RedoRemoveNoteSelected(True, xUndo, xRedo)
         'Dim xRedo As String = sCmdKDs()
         'Dim xUndo As String = sCmdKs(True)
 
