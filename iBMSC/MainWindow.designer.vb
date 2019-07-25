@@ -60,6 +60,16 @@ Partial Class MainWindow
         Me.CBeatMeasure = New System.Windows.Forms.RadioButton()
         Me.CBeatPreserve = New System.Windows.Forms.RadioButton()
         Me.POBeatSwitch = New System.Windows.Forms.CheckBox()
+        Me.POBMP = New System.Windows.Forms.Panel()
+        Me.POBMPInner = New System.Windows.Forms.TableLayoutPanel()
+        Me.LBMP = New System.Windows.Forms.ListBox()
+        Me.FlowLayoutPanel4 = New System.Windows.Forms.FlowLayoutPanel()
+        Me.BBMPUp = New System.Windows.Forms.Button()
+        Me.BBMPDown = New System.Windows.Forms.Button()
+        Me.BBMPBrowse = New System.Windows.Forms.Button()
+        Me.BBMPRemove = New System.Windows.Forms.Button()
+        Me.POBMPResizer = New System.Windows.Forms.Button()
+        Me.POBMPSwitch = New System.Windows.Forms.CheckBox()
         Me.POWAV = New System.Windows.Forms.Panel()
         Me.POWAVInner = New System.Windows.Forms.TableLayoutPanel()
         Me.POWAVExpander = New System.Windows.Forms.CheckBox()
@@ -372,6 +382,9 @@ Partial Class MainWindow
         Me.POWAVInner.SuspendLayout()
         Me.FlowLayoutPanel3.SuspendLayout()
         Me.POWAVPart2.SuspendLayout()
+        Me.POBMP.SuspendLayout()
+        Me.POBMPInner.SuspendLayout()
+        Me.FlowLayoutPanel4.SuspendLayout()
         Me.POWaveForm.SuspendLayout()
         Me.POWaveFormInner.SuspendLayout()
         Me.POWaveFormPart2.SuspendLayout()
@@ -551,6 +564,7 @@ Partial Class MainWindow
         Me.POptions.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink
         Me.POptions.Controls.Add(Me.POExpansion)
         Me.POptions.Controls.Add(Me.POBeat)
+        Me.POptions.Controls.Add(Me.POBMP)
         Me.POptions.Controls.Add(Me.POWAV)
         Me.POptions.Controls.Add(Me.POWaveForm)
         Me.POptions.Controls.Add(Me.POGrid)
@@ -890,6 +904,141 @@ Partial Class MainWindow
         Me.POBeatSwitch.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         Me.POBeatSwitch.UseCompatibleTextRendering = True
         Me.POBeatSwitch.UseVisualStyleBackColor = False
+        '
+        'POBMP
+        '
+        Me.POBMP.AllowDrop = True
+        Me.POBMP.AutoSize = True
+        Me.POBMP.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink
+        Me.POBMP.Controls.Add(Me.POBMPInner)
+        Me.POBMP.Controls.Add(Me.POBMPSwitch)
+        Me.POBMP.Dock = System.Windows.Forms.DockStyle.Top
+        Me.POBMP.Location = New System.Drawing.Point(0, 912)
+        Me.POBMP.Name = "POBMP"
+        Me.POBMP.Size = New System.Drawing.Size(183, 270)
+        Me.POBMP.TabIndex = 4
+        '
+        'POBMPInner
+        '
+        Me.POBMPInner.ColumnCount = 1
+        Me.POBMPInner.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
+        Me.POBMPInner.Controls.Add(Me.LBMP, 0, 1)
+        Me.POBMPInner.Controls.Add(Me.FlowLayoutPanel4, 0, 0)
+        Me.POBMPInner.Controls.Add(Me.POBMPResizer, 0, 2)
+        Me.POBMPInner.Dock = System.Windows.Forms.DockStyle.Top
+        Me.POBMPInner.Location = New System.Drawing.Point(0, 20)
+        Me.POBMPInner.Name = "POBMPInner"
+        Me.POBMPInner.RowCount = 3
+        Me.POBMPInner.RowStyles.Add(New System.Windows.Forms.RowStyle())
+        Me.POBMPInner.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
+        Me.POBMPInner.RowStyles.Add(New System.Windows.Forms.RowStyle())
+        Me.POBMPInner.Size = New System.Drawing.Size(183, 250)
+        Me.POBMPInner.TabIndex = 5
+        Me.POBMPInner.Visible = False
+        '
+        'LBMP
+        '
+        Me.LBMP.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.LBMP.Font = New System.Drawing.Font("Consolas", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.LBMP.IntegralHeight = False
+        Me.LBMP.ItemHeight = 14
+        Me.LBMP.Location = New System.Drawing.Point(3, 93)
+        Me.LBMP.Margin = New System.Windows.Forms.Padding(3, 0, 3, 0)
+        Me.LBMP.Name = "LBMP"
+        Me.LBMP.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended
+        Me.LBMP.Size = New System.Drawing.Size(177, 152)
+        Me.LBMP.TabIndex = 25
+        '
+        'FlowLayoutPanel4
+        '
+        Me.FlowLayoutPanel4.AutoSize = True
+        Me.FlowLayoutPanel4.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink
+        Me.FlowLayoutPanel4.Controls.Add(Me.BBMPUp)
+        Me.FlowLayoutPanel4.Controls.Add(Me.BBMPDown)
+        Me.FlowLayoutPanel4.Controls.Add(Me.BBMPBrowse)
+        Me.FlowLayoutPanel4.Controls.Add(Me.BBMPRemove)
+        Me.FlowLayoutPanel4.Location = New System.Drawing.Point(3, 3)
+        Me.FlowLayoutPanel4.Name = "FlowLayoutPanel4"
+        Me.FlowLayoutPanel4.Size = New System.Drawing.Size(96, 24)
+        Me.FlowLayoutPanel4.TabIndex = 26
+        Me.FlowLayoutPanel4.WrapContents = False
+        '
+        'BBMPUp
+        '
+        Me.BBMPUp.Image = Global.iBMSC.My.Resources.Resources.x16Up
+        Me.BBMPUp.Location = New System.Drawing.Point(0, 0)
+        Me.BBMPUp.Margin = New System.Windows.Forms.Padding(0)
+        Me.BBMPUp.Name = "BBMPUp"
+        Me.BBMPUp.Size = New System.Drawing.Size(24, 24)
+        Me.BBMPUp.TabIndex = 26
+        Me.ToolTipUniversal.SetToolTip(Me.BBMPUp, "Move Up")
+        Me.BBMPUp.UseVisualStyleBackColor = True
+        '
+        'BBMPDown
+        '
+        Me.BBMPDown.Image = Global.iBMSC.My.Resources.Resources.x16Down
+        Me.BBMPDown.Location = New System.Drawing.Point(24, 0)
+        Me.BBMPDown.Margin = New System.Windows.Forms.Padding(0)
+        Me.BBMPDown.Name = "BBMPDown"
+        Me.BBMPDown.Size = New System.Drawing.Size(24, 24)
+        Me.BBMPDown.TabIndex = 27
+        Me.ToolTipUniversal.SetToolTip(Me.BBMPDown, "Move Down")
+        Me.BBMPDown.UseVisualStyleBackColor = True
+        '
+        'BBMPBrowse
+        '
+        Me.BBMPBrowse.Image = Global.iBMSC.My.Resources.Resources.x16PlayerBrowse
+        Me.BBMPBrowse.Location = New System.Drawing.Point(48, 0)
+        Me.BBMPBrowse.Margin = New System.Windows.Forms.Padding(0)
+        Me.BBMPBrowse.Name = "BBMPBrowse"
+        Me.BBMPBrowse.Size = New System.Drawing.Size(24, 24)
+        Me.BBMPBrowse.TabIndex = 30
+        Me.ToolTipUniversal.SetToolTip(Me.BBMPBrowse, "Browse")
+        Me.BBMPBrowse.UseVisualStyleBackColor = True
+        '
+        'BBMPRemove
+        '
+        Me.BBMPRemove.Image = Global.iBMSC.My.Resources.Resources.x16Remove
+        Me.BBMPRemove.Location = New System.Drawing.Point(72, 0)
+        Me.BBMPRemove.Margin = New System.Windows.Forms.Padding(0)
+        Me.BBMPRemove.Name = "BBMPRemove"
+        Me.BBMPRemove.Size = New System.Drawing.Size(24, 24)
+        Me.BBMPRemove.TabIndex = 31
+        Me.ToolTipUniversal.SetToolTip(Me.BBMPRemove, "Remove")
+        Me.BBMPRemove.UseVisualStyleBackColor = True
+        '
+        'POBMPResizer
+        '
+        Me.POBMPResizer.Dock = System.Windows.Forms.DockStyle.Top
+        Me.POBMPResizer.FlatAppearance.BorderSize = 0
+        Me.POBMPResizer.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.POBMPResizer.Location = New System.Drawing.Point(0, 245)
+        Me.POBMPResizer.Margin = New System.Windows.Forms.Padding(0)
+        Me.POBMPResizer.Name = "POBMPResizer"
+        Me.POBMPResizer.Size = New System.Drawing.Size(183, 5)
+        Me.POBMPResizer.TabIndex = 33
+        Me.POBMPResizer.TabStop = False
+        Me.POBMPResizer.UseVisualStyleBackColor = True
+        '
+        'POBMPSwitch
+        '
+        Me.POBMPSwitch.Appearance = System.Windows.Forms.Appearance.Button
+        Me.POBMPSwitch.BackColor = System.Drawing.SystemColors.Control
+        Me.POBMPSwitch.Checked = True
+        Me.POBMPSwitch.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.POBMPSwitch.Cursor = System.Windows.Forms.Cursors.Hand
+        Me.POBMPSwitch.Dock = System.Windows.Forms.DockStyle.Top
+        Me.POBMPSwitch.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.POBMPSwitch.Location = New System.Drawing.Point(0, 0)
+        Me.POBMPSwitch.Name = "POBMPSwitch"
+        Me.POBMPSwitch.Size = New System.Drawing.Size(183, 20)
+        Me.POBMPSwitch.TabIndex = 4
+        Me.POBMPSwitch.TabStop = False
+        Me.POBMPSwitch.Text = "#BMP (Images List)"
+        Me.POBMPSwitch.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+        Me.POBMPSwitch.UseCompatibleTextRendering = True
+        Me.POBMPSwitch.UseVisualStyleBackColor = False
+
         '
         'POWAV
         '
@@ -4048,6 +4197,10 @@ Partial Class MainWindow
         Me.POWAVInner.ResumeLayout(False)
         Me.POWAVInner.PerformLayout()
         Me.FlowLayoutPanel3.ResumeLayout(False)
+        Me.POBMP.ResumeLayout(False)
+        Me.POBMPInner.ResumeLayout(False)
+        Me.POBMPInner.PerformLayout()
+        Me.FlowLayoutPanel4.ResumeLayout(False)
         Me.POWAVPart2.ResumeLayout(False)
         Me.POWAVPart2.PerformLayout()
         Me.POWaveForm.ResumeLayout(False)
@@ -4143,6 +4296,7 @@ Partial Class MainWindow
     End Sub
     Friend WithEvents POptionsScroll As System.Windows.Forms.Panel
     Friend WithEvents LWAV As System.Windows.Forms.ListBox
+    Friend WithEvents LBMP As System.Windows.Forms.ListBox
     Friend WithEvents Timer1 As System.Windows.Forms.Timer
     Friend WithEvents MInsert As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents MRemove As System.Windows.Forms.ToolStripMenuItem
@@ -4433,18 +4587,27 @@ Partial Class MainWindow
     Friend WithEvents POWAV As System.Windows.Forms.Panel
     Friend WithEvents POWAVInner As System.Windows.Forms.TableLayoutPanel
     Friend WithEvents POWAVSwitch As System.Windows.Forms.CheckBox
+    Friend WithEvents POBMP As System.Windows.Forms.Panel
+    Friend WithEvents POBMPInner As System.Windows.Forms.TableLayoutPanel
+    Friend WithEvents POBMPSwitch As System.Windows.Forms.CheckBox
     Friend WithEvents POBeat As System.Windows.Forms.Panel
     Friend WithEvents POBeatInner As System.Windows.Forms.TableLayoutPanel
     Friend WithEvents POBeatSwitch As System.Windows.Forms.CheckBox
     Friend WithEvents FlowLayoutPanel3 As System.Windows.Forms.FlowLayoutPanel
+    Friend WithEvents FlowLayoutPanel4 As System.Windows.Forms.FlowLayoutPanel
     Friend WithEvents BWAVUp As System.Windows.Forms.Button
     Friend WithEvents BWAVDown As System.Windows.Forms.Button
     Friend WithEvents BWAVBrowse As System.Windows.Forms.Button
     Friend WithEvents BWAVRemove As System.Windows.Forms.Button
+    Friend WithEvents BBMPUp As System.Windows.Forms.Button
+    Friend WithEvents BBMPDown As System.Windows.Forms.Button
+    Friend WithEvents BBMPBrowse As System.Windows.Forms.Button
+    Friend WithEvents BBMPRemove As System.Windows.Forms.Button
     Friend WithEvents POExpansion As System.Windows.Forms.Panel
     Friend WithEvents POExpansionInner As System.Windows.Forms.Panel
     Friend WithEvents POExpansionSwitch As System.Windows.Forms.CheckBox
     Friend WithEvents POWAVResizer As System.Windows.Forms.Button
+    Friend WithEvents POBMPResizer As System.Windows.Forms.Button
     Friend WithEvents TableLayoutPanel7 As System.Windows.Forms.TableLayoutPanel
     Friend WithEvents POExpansionResizer As System.Windows.Forms.Button
     Friend WithEvents POBeatResizer As System.Windows.Forms.Button

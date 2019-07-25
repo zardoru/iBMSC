@@ -34,34 +34,34 @@ Partial Public Class MainWindow
     Public Const niS4 As Integer = 26
     Public Const niB As Integer = 27
 
-    Public column() As Column = {New Column(0, 50, "Measure", False, True, True, 0, 0, &HFF00FFFF, 0, &HFF00FFFF, 0),
-                              New Column(50, 60, "SCROLL", True, True, True, 99, 0, &HFFFF0000, 0, &HFFFF0000, 0),
-                              New Column(110, 60, "BPM", True, True, True, 3, 0, &HFFFF0000, 0, &HFFFF0000, 0),
-                              New Column(170, 50, "STOP", True, True, True, 9, 0, &HFFFF0000, 0, &HFFFF0000, 0),
-                              New Column(220, 5, "", False, False, True, 0, 0, 0, 0, 0, 0),
-                              New Column(225, 42, "A1", True, False, True, 16, &HFFB0B0B0, &HFF000000, &HFFC0C0C0, &HFF000000, &H14FFFFFF),
-                              New Column(267, 30, "A2", True, False, True, 11, &HFF62B0FF, &HFF000000, &HFF6AB0F7, &HFF000000, &H140033FF),
-                              New Column(297, 42, "A3", True, False, True, 12, &HFFB0B0B0, &HFF000000, &HFFC0C0C0, &HFF000000, &H14FFFFFF),
-                              New Column(339, 45, "A4", True, False, True, 13, &HFFFFC862, &HFF000000, &HFFF7C66A, &HFF000000, &H16F38B0C),
-                              New Column(384, 42, "A5", True, False, True, 14, &HFFB0B0B0, &HFF000000, &HFFC0C0C0, &HFF000000, &H14FFFFFF),
-                              New Column(426, 30, "A6", True, False, True, 15, &HFF62B0FF, &HFF000000, &HFF6AB0F7, &HFF000000, &H140033FF),
-                              New Column(456, 42, "A7", True, False, True, 18, &HFFB0B0B0, &HFF000000, &HFFC0C0C0, &HFF000000, &H14FFFFFF),
-                              New Column(498, 40, "A8", True, False, True, 19, &HFF808080, &HFF000000, &HFF909090, &HFF000000, 0),
-                              New Column(498, 5, "", False, False, True, 0, 0, 0, 0, 0, 0),
-                              New Column(503, 42, "D1", True, False, False, 21, &HFFB0B0B0, &HFF000000, &HFFC0C0C0, &HFF000000, &H14FFFFFF),
-                              New Column(503, 30, "D2", True, False, False, 22, &HFF62B0FF, &HFF000000, &HFF6AB0F7, &HFF000000, &H140033FF),
-                              New Column(503, 42, "D3", True, False, False, 23, &HFFB0B0B0, &HFF000000, &HFFC0C0C0, &HFF000000, &H14FFFFFF),
-                              New Column(503, 45, "D4", True, False, False, 24, &HFFFFC862, &HFF000000, &HFFF7C66A, &HFF000000, &H16F38B0C),
-                              New Column(503, 42, "D5", True, False, False, 25, &HFFB0B0B0, &HFF000000, &HFFC0C0C0, &HFF000000, &H14FFFFFF),
-                              New Column(503, 30, "D6", True, False, False, 28, &HFF62B0FF, &HFF000000, &HFF6AB0F7, &HFF000000, &H140033FF),
-                              New Column(503, 42, "D7", True, False, False, 29, &HFFB0B0B0, &HFF000000, &HFFC0C0C0, &HFF000000, &H14FFFFFF),
-                              New Column(503, 40, "D8", True, False, False, 26, &HFF808080, &HFF000000, &HFF909090, &HFF000000, 0),
-                              New Column(503, 5, "", False, False, False, 0, 0, 0, 0, 0, 0),
-                              New Column(503, 40, "BGA", True, False, False, 4, &HFF8CD78A, &HFF000000, &HFF90D38E, &HFF000000, 0),
-                              New Column(503, 40, "LAYER", True, False, False, 7, &HFF8CD78A, &HFF000000, &HFF90D38E, &HFF000000, 0),
-                              New Column(503, 40, "POOR", True, False, False, 6, &HFF8CD78A, &HFF000000, &HFF90D38E, &HFF000000, 0),
-                              New Column(503, 5, "", False, False, False, 0, 0, 0, 0, 0, 0),
-                              New Column(503, 40, "B", True, False, True, 1, &HFFE18080, &HFF000000, &HFFDC8585, &HFF000000, 0)}
+    Public column() As Column = {New Column(0, 50, "Measure", False, True, False, True, 0, 0, &HFF00FFFF, 0, &HFF00FFFF, 0),
+                              New Column(50, 60, "SCROLL", True, True, False, True, 99, 0, &HFFFF0000, 0, &HFFFF0000, 0),
+                              New Column(110, 60, "BPM", True, True, False, True, 3, 0, &HFFFF0000, 0, &HFFFF0000, 0),
+                              New Column(170, 50, "STOP", True, True, False, True, 9, 0, &HFFFF0000, 0, &HFFFF0000, 0),
+                              New Column(220, 5, "", False, False, False, True, 0, 0, 0, 0, 0, 0),
+                              New Column(225, 42, "A1", True, False, True, True, 16, &HFFB0B0B0, &HFF000000, &HFFC0C0C0, &HFF000000, &H14FFFFFF),
+                              New Column(267, 30, "A2", True, False, True, True, 11, &HFF62B0FF, &HFF000000, &HFF6AB0F7, &HFF000000, &H140033FF),
+                              New Column(297, 42, "A3", True, False, True, True, 12, &HFFB0B0B0, &HFF000000, &HFFC0C0C0, &HFF000000, &H14FFFFFF),
+                              New Column(339, 45, "A4", True, False, True, True, 13, &HFFFFC862, &HFF000000, &HFFF7C66A, &HFF000000, &H16F38B0C),
+                              New Column(384, 42, "A5", True, False, True, True, 14, &HFFB0B0B0, &HFF000000, &HFFC0C0C0, &HFF000000, &H14FFFFFF),
+                              New Column(426, 30, "A6", True, False, True, True, 15, &HFF62B0FF, &HFF000000, &HFF6AB0F7, &HFF000000, &H140033FF),
+                              New Column(456, 42, "A7", True, False, True, True, 18, &HFFB0B0B0, &HFF000000, &HFFC0C0C0, &HFF000000, &H14FFFFFF),
+                              New Column(498, 40, "A8", True, False, True, True, 19, &HFF808080, &HFF000000, &HFF909090, &HFF000000, 0),
+                              New Column(498, 5, "", False, False, False, True, 0, 0, 0, 0, 0, 0),
+                              New Column(503, 42, "D1", True, False, True, False, 21, &HFFB0B0B0, &HFF000000, &HFFC0C0C0, &HFF000000, &H14FFFFFF),
+                              New Column(503, 30, "D2", True, False, True, False, 22, &HFF62B0FF, &HFF000000, &HFF6AB0F7, &HFF000000, &H140033FF),
+                              New Column(503, 42, "D3", True, False, True, False, 23, &HFFB0B0B0, &HFF000000, &HFFC0C0C0, &HFF000000, &H14FFFFFF),
+                              New Column(503, 45, "D4", True, False, True, False, 24, &HFFFFC862, &HFF000000, &HFFF7C66A, &HFF000000, &H16F38B0C),
+                              New Column(503, 42, "D5", True, False, True, False, 25, &HFFB0B0B0, &HFF000000, &HFFC0C0C0, &HFF000000, &H14FFFFFF),
+                              New Column(503, 30, "D6", True, False, True, False, 28, &HFF62B0FF, &HFF000000, &HFF6AB0F7, &HFF000000, &H140033FF),
+                              New Column(503, 42, "D7", True, False, True, False, 29, &HFFB0B0B0, &HFF000000, &HFFC0C0C0, &HFF000000, &H14FFFFFF),
+                              New Column(503, 40, "D8", True, False, True, False, 26, &HFF808080, &HFF000000, &HFF909090, &HFF000000, 0),
+                              New Column(503, 5, "", False, False, False, False, 0, 0, 0, 0, 0, 0),
+                              New Column(503, 40, "BGA", True, False, False, False, 4, &HFF8CD78A, &HFF000000, &HFF90D38E, &HFF000000, 0),
+                              New Column(503, 40, "LAYER", True, False, False, False, 7, &HFF8CD78A, &HFF000000, &HFF90D38E, &HFF000000, 0),
+                              New Column(503, 40, "POOR", True, False, False, False, 6, &HFF8CD78A, &HFF000000, &HFF90D38E, &HFF000000, 0),
+                              New Column(503, 5, "", False, False, False, False, 0, 0, 0, 0, 0, 0),
+                              New Column(503, 40, "B", True, False, True, True, 1, &HFFE18080, &HFF000000, &HFFDC8585, &HFF000000, 0)}
 
 
     Public Const idflBPM As Integer = 5
@@ -123,6 +123,9 @@ Partial Public Class MainWindow
     End Function
     Private Function IsColumnNumeric(ByVal iCol As Integer) As Boolean
         If iCol < niB Then Return column(iCol).isNumeric Else Return column(niB).isNumeric
+    End Function
+    Private Function IsColumnSound(ByVal iCol As Integer) As Boolean
+        If iCol < niB Then Return column(iCol).isSound Else Return column(niB).isSound
     End Function
 
 

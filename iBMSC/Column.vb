@@ -58,6 +58,7 @@
         Public Left As Integer
         Public Title As String
         Public isNumeric As Boolean
+        Public isSound As Boolean
         Public Identifier As Integer
 
         Public cNote As Integer
@@ -100,11 +101,12 @@
         End Sub
 
         Public Sub New(ByVal xLeft As Integer, ByVal xWidth As Integer, ByVal xTitle As String,
-        ByVal xNoteCol As Boolean, ByVal xisNumeric As Boolean, ByVal xVisible As Boolean, ByVal xIdentifier As Integer,
+        ByVal xNoteCol As Boolean, ByVal xisNumeric As Boolean, ByVal xisSound As Boolean, ByVal xVisible As Boolean, ByVal xIdentifier As Integer,
         ByVal xcNote As Integer, ByVal xcText As Integer, ByVal xcLNote As Integer, ByVal xcLText As Integer, ByVal xcBG As Integer)
             Left = xLeft
             Title = xTitle
             isNumeric = xisNumeric
+            isSound = xisSound
             Identifier = xIdentifier
 
             _Width = xWidth

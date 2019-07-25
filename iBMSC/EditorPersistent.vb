@@ -618,7 +618,7 @@ EndOfSub:
                     xChildNode = xChildNode.PreviousSibling
                 Loop
 
-                Dim mList() As Object = {LWAV, LBeat, TExpansion}
+                Dim mList() As Object = {LWAV, LBMP, LBeat, TExpansion}
                 For Each c As Object In mList
                     Try
                         c.font = fMono
@@ -907,10 +907,19 @@ EndOfSub:
                 Dim eWAV As XmlElement = eOptionsPanel.Item("WAV")
                 If eWAV IsNot Nothing Then
                     XMLLoadLocale(eWAV.Item("Title"), POWAVSwitch.Text)
+                    XMLLoadLocaleToolTipUniversal(eWAV.Item("MoveUp"), BBMPUp)
+                    XMLLoadLocaleToolTipUniversal(eWAV.Item("MoveDown"), BBMPDown)
+                    XMLLoadLocaleToolTipUniversal(eWAV.Item("Browse"), BBMPBrowse)
+                    XMLLoadLocaleToolTipUniversal(eWAV.Item("Remove"), BBMPRemove)
                     XMLLoadLocaleToolTipUniversal(eWAV.Item("MoveUp"), BWAVUp)
                     XMLLoadLocaleToolTipUniversal(eWAV.Item("MoveDown"), BWAVDown)
                     XMLLoadLocaleToolTipUniversal(eWAV.Item("Browse"), BWAVBrowse)
                     XMLLoadLocaleToolTipUniversal(eWAV.Item("Remove"), BWAVRemove)
+                End If
+
+                Dim eBMP As XmlElement = eOptionsPanel.Item("BMP")
+                If eBMP IsNot Nothing Then
+                    XMLLoadLocale(eBMP.Item("Title"), POBMPSwitch.Text)
                 End If
 
                 XMLLoadLocale(eOptionsPanel.Item("Beat"), POBeatSwitch.Text)
@@ -973,6 +982,16 @@ EndOfSub:
                 XMLLoadLocale(eFileType.Item("MP3"), Strings.FileType.MP3)
                 XMLLoadLocale(eFileType.Item("MID"), Strings.FileType.MID)
                 XMLLoadLocale(eFileType.Item("_image"), Strings.FileType._image)
+                XMLLoadLocale(eFileType.Item("_movie"), Strings.FileType._movie)
+                XMLLoadLocale(eFileType.Item("BMP"), Strings.FileType.BMP)
+                XMLLoadLocale(eFileType.Item("PNG"), Strings.FileType.PNG)
+                XMLLoadLocale(eFileType.Item("JPG"), Strings.FileType.JPG)
+                XMLLoadLocale(eFileType.Item("GIF"), Strings.FileType.GIF)
+                XMLLoadLocale(eFileType.Item("MPG"), Strings.FileType.MPG)
+                XMLLoadLocale(eFileType.Item("AVI"), Strings.FileType.AVI)
+                XMLLoadLocale(eFileType.Item("MP4"), Strings.FileType.MP4)
+                XMLLoadLocale(eFileType.Item("WMV"), Strings.FileType.WMV)
+                XMLLoadLocale(eFileType.Item("WEBM"), Strings.FileType.WEBM)
                 XMLLoadLocale(eFileType.Item("EXE"), Strings.FileType.EXE)
             End If
 
