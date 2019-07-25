@@ -7,6 +7,37 @@ Module Audio
     Dim Output As WasapiOut
     Dim Source As IWaveSource
 
+    Public Structure BMSONSliceResult
+        Public Found As Boolean
+        Public Start As Double
+        Public Length As Double
+        Public Overrides Function ToString() As String
+            Return "Slice result " & Found & " - " & Start & " => " & Length
+        End Function
+    End Structure
+
+    ' https://github.com/filoe/cscore/blob/master/CSCore.Test/utils/TrimmedWaveSource.cs
+    Public Class TrimmedWaveSource
+        Inherits WaveAggregatorBase
+        Private mSource As IWaveSource
+        Private mMaxLength As Integer
+        Private mRead As Integer
+        Public Sub New(Source As IWaveSource, MaxLength As Integer)
+            MyBase.New(Source)
+            mSource = Source
+            mMaxLength = MaxLength
+        End Sub
+        Public Overrides Function Read(buffer() As Byte, offset As Integer, count As Integer) As Integer
+            Dim ReadBytes = MyBase.Read(buffer, offset, count)
+            mRead = mRead + ReadBytes
+            If mRead > mMaxLength Then
+                ReadBytes = ReadBytes - (mRead - mMaxLength)
+                mRead = mMaxLength
+            End If
+            Return ReadBytes
+        End Function
+    End Class
+
     Public Sub Initialize()
         Output = New WasapiOut()
         CodecFactory.Instance.Register("ogg", New CodecFactoryEntry(Function(s)
@@ -36,7 +67,7 @@ Module Audio
         Return filename
     End Function
 
-    Public Sub Play(ByVal filename As String)
+    Public Sub Play(ByVal filename As String, ByVal slice As BMSONSliceResult)
 
         If Source IsNot Nothing Then
             Output.Stop()
@@ -55,8 +86,19 @@ Module Audio
         End If
 
         Source = CodecFactory.Instance.GetCodec(fn)
+        If slice.Found Then
+            Source.Position = Source.WaveFormat.MillisecondsToBytes(Conversion.Int(slice.Start))
+            If slice.Length > 0 Then
+                Source = New TrimmedWaveSource(Source, Source.WaveFormat.MillisecondsToBytes(Conversion.Int(slice.Length)))
+            End If
+        End If
         Output.Initialize(Source)
         Output.Play()
+    End Sub
+
+    Public Sub Play(ByVal filename As String)
+        Dim slice As BMSONSliceResult
+        Play(filename, slice)
     End Sub
 
     Public Sub StopPlaying()

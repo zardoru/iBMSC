@@ -509,6 +509,23 @@ Partial Public Class MainWindow
         End If
     End Sub
 
+    Private Function GetNoteLabel(sNote As Note)
+        Dim xLabel As String = C10to36(sNote.Value \ 10000)
+        Dim xContinue As Boolean = False
+        Dim xWAV As String = hWAV(sNote.Value \ 10000)
+        If xWAV <> "" AndAlso xWAV.Length = 4 AndAlso xWAV.Substring(0, 2) = "C-" Then
+            xLabel = xWAV.Substring(2)
+            xContinue = True
+        End If
+        If ShowFileName AndAlso hWAV(C36to10(xLabel)) <> "" Then
+            xLabel = Path.GetFileNameWithoutExtension(hWAV(C36to10(xLabel)))
+        End If
+        If xContinue Then
+            xLabel = ">" & xLabel
+        End If
+        Return xLabel
+    End Function
+
     ''' <summary>
     ''' Draw a note in a buffer.
     ''' </summary>
@@ -523,10 +540,7 @@ Partial Public Class MainWindow
         Dim xAlpha As Single = 1.0F
         If sNote.Hidden Then xAlpha = vo.kOpacity
 
-        Dim xLabel As String = C10to36(sNote.Value \ 10000)
-        If ShowFileName AndAlso hWAV(C36to10(xLabel)) <> "" Then
-            xLabel = Path.GetFileNameWithoutExtension(hWAV(C36to10(xLabel)))
-        End If
+        Dim xLabel As String = GetNoteLabel(sNote)
 
         Dim xPen As Pen
         Dim xBrush As Drawing2D.LinearGradientBrush
@@ -628,9 +642,7 @@ Partial Public Class MainWindow
         Dim xAlpha As Single = 1.0F
         If sNote.Hidden Then xAlpha = vo.kOpacity
 
-        Dim xLabel As String = C10to36(sNote.Value \ 10000)
-        If ShowFileName AndAlso hWAV(C36to10(xLabel)) <> "" Then xLabel = Path.GetFileNameWithoutExtension(hWAV(C36to10(xLabel)))
-
+        Dim xLabel As String = GetNoteLabel(sNote)
         Dim xPen1 As Pen
         Dim xBrush As Drawing2D.LinearGradientBrush
         Dim xBrush2 As SolidBrush

@@ -495,6 +495,54 @@ Partial Public Class MainWindow
         Return NoteIndex
     End Function
 
+    Private Function GetBMSONSliceTime(NoteIndex As Integer, ContinueI2 As Integer, StartI2 As Integer) As BMSONSliceResult
+        Dim currentMS = 0.0#
+        Dim currentBPM = Notes(0).Value / 10000
+        Dim currentBPMVPosition = 0.0#
+        Dim startTime = 0.0#
+        Dim sliceStart = 0.0#
+        Dim sliceEnd = 0.0#
+        Dim started = False
+        Dim found As Integer = -1
+        Dim result As BMSONSliceResult
+        For i = 1 To UBound(Notes)
+            If Notes(i).ColumnIndex = niBPM Then
+                currentMS += (Notes(i).VPosition - currentBPMVPosition) / currentBPM * 1250
+                currentBPM = Notes(i).Value / 10000
+                currentBPMVPosition = Notes(i).VPosition
+            End If
+
+            If i = NoteIndex Then
+                If found = -1 Then
+                    result.Found = False
+                    Return result
+                End If
+                sliceStart = currentMS + (Notes(i).VPosition - currentBPMVPosition) / currentBPM * 1250
+                started = True
+            ElseIf started And (Notes(i).Value \ 10000 = StartI2 Or Notes(i).Value \ 10000 = ContinueI2) Then
+                sliceEnd = currentMS + (Notes(i).VPosition - currentBPMVPosition) / currentBPM * 1250
+                If sliceEnd > sliceStart Then
+                    result.Found = True
+                    result.Start = sliceStart - startTime
+                    result.Length = sliceEnd - sliceStart
+                    Return result
+                End If
+            ElseIf Notes(i).Value \ 10000 = StartI2 And Not started Then
+                found = i
+                startTime = currentMS + (Notes(i).VPosition - currentBPMVPosition) / currentBPM * 1250
+            End If
+            'K(i).TimeOffset = currentMS + (K(i).VPosition - currentBPMVPosition) / currentBPM * 1250
+        Next
+        If found Then
+            result.Found = True
+            result.Start = sliceStart - startTime
+            result.Length = 0
+            Return result
+        End If
+        result.Found = False
+        Return result
+    End Function
+
     Private Sub PanelPreviewNoteIndex(NoteIndex As Integer)
         'Play wav
         If ClickStopPreview Then PreviewNote("", True)
@@ -505,9 +553,24 @@ Partial Public Class MainWindow
             If xI2 >= 1296 Then xI2 = 1295
 
             If Not hWAV(xI2) = "" Then ' AndAlso Path.GetExtension(hWAV(xI2)).ToLower = ".wav" Then
-                Dim xFileLocation As String = IIf(ExcludeFileName(FileName) = "", InitPath, ExcludeFileName(FileName)) & "\" & hWAV(xI2)
+                Dim xFileName As String = hWAV(xI2)
+                Dim xFileLocation As String = IIf(ExcludeFileName(FileName) = "", InitPath, ExcludeFileName(FileName)) & "\" & xFileName
+                Dim Slice As BMSONSliceResult
+                If xFileName.Length = 4 And xFileName.Substring(0, 2) = "C-" Then
+                    Dim TargetI2 = C36to10(xFileName.Substring(2))
+                    Dim TargetFileName As String = hWAV(TargetI2)
+                    If Not TargetFileName = "" Then
+                        Dim TargetFileLocation = IIf(ExcludeFileName(FileName) = "", InitPath, ExcludeFileName(FileName)) & "\" & TargetFileName
+                        Slice = GetBMSONSliceTime(NoteIndex, xI2, TargetI2)
+                        If slice.Found Then
+                            xFileLocation = TargetFileLocation
+                        End If
+                    End If
+                End If
                 If Not ClickStopPreview Then PreviewNote("", True)
-                PreviewNote(xFileLocation, False)
+                Console.WriteLine(xFileLocation)
+                Console.WriteLine(Slice)
+                PreviewNote(xFileLocation, False, Slice)
             End If
         End If
     End Sub

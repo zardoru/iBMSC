@@ -3,8 +3,6 @@ Imports iBMSC.Editor
 
 
 Public Class MainWindow
-
-
     'Public Structure MARGINS
     '    Public Left As Integer
     '    Public Right As Integer
@@ -489,10 +487,15 @@ Public Class MainWindow
     End Sub
 
     Private Sub PreviewNote(ByVal xFileLocation As String, ByVal bStop As Boolean)
+        Dim Slice As BMSONSliceResult
+        Audio.Play(xFileLocation, Slice)
+    End Sub
+
+    Private Sub PreviewNote(ByVal xFileLocation As String, ByVal bStop As Boolean, ByVal Slice As BMSONSliceResult)
         If bStop Then
             Audio.StopPlaying()
         End If
-        Audio.Play(xFileLocation)
+        Audio.Play(xFileLocation, Slice)
     End Sub
 
     Private Sub AddNote(note As Note,
