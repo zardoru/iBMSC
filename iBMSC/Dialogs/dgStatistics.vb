@@ -18,15 +18,16 @@ Public Class dgStatistics
         Me.Text = Strings.fStatistics.Title
         Label6.Text = Strings.fStatistics.lBPM
         Label7.Text = Strings.fStatistics.lSTOP
-        Label8.Text = Strings.fStatistics.lA
-        Label9.Text = Strings.fStatistics.lD
-        Label10.Text = Strings.fStatistics.lBGM
+        Label8.Text = Strings.fStatistics.lSCROLL
+        Label9.Text = Strings.fStatistics.lA
+        Label10.Text = Strings.fStatistics.lD
+        Label11.Text = Strings.fStatistics.lBGM
         Label1.Text = Strings.fStatistics.lTotal
-        Label11.Text = Strings.fStatistics.lShort
-        Label12.Text = Strings.fStatistics.lLong
-        Label13.Text = Strings.fStatistics.lLnObj
-        Label14.Text = Strings.fStatistics.lHidden
-        Label15.Text = Strings.fStatistics.lErrors
+        Label12.Text = Strings.fStatistics.lShort
+        Label13.Text = Strings.fStatistics.lLong
+        Label14.Text = Strings.fStatistics.lLnObj
+        Label15.Text = Strings.fStatistics.lHidden
+        Label16.Text = Strings.fStatistics.lErrors
         Label2.Text = Strings.fStatistics.lTotal
         OK_Button.Text = Strings.OK
     End Sub
@@ -34,7 +35,7 @@ Public Class dgStatistics
     Public Sub New(ByVal data(,) As Integer)
         InitializeComponent()
 
-        For row As Integer = 0 To 5
+        For row As Integer = 0 To 6
             For col As Integer = 0 To 5
                 Dim xLabel As New Label
                 xLabel.Dock = DockStyle.Fill
