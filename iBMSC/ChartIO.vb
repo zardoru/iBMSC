@@ -52,6 +52,9 @@ Partial Public Class MainWindow
             ElseIf sLineTrim.StartsWith("#WAV", StringComparison.CurrentCultureIgnoreCase) Then
                 hWAV(C36to10(Mid(sLineTrim, Len("#WAV") + 1, 2))) = Mid(sLineTrim, Len("#WAV") + 4)
 
+            ElseIf sLineTrim.StartsWith("#BMP", StringComparison.CurrentCultureIgnoreCase) Then
+                hBMP(C36to10(Mid(sLineTrim, Len("#BMP") + 1, 2))) = Mid(sLineTrim, Len("#BMP") + 4)
+
             ElseIf sLineTrim.StartsWith("#BPM", StringComparison.CurrentCultureIgnoreCase) And Not Mid(sLineTrim, Len("#BPM") + 1, 1).Trim = "" Then  'If BPM##
                 ' zdr: No limits on BPM editing.. they don't make much sense.
                 hBPM(C36to10(Mid(sLineTrim, Len("#BPM") + 1, 2))) = Val(Mid(sLineTrim, Len("#BPM") + 4)) * 10000
@@ -209,11 +212,16 @@ AddExpansion:       xExpansion &= sLine & vbCrLf
 
         LWAV.Visible = False
         LWAV.Items.Clear()
+        LBMP.Visible = False
+        LBMP.Items.Clear()
         For xI1 = 1 To 1295
             LWAV.Items.Add(C10to36(xI1) & ": " & hWAV(xI1))
+            LBMP.Items.Add(C10to36(xI1) & ": " & hBMP(xI1))
         Next
         LWAV.SelectedIndex = 0
         LWAV.Visible = True
+        LBMP.SelectedIndex = 0
+        LBMP.Visible = True
 
         TExpansion.Text = xExpansion
 
@@ -375,10 +383,14 @@ AddExpansion:       xExpansion &= sLine & vbCrLf
             If Not hWAV(i) = "" Then xStrHeader &= "#WAV" & C10to36(i) &
                                                     " " & hWAV(i) & vbCrLf
         Next
+        For i = 1 To UBound(hBMP)
+            If Not hBMP(i) = "" Then xStrHeader &= "#BMP" & C10to36(i) &
+                                                    " " & hBMP(i) & vbCrLf
+        Next
         For i = 1 To UBound(hBPM)
             xStrHeader &= "#BPM" &
-                IIf(BPMx1296, C10to36(i), Mid("0" & Hex(i), Len(Hex(i)))) &
-                " " & WriteDecimalWithDot(hBPM(i) / 10000) & vbCrLf
+            IIf(BPMx1296, C10to36(i), Mid("0" & Hex(i), Len(Hex(i)))) &
+            " " & WriteDecimalWithDot(hBPM(i) / 10000) & vbCrLf
         Next
         For i = 1 To UBound(hSTOP)
             xStrHeader &= "#STOP" &
@@ -612,6 +624,7 @@ AddExpansion:       xExpansion &= sLine & vbCrLf
         ReDim Notes(0)
         ReDim mColumn(999)
         ReDim hWAV(1295)
+        ReDim hBMP(1295)
         ReDim hBPM(1295)    'x10000
         ReDim hSTOP(1295)
         ReDim hSCROLL(1295)
@@ -739,11 +752,16 @@ Jump1:
 
         LWAV.Visible = False
         LWAV.Items.Clear()
+        LBMP.Visible = False
+        LBMP.Items.Clear()
         For xI1 As Integer = 1 To 1295
             LWAV.Items.Add(C10to36(xI1) & ": " & hWAV(xI1))
+            LBMP.Items.Add(C10to36(xI1) & ": " & hBMP(xI1))
         Next
         LWAV.SelectedIndex = 0
         LWAV.Visible = True
+        LBMP.SelectedIndex = 0
+        LBMP.Visible = True
 
         THBPM.Value = Notes(0).Value / 10000
         SortByVPositionQuick(0, UBound(Notes))
@@ -771,6 +789,7 @@ Jump1:
         ReDim Notes(0)
         ReDim mColumn(999)
         ReDim hWAV(1295)
+        ReDim hBMP(1295)
         Me.InitializeNewBMS()
         Me.InitializeOpenBMS()
 
@@ -881,6 +900,14 @@ Jump1:
                         hWAV(xI) = br.ReadString
                     Next
 
+                Case &H504D42       'BMP List
+
+                    Dim xBMPCount As Integer = br.ReadInt32
+                    For xxi As Integer = 1 To xBMPCount
+                        Dim xI As Integer = br.ReadInt16
+                        hBMP(xI) = br.ReadString
+                    Next
+
                 Case &H74616542     'Beat
                     nBeatN.Value = br.ReadInt16
                     nBeatD.Value = br.ReadInt16
@@ -951,13 +978,18 @@ EndOfSub:
         mnUndo.Enabled = sUndo(sI).ofType <> UndoRedo.opNoOperation
         mnRedo.Enabled = sRedo(sIA).ofType <> UndoRedo.opNoOperation
 
+        LBMP.Visible = False
+        LBMP.Items.Clear()
         LWAV.Visible = False
         LWAV.Items.Clear()
         For xI1 As Integer = 1 To 1295
             LWAV.Items.Add(C10to36(xI1) & ": " & hWAV(xI1))
+            LBMP.Items.Add(C10to36(xI1) & ": " & hBMP(xI1))
         Next
         LWAV.SelectedIndex = 0
         LWAV.Visible = True
+        LBMP.SelectedIndex = 0
+        LBMP.Visible = True
 
         THBPM.Value = Notes(0).Value / 10000
         SortByVPositionQuick(0, UBound(Notes))
@@ -1069,6 +1101,22 @@ EndOfSub:
                 If hWAV(i) = "" Then Continue For
                 bw.Write(CShort(i))
                 bw.Write(hWAV(i))
+            Next
+
+            'Bmp List
+            'bw.Write(("BMP" & vbNullChar).ToCharArray)
+            bw.Write(&H504D42)
+
+            Dim xBMPCount As Integer = 0
+            For i As Integer = 1 To UBound(hBMP)
+                If hBMP(i) <> "" Then xBMPCount += 1
+            Next
+            bw.Write(xBMPCount)
+
+            For i As Integer = 1 To UBound(hBMP)
+                If hBMP(i) = "" Then Continue For
+                bw.Write(CShort(i))
+                bw.Write(hBMP(i))
             Next
 
             'Beat

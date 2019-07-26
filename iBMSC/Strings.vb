@@ -68,6 +68,16 @@ Public Class Strings
         Public Shared MID As String = "MIDI (*.mid)"
 
         Public Shared _image As String = "Supported Image Format (*.png, *.bmp, *.jpg, *.gif)"
+        Public Shared _movie As String = "Supported Movie Format (*.mpg, *.avi, *.mp4, *.wmv, *.webm)"
+        Public Shared BMP As String = "Windows bitmap image (*.bmp)"
+        Public Shared PNG As String = "Portable Network Graphic (*.png)"
+        Public Shared JPG As String = "Joint Photographic Experts Group (*.jpg)"
+        Public Shared GIF As String = "Graphics Interchange Format (*.gif)"
+        Public Shared MPG As String = "Moving Picture Experts Group (*.mpg)"
+        Public Shared AVI As String = "Audio Video Interleave (*.avi)"
+        Public Shared MP4 As String = "MPEG phase 4 (*.mp4)"
+        Public Shared WMV As String = "Windows Media Video (*.wmv)"
+        Public Shared WEBM As String = "WebM (*.webm)"
 
         Public Shared EXE As String = "Executable file (*.exe)"
     End Class

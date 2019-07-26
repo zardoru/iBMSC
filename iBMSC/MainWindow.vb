@@ -87,6 +87,7 @@ Public Class MainWindow
     Dim DDFileName() As String = {}
     Dim SupportedFileExtension() As String = {".bms", ".bme", ".bml", ".pms", ".txt", ".sm", ".ibmsc"}
     Dim SupportedAudioExtension() As String = {".wav", ".mp3", ".ogg"}
+    Dim SupportedImageExtension() As String = {".bmp", ".png", ".jpg", ".jpeg", ".gif", ".mpg", ".mpeg", ".avi", ".m1v", ".m2v", ".m4v", ".mp4", ".webm", ".wmv"}
 
     'Variables for theme
     'Dim SaveTheme As Boolean = True
@@ -157,6 +158,7 @@ Public Class MainWindow
 
     '----Header Options
     Dim hWAV(1295) As String
+    Dim hBMP(1295) As String
     Dim hBPM(1295) As Long   'x10000
     Dim hSTOP(1295) As Long
     Dim hSCROLL(1295) As Long
@@ -1051,6 +1053,7 @@ Public Class MainWindow
             File.Delete(xTempFileName)
 
             POWAVResizer.Cursor = xDownCursor
+            POBMPResizer.Cursor = xDownCursor
             POBeatResizer.Cursor = xDownCursor
             POExpansionResizer.Cursor = xDownCursor
 
@@ -1073,10 +1076,13 @@ Public Class MainWindow
         sI = 0
 
         LWAV.Items.Clear()
+        LBMP.Items.Clear()
         For xI1 = 1 To 1295
             LWAV.Items.Add(C10to36(xI1) & ":")
+            LBMP.Items.Add(C10to36(xI1) & ":")
         Next
         LWAV.SelectedIndex = 0
+        LBMP.SelectedIndex = 0
         CHPlayer.SelectedIndex = 0
 
         CalculateGreatestVPosition()
@@ -1331,6 +1337,7 @@ EndSearch:
         ReDim Notes(0)
         ReDim mColumn(999)
         ReDim hWAV(1295)
+        ReDim hBMP(1295)
         ReDim hBPM(1295)    'x10000
         ReDim hSTOP(1295)
         ReDim hSCROLL(1295)
@@ -1349,11 +1356,14 @@ EndSearch:
         THBPM.Value = 120
 
         LWAV.Items.Clear()
+        LBMP.Items.Clear()
         Dim xI1 As Integer
         For xI1 = 1 To 1295
             LWAV.Items.Add(C10to36(xI1) & ": " & hWAV(xI1))
+            LBMP.Items.Add(C10to36(xI1) & ": " & hBMP(xI1))
         Next
         LWAV.SelectedIndex = 0
+        LBMP.SelectedIndex = 0
 
         SetFileName("Untitled.bms")
         SetIsSaved(True)
@@ -1376,6 +1386,7 @@ EndSearch:
         ReDim Notes(0)
         ReDim mColumn(999)
         ReDim hWAV(1295)
+        ReDim hBMP(1295)
         ReDim hBPM(1295)    'x10000
         ReDim hSTOP(1295)
         ReDim hSCROLL(1295)
@@ -1877,6 +1888,39 @@ EndSearch:
             Case Keys.Delete
                 hWAV(LWAV.SelectedIndex + 1) = ""
                 LWAV.Items.Item(LWAV.SelectedIndex) = C10to36(LWAV.SelectedIndex + 1) & ": "
+                If IsSaved Then SetIsSaved(False)
+        End Select
+    End Sub
+
+    Private Sub LBMP_DoubleClick(ByVal sender As Object, ByVal e As System.EventArgs) Handles LBMP.DoubleClick
+        Dim xDBMP As New OpenFileDialog
+        xDBMP.DefaultExt = "bmp"
+        xDBMP.Filter = Strings.FileType._image & "|*.bmp;*.png;*.jpg;*.jpeg;.gif|" &
+                       Strings.FileType._movie & "|*.mpg;*.m1v;*.m2v;*.avi;*.mp4;*.m4v;*.wmv;*.webm|" &
+                       Strings.FileType.BMP & "|*.bmp|" &
+                       Strings.FileType.PNG & "|*.png|" &
+                       Strings.FileType.JPG & "|*.jpg;*.jpeg|" &
+                       Strings.FileType.GIF & "|*.gif|" &
+                       Strings.FileType.MP4 & "|*.mp4;*.m4v|" &
+                       Strings.FileType.AVI & "|*.avi|" &
+                       Strings.FileType.MPG & "|*.mpg;*.m1v;*.m2v|" &
+                       Strings.FileType.WMV & "|*.wmv|" &
+                       Strings.FileType.WEBM & "|*.webm|" &
+                       Strings.FileType._all & "|*.*"
+        xDBMP.InitialDirectory = IIf(ExcludeFileName(FileName) = "", InitPath, ExcludeFileName(FileName))
+
+        If xDBMP.ShowDialog = Windows.Forms.DialogResult.Cancel Then Exit Sub
+        InitPath = ExcludeFileName(xDBMP.FileName)
+        hBMP(LBMP.SelectedIndex + 1) = GetFileName(xDBMP.FileName)
+        LBMP.Items.Item(LBMP.SelectedIndex) = C10to36(LBMP.SelectedIndex + 1) & ": " & GetFileName(xDBMP.FileName)
+        If IsSaved Then SetIsSaved(False)
+    End Sub
+
+    Private Sub LBMP_KeyDown(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyEventArgs) Handles LBMP.KeyDown
+        Select Case e.KeyCode
+            Case Keys.Delete
+                hBMP(LBMP.SelectedIndex + 1) = ""
+                LBMP.Items.Item(LBMP.SelectedIndex) = C10to36(LBMP.SelectedIndex + 1) & ": "
                 If IsSaved Then SetIsSaved(False)
         End Select
     End Sub
@@ -2512,7 +2556,6 @@ StartCount:     If Not NTInput Then
         RefreshPanelAll()
     End Sub
 
-
     Private Sub AddToPOWAV(ByVal xPath() As String)
         Dim xIndices(LWAV.SelectedIndices.Count - 1) As Integer
         LWAV.SelectedIndices.CopyTo(xIndices, 0)
@@ -2591,6 +2634,86 @@ StartCount:     If Not NTInput Then
 
     Private Sub POWAV_Resize(ByVal sender As Object, ByVal e As System.EventArgs) Handles POWAV.Resize
         LWAV.Height = sender.Height - 25
+    End Sub
+
+    Private Sub AddToPOBMP(ByVal xPath() As String)
+        Dim xIndices(LBMP.SelectedIndices.Count - 1) As Integer
+        LBMP.SelectedIndices.CopyTo(xIndices, 0)
+        If xIndices.Length = 0 Then Exit Sub
+
+        If xIndices.Length < xPath.Length Then
+            Dim i As Integer = xIndices.Length
+            Dim currBmpIndex As Integer = xIndices(UBound(xIndices)) + 1
+            ReDim Preserve xIndices(UBound(xPath))
+
+            Do While i < xIndices.Length And currBmpIndex <= 1294
+                Do While currBmpIndex <= 1294 AndAlso hBMP(currBmpIndex + 1) <> ""
+                    currBmpIndex += 1
+                Loop
+                If currBmpIndex > 1294 Then Exit Do
+
+                xIndices(i) = currBmpIndex
+                currBmpIndex += 1
+                i += 1
+            Loop
+
+            If currBmpIndex > 1294 Then
+                ReDim Preserve xPath(i - 1)
+                ReDim Preserve xIndices(i - 1)
+            End If
+        End If
+
+        'Dim xI2 As Integer = 0
+        For xI1 As Integer = 0 To UBound(xPath)
+            'If xI2 > UBound(xIndices) Then Exit For
+            'hBMP(xIndices(xI2) + 1) = GetFileName(xPath(xI1))
+            'LBMP.Items.Item(xIndices(xI2)) = C10to36(xIndices(xI2) + 1) & ": " & GetFileName(xPath(xI1))
+            hBMP(xIndices(xI1) + 1) = GetFileName(xPath(xI1))
+            LBMP.Items.Item(xIndices(xI1)) = C10to36(xIndices(xI1) + 1) & ": " & GetFileName(xPath(xI1))
+            'xI2 += 1
+        Next
+
+        LBMP.SelectedIndices.Clear()
+        For xI1 As Integer = 0 To IIf(UBound(xIndices) < UBound(xPath), UBound(xIndices), UBound(xPath))
+            LBMP.SelectedIndices.Add(xIndices(xI1))
+        Next
+
+        If IsSaved Then SetIsSaved(False)
+        RefreshPanelAll()
+    End Sub
+
+    Private Sub POBMP_DragDrop(ByVal sender As Object, ByVal e As System.Windows.Forms.DragEventArgs) Handles POBMP.DragDrop
+        ReDim DDFileName(-1)
+        If Not e.Data.GetDataPresent(DataFormats.FileDrop) Then Return
+
+        Dim xOrigPath() As String = CType(e.Data.GetData(DataFormats.FileDrop), String())
+        Dim xPath() As String = FilterFileBySupported(xOrigPath, SupportedImageExtension)
+        Array.Sort(xPath)
+        If xPath.Length = 0 Then
+            RefreshPanelAll()
+            Exit Sub
+        End If
+
+        AddToPOBMP(xPath)
+    End Sub
+
+    Private Sub POBMP_DragEnter(ByVal sender As Object, ByVal e As System.Windows.Forms.DragEventArgs) Handles POBMP.DragEnter
+        If e.Data.GetDataPresent(DataFormats.FileDrop) Then
+            e.Effect = DragDropEffects.Copy
+            DDFileName = FilterFileBySupported(CType(e.Data.GetData(DataFormats.FileDrop), String()), SupportedImageExtension)
+        Else
+            e.Effect = DragDropEffects.None
+        End If
+        RefreshPanelAll()
+    End Sub
+
+    Private Sub POBMP_DragLeave(ByVal sender As Object, ByVal e As System.EventArgs) Handles POBMP.DragLeave
+        ReDim DDFileName(-1)
+        RefreshPanelAll()
+    End Sub
+
+    Private Sub POBMP_Resize(ByVal sender As Object, ByVal e As System.EventArgs) Handles POBMP.Resize
+        LBMP.Height = sender.Height - 25
     End Sub
     Private Sub POBeat_Resize(ByVal sender As Object, ByVal e As System.EventArgs) Handles POBeat.Resize
         LBeat.Height = POBeat.Height - 25
@@ -3620,6 +3743,7 @@ Jump2:
     Private Sub CWAVMultiSelect_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles CWAVMultiSelect.CheckedChanged
         WAVMultiSelect = CWAVMultiSelect.Checked
         LWAV.SelectionMode = IIf(WAVMultiSelect, SelectionMode.MultiExtended, SelectionMode.One)
+        LBMP.SelectionMode = IIf(WAVMultiSelect, SelectionMode.MultiExtended, SelectionMode.One)
     End Sub
 
     Private Sub CWAVChangeLabel_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles CWAVChangeLabel.CheckedChanged
@@ -3772,6 +3896,166 @@ Jump2:
         LWAV.SelectedIndices.Clear()
         For xI1 As Integer = 0 To UBound(xIndices)
             LWAV.SelectedIndices.Add(xIndices(xI1))
+        Next
+
+        If IsSaved Then SetIsSaved(False)
+        RefreshPanelAll()
+        POStatusRefresh()
+    End Sub
+
+    Private Sub BBMPUp_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles BBMPUp.Click
+        If LBMP.SelectedIndex = -1 Then Return
+
+        Dim xUndo As UndoRedo.LinkedURCmd = Nothing
+        Dim xRedo As UndoRedo.LinkedURCmd = New UndoRedo.Void
+        Dim xBaseRedo As UndoRedo.LinkedURCmd = xRedo
+
+        Dim xIndices(LBMP.SelectedIndices.Count - 1) As Integer
+        LBMP.SelectedIndices.CopyTo(xIndices, 0)
+
+        Dim xS As Integer
+        For xS = 0 To 1294
+            If Array.IndexOf(xIndices, xS) = -1 Then Exit For
+        Next
+
+        Dim xStr As String = ""
+        Dim xIndex As Integer = -1
+        For xI1 As Integer = xS To 1294
+            xIndex = Array.IndexOf(xIndices, xI1)
+            If xIndex <> -1 Then
+                xStr = hBMP(xI1 + 1)
+                hBMP(xI1 + 1) = hBMP(xI1)
+                hBMP(xI1) = xStr
+
+                LBMP.Items.Item(xI1) = C10to36(xI1 + 1) & ": " & hBMP(xI1 + 1)
+                LBMP.Items.Item(xI1 - 1) = C10to36(xI1) & ": " & hBMP(xI1)
+
+                If Not WAVChangeLabel Then GoTo 1100
+
+                Dim xL1 As String = C10to36(xI1)
+                Dim xL2 As String = C10to36(xI1 + 1)
+                For xI2 As Integer = 1 To UBound(Notes)
+                    If IsColumnNumeric(Notes(xI2).ColumnIndex) Then Continue For
+
+                    If C10to36(Notes(xI2).Value \ 10000) = xL1 Then
+                        Me.RedoRelabelNote(Notes(xI2), xI1 * 10000 + 10000, xUndo, xRedo)
+                        Notes(xI2).Value = xI1 * 10000 + 10000
+
+                    ElseIf C10to36(Notes(xI2).Value \ 10000) = xL2 Then
+                        Me.RedoRelabelNote(Notes(xI2), xI1 * 10000, xUndo, xRedo)
+                        Notes(xI2).Value = xI1 * 10000
+
+                    End If
+                Next
+
+1100:           xIndices(xIndex) += -1
+            End If
+        Next
+
+        LBMP.SelectedIndices.Clear()
+        For xI1 As Integer = 0 To UBound(xIndices)
+            LBMP.SelectedIndices.Add(xIndices(xI1))
+        Next
+
+        AddUndo(xUndo, xBaseRedo.Next)
+        RefreshPanelAll()
+        POStatusRefresh()
+    End Sub
+
+    Private Sub BBMPDown_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles BBMPDown.Click
+        If LBMP.SelectedIndex = -1 Then Return
+
+        Dim xUndo As UndoRedo.LinkedURCmd = Nothing
+        Dim xRedo As UndoRedo.LinkedURCmd = New UndoRedo.Void
+        Dim xBaseRedo As UndoRedo.LinkedURCmd = xRedo
+
+        Dim xIndices(LBMP.SelectedIndices.Count - 1) As Integer
+        LBMP.SelectedIndices.CopyTo(xIndices, 0)
+
+        Dim xS As Integer
+        For xS = 1294 To 0 Step -1
+            If Array.IndexOf(xIndices, xS) = -1 Then Exit For
+        Next
+
+        Dim xStr As String = ""
+        Dim xIndex As Integer = -1
+        For xI1 As Integer = xS To 0 Step -1
+            xIndex = Array.IndexOf(xIndices, xI1)
+            If xIndex <> -1 Then
+                xStr = hBMP(xI1 + 1)
+                hBMP(xI1 + 1) = hBMP(xI1 + 2)
+                hBMP(xI1 + 2) = xStr
+
+                LBMP.Items.Item(xI1) = C10to36(xI1 + 1) & ": " & hBMP(xI1 + 1)
+                LBMP.Items.Item(xI1 + 1) = C10to36(xI1 + 2) & ": " & hBMP(xI1 + 2)
+
+                If Not WAVChangeLabel Then GoTo 1100
+
+                Dim xL1 As String = C10to36(xI1 + 2)
+                Dim xL2 As String = C10to36(xI1 + 1)
+                For xI2 As Integer = 1 To UBound(Notes)
+                    If IsColumnNumeric(Notes(xI2).ColumnIndex) Then Continue For
+
+                    If C10to36(Notes(xI2).Value \ 10000) = xL1 Then
+                        Me.RedoRelabelNote(Notes(xI2), xI1 * 10000 + 10000, xUndo, xRedo)
+                        Notes(xI2).Value = xI1 * 10000 + 10000
+
+                    ElseIf C10to36(Notes(xI2).Value \ 10000) = xL2 Then
+                        Me.RedoRelabelNote(Notes(xI2), xI1 * 10000 + 20000, xUndo, xRedo)
+                        Notes(xI2).Value = xI1 * 10000 + 20000
+
+                    End If
+                Next
+
+1100:           xIndices(xIndex) += 1
+            End If
+        Next
+
+        LBMP.SelectedIndices.Clear()
+        For xI1 As Integer = 0 To UBound(xIndices)
+            LBMP.SelectedIndices.Add(xIndices(xI1))
+        Next
+
+        AddUndo(xUndo, xBaseRedo.Next)
+        RefreshPanelAll()
+        POStatusRefresh()
+    End Sub
+
+    Private Sub BBMPBrowse_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles BBMPBrowse.Click
+        Dim xDBMP As New OpenFileDialog
+        xDBMP.DefaultExt = "bmp"
+        xDBMP.Filter = Strings.FileType._image & "|*.bmp;*.png;*.jpg;*.jpeg;.gif|" &
+                       Strings.FileType._movie & "|*.mpg;*.m1v;*.m2v;*.avi;*.mp4;*.m4v;*.wmv;*.webm|" &
+                       Strings.FileType.BMP & "|*.bmp|" &
+                       Strings.FileType.PNG & "|*.png|" &
+                       Strings.FileType.JPG & "|*.jpg;*.jpeg|" &
+                       Strings.FileType.GIF & "|*.gif|" &
+                       Strings.FileType.MP4 & "|*.mp4;*.m4v|" &
+                       Strings.FileType.AVI & "|*.avi|" &
+                       Strings.FileType.MPG & "|*.mpg;*.m1v;*.m2v|" &
+                       Strings.FileType.WMV & "|*.wmv|" &
+                       Strings.FileType.WEBM & "|*.webm|" &
+                       Strings.FileType._all & "|*.*"
+        xDBMP.InitialDirectory = IIf(ExcludeFileName(FileName) = "", InitPath, ExcludeFileName(FileName))
+        xDBMP.Multiselect = WAVMultiSelect
+
+        If xDBMP.ShowDialog = Windows.Forms.DialogResult.Cancel Then Exit Sub
+        InitPath = ExcludeFileName(xDBMP.FileName)
+
+        AddToPOBMP(xDBMP.FileNames)
+    End Sub
+
+    Private Sub BBMPRemove_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles BBMPRemove.Click
+        Dim xIndices(LBMP.SelectedIndices.Count - 1) As Integer
+        LBMP.SelectedIndices.CopyTo(xIndices, 0)
+        For xI1 As Integer = 0 To UBound(xIndices)
+            hBMP(xIndices(xI1) + 1) = ""
+            LBMP.Items.Item(xIndices(xI1)) = C10to36(xIndices(xI1) + 1) & ": "
+        Next
+
+        LBMP.SelectedIndices.Clear()
+        For xI1 As Integer = 0 To UBound(xIndices)
+            LBMP.SelectedIndices.Add(xIndices(xI1))
         Next
 
         If IsSaved Then SetIsSaved(False)
@@ -4199,7 +4483,7 @@ case2:              Dim xI0 As Integer
 
     Private Sub BHStageFile_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles BHStageFile.Click, BHBanner.Click, BHBackBMP.Click
         Dim xDiag As New OpenFileDialog
-        xDiag.Filter = Strings.FileType._image & "|*.bmp;*.png;*.jpg;*.gif|" &
+        xDiag.Filter = Strings.FileType._image & "|*.bmp;*.png;*.jpeg;*.jpg;*.gif|" &
                        Strings.FileType._all & "|*.*"
         xDiag.InitialDirectory = IIf(ExcludeFileName(FileName) = "", InitPath, ExcludeFileName(FileName))
         xDiag.DefaultExt = "png"
@@ -4221,6 +4505,7 @@ case2:              Dim xI0 As Integer
     POGridSwitch.CheckedChanged,
     POWaveFormSwitch.CheckedChanged,
     POWAVSwitch.CheckedChanged,
+    POBMPSwitch.CheckedChanged,
     POBeatSwitch.CheckedChanged,
     POExpansionSwitch.CheckedChanged
 
@@ -4233,6 +4518,7 @@ case2:              Dim xI0 As Integer
             ElseIf Object.ReferenceEquals(sender, POGridSwitch) Then : Target = POGridInner
             ElseIf Object.ReferenceEquals(sender, POWaveFormSwitch) Then : Target = POWaveFormInner
             ElseIf Object.ReferenceEquals(sender, POWAVSwitch) Then : Target = POWAVInner
+            ElseIf Object.ReferenceEquals(sender, POBMPSwitch) Then : Target = POBMPInner
             ElseIf Object.ReferenceEquals(sender, POBeatSwitch) Then : Target = POBeatInner
             ElseIf Object.ReferenceEquals(sender, POExpansionSwitch) Then : Target = POExpansionInner
             End If
@@ -4282,7 +4568,7 @@ case2:              Dim xI0 As Integer
 
     End Sub
 
-    Private Sub VerticalResizer_MouseDown(ByVal sender As Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles POWAVResizer.MouseDown, POBeatResizer.MouseDown, POExpansionResizer.MouseDown
+    Private Sub VerticalResizer_MouseDown(ByVal sender As Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles POWAVResizer.MouseDown, POBMPResizer.MouseDown, POBeatResizer.MouseDown, POExpansionResizer.MouseDown
         tempResize = e.Y
     End Sub
 
@@ -4290,7 +4576,7 @@ case2:              Dim xI0 As Integer
         tempResize = e.X
     End Sub
 
-    Private Sub POResizer_MouseMove(ByVal sender As Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles POWAVResizer.MouseMove, POBeatResizer.MouseMove, POExpansionResizer.MouseMove
+    Private Sub POResizer_MouseMove(ByVal sender As Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles POWAVResizer.MouseMove, POBMPResizer.MouseMove, POBeatResizer.MouseMove, POExpansionResizer.MouseMove
         If e.Button <> Windows.Forms.MouseButtons.Left Then Exit Sub
         If e.Y = tempResize Then Exit Sub
 
