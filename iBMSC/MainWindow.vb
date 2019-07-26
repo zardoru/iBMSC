@@ -1892,14 +1892,6 @@ EndSearch:
         End Select
     End Sub
 
-    Private Sub ValidateBmpListView()
-        Try
-            Dim xRect As Rectangle = LBMP.GetItemRectangle(LBMP.SelectedIndex)
-            If xRect.Top + xRect.Height > LBMP.DisplayRectangle.Height Then SendMessage(LBMP.Handle, &H115, 1, 0)
-        Catch ex As Exception
-        End Try
-    End Sub
-
     Private Sub LBMP_DoubleClick(ByVal sender As Object, ByVal e As System.EventArgs) Handles LBMP.DoubleClick
         Dim xDBMP As New OpenFileDialog
         xDBMP.DefaultExt = "bmp"

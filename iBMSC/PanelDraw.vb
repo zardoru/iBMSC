@@ -524,8 +524,12 @@ Partial Public Class MainWindow
         If sNote.Hidden Then xAlpha = vo.kOpacity
 
         Dim xLabel As String = C10to36(sNote.Value \ 10000)
-        If ShowFileName AndAlso hWAV(C36to10(xLabel)) <> "" Then
-            xLabel = Path.GetFileNameWithoutExtension(hWAV(C36to10(xLabel)))
+        If ShowFileName Then
+            If IsColumnSound(sNote.ColumnIndex) Then
+                If hWAV(C36to10(xLabel)) <> "" Then xLabel = Path.GetFileNameWithoutExtension(hWAV(C36to10(xLabel)))
+            Else
+                If hBMP(C36to10(xLabel)) <> "" Then xLabel = Path.GetFileNameWithoutExtension(hBMP(C36to10(xLabel)))
+            End If
         End If
 
         Dim xPen As Pen
@@ -629,7 +633,13 @@ Partial Public Class MainWindow
         If sNote.Hidden Then xAlpha = vo.kOpacity
 
         Dim xLabel As String = C10to36(sNote.Value \ 10000)
-        If ShowFileName AndAlso hWAV(C36to10(xLabel)) <> "" Then xLabel = Path.GetFileNameWithoutExtension(hWAV(C36to10(xLabel)))
+        If ShowFileName Then
+            If IsColumnSound(sNote.ColumnIndex) Then
+                If hWAV(C36to10(xLabel)) <> "" Then xLabel = Path.GetFileNameWithoutExtension(hWAV(C36to10(xLabel)))
+            Else
+                If hBMP(C36to10(xLabel)) <> "" Then xLabel = Path.GetFileNameWithoutExtension(hBMP(C36to10(xLabel)))
+            End If
+        End If
 
         Dim xPen1 As Pen
         Dim xBrush As Drawing2D.LinearGradientBrush
