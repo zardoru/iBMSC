@@ -41,9 +41,9 @@ Public Class dgMyO2
         ReDim Aj(UBound(xStrItem))
 
         lResult.Rows.Clear()
-        For xI1 As Integer = 0 To UBound(Aj)
-            Dim xW() As String = Split(xStrItem(xI1), "_")
-            With Aj(xI1)
+        For i As Integer = 0 To UBound(Aj)
+            Dim xW() As String = Split(xStrItem(i), "_")
+            With Aj(i)
                 .Measure = Val(xW(0))
                 .ColumnIndex = Val(xW(1))
                 .ColumnName = xW(2)
@@ -55,7 +55,7 @@ Public Class dgMyO2
                 .D48 = Val(xW(8))
             End With
 
-            AddAdjItem(Aj(xI1), xI1)
+            AddAdjItem(Aj(i), i)
         Next
     End Sub
 

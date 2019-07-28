@@ -21,16 +21,16 @@ Public Class fLoadFileProgress
 
     Private Sub fLoadFileProgress_Shown(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Shown
         On Error GoTo 0
-        For xI1 As Integer = 0 To UBound(xPath)
-            Label1.Text = "Currently loading ( " & (xI1 + 1) & " / " & (UBound(xPath) + 1) & " ): " & xPath(xI1)
+        For i As Integer = 0 To UBound(xPath)
+            Label1.Text = "Currently loading ( " & (i + 1) & " / " & (UBound(xPath) + 1) & " ): " & xPath(i)
             Dim aa As Integer = prog.Maximum
             Dim bb As Integer = prog.Value
-            prog.Value = xI1
+            prog.Value = i
             Application.DoEvents()
             If CancelPressed Then Exit For
 
-            If xI1 = 0 AndAlso IsSaved Then MainWindow.ReadFile(xPath(xI1)) _
-                Else System.Diagnostics.Process.Start(Application.ExecutablePath, """" & xPath(xI1) & """") 'Shell("""" & Application.ExecutablePath & """ """ & xPaths(xI1) & """") ' 
+            If i = 0 AndAlso IsSaved Then MainWindow.ReadFile(xPath(i)) _
+                Else System.Diagnostics.Process.Start(Application.ExecutablePath, """" & xPath(i) & """") 'Shell("""" & Application.ExecutablePath & """ """ & xPaths(i) & """") ' 
         Next
         Me.Close()
     End Sub

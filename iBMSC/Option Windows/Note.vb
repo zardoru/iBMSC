@@ -1,5 +1,5 @@
 ﻿Namespace Editor
-    Public Structure Note
+    Public Class Note
         Public VPosition As Double
         Public ColumnIndex As Integer
         Public Value As Long 'x10000
@@ -12,10 +12,8 @@
         Public Selected As Boolean
         Public HasError As Boolean
 
-        'Public TempBoolean As Boolean
         Public TempSelected As Boolean
         Public TempMouseDown As Boolean
-        Public TempIndex As Integer
 
         Public Function equalsBMSE(note As Note) As Boolean
             Return VPosition = note.VPosition And
@@ -33,6 +31,14 @@
                Length = note.Length And
                Landmine = note.Landmine
         End Function
+
+        Public Function Clone() As Note
+            Return MemberwiseClone()
+        End Function
+
+        Public Sub New()
+            ' simple initializer
+        End Sub
 
         Public Sub New(nColumnIndex As Integer,
                        nVposition As Double,
@@ -82,5 +88,5 @@
             Dim br As New BinaryReader(New MemoryStream(bytes))
             FromBinReader(br)
         End Sub
-    End Structure
+    End Class
 End Namespace

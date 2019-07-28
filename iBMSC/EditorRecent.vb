@@ -1,18 +1,39 @@
-﻿Partial Public Class MainWindow
+﻿Imports System.Linq
+Imports iBMSC.Editor
+
+Partial Public Class MainWindow
+    Public ReadOnly Property FirstBpm
+        Get
+            Return Notes(0).Value
+        End Get
+    End Property
+
+    Public ReadOnly Property CurrentWavSelectedIndex As Integer
+        Get
+            Return LWAV.SelectedIndex + 1
+        End Get
+    End Property
+
+    Public ReadOnly Property AutoincreaseWavIndex As Boolean
+        Get
+            Return TBWavIncrease.Checked
+        End Get
+    End Property
+
     Private Sub NewRecent(ByVal xFileName As String)
         Dim xAlreadyExists As Boolean = False
-        Dim xI1 As Integer
+        Dim i As Integer
 
-        For xI1 = 0 To 4
-            If Recent(xI1) = xFileName Then
+        For i = 0 To 4
+            If Recent(i) = xFileName Then
                 xAlreadyExists = True
                 Exit For
             End If
         Next
 
         If xAlreadyExists Then
-            For xI2 As Integer = xI1 To 1 Step -1
-                Recent(xI2) = Recent(xI2 - 1)
+            For j As Integer = i To 1 Step -1
+                Recent(j) = Recent(j - 1)
             Next
             Recent(0) = xFileName
 
@@ -51,8 +72,9 @@
 
     Private Sub OpenRecent(ByVal xFileName As String)
         'KMouseDown = -1
-        ReDim SelectedNotes(-1)
-        KMouseOver = -1
+        ClearSelectionArray()
+        State.Mouse.CurrentHoveredNoteIndex = -1
+
         If Not My.Computer.FileSystem.FileExists(xFileName) Then
             MsgBox(Strings.Messages.CannotFind.Replace("{}", xFileName), MsgBoxStyle.Critical)
             Exit Sub
@@ -90,5 +112,4 @@
     Private Sub TBOpenR4_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TBOpenR4.Click, mnOpenR4.Click
         OpenRecent(Recent(4))
     End Sub
-
 End Class

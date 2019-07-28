@@ -331,12 +331,12 @@ Public Class UndoRedo
                                       xVal(0), xVal(1), xVal(2), xVal(3), xVal(4), xVal(5), xVal(6), xVal(7),
                                       xUbound(0), xUbound(1), xUbound(2), xUbound(3)}
             ReDim Preserve xToBytes(12 + 4 * Indices.Length)
-            For xI1 As Integer = 13 To UBound(xToBytes) Step 4
-                Dim xId() As Byte = BitConverter.GetBytes(Indices((xI1 - 13) \ 4))
-                xToBytes(xI1 + 0) = xId(0)
-                xToBytes(xI1 + 1) = xId(1)
-                xToBytes(xI1 + 2) = xId(2)
-                xToBytes(xI1 + 3) = xId(3)
+            For i As Integer = 13 To UBound(xToBytes) Step 4
+                Dim xId() As Byte = BitConverter.GetBytes(Indices((i - 13) \ 4))
+                xToBytes(i + 0) = xId(0)
+                xToBytes(i + 1) = xId(1)
+                xToBytes(i + 2) = xId(2)
+                xToBytes(i + 3) = xId(3)
             Next
             Return xToBytes
         End Function
@@ -345,8 +345,8 @@ Public Class UndoRedo
             Value = BitConverter.ToDouble(b, 1)
             Dim xUbound As Integer = BitConverter.ToInt32(b, 9)
             ReDim Preserve Indices(xUbound)
-            For xI1 As Integer = 13 To xUbound Step 4
-                Indices((xI1 - 13) \ 4) = BitConverter.ToInt32(b, xI1)
+            For i As Integer = 13 To xUbound Step 4
+                Indices((i - 13) \ 4) = BitConverter.ToInt32(b, i)
             Next
         End Sub
 

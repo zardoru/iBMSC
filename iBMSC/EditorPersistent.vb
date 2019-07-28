@@ -5,7 +5,7 @@ Partial Public Class MainWindow
     Private Sub XMLWriteColumn(ByVal w As XmlTextWriter, ByVal I As Integer)
         w.WriteStartElement("Column")
         w.WriteAttributeString("Index", I)
-        With column(I)
+        With Columns.column(I)
             'w.WriteAttributeString("Left", .Left)
             w.WriteAttributeString("Width", .Width)
             w.WriteAttributeString("Title", .Title)
@@ -56,11 +56,11 @@ Partial Public Class MainWindow
             If ThemeOnly Then GoTo 5000
 
             .WriteStartElement("Form")
-            .WriteAttributeString("WindowState", IIf(isFullScreen, previousWindowState, Me.WindowState))
-            .WriteAttributeString("Width", IIf(isFullScreen, previousWindowPosition.Width, Me.Width))
-            .WriteAttributeString("Height", IIf(isFullScreen, previousWindowPosition.Height, Me.Height))
-            .WriteAttributeString("Top", IIf(isFullScreen, previousWindowPosition.Top, Me.Top))
-            .WriteAttributeString("Left", IIf(isFullScreen, previousWindowPosition.Left, Me.Left))
+            .WriteAttributeString("WindowState", IIf(IsFullscreen, previousWindowState, Me.WindowState))
+            .WriteAttributeString("Width", IIf(IsFullscreen, previousWindowPosition.Width, Me.Width))
+            .WriteAttributeString("Height", IIf(IsFullscreen, previousWindowPosition.Height, Me.Height))
+            .WriteAttributeString("Top", IIf(IsFullscreen, previousWindowPosition.Top, Me.Top))
+            .WriteAttributeString("Left", IIf(IsFullscreen, previousWindowPosition.Left, Me.Left))
             .WriteEndElement()
 
             .WriteStartElement("Recent")
@@ -76,7 +76,7 @@ Partial Public Class MainWindow
             .WriteAttributeString("Language", DispLang)
             '.WriteAttributeString("SortingMethod", SortingMethod)
             .WriteAttributeString("ErrorCheck", ErrorCheck)
-            .WriteAttributeString("AutoFocusMouseEnter", AutoFocusMouseEnter)
+            .WriteAttributeString("AutoFocusMouseEnter", AutoFocusPanelOnMouseEnter)
             .WriteAttributeString("FirstClickDisabled", FirstClickDisabled)
             .WriteAttributeString("ShowFileName", ShowFileName)
             .WriteAttributeString("MiddleButtonMoveMethod", MiddleButtonMoveMethod)
@@ -110,27 +110,27 @@ Partial Public Class MainWindow
             .WriteEndElement()
 
             .WriteStartElement("Grid")
-            .WriteAttributeString("gSnap", gSnap)
-            .WriteAttributeString("gWheel", gWheel)
-            .WriteAttributeString("gPgUpDn", gPgUpDn)
-            .WriteAttributeString("gShow", gShowGrid)
-            .WriteAttributeString("gShowS", gShowSubGrid)
-            .WriteAttributeString("gShowBG", gShowBG)
-            .WriteAttributeString("gShowM", gShowMeasureNumber)
-            .WriteAttributeString("gShowV", gShowVerticalLine)
-            .WriteAttributeString("gShowMB", gShowMeasureBar)
-            .WriteAttributeString("gShowC", gShowC)
-            .WriteAttributeString("gBPM", gBPM)
-            .WriteAttributeString("gSTOP", gSTOP)
-            .WriteAttributeString("gSCROLL", gSCROLL)
-            .WriteAttributeString("gBLP", gDisplayBGAColumn)
+            .WriteAttributeString("Snap", Grid.IsSnapEnabled)
+            .WriteAttributeString("WheelScroll", Grid.WheelScroll)
+            .WriteAttributeString("PageUpDnScroll", Grid.PageUpDnScroll)
+            .WriteAttributeString("gShow", Grid.ShowMainGrid)
+            .WriteAttributeString("gShowS", Grid.ShowSubGrid)
+            .WriteAttributeString("gShowBG", Grid.ShowBackground)
+            .WriteAttributeString("gShowM", Grid.ShowMeasureNumber)
+            .WriteAttributeString("gShowV", Grid.ShowVerticalLines)
+            .WriteAttributeString("gShowMB", Grid.ShowMeasureBars)
+            .WriteAttributeString("ShowColumnCaptions", Grid.ShowColumnCaptions)
+            .WriteAttributeString("ShowBpmColumn", Grid.ShowBpmColumn)
+            .WriteAttributeString("ShowStopColumn", Grid.ShowStopColumn)
+            .WriteAttributeString("ShowScrollColumn", Grid.ShowScrollColumn)
+            .WriteAttributeString("gBLP", Grid.ShowBgaColumn)
             .WriteAttributeString("gP2", CHPlayer.SelectedIndex)
             .WriteAttributeString("gCol", CGB.Value)
-            .WriteAttributeString("gDivide", gDivide)
-            .WriteAttributeString("gSub", gSub)
-            .WriteAttributeString("gSlash", gSlash)
-            .WriteAttributeString("gxHeight", gxHeight)
-            .WriteAttributeString("gxWidth", gxWidth)
+            .WriteAttributeString("Divider", Grid.Divider)
+            .WriteAttributeString("Subdivider", Grid.Subdivider)
+            .WriteAttributeString("Slash", Grid.Slash)
+            .WriteAttributeString("gxHeight", Grid.HeightScale)
+            .WriteAttributeString("WidthScale", Grid.WidthScale)
             .WriteEndElement()
 
             .WriteStartElement("WaveForm")
@@ -150,7 +150,7 @@ Partial Public Class MainWindow
 
 5000:       .WriteStartElement("Columns")
             '.WriteAttributeString("Count", col.Length)
-            For i As Integer = 0 To UBound(column)
+            For i As Integer = 0 To UBound(Columns.column)
                 XMLWriteColumn(w, i) : Next
             .WriteEndElement()
 
@@ -229,9 +229,9 @@ Partial Public Class MainWindow
     Private Sub XMLLoadColumn(ByVal n As XmlElement)
         Dim i As Integer = -1
         XMLLoadAttribute(n.GetAttribute("Index"), i)
-        If i < 0 Or i > UBound(column) Then Exit Sub
+        If i < 0 Or i > UBound(Columns.column) Then Exit Sub
 
-        With column(i)
+        With Columns.column(i)
             'XMLLoadAttribute(n.GetAttribute("Left"), .Left)
             XMLLoadAttribute(n.GetAttribute("Width"), .Width)
             XMLLoadAttribute(n.GetAttribute("Title"), .Title)
@@ -239,7 +239,7 @@ Partial Public Class MainWindow
             Dim Display As Boolean
             Dim attr = n.GetAttribute("Display")
             XMLLoadAttribute(attr, Display)
-            .isVisible = IIf(String.IsNullOrEmpty(attr), .isVisible, Display)
+            .IsVisible = IIf(String.IsNullOrEmpty(attr), .IsVisible, Display)
 
             'XMLLoadAttribute(n.GetAttribute("isNumeric"), .isNumeric)
             'XMLLoadAttribute(n.GetAttribute("Visible"), .Visible)
@@ -340,7 +340,7 @@ Partial Public Class MainWindow
                 TBShowFileName_Click(TBShowFileName, New System.EventArgs)
 
                 XMLLoadAttribute(.GetAttribute("MiddleButtonMoveMethod"), MiddleButtonMoveMethod)
-                XMLLoadAttribute(.GetAttribute("AutoFocusMouseEnter"), AutoFocusMouseEnter)
+                XMLLoadAttribute(.GetAttribute("AutoFocusMouseEnter"), AutoFocusPanelOnMouseEnter)
                 XMLLoadAttribute(.GetAttribute("FirstClickDisabled"), FirstClickDisabled)
 
                 XMLLoadAttribute(.GetAttribute("AutoSaveInterval"), AutoSaveInterval)
@@ -417,30 +417,30 @@ Partial Public Class MainWindow
         Dim eGrid As XmlElement = Root.Item("Grid")
         If eGrid IsNot Nothing Then
             With eGrid
-                XMLLoadAttribute(.GetAttribute("gSnap"), CGSnap.Checked)
-                XMLLoadAttribute(.GetAttribute("gWheel"), gWheel)
-                XMLLoadAttribute(.GetAttribute("gPgUpDn"), gPgUpDn)
+                XMLLoadAttribute(.GetAttribute("Snap"), CGSnap.Checked)
+                XMLLoadAttribute(.GetAttribute("WheelScroll"), Grid.WheelScroll)
+                XMLLoadAttribute(.GetAttribute("PageUpDnScroll"), Grid.PageUpDnScroll)
                 XMLLoadAttribute(.GetAttribute("gShow"), CGShow.Checked)
                 XMLLoadAttribute(.GetAttribute("gShowS"), CGShowS.Checked)
                 XMLLoadAttribute(.GetAttribute("gShowBG"), CGShowBG.Checked)
                 XMLLoadAttribute(.GetAttribute("gShowM"), CGShowM.Checked)
                 XMLLoadAttribute(.GetAttribute("gShowV"), CGShowV.Checked)
                 XMLLoadAttribute(.GetAttribute("gShowMB"), CGShowMB.Checked)
-                XMLLoadAttribute(.GetAttribute("gShowC"), CGShowC.Checked)
-                XMLLoadAttribute(.GetAttribute("gBPM"), CGBPM.Checked)
-                XMLLoadAttribute(.GetAttribute("gSTOP"), CGSTOP.Checked)
-                XMLLoadAttribute(.GetAttribute("gSCROLL"), CGSCROLL.Checked)
+                XMLLoadAttribute(.GetAttribute("ShowColumnCaptions"), CGShowC.Checked)
+                XMLLoadAttribute(.GetAttribute("ShowBpmColumn"), CGBPM.Checked)
+                XMLLoadAttribute(.GetAttribute("ShowStopColumn"), CGSTOP.Checked)
+                XMLLoadAttribute(.GetAttribute("ShowScrollColumn"), CGSCROLL.Checked)
                 XMLLoadAttribute(.GetAttribute("gBLP"), CGBLP.Checked)
                 XMLLoadAttribute(.GetAttribute("gP2"), CHPlayer.SelectedIndex)
                 XMLLoadAttribute(.GetAttribute("gCol"), CGB.Value)
                 XMLLoadAttribute(.GetAttribute("gxHeight"), CGHeight.Value)
-                XMLLoadAttribute(.GetAttribute("gxWidth"), CGWidth.Value)
-                XMLLoadAttribute(.GetAttribute("gSlash"), gSlash)
+                XMLLoadAttribute(.GetAttribute("WidthScale"), CGWidth.Value)
+                XMLLoadAttribute(.GetAttribute("Slash"), Grid.Slash)
 
-                Dim xgDivide As Integer = CInt(.GetAttribute("gDivide"))
+                Dim xgDivide As Integer = CInt(.GetAttribute("Divider"))
                 If xgDivide >= CGDivide.Minimum And xgDivide <= CGDivide.Maximum Then CGDivide.Value = xgDivide
 
-                Dim xgSub As Integer = CInt(.GetAttribute("gSub"))
+                Dim xgSub As Integer = CInt(.GetAttribute("Subdivider"))
                 If xgSub >= CGSub.Minimum And xgSub <= CGSub.Maximum Then CGSub.Value = xgSub
             End With
         End If
@@ -1156,6 +1156,7 @@ EndOfSub:
 
             Dim xW1 As String = ""
             Dim xW2 As String = ""
+            Dim column = Columns.column
 
             For Each xLine As String In xStrLine
                 xW1 = UCase(Mid(xLine, 1, InStr(xLine, "=") - 1))

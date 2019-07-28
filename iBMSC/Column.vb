@@ -1,5 +1,5 @@
 ﻿Namespace Editor
-    Public Structure Column
+    Public Class Column
         Private _Width As Integer
         Private _isNoteCol As Boolean
         Private _isVisible As Boolean
@@ -15,7 +15,7 @@
             End Set
         End Property
 
-        Public Property isVisible() As Boolean
+        Public Property IsVisible() As Boolean
             Get
                 Return _isVisible
             End Get
@@ -25,7 +25,7 @@
             End Set
         End Property
 
-        Public Property isNoteCol() As Boolean
+        Public Property IsNoteCol() As Boolean
             Get
                 Return _isNoteCol
             End Get
@@ -35,7 +35,7 @@
             End Set
         End Property
 
-        Public ReadOnly Property isEnabledAfterAll() As Boolean
+        Public ReadOnly Property IsEnabledAfterAll() As Boolean
             Get
                 Return _isEnabledAfterAll
             End Get
@@ -59,7 +59,7 @@
         Public Title As String
         Public isNumeric As Boolean
         Public isSound As Boolean
-        Public Identifier As Integer
+        Public BmsChannel As Integer
 
         Public cNote As Integer
         Public cText As Color
@@ -107,7 +107,7 @@
             Title = xTitle
             isNumeric = xisNumeric
             isSound = xisSound
-            Identifier = xIdentifier
+            BmsChannel = xIdentifier
 
             _Width = xWidth
             _isVisible = xVisible
@@ -120,5 +120,5 @@
             cLText = Color.FromArgb(xcLText)
             cBG = Color.FromArgb(xcBG)
         End Sub
-    End Structure
+    End Class
 End Namespace

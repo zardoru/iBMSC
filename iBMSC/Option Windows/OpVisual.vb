@@ -3,7 +3,6 @@ Imports System.Windows.Forms
 Imports iBMSC.Editor
 
 Public Class OpVisual
-    Dim niB As Integer = MainWindow.niB
     Dim lLeft() As Integer = {78, 110, 142, 174, 208, 240, 272, 304, 336, 368, 400, 432, 464, 498, 530, 562, 594, 626, 658, 690, 722, 754, 788, 820, 852, 884, 918, 950}
 
     Structure ColumnOptionSet
@@ -42,9 +41,9 @@ Public Class OpVisual
     'Dim WithEvents eaFont As New ArrayList
     'Dim WithEvents eaI As New ArrayList
 
-    Dim vo As visualSettings
-    Dim col() As Column
-    Dim co() As ColumnOptionSet
+    Dim VisualOptions As visualSettings
+    Dim TemporalColumns() As Column
+    Dim ColumnOptions() As ColumnOptionSet
 
 
 
@@ -54,88 +53,80 @@ Public Class OpVisual
         'eColor = xeColor
         'eFont = xeFont
         'eI = xeI
-        vo = xvo
+        VisualOptions = xvo
 
-        cButtonChange(Me.cColumnTitle, vo.ColumnTitle.Color)
-        cButtonChange(Me.cBG, vo.Bg.Color)
-        cButtonChange(Me.cGrid, vo.pGrid.Color)
-        cButtonChange(Me.cSub, vo.pSub.Color)
-        cButtonChange(Me.cVerticalLine, vo.pVLine.Color)
-        cButtonChange(Me.cMeasureBarLine, vo.pMLine.Color)
-        cButtonChange(Me.cWaveForm, vo.pBGMWav.Color)
-        cButtonChange(Me.cMouseOver, vo.kMouseOver.Color)
-        cButtonChange(Me.cSelectedBorder, vo.kSelected.Color)
-        cButtonChange(Me.cAdjustLengthBorder, vo.kMouseOverE.Color)
-        cButtonChange(Me.cSelectionBox, vo.SelBox.Color)
-        cButtonChange(Me.cTSCursor, vo.PECursor.Color)
-        cButtonChange(Me.cTSSplitter, vo.PEHalf.Color)
-        cButtonChange(Me.cTSMouseOver, vo.PEMouseOver.Color)
-        cButtonChange(Me.cTSSelectionFill, vo.PESel.Color)
-        cButtonChange(Me.cTSBPM, vo.PEBPM.Color)
+        cButtonChange(cColumnTitle, VisualOptions.ColumnTitle.Color)
+        cButtonChange(cBG, VisualOptions.Bg.Color)
+        cButtonChange(cGrid, VisualOptions.pGrid.Color)
+        cButtonChange(cSub, VisualOptions.pSub.Color)
+        cButtonChange(cVerticalLine, VisualOptions.pVLine.Color)
+        cButtonChange(cMeasureBarLine, VisualOptions.pMLine.Color)
+        cButtonChange(cWaveForm, VisualOptions.pBGMWav.Color)
+        cButtonChange(cMouseOver, VisualOptions.kMouseOver.Color)
+        cButtonChange(cSelectedBorder, VisualOptions.kSelected.Color)
+        cButtonChange(cAdjustLengthBorder, VisualOptions.kMouseOverE.Color)
+        cButtonChange(cSelectionBox, VisualOptions.SelBox.Color)
+        cButtonChange(cTSCursor, VisualOptions.PECursor.Color)
+        cButtonChange(cTSSplitter, VisualOptions.PEHalf.Color)
+        cButtonChange(cTSMouseOver, VisualOptions.PEMouseOver.Color)
+        cButtonChange(cTSSelectionFill, VisualOptions.PESel.Color)
+        cButtonChange(cTSBPM, VisualOptions.PEBPM.Color)
 
-        fButtonChange(Me.fColumnTitle, vo.ColumnTitleFont)
-        fButtonChange(Me.fNoteLabel, vo.kFont)
-        fButtonChange(Me.fMeasureLabel, vo.kMFont)
-        fButtonChange(Me.fTSBPM, vo.PEBPMFont)
+        fButtonChange(fColumnTitle, VisualOptions.ColumnTitleFont)
+        fButtonChange(fNoteLabel, VisualOptions.kFont)
+        fButtonChange(fMeasureLabel, VisualOptions.kMFont)
+        fButtonChange(fTSBPM, VisualOptions.PEBPMFont)
 
 
-        Me.iNoteHeight.SetValClamped(vo.kHeight)
-        Me.iLabelVerticalShift.SetValClamped(vo.kLabelVShift)
-        Me.iLabelHorizShift.SetValClamped(vo.kLabelHShift)
-        Me.iLongLabelHorizShift.SetValClamped(vo.kLabelHShiftL)
-        Me.iHiddenNoteOpacity.SetValClamped(vo.kOpacity)
-        Me.iTSSensitivity.SetValClamped(vo.PEDeltaMouseOver)
-        Me.iMiddleSensitivity.SetValClamped(vo.MiddleDeltaRelease)
+        iNoteHeight.SetValClamped(VisualOptions.kHeight)
+        iLabelVerticalShift.SetValClamped(VisualOptions.kLabelVShift)
+        iLabelHorizShift.SetValClamped(VisualOptions.kLabelHShift)
+        iLongLabelHorizShift.SetValClamped(VisualOptions.kLabelHShiftL)
+        iHiddenNoteOpacity.SetValClamped(VisualOptions.kOpacity)
+        iTSSensitivity.SetValClamped(VisualOptions.PEDeltaMouseOver)
+        iMiddleSensitivity.SetValClamped(VisualOptions.MiddleDeltaRelease)
 
-        'lWidth = xlWidth
-        'lTitle = xlTitle
-        'lColor = xlColor
-        'lForeColor = xlForeColor
-        'lColorL = xlColorL
-        'lForeColorL = xlForeColorL
-        'lBg = xlBg
+        TemporalColumns = xcol.Clone
+        ReDim ColumnOptions(UBound(TemporalColumns))
 
-        col = xcol.Clone
-        ReDim co(UBound(col))
-
-        For xI1 As Integer = 0 To UBound(col)
+        For i As Integer = 0 To UBound(TemporalColumns)
             Dim jw As New NumericUpDown
             With jw
                 .BorderStyle = BorderStyle.FixedSingle
-                .Location = New Point(lLeft(xI1), 12)
+                .Location = New Point(lLeft(i), 12)
                 .Maximum = 999
                 .Size = New Size(33, 23)
-                .Value = col(xI1).Width
+                .Value = TemporalColumns(i).Width
             End With
 
             Dim jt As New TextBox
             With jt
                 .BorderStyle = BorderStyle.FixedSingle
-                .Location = New Point(lLeft(xI1), 34)
+                .Location = New Point(lLeft(i), 34)
                 .Size = New Size(33, 23)
-                .Text = col(xI1).Title
+                .Text = TemporalColumns(i).Title
             End With
 
             Dim js As New Button
             With js
                 .FlatStyle = FlatStyle.Popup
                 .Font = monoFont
-                .Location = New Point(lLeft(xI1), 63)
+                .Location = New Point(lLeft(i), 63)
                 .Size = New Size(33, 66)
-                .BackColor = Color.FromArgb(col(xI1).cNote)
-                .ForeColor = col(xI1).cText
-                .Text = To4Hex(col(xI1).cNote)
+                .BackColor = Color.FromArgb(TemporalColumns(i).cNote)
+                .ForeColor = TemporalColumns(i).cText
+                .Text = To4Hex(TemporalColumns(i).cNote)
                 .Name = "cNote"
             End With
             Dim jst As New Button
             With jst
                 .FlatStyle = FlatStyle.Popup
                 .Font = monoFont
-                .Location = New Point(lLeft(xI1), 128)
+                .Location = New Point(lLeft(i), 128)
                 .Size = New Size(33, 66)
-                .BackColor = Color.FromArgb(col(xI1).cNote)
-                .ForeColor = col(xI1).cText
-                .Text = To4Hex(col(xI1).cText.ToArgb)
+                .BackColor = Color.FromArgb(TemporalColumns(i).cNote)
+                .ForeColor = TemporalColumns(i).cText
+                .Text = To4Hex(TemporalColumns(i).cText.ToArgb)
                 .Name = "cText"
             End With
             js.Tag = jst
@@ -145,22 +136,22 @@ Public Class OpVisual
             With jl
                 .FlatStyle = FlatStyle.Popup
                 .Font = monoFont
-                .Location = New Point(lLeft(xI1), 193)
+                .Location = New Point(lLeft(i), 193)
                 .Size = New Size(33, 66)
-                .BackColor = Color.FromArgb(col(xI1).cLNote)
-                .ForeColor = col(xI1).cLText
-                .Text = To4Hex(col(xI1).cLNote)
+                .BackColor = Color.FromArgb(TemporalColumns(i).cLNote)
+                .ForeColor = TemporalColumns(i).cLText
+                .Text = To4Hex(TemporalColumns(i).cLNote)
                 .Name = "cNote"
             End With
             Dim jlt As New Button
             With jlt
                 .FlatStyle = FlatStyle.Popup
                 .Font = monoFont
-                .Location = New Point(lLeft(xI1), 258)
+                .Location = New Point(lLeft(i), 258)
                 .Size = New Size(33, 66)
-                .BackColor = Color.FromArgb(col(xI1).cLNote)
-                .ForeColor = col(xI1).cLText
-                .Text = To4Hex(col(xI1).cLText.ToArgb)
+                .BackColor = Color.FromArgb(TemporalColumns(i).cLNote)
+                .ForeColor = TemporalColumns(i).cLText
+                .Text = To4Hex(TemporalColumns(i).cLText.ToArgb)
                 .Name = "cText"
             End With
             jl.Tag = jlt
@@ -170,11 +161,11 @@ Public Class OpVisual
             With jb
                 .FlatStyle = FlatStyle.Popup
                 .Font = monoFont
-                .Location = New Point(lLeft(xI1), 323)
+                .Location = New Point(lLeft(i), 323)
                 .Size = New Size(33, 66)
-                .BackColor = col(xI1).cBG
-                .ForeColor = IIf(CInt(col(xI1).cBG.GetBrightness * 255) + 255 - col(xI1).cBG.A >= 128, Color.Black, Color.White)
-                .Text = To4Hex(col(xI1).cBG.ToArgb)
+                .BackColor = TemporalColumns(i).cBG
+                .ForeColor = IIf(CInt(TemporalColumns(i).cBG.GetBrightness * 255) + 255 - TemporalColumns(i).cBG.A >= 128, Color.Black, Color.White)
+                .Text = To4Hex(TemporalColumns(i).cBG.ToArgb)
                 .Name = "cBG"
                 .Tag = Nothing
             End With
@@ -186,13 +177,13 @@ Public Class OpVisual
             Panel1.Controls.Add(jl)
             Panel1.Controls.Add(jlt)
             Panel1.Controls.Add(jb)
-            co(xI1).Width = jw
-            co(xI1).Title = jt
-            co(xI1).SNote = js
-            co(xI1).SText = jst
-            co(xI1).LNote = jl
-            co(xI1).LText = jlt
-            co(xI1).BG = jb
+            ColumnOptions(i).Width = jw
+            ColumnOptions(i).Title = jt
+            ColumnOptions(i).SNote = js
+            ColumnOptions(i).SText = jst
+            ColumnOptions(i).LNote = jl
+            ColumnOptions(i).LText = jlt
+            ColumnOptions(i).BG = jb
             'AddHandler jw.ValueChanged, AddressOf WidthChanged
             'AddHandler jt.TextChanged, AddressOf TitleChanged
             AddHandler js.Click, AddressOf ButtonClick
@@ -215,106 +206,56 @@ Public Class OpVisual
     End Sub
 
     Private Sub OK_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles OK_Button.Click
-        'With Form1
+        VisualOptions.ColumnTitle.Color = cColumnTitle.BackColor
+        VisualOptions.Bg.Color = cBG.BackColor
+        VisualOptions.pGrid.Color = cGrid.BackColor
+        VisualOptions.pSub.Color = cSub.BackColor
+        VisualOptions.pVLine.Color = cVerticalLine.BackColor
+        VisualOptions.pMLine.Color = cMeasureBarLine.BackColor
+        VisualOptions.pBGMWav.Color = cWaveForm.BackColor
+        VisualOptions.kMouseOver.Color = cMouseOver.BackColor
+        VisualOptions.kSelected.Color = cSelectedBorder.BackColor
+        VisualOptions.kMouseOverE.Color = cAdjustLengthBorder.BackColor
+        VisualOptions.SelBox.Color = cSelectionBox.BackColor
+        VisualOptions.PECursor.Color = cTSCursor.BackColor
+        VisualOptions.PEHalf.Color = cTSSplitter.BackColor
+        VisualOptions.PEMouseOver.Color = cTSMouseOver.BackColor
+        VisualOptions.PESel.Color = cTSSelectionFill.BackColor
+        VisualOptions.PEBPM.Color = cTSBPM.BackColor
 
-        '-----------------------------------------------
-        'Page 2-----------------------------------------
-        '-----------------------------------------------
+        VisualOptions.ColumnTitleFont = fColumnTitle.Font
+        VisualOptions.kFont = fNoteLabel.Font
+        VisualOptions.kMFont = fMeasureLabel.Font
+        VisualOptions.PEBPMFont = fTSBPM.Font
 
-        '.voTitle.Color = eColor(0)
-        '.voBg.Color = eColor(1)
-        '.voGrid.Color = eColor(2)
-        '.voSub.Color = eColor(3)
-        '.voVLine.Color = eColor(4)
-        '.voMLine.Color = eColor(5)
+        VisualOptions.kHeight = CInt(iNoteHeight.Value)
+        VisualOptions.kLabelVShift = CInt(iLabelVerticalShift.Value)
+        VisualOptions.kLabelHShift = CInt(iLabelHorizShift.Value)
+        VisualOptions.kLabelHShiftL = CInt(iLongLabelHorizShift.Value)
+        VisualOptions.kOpacity = CSng(iHiddenNoteOpacity.Value)
+        VisualOptions.PEDeltaMouseOver = CInt(iTSSensitivity.Value)
+        VisualOptions.MiddleDeltaRelease = CInt(iMiddleSensitivity.Value)
 
-        '.voBGMWav.Color = eColor(6)
-        '.TWTransparency.Value = eColor(6).A
-        '.TWTransparency2.Value = eColor(6).A
-        '.TWSaturation.Value = eColor(6).GetSaturation * 1000
-        '.TWSaturation2.Value = eColor(6).GetSaturation * 1000
+        MainWindow.setVO(VisualOptions)
 
-        '.voSelBox.Color = eColor(7)
-        '.voPECursor.Color = eColor(8)
-        '.voPESel.Color = eColor(9)
-        '.voPEBPM.Color = eColor(10)
-        '.vKMouseOver.Color = eColor(11)
-        '.vKSelected.Color = eColor(12)
-        '.vKMouseOverE.Color = eColor(13)
-        '.voTitleFont = eFont(0)
-        '.voPEBPMFont = eFont(1)
-        '.vKFont = eFont(2)
-        '.vKMFont = eFont(3)
-        '.vKHeight = eI(0)
-        '.vKLabelVShift = eI(1)
-        '.vKLabelHShift = eI(2)
-        '.vKLabelHShiftL = eI(3)
-        '.vKHidTransparency = CSng(eI(4)) / 100
-
-        '-----------------------------------------------
-        'Page 1-----------------------------------------
-        '-----------------------------------------------
-
-        '.kLength = lWidth
-        '.kTitle = lTitle
-        '.kColor = ColorArrayToIntArray(lColor)
-        '.kForeColor = ColorArrayToIntArray(lForeColor)
-        '.kColorL = ColorArrayToIntArray(lColorL)
-        '.kForeColorL = ColorArrayToIntArray(lForeColorL)
-        '.kBgColor = ColorArrayToIntArray(lBg)
-
-        'End With
-
-        vo.ColumnTitle.Color = Me.cColumnTitle.BackColor
-        vo.Bg.Color = Me.cBG.BackColor
-        vo.pGrid.Color = Me.cGrid.BackColor
-        vo.pSub.Color = Me.cSub.BackColor
-        vo.pVLine.Color = Me.cVerticalLine.BackColor
-        vo.pMLine.Color = Me.cMeasureBarLine.BackColor
-        vo.pBGMWav.Color = Me.cWaveForm.BackColor
-        vo.kMouseOver.Color = Me.cMouseOver.BackColor
-        vo.kSelected.Color = Me.cSelectedBorder.BackColor
-        vo.kMouseOverE.Color = Me.cAdjustLengthBorder.BackColor
-        vo.SelBox.Color = Me.cSelectionBox.BackColor
-        vo.PECursor.Color = Me.cTSCursor.BackColor
-        vo.PEHalf.Color = Me.cTSSplitter.BackColor
-        vo.PEMouseOver.Color = Me.cTSMouseOver.BackColor
-        vo.PESel.Color = Me.cTSSelectionFill.BackColor
-        vo.PEBPM.Color = Me.cTSBPM.BackColor
-
-        vo.ColumnTitleFont = Me.fColumnTitle.Font
-        vo.kFont = Me.fNoteLabel.Font
-        vo.kMFont = Me.fMeasureLabel.Font
-        vo.PEBPMFont = Me.fTSBPM.Font
-
-        vo.kHeight = CInt(Me.iNoteHeight.Value)
-        vo.kLabelVShift = CInt(Me.iLabelVerticalShift.Value)
-        vo.kLabelHShift = CInt(Me.iLabelHorizShift.Value)
-        vo.kLabelHShiftL = CInt(Me.iLongLabelHorizShift.Value)
-        vo.kOpacity = CSng(Me.iHiddenNoteOpacity.Value)
-        vo.PEDeltaMouseOver = CInt(Me.iTSSensitivity.Value)
-        vo.MiddleDeltaRelease = CInt(Me.iMiddleSensitivity.Value)
-
-        MainWindow.setVO(vo)
-
-        For xI1 As Integer = 0 To UBound(co)
-            col(xI1).Title = co(xI1).Title.Text
-            col(xI1).Width = co(xI1).Width.Value
-            col(xI1).setNoteColor(co(xI1).SNote.BackColor.ToArgb)
-            col(xI1).cText = co(xI1).SText.ForeColor
-            col(xI1).setLNoteColor(co(xI1).LNote.BackColor.ToArgb)
-            col(xI1).cLText = co(xI1).LText.ForeColor
-            col(xI1).cBG = co(xI1).BG.BackColor
+        For i As Integer = 0 To ColumnOptions.Length - 1
+            TemporalColumns(i).Title = ColumnOptions(i).Title.Text
+            TemporalColumns(i).Width = ColumnOptions(i).Width.Value
+            TemporalColumns(i).setNoteColor(ColumnOptions(i).SNote.BackColor.ToArgb)
+            TemporalColumns(i).cText = ColumnOptions(i).SText.ForeColor
+            TemporalColumns(i).setLNoteColor(ColumnOptions(i).LNote.BackColor.ToArgb)
+            TemporalColumns(i).cLText = ColumnOptions(i).LText.ForeColor
+            TemporalColumns(i).cBG = ColumnOptions(i).BG.BackColor
         Next
 
-        MainWindow.column = col
+        MainWindow.Columns.column = TemporalColumns
 
-        Me.DialogResult = System.Windows.Forms.DialogResult.OK
-        Me.Close()
+        DialogResult = DialogResult.OK
+        Close()
     End Sub
 
     Private Sub Cancel_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Cancel_Button.Click
-        Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
+        Me.DialogResult = DialogResult.Cancel
         Me.Close()
     End Sub
 
@@ -445,18 +386,18 @@ Public Class OpVisual
         '    .Add(iHiddenNoteOpacity)
         'End With
 
-        'Dim xI1 As Integer
-        'For xI1 = 0 To 13
-        '    eaColor(xI1).Text = Hex(eColor(xI1).ToArgb)
-        '    eaColor(xI1).BackColor = eColor(xI1)
-        '    eaColor(xI1).ForeColor = IIf(eColor(xI1).GetBrightness + (255 - eColor(xI1).A) / 255 >= 0.5, Color.Black, Color.White)
+        'Dim i As Integer
+        'For i = 0 To 13
+        '    eaColor(i).Text = Hex(eColor(i).ToArgb)
+        '    eaColor(i).BackColor = eColor(i)
+        '    eaColor(i).ForeColor = IIf(eColor(i).GetBrightness + (255 - eColor(i).A) / 255 >= 0.5, Color.Black, Color.White)
         'Next
-        'For xI1 = 0 To 3
-        '    eaFont(xI1).Text = eFont(xI1).FontFamily.Name
-        '    eaFont(xI1).Font = eFont(xI1)
+        'For i = 0 To 3
+        '    eaFont(i).Text = eFont(i).FontFamily.Name
+        '    eaFont(i).Font = eFont(i)
         'Next
-        'For xI1 = 0 To 4
-        '    eaI(xI1).Value = eI(xI1)
+        'For i = 0 To 4
+        '    eaI(i).Value = eI(i)
         'Next
 
         'AddHandler cColumnTitle.Click, AddressOf BCClick
@@ -488,15 +429,15 @@ Public Class OpVisual
         '-----------------------------------------------
 
         ''Width
-        'For xI1 = 0 To niB
+        'For i = 0 To Columns.BGM
         '    Dim xjWidth As New NumericUpDown
         '    With xjWidth
         '        .BorderStyle = BorderStyle.FixedSingle
-        '        .Location = New Point(lLeft(xI1), 12)
+        '        .Location = New Point(lLeft(i), 12)
         '        .Maximum = 99
         '        .Size = New Size(33, 23)
-        '        .Value = lWidth(xI1)
-        '        .Tag = xI1
+        '        .Value = lWidth(i)
+        '        .Tag = i
         '    End With
         '    Panel1.Controls.Add(xjWidth)
         '    jWidth.Add(xjWidth)
@@ -504,14 +445,14 @@ Public Class OpVisual
         'Next
         '
         ''Title
-        'For xI1 = 0 To niB
+        'For i = 0 To Columns.BGM
         '    Dim xjTitle As New TextBox
         '    With xjTitle
         '        .BorderStyle = BorderStyle.FixedSingle
-        '        .Location = New Point(lLeft(xI1), 34)
+        '        .Location = New Point(lLeft(i), 34)
         '        .Size = New Size(33, 23)
-        '        .Text = lTitle(xI1)
-        '        .Tag = xI1
+        '        .Text = lTitle(i)
+        '        .Tag = i
         '    End With
         '    Panel1.Controls.Add(xjTitle)
         '    jTitle.Add(xjTitle)
@@ -519,17 +460,17 @@ Public Class OpVisual
         'Next
         '
         ''Color
-        'For xI1 = 0 To niB
+        'For i = 0 To Columns.BGM
         '    Dim xjColor As New Button
         '    With xjColor
         '        .FlatStyle = FlatStyle.Popup
         '        .Font = New Font("Consolas", 9)
-        '        .Location = New Point(lLeft(xI1), 63)
+        '        .Location = New Point(lLeft(i), 63)
         '        .Size = New Size(33, 66)
-        '        .BackColor = lColor(xI1)
-        '        .ForeColor = lForeColor(xI1)
-        '        .Text = To4Hex(lColor(xI1).ToArgb)
-        '        .Tag = xI1
+        '        .BackColor = lColor(i)
+        '        .ForeColor = lForeColor(i)
+        '        .Text = To4Hex(lColor(i).ToArgb)
+        '        .Tag = i
         '    End With
         '    Panel1.Controls.Add(xjColor)
         '    jColor.Add(xjColor)
@@ -537,17 +478,17 @@ Public Class OpVisual
         'Next
         '
         ''ForeColor
-        'For xI1 = 0 To niB
+        'For i = 0 To Columns.BGM
         '    Dim xjColor As New Button
         '    With xjColor
         '        .FlatStyle = FlatStyle.Popup
         '        .Font = New Font("Consolas", 9)
-        '        .Location = New Point(lLeft(xI1), 128)
+        '        .Location = New Point(lLeft(i), 128)
         '        .Size = New Size(33, 66)
-        '        .BackColor = lColor(xI1)
-        '        .ForeColor = lForeColor(xI1)
-        '        .Text = To4Hex(lForeColor(xI1).ToArgb)
-        '        .Tag = xI1
+        '        .BackColor = lColor(i)
+        '        .ForeColor = lForeColor(i)
+        '        .Text = To4Hex(lForeColor(i).ToArgb)
+        '        .Tag = i
         '    End With
         '    Panel1.Controls.Add(xjColor)
         '    jForeColor.Add(xjColor)
@@ -555,17 +496,17 @@ Public Class OpVisual
         'Next
         '
         ''ColorL
-        'For xI1 = 0 To niB
+        'For i = 0 To Columns.BGM
         '    Dim xjColor As New Button
         '    With xjColor
         '        .FlatStyle = FlatStyle.Popup
         '        .Font = New Font("Consolas", 9)
-        '        .Location = New Point(lLeft(xI1), 193)
+        '        .Location = New Point(lLeft(i), 193)
         '        .Size = New Size(33, 66)
-        '        .BackColor = lColorL(xI1)
-        '        .ForeColor = lForeColorL(xI1)
-        '        .Text = To4Hex(lColorL(xI1).ToArgb)
-        '        .Tag = xI1
+        '        .BackColor = lColorL(i)
+        '        .ForeColor = lForeColorL(i)
+        '        .Text = To4Hex(lColorL(i).ToArgb)
+        '        .Tag = i
         '    End With
         '    Panel1.Controls.Add(xjColor)
         '    jColorL.Add(xjColor)
@@ -573,17 +514,17 @@ Public Class OpVisual
         'Next
         '
         ''ForeColorL
-        'For xI1 = 0 To niB
+        'For i = 0 To Columns.BGM
         '    Dim xjColor As New Button
         '    With xjColor
         '        .FlatStyle = FlatStyle.Popup
         '        .Font = New Font("Consolas", 9)
-        '        .Location = New Point(lLeft(xI1), 258)
+        '        .Location = New Point(lLeft(i), 258)
         '        .Size = New Size(33, 66)
-        '        .BackColor = lColorL(xI1)
-        '        .ForeColor = lForeColorL(xI1)
-        '        .Text = To4Hex(lForeColorL(xI1).ToArgb)
-        '        .Tag = xI1
+        '        .BackColor = lColorL(i)
+        '        .ForeColor = lForeColorL(i)
+        '        .Text = To4Hex(lForeColorL(i).ToArgb)
+        '        .Tag = i
         '    End With
         '    Panel1.Controls.Add(xjColor)
         '    jForeColorL.Add(xjColor)
@@ -591,17 +532,17 @@ Public Class OpVisual
         'Next
         '
         ''BgColor
-        'For xI1 = 0 To niB
+        'For i = 0 To Columns.BGM
         '    Dim xjColor As New Button
         '    With xjColor
         '        .FlatStyle = FlatStyle.Popup
         '        .Font = New Font("Consolas", 9)
-        '        .Location = New Point(lLeft(xI1), 323)
+        '        .Location = New Point(lLeft(i), 323)
         '        .Size = New Size(33, 66)
-        '        .BackColor = lBg(xI1)
-        '        .ForeColor = IIf(lBg(xI1).GetBrightness + (255 - lBg(xI1).A) / 255 >= 0.5, Color.Black, Color.White)
-        '        .Text = To4Hex(lBg(xI1).ToArgb)
-        '        .Tag = xI1
+        '        .BackColor = lBg(i)
+        '        .ForeColor = IIf(lBg(i).GetBrightness + (255 - lBg(i).A) / 255 >= 0.5, Color.Black, Color.White)
+        '        .Text = To4Hex(lBg(i).ToArgb)
+        '        .Tag = i
         '    End With
         '    Panel1.Controls.Add(xjColor)
         '    jBg.Add(xjColor)
@@ -763,8 +704,8 @@ Public Class OpVisual
 
     Private Function ColorArrayToIntArray(ByVal xC() As Color) As Integer()
         Dim xI(UBound(xC)) As Integer
-        For xI1 As Integer = 0 To UBound(xI)
-            xI(xI1) = xC(xI1).ToArgb
+        For i As Integer = 0 To UBound(xI)
+            xI(i) = xC(i).ToArgb
         Next
         Return xI
     End Function

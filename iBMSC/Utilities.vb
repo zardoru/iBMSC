@@ -148,24 +148,24 @@ Namespace Editor
 
         Public Function ArrayToString(ByVal xInt() As Integer) As String
             Dim xStr As String = ""
-            For xI1 As Integer = 0 To UBound(xInt)
-                xStr &= xInt(xI1).ToString & IIf(xI1 = UBound(xInt), "", ",")
+            For i As Integer = 0 To UBound(xInt)
+                xStr &= xInt(i).ToString & IIf(i = UBound(xInt), "", ",")
             Next
             Return xStr
         End Function
 
         Public Function ArrayToString(ByVal xBool() As Boolean) As String
             Dim xStr As String = ""
-            For xI1 As Integer = 0 To UBound(xBool)
-                xStr &= CInt(xBool(xI1)).ToString & IIf(xI1 = UBound(xBool), "", ",")
+            For i As Integer = 0 To UBound(xBool)
+                xStr &= CInt(xBool(i)).ToString & IIf(i = UBound(xBool), "", ",")
             Next
             Return xStr
         End Function
 
         Public Function ArrayToString(ByVal xColor() As Color) As String
             Dim xStr As String = ""
-            For xI1 As Integer = 0 To UBound(xColor)
-                xStr &= xColor(xI1).ToArgb.ToString & IIf(xI1 = UBound(xColor), "", ",")
+            For i As Integer = 0 To UBound(xColor)
+                xStr &= xColor(i).ToArgb.ToString & IIf(i = UBound(xColor), "", ",")
             Next
             Return xStr
         End Function
@@ -173,8 +173,8 @@ Namespace Editor
         Public Function StringToArrayInt(ByVal xStr As String) As Integer()
             Dim xL() As String = Split(xStr, ",")
             Dim xInt(UBound(xL)) As Integer
-            For xI1 As Integer = 0 To UBound(xInt)
-                xInt(xI1) = Val(xL(xI1))
+            For i As Integer = 0 To UBound(xInt)
+                xInt(i) = Val(xL(i))
             Next
             Return xInt
         End Function
@@ -182,8 +182,8 @@ Namespace Editor
         Public Function StringToArrayBool(ByVal xStr As String) As Boolean()
             Dim xL() As String = Split(xStr, ",")
             Dim xBool(UBound(xL)) As Boolean
-            For xI1 As Integer = 0 To UBound(xBool)
-                xBool(xI1) = CBool(Val(xL(xI1)))
+            For i As Integer = 0 To UBound(xBool)
+                xBool(i) = CBool(Val(xL(i)))
             Next
             Return xBool
         End Function
@@ -221,5 +221,8 @@ Namespace Editor
             Return re.IsMatch(str)
         End Function
 
+        Public Function Clamp(i As Integer, Min As Integer, Max As Integer)
+            Return Math.Max(Math.Min(i, Max), Min)
+        End Function
     End Module
 End Namespace

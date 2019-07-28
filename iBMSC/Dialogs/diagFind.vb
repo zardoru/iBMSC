@@ -71,16 +71,16 @@ Public Class diagFind
         TBDelete.Text = Strings.fFind.Delete_
         TBClose.Text = Strings.fFind.Close_
 
-        For xI1 As Integer = 27 To bCol
+        For i As Integer = 27 To bCol
             Dim xCB As New CheckBox
             With xCB
                 .Appearance = Appearance.Button
                 .Checked = True
                 .FlatStyle = FlatStyle.System
-                .Location = New Point(((xI1 - 26) Mod 8) * 35 + 3, ((xI1 - 26) \ 8) * 25 + 103)
+                .Location = New Point(((i - 26) Mod 8) * 35 + 3, ((i - 26) \ 8) * 25 + 103)
                 .Size = New Size(35, 25)
-                .Tag = xI1
-                .Text = "B" & (xI1 - 25).ToString
+                .Tag = i
+                .Text = "B" & (i - 25).ToString
                 .TextAlign = ContentAlignment.MiddleCenter
                 .UseVisualStyleBackColor = True
             End With

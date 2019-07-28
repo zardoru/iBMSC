@@ -1,11 +1,9 @@
-Imports System.Windows.Forms
-
 Public Class OpPlayer
-    Dim pArg() As MainWindow.PlayerArguments
+    Dim pArg() As PlayerArguments
     'Dim ImplicitChange As Boolean = False
     Dim CurrPlayer As Integer = -1
 
-    Private Sub OK_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles OK_Button.Click
+    Private Sub OK_Button_Click(ByVal sender As System.Object, ByVal e As EventArgs) Handles OK_Button.Click
         DialogResult = DialogResult.OK
         Close()
 
@@ -15,10 +13,10 @@ Public Class OpPlayer
         Dispose()
     End Sub
 
-    Private Sub Cancel_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Cancel_Button.Click
-        Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
-        Me.Close()
-        Me.Dispose()
+    Private Sub Cancel_Button_Click(ByVal sender As System.Object, ByVal e As EventArgs) Handles Cancel_Button.Click
+        DialogResult = DialogResult.Cancel
+        Close()
+        Dispose()
     End Sub
 
     Private Sub OpPlayer_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
@@ -31,9 +29,9 @@ Public Class OpPlayer
         Label4.Text = Strings.fopPlayer.StopPlaying
         BAdd.Text = Strings.fopPlayer.Add
         BRemove.Text = Strings.fopPlayer.Remove
-        Label6.Text = Strings.fopPlayer.References & vbCrLf & _
-                      "<apppath> = " & Strings.fopPlayer.DirectoryOfApp & vbCrLf & _
-                      "<measure> = " & Strings.fopPlayer.CurrMeasure & vbCrLf & _
+        Label6.Text = Strings.fopPlayer.References & vbCrLf &
+                      "<apppath> = " & Strings.fopPlayer.DirectoryOfApp & vbCrLf &
+                      "<measure> = " & Strings.fopPlayer.CurrMeasure & vbCrLf &
                       "<filename> = " & Strings.fopPlayer.FileName
         OK_Button.Text = Strings.OK
         Cancel_Button.Text = Strings.Cancel
@@ -54,11 +52,11 @@ Public Class OpPlayer
     Private Sub BPrevAdd_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles BAdd.Click
         ReDim Preserve pArg(UBound(pArg) + 1)
         CurrPlayer += 1
-        For xI1 As Integer = UBound(pArg) To CurrPlayer Step -1
-            pArg(xI1) = pArg(xI1 - 1)
+        For i As Integer = UBound(pArg) To CurrPlayer Step -1
+            pArg(i) = pArg(i - 1)
         Next
 
-        LPlayer.Items.Insert(CurrPlayer, _
+        LPlayer.Items.Insert(CurrPlayer,
             GetFileName(pArg(CurrPlayer - 1).Path))
         LPlayer.SelectedIndex += 1
     End Sub
@@ -69,8 +67,8 @@ Public Class OpPlayer
             Exit Sub
         End If
 
-        For xI1 As Integer = CurrPlayer To UBound(pArg) - 1
-            pArg(xI1) = pArg(xI1 + 1)
+        For i As Integer = CurrPlayer To UBound(pArg) - 1
+            pArg(i) = pArg(i + 1)
         Next
         ReDim Preserve pArg(UBound(pArg) - 1)
 
@@ -85,8 +83,8 @@ Public Class OpPlayer
 
     Private Sub BPrevBrowse_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles BBrowse.Click
         Dim xDOpen As New OpenFileDialog
-        xDOpen.InitialDirectory = IIf(Path.GetDirectoryName(Replace(TPath.Text, "<apppath>", My.Application.Info.DirectoryPath)) = "", _
-                                      My.Application.Info.DirectoryPath, _
+        xDOpen.InitialDirectory = IIf(Path.GetDirectoryName(Replace(TPath.Text, "<apppath>", My.Application.Info.DirectoryPath)) = "",
+                                      My.Application.Info.DirectoryPath,
                                       Path.GetDirectoryName(Replace(TPath.Text, "<apppath>", My.Application.Info.DirectoryPath)))
         xDOpen.Filter = Strings.FileType.EXE & "|*.exe"
         xDOpen.DefaultExt = "exe"
@@ -98,14 +96,14 @@ Public Class OpPlayer
         'ImplicitChange = True
         If MsgBox(Strings.Messages.RestoreDefaultSettings, MsgBoxStyle.Question + MsgBoxStyle.YesNo) = MsgBoxResult.No Then Exit Sub
 
-        pArg = New MainWindow.PlayerArguments() {New MainWindow.PlayerArguments("<apppath>\uBMplay.exe", _
-                                                                      "-P -N0 ""<filename>""", _
-                                                                      "-P -N<measure> ""<filename>""", _
-                                                                      "-S"), _
-                                            New MainWindow.PlayerArguments("<apppath>\o2play.exe", _
-                                                                      "-P -N0 ""<filename>""", _
-                                                                      "-P -N<measure> ""<filename>""", _
-                                                                      "-S")}
+        pArg = New PlayerArguments() {New PlayerArguments("<apppath>\uBMplay.exe",
+                                                            "-P -N0 ""<filename>""",
+                                                            "-P -N<measure> ""<filename>""",
+                                                            "-S"),
+                                      New PlayerArguments("<apppath>\o2play.exe",
+                                                            "-P -N0 ""<filename>""",
+                                                            "-P -N<measure> ""<filename>""",
+                                                            "-S")}
         CurrPlayer = 0
         ResetLPlayer_ShowInTextbox()
         'ImplicitChange = False
@@ -114,8 +112,8 @@ Public Class OpPlayer
     'Affect LPlayer and all textboxes
     Private Sub ResetLPlayer_ShowInTextbox()
         LPlayer.Items.Clear()
-        For xI1 As Integer = 0 To UBound(pArg)
-            LPlayer.Items.Add(GetFileName(pArg(xI1).Path))
+        For i As Integer = 0 To UBound(pArg)
+            LPlayer.Items.Add(GetFileName(pArg(i).Path))
         Next
         'RemoveHandler LPlayer.SelectedIndexChanged, AddressOf LPlayer_SelectedIndexChanged
         LPlayer.SelectedIndex = CurrPlayer

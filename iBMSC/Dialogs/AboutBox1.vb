@@ -5,7 +5,7 @@
     Private Const SC_MOVE As Integer = &HF010
     Private Const WM_NCLBUTTONDOWN As Integer = &HA1
     Private Const HTCAPTION As Integer = 2
-    Public bBitmap As Bitmap = My.Resources.SplashScreenx
+    Public bBitmap As Bitmap = My.Resources.ImageError
 
     Private Sub AboutBox1_KeyPress(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyPressEventArgs) Handles Me.KeyPress
         Me.Close()

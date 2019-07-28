@@ -151,16 +151,28 @@
     <Compile Include="Dialogs\SplashScreen1.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="EditorColumns.vb">
+    <Compile Include="EditorChart.vb">
       <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditorClipboard.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditorColumns.vb" />
+    <Compile Include="EditorPanel.vb">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="EditorRecent.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="EditorShortcuts.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditorState.vb" />
     <Compile Include="EditorUndoRedo.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Extensions.vb" />
+    <Compile Include="GridSettings.vb" />
     <Compile Include="MainWindow.designer.vb">
       <DependentUpon>MainWindow.vb</DependentUpon>
     </Compile>
@@ -170,14 +182,16 @@
     <Compile Include="EditorPersistent.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="My Project\Resources.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="MyO2.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="PanelDraw.vb">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="PanelEvents.vb">
-      <SubType>Form</SubType>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="PanelKeyStates.vb" />
     <Compile Include="TimeSelectionOps.vb">
@@ -190,11 +204,6 @@
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
       <DependentUpon>Application.myapp</DependentUpon>
-    </Compile>
-    <Compile Include="My Project\Resources.Designer.vb">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="My Project\Settings.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -256,12 +265,13 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MainWindow.resx">
       <DependentUpon>MainWindow.vb</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.vb</LastGenOutput>
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.vb</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Option Windows\OpGeneral.resx">
       <DependentUpon>OpGeneral.vb</DependentUpon>
@@ -275,7 +285,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="My Project\app.manifest" />
+    <None Include="My Project\app.manifest">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="My Project\Application.myapp">
       <Generator>MyApplicationCodeGenerator</Generator>
       <LastGenOutput>Application.Designer.vb</LastGenOutput>
