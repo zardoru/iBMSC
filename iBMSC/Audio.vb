@@ -1,7 +1,7 @@
-﻿Imports NVorbis
-Imports CSCore
+﻿Imports CSCore
 Imports CSCore.Codecs
 Imports CSCore.SoundOut
+Imports NVorbis
 
 Module Audio
     Dim Output As WasapiOut
@@ -10,8 +10,8 @@ Module Audio
     Public Sub Initialize()
         Output = New WasapiOut()
         CodecFactory.Instance.Register("ogg", New CodecFactoryEntry(Function(s)
-                                                                        Return New NVorbisSource(s).ToWaveSource()
-                                                                    End Function, ".ogg"))
+            Return New NVorbisSource(s).ToWaveSource()
+        End Function, ".ogg"))
     End Sub
 
     Public Sub Finalize()
@@ -20,7 +20,7 @@ Module Audio
         Output = Nothing
     End Sub
 
-    Public Function CheckFilename(ByVal filename As String) As String
+    Public Function CheckFilename(filename As String) As String
         If File.Exists(filename) Then
             Return filename
         End If
@@ -36,7 +36,7 @@ Module Audio
         Return filename
     End Function
 
-    Public Sub Play(ByVal filename As String)
+    Public Sub Play(filename As String)
 
         If Source IsNot Nothing Then
             Output.Stop()
@@ -65,10 +65,10 @@ Module Audio
 End Module
 
 Class NVorbisSource
-    Implements CSCore.ISampleSource
-    Dim _stream As Stream
-    Dim _vorbisReader As VorbisReader
-    Dim _waveFormat As WaveFormat
+    Implements ISampleSource
+    Dim ReadOnly _stream As Stream
+    Dim ReadOnly _vorbisReader As VorbisReader
+    Dim ReadOnly _waveFormat As WaveFormat
     Dim _disposed As Boolean
 
     Public Sub New(stream As Stream)
@@ -94,27 +94,29 @@ Class NVorbisSource
 
     Public ReadOnly Property Length As Long Implements IAudioSource.Length
         Get
-            Return IIf(CanSeek, _vorbisReader.TotalTime.TotalSeconds * _waveFormat.SampleRate * _waveFormat.Channels, 0)
+            Return IIf(CanSeek, _vorbisReader.TotalTime.TotalSeconds*_waveFormat.SampleRate*_waveFormat.Channels, 0)
         End Get
     End Property
 
     Public Property Position As Long Implements IAudioSource.Position
         Get
-            Return IIf(CanSeek, _vorbisReader.DecodedTime.TotalSeconds * _vorbisReader.SampleRate * _vorbisReader.Channels, 0)
+            Return _
+                IIf(CanSeek, _vorbisReader.DecodedTime.TotalSeconds*_vorbisReader.SampleRate*_vorbisReader.Channels, 0)
         End Get
-        Set(value As Long)
+        Set
             If Not CanSeek Then
                 Throw New InvalidOperationException("Can't seek this stream.")
             End If
             If value < 0 Or value >= Length Then
                 Throw New ArgumentOutOfRangeException("value")
             End If
-            _vorbisReader.DecodedTime = TimeSpan.FromSeconds(value / _vorbisReader.SampleRate / _vorbisReader.Channels)
+            _vorbisReader.DecodedTime = TimeSpan.FromSeconds(value/_vorbisReader.SampleRate/_vorbisReader.Channels)
         End Set
     End Property
 
 
-    Public Function Read(buffer As Single(), offset As Integer, count As Integer) As Integer Implements ISampleSource.Read
+    Public Function Read(buffer As Single(), offset As Integer, count As Integer) As Integer _
+        Implements ISampleSource.Read
         Return _vorbisReader.ReadSamples(buffer, offset, count)
     End Function
 
@@ -126,5 +128,4 @@ Class NVorbisSource
         End If
         _disposed = True
     End Sub
-
 End Class

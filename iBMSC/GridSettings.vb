@@ -19,7 +19,4 @@
     Public Property ShowStopColumn As Boolean = True
     Public Property ShowBpmColumn As Boolean = True
     Public Property IPlayer As Integer = 0
-
-
-
 End Class

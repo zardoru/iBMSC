@@ -1,17 +1,17 @@
 ﻿Imports iBMSC.Editor
 
 Module BMS
-    Public Function IsChannelLongNote(ByVal I As String) As Boolean
-        Dim xI As Integer = CInt(Val(I))
+    Public Function IsChannelLongNote(I As String) As Boolean
+        Dim xI = CInt(Val(I))
         Return xI >= 50 And xI < 90
     End Function
 
-    Public Function IsChannelHidden(ByVal I As String) As Boolean
-        Dim xI As Integer = CInt(Val(I))
+    Public Function IsChannelHidden(I As String) As Boolean
+        Dim xI = CInt(Val(I))
         Return (xI >= 30 And xI < 50) Or (xI >= 70 And xI < 90)
     End Function
 
-    Public Function IsChannelLandmine(ByVal I As String) As Boolean
+    Public Function IsChannelLandmine(I As String) As Boolean
         Dim LandmineStart = C36to10("D0")
         Dim LandmineEnd = C36to10("EZ")
 

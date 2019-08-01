@@ -1,5 +1,4 @@
 Public Class Strings
-
     Public Shared OK As String = "OK"
     Public Shared Cancel As String = "Cancel"
     Public Shared None As String = "None"
@@ -14,8 +13,14 @@ Public Class Strings
     Public Class Messages
         Public Shared Err As String = "Error"
         Public Shared SaveOnExit As String = "Do you want to save changes?"
-        Public Shared SaveOnExit1 As String = "You should tell me if you want to save changes before closing the computer. -_,-"
-        Public Shared SaveOnExit2 As String = "You still need to tell me if you want to save changes even though you are closing the application with task manager. -_,-"
+
+        Public Shared _
+            SaveOnExit1 As String = "You should tell me if you want to save changes before closing the computer. -_,-"
+
+        Public Shared _
+            SaveOnExit2 As String =
+                "You still need to tell me if you want to save changes even though you are closing the application with task manager. -_,-"
+
         Public Shared PromptEnter As String = "Please enter a label."
         Public Shared PromptEnterNumeric As String = "Please enter a value."
         Public Shared PromptEnterMeasure As String = "Please enter a measure (0-999)."
@@ -30,10 +35,17 @@ Public Class Strings
         Public Shared PreviewDelError As String = "There must exist at least one player."
         Public Shared NegativeFactorError As String = "Factor must be greater than zero."
         Public Shared NegativeDivisorError As String = "Divisor must be greater than zero."
-        Public Shared PreferencePostpone As String = "The preference will take effect on the next start-up of the program."
+
+        Public Shared _
+            PreferencePostpone As String = "The preference will take effect on the next start-up of the program."
+
         Public Shared EraserObsolete As String = "The eraser tool has been replaced by right-clicking on the note."
         Public Shared SaveWarning As String = "Warning: "
-        Public Shared NoteOverlapError As String = "Note operlapping detected. Increasing Maximum Grid Partition will resolve this."
+
+        Public Shared _
+            NoteOverlapError As String =
+                "Note operlapping detected. Increasing Maximum Grid Partition will resolve this."
+
         Public Shared BPMOverflowError As String = "Numbers of multi-byte BPMs has exceeded supported maximum: "
         Public Shared STOPOverflowError As String = "Numbers of STOPs has exceeded supported maximum: "
         Public Shared SCROLLOverflowError As String = "Numbers of multi-byte SCROLLs has exceeded supported maximum: "
@@ -41,7 +53,9 @@ Public Class Strings
         Public Shared FileAssociationPrompt As String = "Do you want to set iBMSC as default program to all {} files?"
         Public Shared FileAssociationError As String = "Error changing file type association:"
         Public Shared RestoreDefaultSettings As String = "Restore default settings?"
-        Public Shared RestoreAutosavedFile As String = "{} autosaved file(s) have been found. Do you want to recover these files?"
+
+        Public Shared _
+            RestoreAutosavedFile As String = "{} autosaved file(s) have been found. Do you want to recover these files?"
     End Class
 
     Public Class FileType

@@ -37,36 +37,60 @@ End Enum
 
 Public Class ColumnList
     ' Should match the order of the enum above!
-    Public column() As Column = {
-        New Column(0, 50, "Measure", False, True, False, True, 0, 0, &HFF00FFFF, 0, &HFF00FFFF, 0),
-        New Column(50, 60, "SCROLL", True, True, False, True, 99, 0, &HFFFF0000, 0, &HFFFF0000, 0),
-        New Column(110, 60, "BPM", True, True, False, True, 3, 0, &HFFFF0000, 0, &HFFFF0000, 0),
-        New Column(170, 50, "STOP", True, True, False, True, 9, 0, &HFFFF0000, 0, &HFFFF0000, 0),
-        New Column(220, 5, "", False, False, False, True, 0, 0, 0, 0, 0, 0),
-        New Column(225, 42, "A1", True, False, True, True, 6, &HFFB0B0B0, &HFF000000, &HFFC0C0C0, &HFF000000, &H14FFFFFF),
-        New Column(267, 30, "A2", True, False, True, True, 1, &HFF62B0FF, &HFF000000, &HFF6AB0F7, &HFF000000, &H140033FF),
-        New Column(297, 42, "A3", True, False, True, True, 2, &HFFB0B0B0, &HFF000000, &HFFC0C0C0, &HFF000000, &H14FFFFFF),
-        New Column(339, 45, "A4", True, False, True, True, 3, &HFFFFC862, &HFF000000, &HFFF7C66A, &HFF000000, &H16F38B0C),
-        New Column(384, 42, "A5", True, False, True, True, 4, &HFFB0B0B0, &HFF000000, &HFFC0C0C0, &HFF000000, &H14FFFFFF),
-        New Column(426, 30, "A6", True, False, True, True, 5, &HFF62B0FF, &HFF000000, &HFF6AB0F7, &HFF000000, &H140033FF),
-        New Column(456, 42, "A7", True, False, True, True, 8, &HFFB0B0B0, &HFF000000, &HFFC0C0C0, &HFF000000, &H14FFFFFF),
-        New Column(498, 40, "A8", True, False, True, True, 9, &HFF808080, &HFF000000, &HFF909090, &HFF000000, 0),
-        New Column(498, 5, "", False, False, False, True, 0, 0, 0, 0, 0, 0),
-        New Column(503, 42, "D1", True, False, True, False, 1, &HFFB0B0B0, &HFF000000, &HFFC0C0C0, &HFF000000, &H14FFFFFF),
-        New Column(503, 30, "D2", True, False, True, False, 2, &HFF62B0FF, &HFF000000, &HFF6AB0F7, &HFF000000, &H140033FF),
-        New Column(503, 42, "D3", True, False, True, False, 3, &HFFB0B0B0, &HFF000000, &HFFC0C0C0, &HFF000000, &H14FFFFFF),
-        New Column(503, 45, "D4", True, False, True, False, 4, &HFFFFC862, &HFF000000, &HFFF7C66A, &HFF000000, &H16F38B0C),
-        New Column(503, 42, "D5", True, False, True, False, 5, &HFFB0B0B0, &HFF000000, &HFFC0C0C0, &HFF000000, &H14FFFFFF),
-        New Column(503, 30, "D6", True, False, True, False, 8, &HFF62B0FF, &HFF000000, &HFF6AB0F7, &HFF000000, &H140033FF),
-        New Column(503, 42, "D7", True, False, True, False, 9, &HFFB0B0B0, &HFF000000, &HFFC0C0C0, &HFF000000, &H14FFFFFF),
-        New Column(503, 40, "D8", True, False, True, False, 6, &HFF808080, &HFF000000, &HFF909090, &HFF000000, 0),
-        New Column(503, 5, "", False, False, False, False, 0, 0, 0, 0, 0, 0),
-        New Column(503, 40, "BGA", True, False, False, False, 4, &HFF8CD78A, &HFF000000, &HFF90D38E, &HFF000000, 0),
-        New Column(503, 40, "LAYER", True, False, False, False, 7, &HFF8CD78A, &HFF000000, &HFF90D38E, &HFF000000, 0),
-        New Column(503, 40, "POOR", True, False, False, False, 6, &HFF8CD78A, &HFF000000, &HFF90D38E, &HFF000000, 0),
-        New Column(503, 5, "", False, False, False, False, 0, 0, 0, 0, 0, 0),
-        New Column(503, 40, "B", True, False, True, True, 1, &HFFE18080, &HFF000000, &HFFDC8585, &HFF000000, 0)
-    }
+    Public column() As Column = { _
+                                    New Column(0, 50, "Measure", False, True, False, True, 0, 0, &HFF00FFFF, 0,
+                                               &HFF00FFFF, 0),
+                                    New Column(50, 60, "SCROLL", True, True, False, True, 99, 0, &HFFFF0000, 0,
+                                               &HFFFF0000, 0),
+                                    New Column(110, 60, "BPM", True, True, False, True, 3, 0, &HFFFF0000, 0, &HFFFF0000,
+                                               0),
+                                    New Column(170, 50, "STOP", True, True, False, True, 9, 0, &HFFFF0000, 0, &HFFFF0000,
+                                               0),
+                                    New Column(220, 5, "", False, False, False, True, 0, 0, 0, 0, 0, 0),
+                                    New Column(225, 42, "A1", True, False, True, True, 6, &HFFB0B0B0, &HFF000000,
+                                               &HFFC0C0C0, &HFF000000, &H14FFFFFF),
+                                    New Column(267, 30, "A2", True, False, True, True, 1, &HFF62B0FF, &HFF000000,
+                                               &HFF6AB0F7, &HFF000000, &H140033FF),
+                                    New Column(297, 42, "A3", True, False, True, True, 2, &HFFB0B0B0, &HFF000000,
+                                               &HFFC0C0C0, &HFF000000, &H14FFFFFF),
+                                    New Column(339, 45, "A4", True, False, True, True, 3, &HFFFFC862, &HFF000000,
+                                               &HFFF7C66A, &HFF000000, &H16F38B0C),
+                                    New Column(384, 42, "A5", True, False, True, True, 4, &HFFB0B0B0, &HFF000000,
+                                               &HFFC0C0C0, &HFF000000, &H14FFFFFF),
+                                    New Column(426, 30, "A6", True, False, True, True, 5, &HFF62B0FF, &HFF000000,
+                                               &HFF6AB0F7, &HFF000000, &H140033FF),
+                                    New Column(456, 42, "A7", True, False, True, True, 8, &HFFB0B0B0, &HFF000000,
+                                               &HFFC0C0C0, &HFF000000, &H14FFFFFF),
+                                    New Column(498, 40, "A8", True, False, True, True, 9, &HFF808080, &HFF000000,
+                                               &HFF909090, &HFF000000, 0),
+                                    New Column(498, 5, "", False, False, False, True, 0, 0, 0, 0, 0, 0),
+                                    New Column(503, 42, "D1", True, False, True, False, 1, &HFFB0B0B0, &HFF000000,
+                                               &HFFC0C0C0, &HFF000000, &H14FFFFFF),
+                                    New Column(503, 30, "D2", True, False, True, False, 2, &HFF62B0FF, &HFF000000,
+                                               &HFF6AB0F7, &HFF000000, &H140033FF),
+                                    New Column(503, 42, "D3", True, False, True, False, 3, &HFFB0B0B0, &HFF000000,
+                                               &HFFC0C0C0, &HFF000000, &H14FFFFFF),
+                                    New Column(503, 45, "D4", True, False, True, False, 4, &HFFFFC862, &HFF000000,
+                                               &HFFF7C66A, &HFF000000, &H16F38B0C),
+                                    New Column(503, 42, "D5", True, False, True, False, 5, &HFFB0B0B0, &HFF000000,
+                                               &HFFC0C0C0, &HFF000000, &H14FFFFFF),
+                                    New Column(503, 30, "D6", True, False, True, False, 8, &HFF62B0FF, &HFF000000,
+                                               &HFF6AB0F7, &HFF000000, &H140033FF),
+                                    New Column(503, 42, "D7", True, False, True, False, 9, &HFFB0B0B0, &HFF000000,
+                                               &HFFC0C0C0, &HFF000000, &H14FFFFFF),
+                                    New Column(503, 40, "D8", True, False, True, False, 6, &HFF808080, &HFF000000,
+                                               &HFF909090, &HFF000000, 0),
+                                    New Column(503, 5, "", False, False, False, False, 0, 0, 0, 0, 0, 0),
+                                    New Column(503, 40, "BGA", True, False, False, False, 4, &HFF8CD78A, &HFF000000,
+                                               &HFF90D38E, &HFF000000, 0),
+                                    New Column(503, 40, "LAYER", True, False, False, False, 7, &HFF8CD78A, &HFF000000,
+                                               &HFF90D38E, &HFF000000, 0),
+                                    New Column(503, 40, "POOR", True, False, False, False, 6, &HFF8CD78A, &HFF000000,
+                                               &HFF90D38E, &HFF000000, 0),
+                                    New Column(503, 5, "", False, False, False, False, 0, 0, 0, 0, 0, 0),
+                                    New Column(503, 40, "B", True, False, True, True, 1, &HFFE18080, &HFF000000,
+                                               &HFFDC8585, &HFF000000, 0)
+                                }
 
     Public Property ColumnCount As Integer = 46
 
@@ -80,7 +104,7 @@ Public Class ColumnList
         Dim bmsBaseChannel As Integer = GetColumn(iCol).BmsChannel
         Dim xLandmine = note.Landmine
 
-        If iCol = ColumnType.BPM AndAlso (xVal / 10000 <> xVal \ 10000 Or xVal >= 2560000 Or xVal < 0) Then
+        If iCol = ColumnType.BPM AndAlso (xVal/10000 <> xVal\10000 Or xVal >= 2560000 Or xVal < 0) Then
             bmsBaseChannel += idflBPM
         End If
 
@@ -119,20 +143,19 @@ Public Class ColumnList
         Return Add2Zeros(bmsBaseChannel)
     End Function
 
-    Public Function GetColumnLeft(ByVal iCol As Integer) As Integer
+    Public Function GetColumnLeft(iCol As Integer) As Integer
         If iCol < ColumnType.BGM Then
             Return column(iCol).Left
         Else
-            Return column(ColumnType.BGM).Left + (iCol - ColumnType.BGM) * column(ColumnType.BGM).Width
+            Return column(ColumnType.BGM).Left + (iCol - ColumnType.BGM)*column(ColumnType.BGM).Width
         End If
-
     End Function
 
-    Public Function GetColumnRight(ByVal iCol As Integer) As Integer
-        Return GetColumnLeft(iCol) + GetColumnWidth(iCol)
+    Public Function GetColumnRight(iCol As Integer) As Integer
+        Return GetColumnLeft(iCol) + GetWidth(iCol)
     End Function
 
-    Public Function GetColumnWidth(ByVal iCol As Integer) As Integer
+    Public Function GetWidth(iCol As Integer) As Integer
         If Not GetColumn(iCol).IsVisible Then Return 0
         If iCol < ColumnType.BGM Then
             Return column(iCol).Width
@@ -141,28 +164,30 @@ Public Class ColumnList
         End If
     End Function
 
-    Public Function nTitle(ByVal iCol As Integer) As String
-        If iCol < ColumnType.BGM Then Return column(iCol).Title Else Return column(ColumnType.BGM).Title & (iCol - ColumnType.BGM + 1).ToString
+    Public Function GetName(iCol As Integer) As String
+        If iCol < ColumnType.BGM Then Return column(iCol).Title Else _
+            Return column(ColumnType.BGM).Title & (iCol - ColumnType.BGM + 1).ToString
     End Function
 
-    Public Function nEnabled(ByVal iCol As Integer) As Boolean
+    Public Function IsEnabled(iCol As Integer) As Boolean
         'If iCol < Columns.BGM Then Return col(iCol).Enabled And col(iCol).Visible Else Return col(Columns.BGM).Enabled And col(Columns.BGM).Visible
-        If iCol < ColumnType.BGM Then Return column(iCol).IsEnabledAfterAll Else Return column(ColumnType.BGM).IsEnabledAfterAll
+        If iCol < ColumnType.BGM Then Return column(iCol).IsEnabledAfterAll Else _
+            Return column(ColumnType.BGM).IsEnabledAfterAll
     End Function
 
-    Public Function IsColumnNumeric(ByVal iCol As Integer) As Boolean
+    Public Function IsColumnNumeric(iCol As Integer) As Boolean
         If iCol < ColumnType.BGM Then Return column(iCol).isNumeric Else Return column(ColumnType.BGM).isNumeric
     End Function
 
-    Public Function IsColumnSound(ByVal iCol As Integer) As Boolean
+    Public Function IsColumnSound(iCol As Integer) As Boolean
         If iCol < ColumnType.BGM Then Return column(iCol).isSound Else Return column(ColumnType.BGM).isSound
     End Function
 
-    Public Function GetColumn(ByVal iCol As Integer) As Column
+    Public Function GetColumn(iCol As Integer) As Column
         If iCol < ColumnType.BGM Then Return column(iCol) Else Return column(ColumnType.BGM)
     End Function
 
-    Public Function BMSEChannelToColumnIndex(ByVal I As String)
+    Public Function BMSEChannelToColumnIndex(I As String)
         Dim Ivalue = Val(I)
         If Ivalue > 100 Then
             Return ColumnType.BGM + Ivalue - 101
@@ -172,7 +197,7 @@ Public Class ColumnList
         Return ColumnType.BGM ' ??? how did a negative number get here?
     End Function
 
-    Public Function BMSChannelToColumn(ByVal I As String) As Integer
+    Public Function BMSChannelToColumn(I As String) As Integer
         Select Case I
             Case "01" : Return ColumnType.BGM
             Case "03", "08" : Return ColumnType.BPM
@@ -204,21 +229,21 @@ Public Class ColumnList
         End Select
     End Function
 
-    Public Function EnabledColumnIndexToColumnArrayIndex(ByVal cEnabled As Integer) As Integer
-        Dim i As Integer = 0
+    Public Function EnabledColumnIndexToColumnArrayIndex(cEnabled As Integer) As Integer
+        Dim i = 0
         Do
             If i >= ColumnCount Then Exit Do
-            If Not nEnabled(i) Then cEnabled += 1
+            If Not IsEnabled(i) Then cEnabled += 1
             If i >= cEnabled Then Exit Do
             i += 1
         Loop
         Return cEnabled
     End Function
 
-    Public Function ColumnArrayIndexToEnabledColumnIndex(ByVal cReal As Integer) As Integer
+    Public Function ColumnArrayIndexToEnabledColumnIndex(cReal As Integer) As Integer
         Dim i As Integer
         For i = 0 To cReal - 1
-            If Not nEnabled(i) Then cReal -= 1
+            If Not IsEnabled(i) Then cReal -= 1
         Next
         Return cReal
     End Function
@@ -226,7 +251,7 @@ Public Class ColumnList
     Friend Sub RecalculatePositions()
         column(0).Left = 0
 
-        For i As Integer = 1 To UBound(column)
+        For i = 1 To UBound(column)
             Dim lastWidth = IIf(column(i - 1).IsVisible, column(i - 1).Width, 0)
             column(i).Left = column(i - 1).Left + lastWidth
         Next

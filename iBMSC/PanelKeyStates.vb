@@ -1,7 +1,7 @@
 ﻿Module PanelKeyStates
     Public Function ModifierLongNoteActive() As Boolean
         Return My.Computer.Keyboard.ShiftKeyDown And
-            Not My.Computer.Keyboard.CtrlKeyDown
+               Not My.Computer.Keyboard.CtrlKeyDown
     End Function
 
     Public Function ModifierHiddenActive() As Boolean

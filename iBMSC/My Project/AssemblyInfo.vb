@@ -1,8 +1,5 @@
-﻿Imports System.Resources
-
-Imports System
-Imports System.Reflection
-Imports System.Runtime.InteropServices
+﻿Imports System.Reflection
+Imports System.Resources
 
 ' General Information about an assembly is controlled through the following 
 ' set of attributes. Change these attribute values to modify the information
@@ -15,9 +12,9 @@ Imports System.Runtime.InteropServices
 <Assembly: AssemblyCompany("iBMS")>
 <Assembly: AssemblyProduct("μBMSC")>
 <Assembly: AssemblyCopyright("Copyright (C) [4th Age]")>
-<Assembly: AssemblyTrademark("iBMS.[4th Age]")> 
+<Assembly: AssemblyTrademark("iBMS.[4th Age]")>
 
-<Assembly: ComVisible(False)> 
+<Assembly: ComVisible(False)>
 
 'The following GUID is for the ID of the typelib if this project is exposed to COM
 <Assembly: Guid("afb6d10d-c12b-4ffc-959f-506073effac9")>
@@ -36,4 +33,4 @@ Imports System.Runtime.InteropServices
 <Assembly: AssemblyVersion("3.2.1.0")>
 <Assembly: AssemblyFileVersion("3.2.1.0")>
 
-<Assembly: NeutralResourcesLanguageAttribute("en")> 
+<Assembly: NeutralResourcesLanguage("en")>

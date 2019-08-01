@@ -17,19 +17,20 @@
 
         Public Function equalsBMSE(note As Note) As Boolean
             Return VPosition = note.VPosition And
-               ColumnIndex = note.ColumnIndex And
-               Value = note.Value And
-               LongNote = note.LongNote And
-               Hidden = note.Hidden And
-               Landmine = note.Landmine
+                   ColumnIndex = note.ColumnIndex And
+                   Value = note.Value And
+                   LongNote = note.LongNote And
+                   Hidden = note.Hidden And
+                   Landmine = note.Landmine
         End Function
+
         Public Function equalsNT(note As Note) As Boolean
             Return VPosition = note.VPosition And
-               ColumnIndex = note.ColumnIndex And
-               Value = note.Value And
-               Hidden = note.Hidden And
-               Length = note.Length And
-               Landmine = note.Landmine
+                   ColumnIndex = note.ColumnIndex And
+                   Value = note.Value And
+                   Hidden = note.Hidden And
+                   Length = note.Length And
+                   Landmine = note.Landmine
         End Function
 
         Public Function Clone() As Note

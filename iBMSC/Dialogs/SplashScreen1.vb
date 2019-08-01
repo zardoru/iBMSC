@@ -1,6 +1,4 @@
 ﻿Public NotInheritable Class SplashScreen1
-
-
     Protected Overrides Sub OnPaint(e As PaintEventArgs)
         ' MyBase.OnPaint(e)
     End Sub
@@ -12,6 +10,5 @@
     End Sub
 
     Private Sub SplashScreen1_Paint(sender As Object, e As PaintEventArgs) Handles MyBase.Paint
-
     End Sub
 End Class

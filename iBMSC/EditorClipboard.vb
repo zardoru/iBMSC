@@ -1,7 +1,8 @@
 ﻿Imports iBMSC.Editor
 
 Partial Public Class MainWindow
-    Private Sub AddNotesFromClipboard(Optional ByVal xSelected As Boolean = True, Optional ByVal SortAndUpdatePairing As Boolean = True)
+    Private Sub AddNotesFromClipboard(Optional ByVal xSelected As Boolean = True,
+                                      Optional ByVal SortAndUpdatePairing As Boolean = True)
         Dim xStrLine() As String = Split(Clipboard.GetText, vbCrLf)
 
         Dim i As Integer
@@ -21,7 +22,7 @@ Partial Public Class MainWindow
             For i = 1 To UBound(xStrLine)
                 If xStrLine(i).Trim = "" Then Continue For
                 xStrSub = Split(xStrLine(i), " ")
-                xTempVP = Val(xStrSub(1)) + MeasureBottom(MeasureAtDisplacement(-verticalScroll) + 1)
+                xTempVP = Val(xStrSub(1)) + MeasureBottom(MeasureAtDisplacement(- verticalScroll) + 1)
                 If UBound(xStrSub) = 5 And xTempVP >= 0 And xTempVP < GetMaxVPosition() Then
                     ReDim Preserve Notes(UBound(Notes) + 1)
                     With Notes(UBound(Notes))
@@ -64,7 +65,7 @@ Partial Public Class MainWindow
             For i = 1 To UBound(xStrLine)
                 If xStrLine(i).Trim = "" Then Continue For
                 xStrSub = Split(xStrLine(i), " ")
-                xTempVP = Val(xStrSub(1)) + MeasureBottom(MeasureAtDisplacement(-verticalScroll) + 1)
+                xTempVP = Val(xStrSub(1)) + MeasureBottom(MeasureAtDisplacement(- verticalScroll) + 1)
                 If UBound(xStrSub) = 5 And xTempVP >= 0 And xTempVP < GetMaxVPosition() Then
                     ReDim Preserve Notes(UBound(Notes) + 1)
                     With Notes(UBound(Notes))
@@ -106,12 +107,12 @@ Partial Public Class MainWindow
             For i = 1 To UBound(xStrLine)
                 ' zdr: holy crap this is obtuse
                 Dim posStr = Mid(xStrLine(i), 5, 7)
-                Dim vPos = Val(posStr) + MeasureBottom(MeasureAtDisplacement(-verticalScroll) + 1)
+                Dim vPos = Val(posStr) + MeasureBottom(MeasureAtDisplacement(- verticalScroll) + 1)
 
                 Dim bmsIdent = Mid(xStrLine(i), 1, 3)
                 Dim lineCol = Columns.BMSEChannelToColumnIndex(bmsIdent)
 
-                Dim Value = Val(Mid(xStrLine(i), 12)) * 10000
+                Dim Value = Val(Mid(xStrLine(i), 12))*10000
 
                 Dim attribute = Mid(xStrLine(i), 4, 1)
 
@@ -126,7 +127,7 @@ Partial Public Class MainWindow
                         .Value = Value
                         .LongNote = attribute = "2"
                         .Hidden = attribute = "1"
-                        .Selected = xSelected And Columns.nEnabled(.ColumnIndex)
+                        .Selected = xSelected And Columns.IsEnabled(.ColumnIndex)
                     End With
                 End If
             Next
@@ -162,7 +163,8 @@ Partial Public Class MainWindow
         Dim MinMeasure As Double = 999
 
         For i = 1 To UBound(Notes)
-            If Notes(i).Selected And MeasureAtDisplacement(Notes(i).VPosition) < MinMeasure Then MinMeasure = MeasureAtDisplacement(Notes(i).VPosition)
+            If Notes(i).Selected And MeasureAtDisplacement(Notes(i).VPosition) < MinMeasure Then _
+                MinMeasure = MeasureAtDisplacement(Notes(i).VPosition)
         Next
         MinMeasure = MeasureBottom(MinMeasure)
 
@@ -170,11 +172,11 @@ Partial Public Class MainWindow
             For i = 1 To UBound(Notes)
                 If Notes(i).Selected Then
                     xStrAll &= vbCrLf & Notes(i).ColumnIndex.ToString & " " &
-                                       (Notes(i).VPosition - MinMeasure).ToString & " " &
-                                        Notes(i).Value.ToString & " " &
-                                   CInt(Notes(i).LongNote).ToString & " " &
-                                   CInt(Notes(i).Hidden).ToString & " " &
-                                   CInt(Notes(i).Landmine).ToString
+                               (Notes(i).VPosition - MinMeasure).ToString & " " &
+                               Notes(i).Value.ToString & " " &
+                               CInt(Notes(i).LongNote).ToString & " " &
+                               CInt(Notes(i).Hidden).ToString & " " &
+                               CInt(Notes(i).Landmine).ToString
                     Notes(i).Selected = Not Unselect
                 End If
             Next
@@ -183,11 +185,11 @@ Partial Public Class MainWindow
             For i = 1 To UBound(Notes)
                 If Notes(i).Selected Then
                     xStrAll &= vbCrLf & Notes(i).ColumnIndex.ToString & " " &
-                                       (Notes(i).VPosition - MinMeasure).ToString & " " &
-                                        Notes(i).Value.ToString & " " &
-                                        Notes(i).Length.ToString & " " &
-                                   CInt(Notes(i).Hidden).ToString & " " &
-                                   CInt(Notes(i).Landmine).ToString
+                               (Notes(i).VPosition - MinMeasure).ToString & " " &
+                               Notes(i).Value.ToString & " " &
+                               Notes(i).Length.ToString & " " &
+                               CInt(Notes(i).Hidden).ToString & " " &
+                               CInt(Notes(i).Landmine).ToString
                     Notes(i).Selected = Not Unselect
                 End If
             Next

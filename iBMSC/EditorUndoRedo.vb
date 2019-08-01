@@ -1,7 +1,35 @@
 ﻿Imports iBMSC.Editor
 
+
+'Undo appends before, Redo appends after.
+'After a sequence of Commands, 
+'   Undo will be the first one to execute, 
+'   Redo will be the last one to execute.
+'Remember to save the first Redo.
+
+'In case where undo is Nothing: Dont worry.
+'In case where redo is Nothing: 
+'   If only one redo is in a sequence, put Nothing.
+'   If several redo are in a sequence, 
+'       Create Void first. 
+'       Record its reference into a seperate copy. (xBaseRedo = xRedo)
+'       Use this xRedo as the BaseRedo.
+'       When calling AddUndo subroutine, use xBaseRedo.Next as cRedo.
+
+'Dim xUndo As UndoRedo.LinkedURCmd = Nothing
+'Dim xRedo As UndoRedo.LinkedURCmd = Nothing
+'... 'Command.RedoRemoveNote(K(i), True, xUndo, xRedo)
+'AddUndo(xUndo, xRedo)
+
+'Dim xUndo As UndoRedo.LinkedURCmd = Nothing
+'Dim xRedo As New UndoRedo.Void
+'Dim xBaseRedo As UndoRedo.LinkedURCmd = xRedo
+'... 'Command.RedoRemoveNote(K(i), True, xUndo, xRedo)
+'AddUndo(xUndo, xBaseRedo.Next)
+
+
 Module Command
-    Public Sub RedoRemoveNote(ByVal xN As Note, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
+    Public Sub RedoRemoveNote(xN As Note, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
         Dim xUndo As New UndoRedo.AddNote(xN.Clone)
         Dim xRedo As New UndoRedo.RemoveNote(xN.Clone)
         xUndo.Next = BaseUndo
@@ -10,10 +38,10 @@ Module Command
         BaseRedo = xRedo
     End Sub
 
-    Public Sub RedoAddNote(ByVal note As Note,
-                            ByRef BaseUndo As UndoRedo.LinkedURCmd,
-                            ByRef BaseRedo As UndoRedo.LinkedURCmd,
-                            Optional autoinc As Boolean = False)
+    Public Sub RedoAddNote(note As Note,
+                           ByRef BaseUndo As UndoRedo.LinkedURCmd,
+                           ByRef BaseRedo As UndoRedo.LinkedURCmd,
+                           Optional autoinc As Boolean = False)
         Dim xUndo As New UndoRedo.RemoveNote(note.Clone)
         Dim xRedo As New UndoRedo.AddNote(note.Clone)
         xUndo.Next = BaseUndo
@@ -22,7 +50,8 @@ Module Command
         BaseRedo = xRedo
     End Sub
 
-    Public Sub RedoAddNote(ByVal xIndices() As Note, ByVal xSel As Boolean, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
+    Public Sub RedoAddNote(xIndices() As Note, xSel As Boolean, ByRef BaseUndo As UndoRedo.LinkedURCmd,
+                           ByRef BaseRedo As UndoRedo.LinkedURCmd)
         For Each note In xIndices
             Dim xUndo As New UndoRedo.RemoveNote(note.Clone)
             Dim xRedo As New UndoRedo.AddNote(note.Clone)
@@ -33,8 +62,9 @@ Module Command
         Next
     End Sub
 
-    Public Sub RedoAddNoteSelected(Notes() As Note, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
-        For i As Integer = 1 To Notes.Length - 1
+    Public Sub RedoAddNoteSelected(Notes() As Note, ByRef BaseUndo As UndoRedo.LinkedURCmd,
+                                   ByRef BaseRedo As UndoRedo.LinkedURCmd)
+        For i = 1 To Notes.Length - 1
             If Not Notes(i).Selected Then Continue For
 
             Dim xUndo As New UndoRedo.RemoveNote(Notes(i).Clone)
@@ -47,7 +77,8 @@ Module Command
         Next
     End Sub
 
-    Public Sub RedoAddNoteAll(Notes() As Note, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
+    Public Sub RedoAddNoteAll(Notes() As Note, ByRef BaseUndo As UndoRedo.LinkedURCmd,
+                              ByRef BaseRedo As UndoRedo.LinkedURCmd)
         For Each note In Notes
 
             Dim xRedo As New UndoRedo.AddNote(note.Clone)
@@ -60,7 +91,8 @@ Module Command
         BaseUndo = xUndo
     End Sub
 
-    Public Sub RedoRemoveNote(ByVal xIndices() As Note, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
+    Public Sub RedoRemoveNote(xIndices() As Note, ByRef BaseUndo As UndoRedo.LinkedURCmd,
+                              ByRef BaseRedo As UndoRedo.LinkedURCmd)
         For Each note In xIndices
             Dim xUndo As New UndoRedo.AddNote(note.Clone)
             Dim xRedo As New UndoRedo.RemoveNote(note.Clone)
@@ -71,8 +103,9 @@ Module Command
         Next
     End Sub
 
-    Public Sub RedoRemoveNoteSelected(Notes() As Note, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
-        For i As Integer = 1 To Notes.Length - 1
+    Public Sub RedoRemoveNoteSelected(Notes() As Note, ByRef BaseUndo As UndoRedo.LinkedURCmd,
+                                      ByRef BaseRedo As UndoRedo.LinkedURCmd)
+        For i = 1 To Notes.Length - 1
             If Not Notes(i).Selected Then Continue For
 
             Dim xUndo As New UndoRedo.AddNote(Notes(i).Clone)
@@ -84,8 +117,9 @@ Module Command
         Next
     End Sub
 
-    Public Sub RedoRemoveNoteAll(Notes() As Note, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
-        For i As Integer = 1 To Notes.Length - 1
+    Public Sub RedoRemoveNoteAll(Notes() As Note, ByRef BaseUndo As UndoRedo.LinkedURCmd,
+                                 ByRef BaseRedo As UndoRedo.LinkedURCmd)
+        For i = 1 To Notes.Length - 1
             Dim xUndo As New UndoRedo.AddNote(Notes(i).Clone)
             xUndo.Next = BaseUndo
             BaseUndo = xUndo
@@ -96,7 +130,8 @@ Module Command
         BaseRedo = xRedo
     End Sub
 
-    Public Sub RedoChangeNote(startNote As Note, endNote As Note, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
+    Public Sub RedoChangeNote(startNote As Note, endNote As Note, ByRef BaseUndo As UndoRedo.LinkedURCmd,
+                              ByRef BaseRedo As UndoRedo.LinkedURCmd)
         Dim xUndo As New UndoRedo.ChangeNote(endNote.Clone, startNote.Clone)
         Dim xRedo As New UndoRedo.ChangeNote(startNote.Clone, endNote.Clone)
         xUndo.Next = BaseUndo
@@ -106,7 +141,8 @@ Module Command
     End Sub
 
 
-    Public Sub RedoMoveNote(note As Note, nCol As Integer, nVPos As Double, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
+    Public Sub RedoMoveNote(note As Note, nCol As Integer, nVPos As Double, ByRef BaseUndo As UndoRedo.LinkedURCmd,
+                            ByRef BaseRedo As UndoRedo.LinkedURCmd)
         Dim noteAfterModification = note.Clone
         noteAfterModification.ColumnIndex = nCol
         noteAfterModification.VPosition = nVPos
@@ -119,7 +155,8 @@ Module Command
     End Sub
 
 
-    Public Sub RedoLongNoteModify(note As Note, nVPos As Double, nLong As Double, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
+    Public Sub RedoLongNoteModify(note As Note, nVPos As Double, nLong As Double, ByRef BaseUndo As UndoRedo.LinkedURCmd,
+                                  ByRef BaseRedo As UndoRedo.LinkedURCmd)
         Dim n = note.Clone
         n.VPosition = nVPos
         n.Length = nLong
@@ -132,7 +169,8 @@ Module Command
         BaseRedo = xRedo
     End Sub
 
-    Public Sub RedoHiddenNoteModify(xN As Note, nHide As Boolean, xSel As Boolean, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
+    Public Sub RedoHiddenNoteModify(xN As Note, nHide As Boolean, xSel As Boolean,
+                                    ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
         Dim noteAfterModification = xN.Clone
         noteAfterModification.Hidden = nHide
         Dim xUndo As New UndoRedo.HiddenNoteModify(noteAfterModification, xN.Hidden)
@@ -143,7 +181,8 @@ Module Command
         BaseRedo = xRedo
     End Sub
 
-    Public Sub RedoRelabelNote(xN As Note, ByVal nVal As Long, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
+    Public Sub RedoRelabelNote(xN As Note, nVal As Long, ByRef BaseUndo As UndoRedo.LinkedURCmd,
+                               ByRef BaseRedo As UndoRedo.LinkedURCmd)
         Dim noteAfterModification = xN.Clone
         noteAfterModification.Value = nVal
         Dim xUndo As New UndoRedo.RelabelNote(noteAfterModification, xN.Value)
@@ -154,8 +193,9 @@ Module Command
         BaseRedo = xRedo
     End Sub
 
-    Public Sub RedoChangeTimeSelection(ByVal pStart As Double, ByVal pLen As Double, ByVal pHalf As Double,
-        ByVal nStart As Double, ByVal nLen As Double, ByVal nHalf As Double, ByVal xSel As Boolean, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
+    Public Sub RedoChangeTimeSelection(pStart As Double, pLen As Double, pHalf As Double,
+                                       nStart As Double, nLen As Double, nHalf As Double, xSel As Boolean,
+                                       ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
         Dim xUndo As New UndoRedo.ChangeTimeSelection(pStart, pLen, pHalf, xSel)
         Dim xRedo As New UndoRedo.ChangeTimeSelection(nStart, nLen, nHalf, xSel)
         xUndo.Next = BaseUndo
@@ -175,7 +215,8 @@ Module Command
     '    BaseRedo = xRedo
     'End Sub
 
-    Public Sub RedoNT(becomeNT As Boolean, autoConvert As Boolean, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
+    Public Sub RedoNT(becomeNT As Boolean, autoConvert As Boolean, ByRef BaseUndo As UndoRedo.LinkedURCmd,
+                      ByRef BaseRedo As UndoRedo.LinkedURCmd)
         Dim xUndo As New UndoRedo.NT(Not becomeNT, autoConvert)
         Dim xRedo As New UndoRedo.NT(becomeNT, autoConvert)
         xUndo.Next = BaseUndo
@@ -184,7 +225,8 @@ Module Command
         BaseRedo = xRedo
     End Sub
 
-    Public Sub RedoWavIncrease(wavinc As Boolean, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
+    Public Sub RedoWavIncrease(wavinc As Boolean, ByRef BaseUndo As UndoRedo.LinkedURCmd,
+                               ByRef BaseRedo As UndoRedo.LinkedURCmd)
         Dim xUndo As New UndoRedo.WavAutoincFlag(Not wavinc)
         Dim xRedo As New UndoRedo.WavAutoincFlag(wavinc)
         xUndo.Next = BaseUndo
@@ -210,16 +252,17 @@ Partial Public Class MainWindow
         Return IIf(sI < 1, 99, sI - 1)
     End Function
 
-    Public Sub RedoChangeMeasureLengthSelected(ByVal nVal As Double, ByRef BaseUndo As UndoRedo.LinkedURCmd, ByRef BaseRedo As UndoRedo.LinkedURCmd)
+    Public Sub RedoChangeMeasureLengthSelected(nVal As Double, ByRef BaseUndo As UndoRedo.LinkedURCmd,
+                                               ByRef BaseRedo As UndoRedo.LinkedURCmd)
         Dim xIndices(LBeat.SelectedIndices.Count - 1) As Integer
         LBeat.SelectedIndices.CopyTo(xIndices, 0)
         If xIndices.Length = 0 Then Exit Sub
 
-        Dim xmLen(-1) As Double
-        Dim xUndo(-1) As UndoRedo.ChangeMeasureLength
+        Dim xmLen(- 1) As Double
+        Dim xUndo(- 1) As UndoRedo.ChangeMeasureLength
         For Each i As Integer In xIndices
             Dim xI As Integer = Array.IndexOf(xmLen, MeasureLength(i))
-            If xI = -1 Then
+            If xI = - 1 Then
                 ReDim Preserve xmLen(UBound(xmLen) + 1)
                 ReDim Preserve xUndo(UBound(xUndo) + 1)
                 xmLen(UBound(xmLen)) = MeasureLength(i)
@@ -231,7 +274,7 @@ Partial Public Class MainWindow
                 End With
             End If
         Next
-        For i As Integer = 0 To UBound(xUndo) - 1
+        For i = 0 To UBound(xUndo) - 1
             xUndo(i).Next = xUndo(i + 1)
         Next
         xUndo(UBound(xUndo)).Next = BaseUndo
@@ -242,8 +285,8 @@ Partial Public Class MainWindow
         BaseRedo = xRedo
     End Sub
 
-    Private Sub PerformCommand(ByVal sCmd As UndoRedo.LinkedURCmd)
-        For j As Integer = 1 To UBound(Notes)
+    Private Sub PerformCommand(sCmd As UndoRedo.LinkedURCmd)
+        For j = 1 To UBound(Notes)
             Notes(j).Selected = False
         Next
         LBeat.SelectedIndices.Clear()
@@ -292,7 +335,7 @@ Partial Public Class MainWindow
                         With Notes(j)
                             .ColumnIndex = xCmd.NColumnIndex
                             .VPosition = xCmd.NVPosition
-                            .Selected = xCmd.note.Selected And Columns.nEnabled(.ColumnIndex)
+                            .Selected = xCmd.note.Selected And Columns.IsEnabled(.ColumnIndex)
                         End With
                     End If
 
@@ -308,7 +351,7 @@ Partial Public Class MainWindow
                             Else
                                 .LongNote = xCmd.NLongNote
                             End If
-                            .Selected = xCmd.note.Selected And Columns.nEnabled(.ColumnIndex)
+                            .Selected = xCmd.note.Selected And Columns.IsEnabled(.ColumnIndex)
                         End With
                     End If
 
@@ -318,7 +361,7 @@ Partial Public Class MainWindow
 
                     If j < Notes.Length Then
                         Notes(j).Hidden = xCmd.NHidden
-                        Notes(j).Selected = xCmd.note.Selected And Columns.nEnabled(Notes(j).ColumnIndex)
+                        Notes(j).Selected = xCmd.note.Selected And Columns.IsEnabled(Notes(j).ColumnIndex)
                     End If
 
                 Case UndoRedo.opRelabelNote
@@ -327,7 +370,7 @@ Partial Public Class MainWindow
 
                     If j < Notes.Length Then
                         Notes(j).Value = xCmd.NValue
-                        Notes(j).Selected = xCmd.note.Selected And Columns.nEnabled(Notes(j).ColumnIndex)
+                        Notes(j).Selected = xCmd.note.Selected And Columns.IsEnabled(Notes(j).ColumnIndex)
                     End If
 
                 Case UndoRedo.opRemoveAllNotes
@@ -335,12 +378,13 @@ Partial Public Class MainWindow
 
                 Case UndoRedo.opChangeMeasureLength
                     Dim xCmd As UndoRedo.ChangeMeasureLength = sCmd
-                    Dim xxD As Long = GetDenominator(xCmd.Value / 192)
+                    Dim xxD As Long = GetDenominator(xCmd.Value/192)
                     'Dim xDenom As Integer = 192 / GCD(xCmd.Value, 192.0R)
                     'If xDenom < 4 Then xDenom = 4
                     For Each xM As Integer In xCmd.Indices
                         MeasureLength(xM) = xCmd.Value
-                        LBeat.Items(xM) = Add3Zeros(xM) & ": " & (xCmd.Value / 192) & IIf(xxD > 10000, "", " ( " & CLng(xCmd.Value / 192 * xxD) & " / " & xxD & " ) ")
+                        LBeat.Items(xM) = Add3Zeros(xM) & ": " & (xCmd.Value/192) &
+                                          IIf(xxD > 10000, "", " ( " & CLng(xCmd.Value/192*xxD) & " / " & xxD & " ) ")
                         LBeat.SelectedIndices.Add(xM)
                     Next
                     UpdateMeasureBottom()
@@ -355,10 +399,10 @@ Partial Public Class MainWindow
                                                Math.Min(State.TimeSelect.EndPointLength, 0)
                         Dim xSelHi As Double = State.TimeSelect.StartPoint +
                                                Math.Max(State.TimeSelect.EndPointLength, 0)
-                        For j As Integer = 1 To UBound(Notes)
+                        For j = 1 To UBound(Notes)
                             Notes(j).Selected = Notes(j).VPosition >= xSelLo AndAlso
-                                              Notes(j).VPosition < xSelHi AndAlso
-                                              Columns.nEnabled(Notes(j).ColumnIndex)
+                                                Notes(j).VPosition < xSelHi AndAlso
+                                                Columns.IsEnabled(Notes(j).ColumnIndex)
                         Next
                     End If
 
@@ -390,22 +434,22 @@ Partial Public Class MainWindow
             sCmd = sCmd.Next
         Loop
 
-        THBPM.Value = Notes(0).Value / 10000
-        If IsSaved Then SetIsSaved(False)
+        THBPM.Value = Notes(0).Value/10000
+        If _isSaved Then SetIsSaved(False)
 
         SortByVPositionInsertion()
         UpdatePairing()
         CalculateTotalPlayableNotes()
-        CalculateGreatestVPosition()
+        
         RefreshPanelAll()
         POStatusRefresh()
     End Sub
 
-    Public Sub AddUndoChain(ByVal sCUndo As UndoRedo.LinkedURCmd,
-                            ByVal sCRedo As UndoRedo.LinkedURCmd,
+    Public Sub AddUndoChain(sCUndo As UndoRedo.LinkedURCmd,
+                            sCRedo As UndoRedo.LinkedURCmd,
                             Optional ByVal OverWrite As Boolean = False)
         If sCUndo Is Nothing And sCRedo Is Nothing Then Exit Sub
-        If IsSaved Then SetIsSaved(False)
+        If _isSaved Then SetIsSaved(False)
         If Not OverWrite Then sI = sIA()
 
         sUndo(sI) = sCUndo
@@ -432,6 +476,4 @@ Partial Public Class MainWindow
         mnUndo.Enabled = False
         mnRedo.Enabled = False
     End Sub
-
-
 End Class

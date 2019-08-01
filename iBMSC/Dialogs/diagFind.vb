@@ -1,38 +1,40 @@
-Imports System.Windows.Forms
+
 
 Public Class diagFind
-    Dim bCol As Integer = 46
-    Dim msg1 As String = "Error"
-    Dim msg2 As String = "Invalid label."
+    Dim ReadOnly bCol As Integer = 46
+    Dim ReadOnly msg1 As String = "Error"
+    Dim ReadOnly msg2 As String = "Invalid label."
 
-    Public Sub New(ByVal xbCol As Integer, ByVal xmsg1 As String, ByVal xmsg2 As String)
+    Public Sub New(xbCol As Integer, xmsg1 As String, xmsg2 As String)
         InitializeComponent()
         bCol = xbCol
         msg1 = xmsg1
         msg2 = xmsg2
     End Sub
 
-    Private Sub CloseDialog(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TBClose.Click
+    Private Sub CloseDialog(sender As Object, e As EventArgs) Handles TBClose.Click
         Me.Close()
     End Sub
 
-    Private Sub BSAll_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles BSAll.Click
+    Private Sub BSAll_Click(sender As Object, e As EventArgs) Handles BSAll.Click
         For Each xCB As CheckBox In Panel1.Controls
             xCB.Checked = True
         Next
     End Sub
-    Private Sub BSInv_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles BSInv.Click
+
+    Private Sub BSInv_Click(sender As Object, e As EventArgs) Handles BSInv.Click
         For Each xCB As CheckBox In Panel1.Controls
             xCB.Checked = Not xCB.Checked
         Next
     End Sub
-    Private Sub BSNone_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles BSNone.Click
+
+    Private Sub BSNone_Click(sender As Object, e As EventArgs) Handles BSNone.Click
         For Each xCB As CheckBox In Panel1.Controls
             xCB.Checked = False
         Next
     End Sub
 
-    Private Sub diagFind_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
+    Private Sub diagFind_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Me.Font = MainWindow.Font
         Dim xBold As New Font(Me.Font, FontStyle.Bold)
 
@@ -71,13 +73,13 @@ Public Class diagFind
         TBDelete.Text = Strings.fFind.Delete_
         TBClose.Text = Strings.fFind.Close_
 
-        For i As Integer = 27 To bCol
+        For i = 27 To bCol
             Dim xCB As New CheckBox
             With xCB
                 .Appearance = Appearance.Button
                 .Checked = True
                 .FlatStyle = FlatStyle.System
-                .Location = New Point(((i - 26) Mod 8) * 35 + 3, ((i - 26) \ 8) * 25 + 103)
+                .Location = New Point(((i - 26) Mod 8)*35 + 3, ((i - 26)\8)*25 + 103)
                 .Size = New Size(35, 25)
                 .Tag = i
                 .Text = "B" & (i - 25).ToString
@@ -92,7 +94,7 @@ Public Class diagFind
         AddHandler Ttl.KeyDown, AddressOf lblKeyDown
     End Sub
 
-    Private Function ValidLabel(ByVal xStr As String) As Boolean
+    Private Function ValidLabel(xStr As String) As Boolean
         xStr = UCase(Trim(xStr))
 
         If Len(xStr) = 0 Then Return False
@@ -109,12 +111,12 @@ Public Class diagFind
         MsgBox(msg2, MsgBoxStyle.Critical, msg1)
     End Function
 
-    Private Sub lblKeyDown(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyEventArgs)
+    Private Sub lblKeyDown(sender As Object, e As KeyEventArgs)
         If Not e.KeyCode = Keys.Enter Then Exit Sub
         ValidateLabel(sender)
     End Sub
 
-    Private Function ValidateLabel(ByVal sender As Object) As Boolean
+    Private Function ValidateLabel(sender As Object) As Boolean
         Dim xBool As Boolean = ValidLabel(sender.Text)
         If Not xBool Then
             MsgBox(msg2, MsgBoxStyle.Critical, msg1)
@@ -124,7 +126,7 @@ Public Class diagFind
         ValidateLabel = xBool
     End Function
 
-    Private Sub TBSelect_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TBSelect.Click
+    Private Sub TBSelect_Click(sender As Object, e As EventArgs) Handles TBSelect.Click
         If Not ValidateLabel(lr1) Then Exit Sub
         If Not ValidateLabel(lr2) Then Exit Sub
 
@@ -136,7 +138,7 @@ Public Class diagFind
             End If
         Next
 
-        Dim xRange As Integer = 1
+        Dim xRange = 1
         If cbx1.Checked Then xRange *= 2
         If cbx2.Checked Then xRange *= 3
         If cbx3.Checked Then xRange *= 5
@@ -144,14 +146,14 @@ Public Class diagFind
         If cbx5.Checked Then xRange *= 11
         If cbx6.Checked Then xRange *= 13
 
-        MainWindow.fdrSelect(xRange, _
-                        mr1.Value, mr2.Value, _
-                        lr1.Text, lr2.Text, _
-                        vr1.Value * 10000, vr2.Value * 10000, _
-                        xCol)
+        MainWindow.fdrSelect(xRange,
+                             mr1.Value, mr2.Value,
+                             lr1.Text, lr2.Text,
+                             vr1.Value*10000, vr2.Value*10000,
+                             xCol)
     End Sub
 
-    Private Sub TBUnselect_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TBUnselect.Click
+    Private Sub TBUnselect_Click(sender As Object, e As EventArgs) Handles TBUnselect.Click
         If Not ValidateLabel(lr1) Then Exit Sub
         If Not ValidateLabel(lr2) Then Exit Sub
 
@@ -163,7 +165,7 @@ Public Class diagFind
             End If
         Next
 
-        Dim xRange As Integer = 1
+        Dim xRange = 1
         If cbx1.Checked Then xRange *= 2
         If cbx2.Checked Then xRange *= 3
         If cbx3.Checked Then xRange *= 5
@@ -171,14 +173,14 @@ Public Class diagFind
         If cbx5.Checked Then xRange *= 11
         If cbx6.Checked Then xRange *= 13
 
-        MainWindow.fdrUnselect(xRange, _
-                          mr1.Value, mr2.Value, _
-                          lr1.Text, lr2.Text, _
-                          vr1.Value * 10000, vr2.Value * 10000, _
-                          xCol)
+        MainWindow.fdrUnselect(xRange,
+                               mr1.Value, mr2.Value,
+                               lr1.Text, lr2.Text,
+                               vr1.Value*10000, vr2.Value*10000,
+                               xCol)
     End Sub
 
-    Private Sub TBDelete_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TBDelete.Click
+    Private Sub TBDelete_Click(sender As Object, e As EventArgs) Handles TBDelete.Click
         If Not ValidateLabel(lr1) Then Exit Sub
         If Not ValidateLabel(lr2) Then Exit Sub
 
@@ -190,7 +192,7 @@ Public Class diagFind
             End If
         Next
 
-        Dim xRange As Integer = 1
+        Dim xRange = 1
         If cbx1.Checked Then xRange *= 2
         If cbx2.Checked Then xRange *= 3
         If cbx3.Checked Then xRange *= 5
@@ -198,14 +200,14 @@ Public Class diagFind
         If cbx5.Checked Then xRange *= 11
         If cbx6.Checked Then xRange *= 13
 
-        MainWindow.fdrDelete(xRange, _
-                        mr1.Value, mr2.Value, _
-                        lr1.Text, lr2.Text, _
-                        vr1.Value * 10000, vr2.Value * 10000, _
-                        xCol)
+        MainWindow.fdrDelete(xRange,
+                             mr1.Value, mr2.Value,
+                             lr1.Text, lr2.Text,
+                             vr1.Value*10000, vr2.Value*10000,
+                             xCol)
     End Sub
 
-    Private Sub TBrl_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TBrl.Click
+    Private Sub TBrl_Click(sender As Object, e As EventArgs) Handles TBrl.Click
         If Not ValidateLabel(lr1) Then Exit Sub
         If Not ValidateLabel(lr2) Then Exit Sub
         If Not ValidateLabel(Ttl) Then Exit Sub
@@ -218,7 +220,7 @@ Public Class diagFind
             End If
         Next
 
-        Dim xRange As Integer = 1
+        Dim xRange = 1
         If cbx1.Checked Then xRange *= 2
         If cbx2.Checked Then xRange *= 3
         If cbx3.Checked Then xRange *= 5
@@ -226,14 +228,14 @@ Public Class diagFind
         If cbx5.Checked Then xRange *= 11
         If cbx6.Checked Then xRange *= 13
 
-        MainWindow.fdrReplaceL(xRange, _
-                          mr1.Value, mr2.Value, _
-                          lr1.Text, lr2.Text, _
-                          vr1.Value * 10000, vr2.Value * 10000, _
-                          xCol, Ttl.Text)
+        MainWindow.fdrReplaceL(xRange,
+                               mr1.Value, mr2.Value,
+                               lr1.Text, lr2.Text,
+                               vr1.Value*10000, vr2.Value*10000,
+                               xCol, Ttl.Text)
     End Sub
 
-    Private Sub TBrv_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TBrv.Click
+    Private Sub TBrv_Click(sender As Object, e As EventArgs) Handles TBrv.Click
         If Not ValidateLabel(lr1) Then Exit Sub
         If Not ValidateLabel(lr2) Then Exit Sub
 
@@ -245,7 +247,7 @@ Public Class diagFind
             End If
         Next
 
-        Dim xRange As Integer = 1
+        Dim xRange = 1
         If cbx1.Checked Then xRange *= 2
         If cbx2.Checked Then xRange *= 3
         If cbx3.Checked Then xRange *= 5
@@ -253,10 +255,10 @@ Public Class diagFind
         If cbx5.Checked Then xRange *= 11
         If cbx6.Checked Then xRange *= 13
 
-        MainWindow.fdrReplaceV(xRange, _
-                          mr1.Value, mr2.Value, _
-                          lr1.Text, lr2.Text, _
-                          vr1.Value * 10000, vr2.Value * 10000, _
-                          xCol, Ttv.Value * 10000)
+        MainWindow.fdrReplaceV(xRange,
+                               mr1.Value, mr2.Value,
+                               lr1.Text, lr2.Text,
+                               vr1.Value*10000, vr2.Value*10000,
+                               xCol, Ttv.Value*10000)
     End Sub
 End Class

@@ -1,6 +1,5 @@
 ﻿Partial Public Class MainWindow
-
-    Public Sub MyO2ConstBPM(ByVal vBPM As Integer)
+    Public Sub MyO2ConstBPM(vBPM As Integer)
         SortByVPositionInsertion()
         Dim xUndo As UndoRedo.LinkedURCmd = Nothing
         Dim xRedo As UndoRedo.LinkedURCmd = New UndoRedo.Void
@@ -20,24 +19,24 @@
         If Not NTInput Then
             For i = 1 To UBound(Notes)
                 If Notes(i).ColumnIndex = ColumnType.BPM Then
-                    xcTime += (Notes(i).VPosition - xcVPos) / xcBPM
+                    xcTime += (Notes(i).VPosition - xcVPos)/xcBPM
                     xcVPos = Notes(i).VPosition
                     xcBPM = Notes(i).Value
                 Else
-                    Notes(i).VPosition = vBPM * (xcTime + (Notes(i).VPosition - xcVPos) / xcBPM)
+                    Notes(i).VPosition = vBPM*(xcTime + (Notes(i).VPosition - xcVPos)/xcBPM)
                 End If
             Next
 
         Else
             For i = 1 To UBound(Notes)
                 If Notes(i).ColumnIndex = ColumnType.BPM Then
-                    xcTime += (Notes(i).VPosition - xcVPos) / xcBPM
+                    xcTime += (Notes(i).VPosition - xcVPos)/xcBPM
                     xcVPos = Notes(i).VPosition
                     xcBPM = Notes(i).Value
                 ElseIf Notes(i).Length = 0 Then
-                    Notes(i).VPosition = vBPM * (xcTime + (Notes(i).VPosition - xcVPos) / xcBPM)
+                    Notes(i).VPosition = vBPM*(xcTime + (Notes(i).VPosition - xcVPos)/xcBPM)
                 Else
-                    Dim xNewTimeL As Double = (xcTime + (Notes(i).VPosition - xcVPos) / xcBPM)
+                    Dim xNewTimeL As Double = (xcTime + (Notes(i).VPosition - xcVPos)/xcBPM)
 
                     'find bpms
                     Dim xcTime2 As Double = xcTime
@@ -46,15 +45,15 @@
                     For j = i + 1 To UBound(Notes)
                         If Notes(j).VPosition >= Notes(i).VPosition + Notes(i).Length Then Exit For
                         If Notes(j).ColumnIndex = ColumnType.BPM Then
-                            xcTime2 += (Notes(j).VPosition - xcVPos2) / xcBPM2
+                            xcTime2 += (Notes(j).VPosition - xcVPos2)/xcBPM2
                             xcVPos2 = Notes(j).VPosition
                             xcBPM2 = Notes(j).Value
                         End If
                     Next
-                    Dim xNewTimeU As Double = (xcTime2 + (Notes(i).VPosition + Notes(i).Length - xcVPos2) / xcBPM2)
+                    Dim xNewTimeU As Double = (xcTime2 + (Notes(i).VPosition + Notes(i).Length - xcVPos2)/xcBPM2)
 
-                    Notes(i).VPosition = vBPM * xNewTimeL
-                    Notes(i).Length = vBPM * xNewTimeU - Notes(i).VPosition
+                    Notes(i).VPosition = vBPM*xNewTimeL
+                    Notes(i).Length = vBPM*xNewTimeU - Notes(i).VPosition
                 End If
             Next
         End If
@@ -80,18 +79,18 @@
         SortByVPositionInsertion()
         UpdatePairing()
         Notes(0).Value = vBPM
-        THBPM.Value = vBPM / 10000
+        THBPM.Value = vBPM/10000
         CalculateTotalPlayableNotes()
-        CalculateGreatestVPosition()
+        
         RefreshPanelAll()
         POStatusRefresh()
     End Sub
 
     Public Function MyO2GridCheck() As String()
-        CalculateGreatestVPosition()
+        
         SortByVPositionInsertion()
-        Dim xResult(-1) As String
-        Dim xResult2(-1) As String
+        Dim xResult(- 1) As String
+        Dim xResult2(- 1) As String
         Dim Identifiers() As String = {"01", "03", "04", "06", "07", "08", "09",
                                        "16", "11", "12", "13", "14", "15", "18", "19",
                                        "26", "21", "22", "23", "24", "25", "28", "29",
@@ -102,11 +101,11 @@
                                        "76", "71", "72", "73", "74", "75", "78", "79",
                                        "86", "81", "82", "83", "84", "85", "88", "89"}
 
-        Dim xLowerIndex As Integer = 1
-        Dim xUpperIndex As Integer = 1
+        Dim xLowerIndex = 1
+        Dim xUpperIndex = 1
 
         If Not NTInput Then
-            For xMeasure As Integer = 0 To MeasureAtDisplacement(GreatestVPosition)
+            For xMeasure = 0 To MeasureAtDisplacement(GreatestVPosition)
                 'Find Ks in the same measure
                 Dim i As Integer
                 For i = xLowerIndex To UBound(Notes)
@@ -116,17 +115,20 @@
 
                 For Each xId As String In Identifiers
                     'collect vposition data
-                    Dim xVPos(-1) As Double
+                    Dim xVPos(- 1) As Double
                     For j As Integer = xLowerIndex To xUpperIndex - 1
-                        If Columns.GetBMSChannelBy(Notes(j)) = xId And Math.Abs(Notes(j).VPosition - MeasureAtDisplacement(Notes(j).VPosition) * 192) > 0 Then
+                        If _
+                            Columns.GetBMSChannelBy(Notes(j)) = xId And
+                            Math.Abs(Notes(j).VPosition - MeasureAtDisplacement(Notes(j).VPosition)*192) > 0 Then
                             ReDim Preserve xVPos(UBound(xVPos) + 1)
-                            xVPos(UBound(xVPos)) = Notes(j).VPosition - xMeasure * 192 : If xVPos(UBound(xVPos)) < 0 Then xVPos(UBound(xVPos)) = 0
+                            xVPos(UBound(xVPos)) = Notes(j).VPosition - xMeasure*192
+                            If xVPos(UBound(xVPos)) < 0 Then xVPos(UBound(xVPos)) = 0
                         End If
                     Next
 
                     'find gcd
                     Dim xGCD As Double = 192
-                    For j As Integer = 0 To UBound(xVPos)
+                    For j = 0 To UBound(xVPos)
                         xGCD = GCD(xGCD, xVPos(j))
                     Next
 
@@ -134,11 +136,11 @@
                     If xGCD < 3 Then
                         'suggestion
                         Dim xAdj64 As Boolean
-                        Dim xD48 As Integer = 0
-                        Dim xD64 As Integer = 0
-                        For j As Integer = 0 To UBound(xVPos)
-                            xD48 += Math.Abs(xVPos(j) - CInt(xVPos(j) / 4) * 4)
-                            xD64 += Math.Abs(xVPos(j) - CInt(xVPos(j) / 3) * 3)
+                        Dim xD48 = 0
+                        Dim xD64 = 0
+                        For j = 0 To UBound(xVPos)
+                            xD48 += Math.Abs(xVPos(j) - CInt(xVPos(j)/4)*4)
+                            xD64 += Math.Abs(xVPos(j) - CInt(xVPos(j)/3)*3)
                         Next
                         xAdj64 = xD48 > xD64
 
@@ -146,8 +148,8 @@
                         ReDim Preserve xResult(UBound(xResult) + 1)
                         xResult(UBound(xResult)) = xMeasure & "_" &
                                                    Columns.BMSChannelToColumn(xId) & "_" &
-                                                   Columns.nTitle(Columns.BMSChannelToColumn(xId)) & "_" &
-                                                   CStr(CInt(192 / xGCD)) & "_" &
+                                                   Columns.GetName(Columns.BMSChannelToColumn(xId)) & "_" &
+                                                   CStr(CInt(192/xGCD)) & "_" &
                                                    CInt(IsChannelLongNote(xId)) & "_" &
                                                    CInt(IsChannelHidden(xId)) & "_" &
                                                    CInt(xAdj64) & "_" &
@@ -156,38 +158,44 @@
                     End If
                 Next
 
-980:            xLowerIndex = xUpperIndex
-990:        Next
+                980: xLowerIndex = xUpperIndex
+                990: Next
 
         Else
-            For xMeasure As Integer = 0 To MeasureAtDisplacement(GreatestVPosition)
+            For xMeasure = 0 To MeasureAtDisplacement(GreatestVPosition)
 
                 For Each xId As String In Identifiers
-                    Dim xVPos(-1) As Double
+                    Dim xVPos(- 1) As Double
 
                     'collect vposition data
-                    For j As Integer = 1 To UBound(Notes)
+                    For j = 1 To UBound(Notes)
                         If MeasureAtDisplacement(Notes(j).VPosition) > xMeasure Then Exit For
 
                         If Columns.GetBMSChannelBy(Notes(j)) <> xId Then GoTo 1330
                         If IsChannelLongNote(xId) Xor CBool(Notes(j).Length) Then GoTo 1330
 
-                        If MeasureAtDisplacement(Notes(j).VPosition) = xMeasure AndAlso Math.Abs(Notes(j).VPosition - MeasureAtDisplacement(Notes(j).VPosition) * 192) > 0 Then
+                        If _
+                            MeasureAtDisplacement(Notes(j).VPosition) = xMeasure AndAlso
+                            Math.Abs(Notes(j).VPosition - MeasureAtDisplacement(Notes(j).VPosition)*192) > 0 Then
                             ReDim Preserve xVPos(UBound(xVPos) + 1)
-                            xVPos(UBound(xVPos)) = Notes(j).VPosition - xMeasure * 192 : If xVPos(UBound(xVPos)) < 0 Then xVPos(UBound(xVPos)) = 0
+                            xVPos(UBound(xVPos)) = Notes(j).VPosition - xMeasure*192
+                            If xVPos(UBound(xVPos)) < 0 Then xVPos(UBound(xVPos)) = 0
                         End If
 
                         If Not CBool(Notes(j).Length) Then GoTo 1330
 
-                        If MeasureAtDisplacement(Notes(j).VPosition + Notes(j).Length) = xMeasure AndAlso Not Notes(j).VPosition + Notes(j).Length - xMeasure * 192 = 0 Then
+                        If _
+                            MeasureAtDisplacement(Notes(j).VPosition + Notes(j).Length) = xMeasure AndAlso
+                            Not Notes(j).VPosition + Notes(j).Length - xMeasure*192 = 0 Then
                             ReDim Preserve xVPos(UBound(xVPos) + 1)
-                            xVPos(UBound(xVPos)) = Notes(j).VPosition + Notes(j).Length - xMeasure * 192 : If xVPos(UBound(xVPos)) < 0 Then xVPos(UBound(xVPos)) = 0
+                            xVPos(UBound(xVPos)) = Notes(j).VPosition + Notes(j).Length - xMeasure*192
+                            If xVPos(UBound(xVPos)) < 0 Then xVPos(UBound(xVPos)) = 0
                         End If
-1330:               Next
+                        1330: Next
 
                     'find gcd
                     Dim xGCD As Double = 192
-                    For j As Integer = 0 To UBound(xVPos)
+                    For j = 0 To UBound(xVPos)
                         xGCD = GCD(xGCD, xVPos(j))
                     Next
 
@@ -195,11 +203,11 @@
                     If xGCD < 3 Then
                         'suggestion
                         Dim xAdj64 As Boolean
-                        Dim xD48 As Integer = 0
-                        Dim xD64 As Integer = 0
-                        For j As Integer = 0 To UBound(xVPos)
-                            xD48 += Math.Abs(xVPos(j) - CInt(xVPos(j) / 4) * 4)
-                            xD64 += Math.Abs(xVPos(j) - CInt(xVPos(j) / 3) * 3)
+                        Dim xD48 = 0
+                        Dim xD64 = 0
+                        For j = 0 To UBound(xVPos)
+                            xD48 += Math.Abs(xVPos(j) - CInt(xVPos(j)/4)*4)
+                            xD64 += Math.Abs(xVPos(j) - CInt(xVPos(j)/3)*3)
                         Next
                         xAdj64 = xD48 > xD64
 
@@ -207,8 +215,8 @@
                         ReDim Preserve xResult(UBound(xResult) + 1)
                         xResult(UBound(xResult)) = xMeasure & "_" &
                                                    Columns.BMSChannelToColumn(xId) & "_" &
-                                                   Columns.nTitle(Columns.BMSChannelToColumn(xId)) & "_" &
-                                                   CStr(CInt(192 / xGCD)) & "_" &
+                                                   Columns.GetName(Columns.BMSChannelToColumn(xId)) & "_" &
+                                                   CStr(CInt(192/xGCD)) & "_" &
                                                    CInt(IsChannelLongNote(xId)) & "_" &
                                                    CInt(IsChannelHidden(xId)) & "_" &
                                                    CInt(xAdj64) & "_" &
@@ -217,13 +225,13 @@
                     End If
                 Next
 
-1990:       Next
+                1990: Next
         End If
 
         Return xResult
     End Function
 
-    Public Sub MyO2GridAdjust(ByVal xaj() As dgMyO2.Adj)
+    Public Sub MyO2GridAdjust(xaj() As dgMyO2.Adj)
         Dim xUndo As UndoRedo.LinkedURCmd = Nothing
         Dim xRedo As UndoRedo.LinkedURCmd = New UndoRedo.Void
         Dim xBaseRedo As UndoRedo.LinkedURCmd = xRedo
@@ -233,19 +241,19 @@
         'adjust
         If Not NTInput Then
             For Each xadj As dgMyO2.Adj In xaj
-                For i As Integer = 1 To UBound(Notes)
+                For i = 1 To UBound(Notes)
                     If MeasureAtDisplacement(Notes(i).VPosition) = xadj.Measure And
                        Notes(i).ColumnIndex = xadj.ColumnIndex And
                        Notes(i).LongNote = xadj.LongNote And
                        Notes(i).Hidden = xadj.Hidden Then
-                        Notes(i).VPosition = CLng(Notes(i).VPosition / IIf(xadj.AdjTo64, 3, 4)) * IIf(xadj.AdjTo64, 3, 4)
+                        Notes(i).VPosition = CLng(Notes(i).VPosition/IIf(xadj.AdjTo64, 3, 4))*IIf(xadj.AdjTo64, 3, 4)
                     End If
                 Next
             Next
 
         Else
             For Each xadj As dgMyO2.Adj In xaj
-                For i As Integer = 1 To UBound(Notes)
+                For i = 1 To UBound(Notes)
                     If CBool(Notes(i).Length) Xor xadj.LongNote Then GoTo 1100
 
                     Dim xStart As Double = Notes(i).VPosition
@@ -253,17 +261,18 @@
                     If MeasureAtDisplacement(Notes(i).VPosition) = xadj.Measure And
                        Notes(i).ColumnIndex = xadj.ColumnIndex And
                        Notes(i).Hidden = xadj.Hidden Then _
-                        xStart = CLng(Notes(i).VPosition / IIf(xadj.AdjTo64, 3, 4)) * IIf(xadj.AdjTo64, 3, 4)
+                        xStart = CLng(Notes(i).VPosition/IIf(xadj.AdjTo64, 3, 4))*IIf(xadj.AdjTo64, 3, 4)
 
                     If Notes(i).Length > 0 AndAlso
                        MeasureAtDisplacement(Notes(i).VPosition + Notes(i).Length) = xadj.Measure And
                        Notes(i).ColumnIndex = xadj.ColumnIndex And
                        Notes(i).Hidden = xadj.Hidden Then _
-                        xEnd = CLng((Notes(i).VPosition + Notes(i).Length) / IIf(xadj.AdjTo64, 3, 4)) * IIf(xadj.AdjTo64, 3, 4)
+                        xEnd = CLng((Notes(i).VPosition + Notes(i).Length)/IIf(xadj.AdjTo64, 3, 4))*
+                               IIf(xadj.AdjTo64, 3, 4)
 
                     Notes(i).VPosition = xStart
                     If Notes(i).Length > 0 Then Notes(i).Length = xEnd - Notes(i).VPosition
-1100:           Next
+                    1100: Next
             Next
         End If
 
@@ -273,7 +282,7 @@
         SortByVPositionInsertion()
         UpdatePairing()
         CalculateTotalPlayableNotes()
-        CalculateGreatestVPosition()
+        
         RefreshPanelAll()
         POStatusRefresh()
         Beep()

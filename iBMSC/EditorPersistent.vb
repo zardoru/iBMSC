@@ -1,8 +1,8 @@
-﻿Imports iBMSC.Editor.Functions
+﻿Imports System.Text
+Imports iBMSC.Editor
 
 Partial Public Class MainWindow
-
-    Private Sub XMLWriteColumn(ByVal w As XmlTextWriter, ByVal I As Integer)
+    Private Sub XMLWriteColumn(w As XmlTextWriter, I As Integer)
         w.WriteStartElement("Column")
         w.WriteAttributeString("Index", I)
         With Columns.column(I)
@@ -23,7 +23,7 @@ Partial Public Class MainWindow
         w.WriteEndElement()
     End Sub
 
-    Private Sub XMLWriteFont(ByVal w As XmlTextWriter, ByVal local As String, ByVal f As Font)
+    Private Sub XMLWriteFont(w As XmlTextWriter, local As String, f As Font)
         w.WriteStartElement(local)
         w.WriteAttributeString("Name", f.FontFamily.Name)
         w.WriteAttributeString("Size", f.SizeInPoints)
@@ -31,7 +31,7 @@ Partial Public Class MainWindow
         w.WriteEndElement()
     End Sub
 
-    Private Sub XMLWritePlayerArguments(ByVal w As XmlTextWriter, ByVal I As Integer)
+    Private Sub XMLWritePlayerArguments(w As XmlTextWriter, I As Integer)
         w.WriteStartElement("Player")
         w.WriteAttributeString("Index", I)
         w.WriteAttributeString("Path", pArgs(I).Path)
@@ -41,8 +41,8 @@ Partial Public Class MainWindow
         w.WriteEndElement()
     End Sub
 
-    Private Sub SaveSettings(ByVal Path As String, ByVal ThemeOnly As Boolean)
-        Dim w As New XmlTextWriter(Path, System.Text.Encoding.Unicode)
+    Private Sub SaveSettings(Path As String, ThemeOnly As Boolean)
+        Dim w As New XmlTextWriter(Path, Encoding.Unicode)
         With w
             .WriteStartDocument()
             .Formatting = Formatting.Indented
@@ -56,48 +56,48 @@ Partial Public Class MainWindow
             If ThemeOnly Then GoTo 5000
 
             .WriteStartElement("Form")
-            .WriteAttributeString("WindowState", IIf(IsFullscreen, previousWindowState, Me.WindowState))
-            .WriteAttributeString("Width", IIf(IsFullscreen, previousWindowPosition.Width, Me.Width))
-            .WriteAttributeString("Height", IIf(IsFullscreen, previousWindowPosition.Height, Me.Height))
-            .WriteAttributeString("Top", IIf(IsFullscreen, previousWindowPosition.Top, Me.Top))
-            .WriteAttributeString("Left", IIf(IsFullscreen, previousWindowPosition.Left, Me.Left))
+            .WriteAttributeString("WindowState", IIf(IsFullscreen, _previousWindowState, Me.WindowState))
+            .WriteAttributeString("Width", IIf(IsFullscreen, _previousWindowPosition.Width, Me.Width))
+            .WriteAttributeString("Height", IIf(IsFullscreen, _previousWindowPosition.Height, Me.Height))
+            .WriteAttributeString("Top", IIf(IsFullscreen, _previousWindowPosition.Top, Me.Top))
+            .WriteAttributeString("Left", IIf(IsFullscreen, _previousWindowPosition.Left, Me.Left))
             .WriteEndElement()
 
             .WriteStartElement("Recent")
-            .WriteAttributeString("Recent0", Recent(0))
-            .WriteAttributeString("Recent1", Recent(1))
-            .WriteAttributeString("Recent2", Recent(2))
-            .WriteAttributeString("Recent3", Recent(3))
-            .WriteAttributeString("Recent4", Recent(4))
+            .WriteAttributeString("Recent0", _recent(0))
+            .WriteAttributeString("Recent1", _recent(1))
+            .WriteAttributeString("Recent2", _recent(2))
+            .WriteAttributeString("Recent3", _recent(3))
+            .WriteAttributeString("Recent4", _recent(4))
             .WriteEndElement()
 
             .WriteStartElement("Edit")
             .WriteAttributeString("NTInput", NTInput)
-            .WriteAttributeString("Language", DispLang)
+            .WriteAttributeString("Language", _dispLang)
             '.WriteAttributeString("SortingMethod", SortingMethod)
             .WriteAttributeString("ErrorCheck", ErrorCheck)
             .WriteAttributeString("AutoFocusMouseEnter", AutoFocusPanelOnMouseEnter)
             .WriteAttributeString("FirstClickDisabled", FirstClickDisabled)
             .WriteAttributeString("ShowFileName", ShowFileName)
             .WriteAttributeString("MiddleButtonMoveMethod", MiddleButtonMoveMethod)
-            .WriteAttributeString("AutoSaveInterval", AutoSaveInterval)
-            .WriteAttributeString("PreviewOnClick", PreviewOnClick)
+            .WriteAttributeString("AutoSaveInterval", _autoSaveInterval)
+            .WriteAttributeString("PreviewOnClick", _previewOnClick)
             '.WriteAttributeString("PreviewErrorCheck", PreviewErrorCheck)
-            .WriteAttributeString("ClickStopPreview", ClickStopPreview)
+            .WriteAttributeString("ClickStopPreview", _clickStopPreview)
             .WriteEndElement()
 
             .WriteStartElement("Save")
-            .WriteAttributeString("TextEncoding", EncodingToString(TextEncoding))
-            .WriteAttributeString("BMSGridLimit", BMSGridLimit)
-            .WriteAttributeString("BeepWhileSaved", BeepWhileSaved)
-            .WriteAttributeString("BPMx1296", BPMx1296)
-            .WriteAttributeString("STOPx1296", STOPx1296)
+            .WriteAttributeString("TextEncoding", EncodingToString(_textEncoding))
+            .WriteAttributeString("BMSGridLimit", _bmsGridLimit)
+            .WriteAttributeString("BeepWhileSaved", _beepWhileSaved)
+            .WriteAttributeString("BPMx1296", _bpMx1296)
+            .WriteAttributeString("STOPx1296", _stoPx1296)
             .WriteEndElement()
 
             .WriteStartElement("WAV")
-            .WriteAttributeString("WAVMultiSelect", WAVMultiSelect)
-            .WriteAttributeString("WAVChangeLabel", WAVChangeLabel)
-            .WriteAttributeString("BeatChangeMode", BeatChangeMode)
+            .WriteAttributeString("WAVMultiSelect", _wavMultiSelect)
+            .WriteAttributeString("WAVChangeLabel", _wavChangeLabel)
+            .WriteAttributeString("BeatChangeMode", _beatChangeMode)
             .WriteEndElement()
 
             .WriteStartElement("ShowHide")
@@ -144,44 +144,44 @@ Partial Public Class MainWindow
             .WriteStartElement("Player")
             .WriteAttributeString("Count", pArgs.Length)
             .WriteAttributeString("CurrentPlayer", CurrentPlayer)
-            For i As Integer = 0 To UBound(pArgs)
+            For i = 0 To UBound(pArgs)
                 XMLWritePlayerArguments(w, i) : Next
             .WriteEndElement()
 
-5000:       .WriteStartElement("Columns")
+            5000: .WriteStartElement("Columns")
             '.WriteAttributeString("Count", col.Length)
-            For i As Integer = 0 To UBound(Columns.column)
+            For i = 0 To UBound(Columns.column)
                 XMLWriteColumn(w, i) : Next
             .WriteEndElement()
 
             .WriteStartElement("VisualSettings")
-            XMLWriteValue(w, "ColumnTitle", vo.ColumnTitle.Color.ToArgb)
-            XMLWriteFont(w, "ColumnTitleFont", vo.ColumnTitleFont)
-            XMLWriteValue(w, "Bg", vo.Bg.Color.ToArgb)
-            XMLWriteValue(w, "Grid", vo.pGrid.Color.ToArgb)
-            XMLWriteValue(w, "Sub", vo.pSub.Color.ToArgb)
-            XMLWriteValue(w, "VLine", vo.pVLine.Color.ToArgb)
-            XMLWriteValue(w, "MLine", vo.pMLine.Color.ToArgb)
-            XMLWriteValue(w, "BGMWav", vo.pBGMWav.Color.ToArgb)
-            XMLWriteValue(w, "SelBox", vo.SelBox.Color.ToArgb)
-            XMLWriteValue(w, "TSCursor", vo.PECursor.Color.ToArgb)
-            XMLWriteValue(w, "TSHalf", vo.PEHalf.Color.ToArgb)
-            XMLWriteValue(w, "TSDeltaMouseOver", vo.PEDeltaMouseOver)
-            XMLWriteValue(w, "TSMouseOver", vo.PEMouseOver.Color.ToArgb)
-            XMLWriteValue(w, "TSSel", vo.PESel.Color.ToArgb)
-            XMLWriteValue(w, "TSBPM", vo.PEBPM.Color.ToArgb)
-            XMLWriteFont(w, "TSBPMFont", vo.PEBPMFont)
-            XMLWriteValue(w, "MiddleDeltaRelease", vo.MiddleDeltaRelease)
-            XMLWriteValue(w, "kHeight", vo.kHeight)
-            XMLWriteFont(w, "kFont", vo.kFont)
-            XMLWriteFont(w, "kMFont", vo.kMFont)
-            XMLWriteValue(w, "kLabelVShift", vo.kLabelVShift)
-            XMLWriteValue(w, "kLabelHShift", vo.kLabelHShift)
-            XMLWriteValue(w, "kLabelHShiftL", vo.kLabelHShiftL)
-            XMLWriteValue(w, "kMouseOver", vo.kMouseOver.Color.ToArgb)
-            XMLWriteValue(w, "kMouseOverE", vo.kMouseOverE.Color.ToArgb)
-            XMLWriteValue(w, "kSelected", vo.kSelected.Color.ToArgb)
-            XMLWriteValue(w, "kOpacity", vo.kOpacity)
+            XMLWriteValue(w, "ColumnTitle", _vo.ColumnTitle.Color.ToArgb)
+            XMLWriteFont(w, "ColumnTitleFont", _vo.ColumnTitleFont)
+            XMLWriteValue(w, "Bg", _vo.Bg.Color.ToArgb)
+            XMLWriteValue(w, "Grid", _vo.pGrid.Color.ToArgb)
+            XMLWriteValue(w, "Sub", _vo.pSub.Color.ToArgb)
+            XMLWriteValue(w, "VLine", _vo.pVLine.Color.ToArgb)
+            XMLWriteValue(w, "MLine", _vo.pMLine.Color.ToArgb)
+            XMLWriteValue(w, "BGMWav", _vo.pBGMWav.Color.ToArgb)
+            XMLWriteValue(w, "SelBox", _vo.SelBox.Color.ToArgb)
+            XMLWriteValue(w, "TSCursor", _vo.PECursor.Color.ToArgb)
+            XMLWriteValue(w, "TSHalf", _vo.PEHalf.Color.ToArgb)
+            XMLWriteValue(w, "TSDeltaMouseOver", _vo.PEDeltaMouseOver)
+            XMLWriteValue(w, "TSMouseOver", _vo.PEMouseOver.Color.ToArgb)
+            XMLWriteValue(w, "TSSel", _vo.PESel.Color.ToArgb)
+            XMLWriteValue(w, "TSBPM", _vo.PEBPM.Color.ToArgb)
+            XMLWriteFont(w, "TSBPMFont", _vo.PEBPMFont)
+            XMLWriteValue(w, "MiddleDeltaRelease", _vo.MiddleDeltaRelease)
+            XMLWriteValue(w, "kHeight", _vo.NoteHeight)
+            XMLWriteFont(w, "kFont", _vo.kFont)
+            XMLWriteFont(w, "kMFont", _vo.kMFont)
+            XMLWriteValue(w, "kLabelVShift", _vo.kLabelVShift)
+            XMLWriteValue(w, "kLabelHShift", _vo.kLabelHShift)
+            XMLWriteValue(w, "kLabelHShiftL", _vo.kLabelHShiftL)
+            XMLWriteValue(w, "kMouseOver", _vo.kMouseOver.Color.ToArgb)
+            XMLWriteValue(w, "kMouseOverE", _vo.kMouseOverE.Color.ToArgb)
+            XMLWriteValue(w, "kSelected", _vo.kSelected.Color.ToArgb)
+            XMLWriteValue(w, "kOpacity", _vo.kOpacity)
             .WriteEndElement()
 
             .WriteEndElement()
@@ -190,20 +190,22 @@ Partial Public Class MainWindow
         End With
     End Sub
 
-    Private Sub XMLLoadElementValue(ByVal n As XmlElement, ByRef v As Integer)
-        If n Is Nothing Then Exit Sub
-        XMLLoadAttribute(n.GetAttribute("Value"), v)
-    End Sub
-    Private Sub XMLLoadElementValue(ByVal n As XmlElement, ByRef v As Single)
-        If n Is Nothing Then Exit Sub
-        XMLLoadAttribute(n.GetAttribute("Value"), v)
-    End Sub
-    Private Sub XMLLoadElementValue(ByVal n As XmlElement, ByRef v As Color)
+    Private Sub XMLLoadElementValue(n As XmlElement, ByRef v As Integer)
         If n Is Nothing Then Exit Sub
         XMLLoadAttribute(n.GetAttribute("Value"), v)
     End Sub
 
-    Private Sub XMLLoadElementValue(ByVal n As XmlElement, ByRef v As Font)
+    Private Sub XMLLoadElementValue(n As XmlElement, ByRef v As Single)
+        If n Is Nothing Then Exit Sub
+        XMLLoadAttribute(n.GetAttribute("Value"), v)
+    End Sub
+
+    Private Sub XMLLoadElementValue(n As XmlElement, ByRef v As Color)
+        If n Is Nothing Then Exit Sub
+        XMLLoadAttribute(n.GetAttribute("Value"), v)
+    End Sub
+
+    Private Sub XMLLoadElementValue(n As XmlElement, ByRef v As Font)
         If n Is Nothing Then Exit Sub
 
         Dim xName As String = Me.Font.FontFamily.Name
@@ -212,11 +214,11 @@ Partial Public Class MainWindow
         XMLLoadAttribute(n.GetAttribute("Name"), xName)
         XMLLoadAttribute(n.GetAttribute("Size"), xSize)
         XMLLoadAttribute(n.GetAttribute("Style"), xStyle)
-        v = New Font(xName, xSize, CType(xStyle, System.Drawing.FontStyle))
+        v = New Font(xName, xSize, CType(xStyle, FontStyle))
     End Sub
 
-    Private Sub XMLLoadPlayer(ByVal n As XmlElement)
-        Dim i As Integer = -1
+    Private Sub XMLLoadPlayer(n As XmlElement)
+        Dim i As Integer = - 1
         XMLLoadAttribute(n.GetAttribute("Index"), i)
         If i < 0 Or i > UBound(pArgs) Then Exit Sub
 
@@ -226,8 +228,8 @@ Partial Public Class MainWindow
         XMLLoadAttribute(n.GetAttribute("Stop"), pArgs(i).aStop)
     End Sub
 
-    Private Sub XMLLoadColumn(ByVal n As XmlElement)
-        Dim i As Integer = -1
+    Private Sub XMLLoadColumn(n As XmlElement)
+        Dim i As Integer = - 1
         XMLLoadAttribute(n.GetAttribute("Index"), i)
         If i < 0 Or i > UBound(Columns.column) Then Exit Sub
 
@@ -254,7 +256,7 @@ Partial Public Class MainWindow
         End With
     End Sub
 
-    Private Sub LoadSettings(ByVal Path As String)
+    Private Sub LoadSettings(Path As String)
         If Not My.Computer.FileSystem.FileExists(Path) Then Return
 
         'Dim xTempFileName As String = ""
@@ -268,7 +270,7 @@ Partial Public Class MainWindow
         'Exit Do
         'Loop
         Dim Doc As New XmlDocument
-        Dim FileStream As New IO.FileStream(Path, FileMode.Open, FileAccess.Read)
+        Dim FileStream As New FileStream(Path, FileMode.Open, FileAccess.Read)
         Doc.Load(FileStream)
 
         Dim Root As XmlElement = Doc.Item("iBMSC")
@@ -309,11 +311,16 @@ Partial Public Class MainWindow
         Dim eRecent As XmlElement = Root.Item("Recent")
         If eRecent IsNot Nothing Then
             With eRecent
-                XMLLoadAttribute(.GetAttribute("Recent0"), Recent(0)) : SetRecent(0, Recent(0))
-                XMLLoadAttribute(.GetAttribute("Recent1"), Recent(1)) : SetRecent(1, Recent(1))
-                XMLLoadAttribute(.GetAttribute("Recent2"), Recent(2)) : SetRecent(2, Recent(2))
-                XMLLoadAttribute(.GetAttribute("Recent3"), Recent(3)) : SetRecent(3, Recent(3))
-                XMLLoadAttribute(.GetAttribute("Recent4"), Recent(4)) : SetRecent(4, Recent(4))
+                XMLLoadAttribute(.GetAttribute("Recent0"), _recent(0))
+                SetRecent(0, _recent(0))
+                XMLLoadAttribute(.GetAttribute("Recent1"), _recent(1))
+                SetRecent(1, _recent(1))
+                XMLLoadAttribute(.GetAttribute("Recent2"), _recent(2))
+                SetRecent(2, _recent(2))
+                XMLLoadAttribute(.GetAttribute("Recent3"), _recent(3))
+                SetRecent(3, _recent(3))
+                XMLLoadAttribute(.GetAttribute("Recent4"), _recent(4))
+                SetRecent(4, _recent(4))
             End With
         End If
 
@@ -333,24 +340,24 @@ Partial Public Class MainWindow
 
                 XMLLoadAttribute(.GetAttribute("ErrorCheck"), ErrorCheck)
                 TBErrorCheck.Checked = ErrorCheck
-                TBErrorCheck_Click(TBErrorCheck, New System.EventArgs)
+                TBErrorCheck_Click(TBErrorCheck, New EventArgs)
 
                 XMLLoadAttribute(.GetAttribute("ShowFileName"), ShowFileName)
                 TBShowFileName.Checked = ShowFileName
-                TBShowFileName_Click(TBShowFileName, New System.EventArgs)
+                TBShowFileName_Click(TBShowFileName, New EventArgs)
 
                 XMLLoadAttribute(.GetAttribute("MiddleButtonMoveMethod"), MiddleButtonMoveMethod)
                 XMLLoadAttribute(.GetAttribute("AutoFocusMouseEnter"), AutoFocusPanelOnMouseEnter)
                 XMLLoadAttribute(.GetAttribute("FirstClickDisabled"), FirstClickDisabled)
 
-                XMLLoadAttribute(.GetAttribute("AutoSaveInterval"), AutoSaveInterval)
-                If AutoSaveInterval Then AutoSaveTimer.Interval = AutoSaveInterval Else AutoSaveTimer.Enabled = False
+                XMLLoadAttribute(.GetAttribute("AutoSaveInterval"), _autoSaveInterval)
+                If _autoSaveInterval Then AutoSaveTimer.Interval = _autoSaveInterval Else AutoSaveTimer.Enabled = False
 
-                XMLLoadAttribute(.GetAttribute("PreviewOnClick"), PreviewOnClick)
-                TBPreviewOnClick.Checked = PreviewOnClick
-                TBPreviewOnClick_Click(TBPreviewOnClick, New System.EventArgs)
+                XMLLoadAttribute(.GetAttribute("PreviewOnClick"), _previewOnClick)
+                TBPreviewOnClick.Checked = _previewOnClick
+                TBPreviewOnClick_Click(TBPreviewOnClick, New EventArgs)
 
-                XMLLoadAttribute(.GetAttribute("ClickStopPreview"), ClickStopPreview)
+                XMLLoadAttribute(.GetAttribute("ClickStopPreview"), _clickStopPreview)
             End With
         End If
 
@@ -359,23 +366,23 @@ Partial Public Class MainWindow
         If eSave IsNot Nothing Then
             With eSave
                 Select Case UCase(.GetAttribute("TextEncoding"))
-                    Case "SYSTEM ANSI" : TextEncoding = System.Text.Encoding.Default
-                    Case "LITTLE ENDIAN UTF16" : TextEncoding = System.Text.Encoding.Unicode
-                    Case "ASCII" : TextEncoding = System.Text.Encoding.ASCII
-                    Case "BIG ENDIAN UTF16" : TextEncoding = System.Text.Encoding.BigEndianUnicode
-                    Case "LITTLE ENDIAN UTF32" : TextEncoding = System.Text.Encoding.UTF32
-                    Case "UTF7" : TextEncoding = System.Text.Encoding.UTF7
-                    Case "UTF8" : TextEncoding = System.Text.Encoding.UTF8
-                    Case "SJIS" : TextEncoding = System.Text.Encoding.GetEncoding(932)
-                    Case "EUC-KR" : TextEncoding = System.Text.Encoding.GetEncoding(51949)
+                    Case "SYSTEM ANSI" : _textEncoding = Encoding.Default
+                    Case "LITTLE ENDIAN UTF16" : _textEncoding = Encoding.Unicode
+                    Case "ASCII" : _textEncoding = Encoding.ASCII
+                    Case "BIG ENDIAN UTF16" : _textEncoding = Encoding.BigEndianUnicode
+                    Case "LITTLE ENDIAN UTF32" : _textEncoding = Encoding.UTF32
+                    Case "UTF7" : _textEncoding = Encoding.UTF7
+                    Case "UTF8" : _textEncoding = Encoding.UTF8
+                    Case "SJIS" : _textEncoding = Encoding.GetEncoding(932)
+                    Case "EUC-KR" : _textEncoding = Encoding.GetEncoding(51949)
                         ' leave current encoding
                         ' Case Else 
                 End Select
 
-                XMLLoadAttribute(.GetAttribute("BMSGridLimit"), BMSGridLimit)
-                XMLLoadAttribute(.GetAttribute("BeepWhileSaved"), BeepWhileSaved)
-                XMLLoadAttribute(.GetAttribute("BPMx1296"), BPMx1296)
-                XMLLoadAttribute(.GetAttribute("STOPx1296"), STOPx1296)
+                XMLLoadAttribute(.GetAttribute("BMSGridLimit"), _bmsGridLimit)
+                XMLLoadAttribute(.GetAttribute("BeepWhileSaved"), _beepWhileSaved)
+                XMLLoadAttribute(.GetAttribute("BPMx1296"), _bpMx1296)
+                XMLLoadAttribute(.GetAttribute("STOPx1296"), _stoPx1296)
             End With
         End If
 
@@ -383,19 +390,19 @@ Partial Public Class MainWindow
         Dim eWAV As XmlElement = Root.Item("WAV")
         If eWAV IsNot Nothing Then
             With eWAV
-                XMLLoadAttribute(.GetAttribute("WAVMultiSelect"), WAVMultiSelect)
-                CWAVMultiSelect.Checked = WAVMultiSelect
+                XMLLoadAttribute(.GetAttribute("WAVMultiSelect"), _wavMultiSelect)
+                CWAVMultiSelect.Checked = _wavMultiSelect
                 CWAVMultiSelect_CheckedChanged(CWAVMultiSelect, New EventArgs)
 
-                XMLLoadAttribute(.GetAttribute("WAVChangeLabel"), WAVChangeLabel)
-                CWAVChangeLabel.Checked = WAVChangeLabel
+                XMLLoadAttribute(.GetAttribute("WAVChangeLabel"), _wavChangeLabel)
+                CWAVChangeLabel.Checked = _wavChangeLabel
                 CWAVChangeLabel_CheckedChanged(CWAVChangeLabel, New EventArgs)
 
-                Dim xInt As Integer = CInt(.GetAttribute("BeatChangeMode"))
+                Dim xInt = CInt(.GetAttribute("BeatChangeMode"))
                 Dim xBeatOpList As RadioButton() = {CBeatPreserve, CBeatMeasure, CBeatCut, CBeatScale}
                 If xInt >= 0 And xInt < xBeatOpList.Length Then
                     xBeatOpList(xInt).Checked = True
-                    CBeatPreserve_Click(xBeatOpList(xInt), New System.EventArgs)
+                    CBeatPreserve_Click(xBeatOpList(xInt), New EventArgs)
                 End If
             End With
         End If
@@ -437,10 +444,10 @@ Partial Public Class MainWindow
                 XMLLoadAttribute(.GetAttribute("WidthScale"), CGWidth.Value)
                 XMLLoadAttribute(.GetAttribute("Slash"), Grid.Slash)
 
-                Dim xgDivide As Integer = CInt(.GetAttribute("Divider"))
+                Dim xgDivide = CInt(.GetAttribute("Divider"))
                 If xgDivide >= CGDivide.Minimum And xgDivide <= CGDivide.Maximum Then CGDivide.Value = xgDivide
 
-                Dim xgSub As Integer = CInt(.GetAttribute("Subdivider"))
+                Dim xgSub = CInt(.GetAttribute("Subdivider"))
                 If xgSub >= CGSub.Minimum And xgSub <= CGSub.Maximum Then CGSub.Value = xgSub
             End With
         End If
@@ -484,49 +491,49 @@ Partial Public Class MainWindow
         Dim eVisualSettings As XmlElement = Root.Item("VisualSettings")
         If eVisualSettings IsNot Nothing Then
             With eVisualSettings
-                XMLLoadElementValue(.Item("ColumnTitle"), vo.ColumnTitle.Color)
-                XMLLoadElementValue(.Item("ColumnTitleFont"), vo.ColumnTitleFont)
-                XMLLoadElementValue(.Item("Bg"), vo.Bg.Color)
-                XMLLoadElementValue(.Item("Grid"), vo.pGrid.Color)
-                XMLLoadElementValue(.Item("Sub"), vo.pSub.Color)
-                XMLLoadElementValue(.Item("VLine"), vo.pVLine.Color)
-                XMLLoadElementValue(.Item("MLine"), vo.pMLine.Color)
+                XMLLoadElementValue(.Item("ColumnTitle"), _vo.ColumnTitle.Color)
+                XMLLoadElementValue(.Item("ColumnTitleFont"), _vo.ColumnTitleFont)
+                XMLLoadElementValue(.Item("Bg"), _vo.Bg.Color)
+                XMLLoadElementValue(.Item("Grid"), _vo.pGrid.Color)
+                XMLLoadElementValue(.Item("Sub"), _vo.pSub.Color)
+                XMLLoadElementValue(.Item("VLine"), _vo.pVLine.Color)
+                XMLLoadElementValue(.Item("MLine"), _vo.pMLine.Color)
 
-                XMLLoadElementValue(.Item("BGMWav"), vo.pBGMWav.Color)
-                TWTransparency.Value = vo.pBGMWav.Color.A
-                TWTransparency2.Value = vo.pBGMWav.Color.A
-                TWSaturation.Value = vo.pBGMWav.Color.GetSaturation * 1000
-                TWSaturation2.Value = vo.pBGMWav.Color.GetSaturation * 1000
+                XMLLoadElementValue(.Item("BGMWav"), _vo.pBGMWav.Color)
+                TWTransparency.Value = _vo.pBGMWav.Color.A
+                TWTransparency2.Value = _vo.pBGMWav.Color.A
+                TWSaturation.Value = _vo.pBGMWav.Color.GetSaturation*1000
+                TWSaturation2.Value = _vo.pBGMWav.Color.GetSaturation*1000
 
-                XMLLoadElementValue(.Item("SelBox"), vo.SelBox.Color)
-                XMLLoadElementValue(.Item("TSCursor"), vo.PECursor.Color)
-                XMLLoadElementValue(.Item("TSHalf"), vo.PEHalf.Color)
-                XMLLoadElementValue(.Item("TSDeltaMouseOver"), vo.PEDeltaMouseOver)
-                XMLLoadElementValue(.Item("TSMouseOver"), vo.PEMouseOver.Color)
-                XMLLoadElementValue(.Item("TSSel"), vo.PESel.Color)
-                XMLLoadElementValue(.Item("TSBPM"), vo.PEBPM.Color)
-                XMLLoadElementValue(.Item("TSBPMFont"), vo.PEBPMFont)
-                XMLLoadElementValue(.Item("MiddleDeltaRelease"), vo.MiddleDeltaRelease)
-                XMLLoadElementValue(.Item("kHeight"), vo.kHeight)
-                XMLLoadElementValue(.Item("kFont"), vo.kFont)
-                XMLLoadElementValue(.Item("kMFont"), vo.kMFont)
-                XMLLoadElementValue(.Item("kLabelVShift"), vo.kLabelVShift)
-                XMLLoadElementValue(.Item("kLabelHShift"), vo.kLabelHShift)
-                XMLLoadElementValue(.Item("kLabelHShiftL"), vo.kLabelHShiftL)
-                XMLLoadElementValue(.Item("kMouseOver"), vo.kMouseOver.Color)
-                XMLLoadElementValue(.Item("kMouseOverE"), vo.kMouseOverE.Color)
-                XMLLoadElementValue(.Item("kSelected"), vo.kSelected.Color)
-                XMLLoadElementValue(.Item("kOpacity"), vo.kOpacity)
+                XMLLoadElementValue(.Item("SelBox"), _vo.SelBox.Color)
+                XMLLoadElementValue(.Item("TSCursor"), _vo.PECursor.Color)
+                XMLLoadElementValue(.Item("TSHalf"), _vo.PEHalf.Color)
+                XMLLoadElementValue(.Item("TSDeltaMouseOver"), _vo.PEDeltaMouseOver)
+                XMLLoadElementValue(.Item("TSMouseOver"), _vo.PEMouseOver.Color)
+                XMLLoadElementValue(.Item("TSSel"), _vo.PESel.Color)
+                XMLLoadElementValue(.Item("TSBPM"), _vo.PEBPM.Color)
+                XMLLoadElementValue(.Item("TSBPMFont"), _vo.PEBPMFont)
+                XMLLoadElementValue(.Item("MiddleDeltaRelease"), _vo.MiddleDeltaRelease)
+                XMLLoadElementValue(.Item("kHeight"), _vo.NoteHeight)
+                XMLLoadElementValue(.Item("kFont"), _vo.kFont)
+                XMLLoadElementValue(.Item("kMFont"), _vo.kMFont)
+                XMLLoadElementValue(.Item("kLabelVShift"), _vo.kLabelVShift)
+                XMLLoadElementValue(.Item("kLabelHShift"), _vo.kLabelHShift)
+                XMLLoadElementValue(.Item("kLabelHShiftL"), _vo.kLabelHShiftL)
+                XMLLoadElementValue(.Item("kMouseOver"), _vo.kMouseOver.Color)
+                XMLLoadElementValue(.Item("kMouseOverE"), _vo.kMouseOverE.Color)
+                XMLLoadElementValue(.Item("kSelected"), _vo.kSelected.Color)
+                XMLLoadElementValue(.Item("kOpacity"), _vo.kOpacity)
             End With
         End If
 
-EndOfSub:
+        EndOfSub:
         UpdateColumnsX()
         FileStream.Close()
         'File.Delete(xTempFileName)
     End Sub
 
-    Private Sub XMLLoadLocaleMenu(ByVal n As XmlElement, ByRef target As String)
+    Private Sub XMLLoadLocaleMenu(n As XmlElement, ByRef target As String)
         If n Is Nothing Then Exit Sub
         If n.HasAttribute("amp") Then
             target = n.InnerText.Insert(Integer.Parse(n.GetAttribute("amp")), "&")
@@ -535,20 +542,20 @@ EndOfSub:
         End If
     End Sub
 
-    Private Sub XMLLoadLocale(ByVal n As XmlElement, ByRef target As String)
+    Private Sub XMLLoadLocale(n As XmlElement, ByRef target As String)
         If n IsNot Nothing Then target = n.InnerText
     End Sub
 
-    Private Sub XMLLoadLocaleToolTipUniversal(ByVal n As XmlElement, ByVal target As Control)
+    Private Sub XMLLoadLocaleToolTipUniversal(n As XmlElement, target As Control)
         If n Is Nothing Then Exit Sub
         ToolTipUniversal.SetToolTip(target, n.InnerText)
     End Sub
 
-    Private Sub LoadLocale(ByVal Path As String)
+    Private Sub LoadLocale(Path As String)
         If Not My.Computer.FileSystem.FileExists(Path) Then Return
 
         Dim Doc As XmlDocument = Nothing
-        Dim FileStream As IO.FileStream = Nothing
+        Dim FileStream As FileStream = Nothing
 
         Dim xPOHeaderPart2 As Boolean = POHeaderPart2.Visible
         Dim xPOGridPart2 As Boolean = POGridPart2.Visible
@@ -559,7 +566,7 @@ EndOfSub:
 
         Try
             Doc = New XmlDocument
-            FileStream = New IO.FileStream(Path, FileMode.Open, FileAccess.Read)
+            FileStream = New FileStream(Path, FileMode.Open, FileAccess.Read)
             Doc.Load(FileStream)
 
             Dim Root As XmlElement = Doc.Item("iBMSC.Locale")
@@ -571,7 +578,7 @@ EndOfSub:
 
             Dim eFont As XmlElement = Root.Item("Font")
             If eFont IsNot Nothing Then
-                Dim xSize As Integer = 9
+                Dim xSize = 9
                 If eFont.HasAttribute("Size") Then xSize = Val(eFont.GetAttribute("Size"))
 
                 Dim fRegular As New Font(Me.Font.FontFamily, xSize, FontStyle.Regular)
@@ -584,7 +591,8 @@ EndOfSub:
                     xChildNode = xChildNode.PreviousSibling
                 Loop
 
-                Dim rList() As Object = {Me, mnSys, Menu1, mnMain, cmnLanguage, cmnTheme, cmnConversion, TBMain, FStatus, FStatus2}
+                Dim rList() As Object =
+                        {Me, mnSys, Menu1, mnMain, cmnLanguage, cmnTheme, cmnConversion, TBMain, FStatus, FStatus2}
                 For Each c As Object In rList
                     Try
                         c.Font = fRegular
@@ -594,7 +602,9 @@ EndOfSub:
 
                 Dim fBold As New Font(fRegular, FontStyle.Bold)
 
-                Dim bList() As Object = {TBStatistics, FSSS, FSSL, FSSH, TVCM, TVCD, TVCBPM, FSP1, FSP3, FSP2, PMain, PMainIn, PMainR, PMainInR, PMainL, PMainInL}
+                Dim bList() As Object =
+                        {TBStatistics, FSSS, FSSL, FSSH, TVCM, TVCD, TVCBPM, FSP1, FSP3, FSP2, PMain, PMainIn, PMainR,
+                         PMainInR, PMainL, PMainInL}
                 For Each c As Object In bList
                     Try
                         c.Font = fBold
@@ -605,7 +615,7 @@ EndOfSub:
 
             Dim eMonoFont As XmlElement = Root.Item("MonoFont")
             If eMonoFont IsNot Nothing Then
-                Dim xSize As Integer = 9
+                Dim xSize = 9
                 If eMonoFont.HasAttribute("Size") Then xSize = Val(eMonoFont.GetAttribute("Size"))
 
                 Dim fMono As New Font(POWAVInner.Font.FontFamily, xSize)
@@ -640,11 +650,11 @@ EndOfSub:
                     XMLLoadLocaleMenu(eFile.Item("Save"), mnSave.Text)
                     XMLLoadLocaleMenu(eFile.Item("SaveAs"), mnSaveAs.Text)
                     XMLLoadLocaleMenu(eFile.Item("ExportIBMSC"), mnExport.Text)
-                    If Recent(0) = "" Then XMLLoadLocaleMenu(eFile.Item("Recent0"), mnOpenR0.Text)
-                    If Recent(1) = "" Then XMLLoadLocaleMenu(eFile.Item("Recent1"), mnOpenR1.Text)
-                    If Recent(2) = "" Then XMLLoadLocaleMenu(eFile.Item("Recent2"), mnOpenR2.Text)
-                    If Recent(3) = "" Then XMLLoadLocaleMenu(eFile.Item("Recent3"), mnOpenR3.Text)
-                    If Recent(4) = "" Then XMLLoadLocaleMenu(eFile.Item("Recent4"), mnOpenR4.Text)
+                    If _recent(0) = "" Then XMLLoadLocaleMenu(eFile.Item("Recent0"), mnOpenR0.Text)
+                    If _recent(1) = "" Then XMLLoadLocaleMenu(eFile.Item("Recent1"), mnOpenR1.Text)
+                    If _recent(2) = "" Then XMLLoadLocaleMenu(eFile.Item("Recent2"), mnOpenR2.Text)
+                    If _recent(3) = "" Then XMLLoadLocaleMenu(eFile.Item("Recent3"), mnOpenR3.Text)
+                    If _recent(4) = "" Then XMLLoadLocaleMenu(eFile.Item("Recent4"), mnOpenR4.Text)
                     XMLLoadLocaleMenu(eFile.Item("Quit"), mnQuit.Text)
                 End If
 
@@ -1051,11 +1061,13 @@ EndOfSub:
                 XMLLoadLocale(eVisualOptions.Item("MeasureLabel"), Strings.fopVisual.MeasureLabel)
                 XMLLoadLocale(eVisualOptions.Item("LabelVerticalShift"), Strings.fopVisual.LabelVerticalShift)
                 XMLLoadLocale(eVisualOptions.Item("LabelHorizontalShift"), Strings.fopVisual.LabelHorizontalShift)
-                XMLLoadLocale(eVisualOptions.Item("LongNoteLabelHorizontalShift"), Strings.fopVisual.LongNoteLabelHorizontalShift)
+                XMLLoadLocale(eVisualOptions.Item("LongNoteLabelHorizontalShift"),
+                              Strings.fopVisual.LongNoteLabelHorizontalShift)
                 XMLLoadLocale(eVisualOptions.Item("HiddenNoteOpacity"), Strings.fopVisual.HiddenNoteOpacity)
                 XMLLoadLocale(eVisualOptions.Item("NoteBorderOnMouseOver"), Strings.fopVisual.NoteBorderOnMouseOver)
                 XMLLoadLocale(eVisualOptions.Item("NoteBorderOnSelection"), Strings.fopVisual.NoteBorderOnSelection)
-                XMLLoadLocale(eVisualOptions.Item("NoteBorderOnAdjustingLength"), Strings.fopVisual.NoteBorderOnAdjustingLength)
+                XMLLoadLocale(eVisualOptions.Item("NoteBorderOnAdjustingLength"),
+                              Strings.fopVisual.NoteBorderOnAdjustingLength)
                 XMLLoadLocale(eVisualOptions.Item("SelectionBoxBorder"), Strings.fopVisual.SelectionBoxBorder)
                 XMLLoadLocale(eVisualOptions.Item("TSCursor"), Strings.fopVisual.TSCursor)
                 XMLLoadLocale(eVisualOptions.Item("TSSplitter"), Strings.fopVisual.TSSplitter)
@@ -1133,7 +1145,7 @@ EndOfSub:
                 XMLLoadLocale(eFileAssociation.Item("ViewCode"), Strings.FileAssociation.ViewCode)
             End If
 
-            DispLang = Path.Replace(My.Application.Info.DirectoryPath & "\", "")
+            _dispLang = Path.Replace(My.Application.Info.DirectoryPath & "\", "")
 
         Catch ex As Exception
             MsgBox(Path & vbCrLf & vbCrLf & ex.Message, MsgBoxStyle.Exclamation)
@@ -1149,13 +1161,14 @@ EndOfSub:
         'File.Delete(xTempFileName)
     End Sub
 
-    Private Sub LoadThemeComptability(ByVal xPath As String)
+    Private Sub LoadThemeComptability(xPath As String)
         Try
             Dim xStrLine() As String = Split(My.Computer.FileSystem.ReadAllText(xPath), vbCrLf)
-            If xStrLine(0).Trim <> "iBMSC Configuration Settings Format" And xStrLine(0).Trim <> "iBMSC Theme Format" Then Exit Sub
+            If xStrLine(0).Trim <> "iBMSC Configuration Settings Format" And xStrLine(0).Trim <> "iBMSC Theme Format" _
+                Then Exit Sub
 
-            Dim xW1 As String = ""
-            Dim xW2 As String = ""
+            Dim xW1 = ""
+            Dim xW2 = ""
             Dim column = Columns.column
 
             For Each xLine As String In xStrLine
@@ -1163,77 +1176,77 @@ EndOfSub:
                 xW2 = Mid(xLine, InStr(xLine, "=") + 1)
 
                 Select Case xW1
-                    Case "VOTITLE" : vo.ColumnTitle.Color = Color.FromArgb(Val(xW2))
-                    Case "VOTITLEFONT" : vo.ColumnTitleFont = StringToFont(xW2, Me.Font)
-                    Case "VOBG" : vo.Bg.Color = Color.FromArgb(Val(xW2))
-                    Case "VOGRID" : vo.pGrid.Color = Color.FromArgb(Val(xW2))
-                    Case "VOSUB" : vo.pSub.Color = Color.FromArgb(Val(xW2))
-                    Case "VOVLINE" : vo.pVLine.Color = Color.FromArgb(Val(xW2))
-                    Case "VOMLINE" : vo.pMLine.Color = Color.FromArgb(Val(xW2))
+                    Case "VOTITLE" : _vo.ColumnTitle.Color = Color.FromArgb(Val(xW2))
+                    Case "VOTITLEFONT" : _vo.ColumnTitleFont = StringToFont(xW2, Me.Font)
+                    Case "VOBG" : _vo.Bg.Color = Color.FromArgb(Val(xW2))
+                    Case "VOGRID" : _vo.pGrid.Color = Color.FromArgb(Val(xW2))
+                    Case "VOSUB" : _vo.pSub.Color = Color.FromArgb(Val(xW2))
+                    Case "VOVLINE" : _vo.pVLine.Color = Color.FromArgb(Val(xW2))
+                    Case "VOMLINE" : _vo.pMLine.Color = Color.FromArgb(Val(xW2))
                     Case "VOBGMWAV"
-                        vo.pBGMWav.Color = Color.FromArgb(Val(xW2))
-                        TWTransparency.Value = vo.pBGMWav.Color.A
-                        TWTransparency2.Value = vo.pBGMWav.Color.A
-                        TWSaturation.Value = vo.pBGMWav.Color.GetSaturation * 1000
-                        TWSaturation2.Value = vo.pBGMWav.Color.GetSaturation * 1000
-                    Case "VOSELBOX" : vo.SelBox.Color = Color.FromArgb(Val(xW2))
-                    Case "VOPECURSOR" : vo.PECursor.Color = Color.FromArgb(Val(xW2))
-                    Case "VOPEHALF" : vo.PEHalf.Color = Color.FromArgb(Val(xW2))
-                    Case "VOPEDELTAMOUSEOVER" : vo.PEDeltaMouseOver = Val(xW2)
-                    Case "VOPEMOUSEOVER" : vo.PEMouseOver.Color = Color.FromArgb(Val(xW2))
-                    Case "VOPESEL" : vo.PESel.Color = Color.FromArgb(Val(xW2))
-                    Case "VOPEBPM" : vo.PEBPM.Color = Color.FromArgb(Val(xW2))
-                    Case "VOPEBPMFONT" : vo.PEBPMFont = StringToFont(xW2, Me.Font)
-                    Case "VKHEIGHT" : vo.kHeight = Val(xW2)
-                    Case "VKFONT" : vo.kFont = StringToFont(xW2, Me.Font)
-                    Case "VKMFONT" : vo.kMFont = StringToFont(xW2, Me.Font)
-                    Case "VKLABELVSHIFT" : vo.kLabelVShift = Val(xW2)
-                    Case "VKLABELHSHIFT" : vo.kLabelHShift = Val(xW2)
-                    Case "VKLABELHSHIFTL" : vo.kLabelHShiftL = Val(xW2)
-                    Case "VKMOUSEOVER" : vo.kMouseOver.Color = Color.FromArgb(Val(xW2))
-                    Case "VKMOUSEOVERE " : vo.kMouseOverE.Color = Color.FromArgb(Val(xW2))
-                    Case "VKSELECTED" : vo.kSelected.Color = Color.FromArgb(Val(xW2))
+                        _vo.pBGMWav.Color = Color.FromArgb(Val(xW2))
+                        TWTransparency.Value = _vo.pBGMWav.Color.A
+                        TWTransparency2.Value = _vo.pBGMWav.Color.A
+                        TWSaturation.Value = _vo.pBGMWav.Color.GetSaturation*1000
+                        TWSaturation2.Value = _vo.pBGMWav.Color.GetSaturation*1000
+                    Case "VOSELBOX" : _vo.SelBox.Color = Color.FromArgb(Val(xW2))
+                    Case "VOPECURSOR" : _vo.PECursor.Color = Color.FromArgb(Val(xW2))
+                    Case "VOPEHALF" : _vo.PEHalf.Color = Color.FromArgb(Val(xW2))
+                    Case "VOPEDELTAMOUSEOVER" : _vo.PEDeltaMouseOver = Val(xW2)
+                    Case "VOPEMOUSEOVER" : _vo.PEMouseOver.Color = Color.FromArgb(Val(xW2))
+                    Case "VOPESEL" : _vo.PESel.Color = Color.FromArgb(Val(xW2))
+                    Case "VOPEBPM" : _vo.PEBPM.Color = Color.FromArgb(Val(xW2))
+                    Case "VOPEBPMFONT" : _vo.PEBPMFont = StringToFont(xW2, Me.Font)
+                    Case "VKHEIGHT" : _vo.NoteHeight = Val(xW2)
+                    Case "VKFONT" : _vo.kFont = StringToFont(xW2, Me.Font)
+                    Case "VKMFONT" : _vo.kMFont = StringToFont(xW2, Me.Font)
+                    Case "VKLABELVSHIFT" : _vo.kLabelVShift = Val(xW2)
+                    Case "VKLABELHSHIFT" : _vo.kLabelHShift = Val(xW2)
+                    Case "VKLABELHSHIFTL" : _vo.kLabelHShiftL = Val(xW2)
+                    Case "VKMOUSEOVER" : _vo.kMouseOver.Color = Color.FromArgb(Val(xW2))
+                    Case "VKMOUSEOVERE " : _vo.kMouseOverE.Color = Color.FromArgb(Val(xW2))
+                    Case "VKSELECTED" : _vo.kSelected.Color = Color.FromArgb(Val(xW2))
                         'Case "VKHIDTRANSPARENCY" : vo.kOpacity = Val(xW2)
 
                     Case "KLENGTH"
                         Dim xE() As String = LoadThemeComptability_SplitStringInto26Parts(xW2)
-                        For i As Integer = 0 To 26
+                        For i = 0 To 26
                             column(i).Width = Val(xE(i))
                         Next
 
                     Case "KTITLE"
                         Dim xE() As String = LoadThemeComptability_SplitStringInto26Parts(xW2)
-                        For i As Integer = 0 To 26
+                        For i = 0 To 26
                             column(i).Title = xE(i)
                         Next
 
                     Case "KCOLOR"
                         Dim xE() As String = LoadThemeComptability_SplitStringInto26Parts(xW2)
-                        For i As Integer = 0 To 26
+                        For i = 0 To 26
                             column(i).setNoteColor(Val(xE(i)))
                         Next
 
                     Case "KCOLORL"
                         Dim xE() As String = LoadThemeComptability_SplitStringInto26Parts(xW2)
-                        For i As Integer = 0 To 26
+                        For i = 0 To 26
                             column(i).setLNoteColor(Val(xE(i)))
                         Next
 
                     Case "KFORECOLOR"
                         Dim xE() As String = LoadThemeComptability_SplitStringInto26Parts(xW2)
-                        For i As Integer = 0 To 26
+                        For i = 0 To 26
                             column(i).cText = Color.FromArgb(Val(xE(i)))
                         Next
 
                     Case "KFORECOLORL"
                         Dim xE() As String = LoadThemeComptability_SplitStringInto26Parts(xW2)
-                        For i As Integer = 0 To 26
+                        For i = 0 To 26
                             column(i).cLText = Color.FromArgb(Val(xE(i)))
                         Next
 
                     Case "KBGCOLOR"
                         Dim xE() As String = LoadThemeComptability_SplitStringInto26Parts(xW2)
-                        For i As Integer = 0 To 26
+                        For i = 0 To 26
                             column(i).cBG = Color.FromArgb(Val(xE(i)))
                         Next
 
@@ -1250,13 +1263,13 @@ EndOfSub:
         End Try
     End Sub
 
-    Private Function LoadThemeComptability_SplitStringInto26Parts(ByVal xLine As String) As String()
+    Private Function LoadThemeComptability_SplitStringInto26Parts(xLine As String) As String()
         Dim xE() As String = Split(xLine, ",")
         ReDim Preserve xE(26)
         Return xE
     End Function
 
-    Private Sub LoadLang(ByVal sender As System.Object, ByVal e As System.EventArgs)
+    Private Sub LoadLang(sender As Object, e As EventArgs)
         Dim xFN2 As String = sender.ToolTipText
         'ReadLanguagePack(xFN2)
         LoadLocale(xFN2)
@@ -1282,7 +1295,7 @@ EndOfSub:
         fs.Close()
     End Sub
 
-    Private Sub LoadTheme(ByVal sender As System.Object, ByVal e As System.EventArgs)
+    Private Sub LoadTheme(sender As Object, e As EventArgs)
         'If Not File.Exists(My.Application.Info.DirectoryPath & "\Data\" & sender.Text) Then Exit Sub
         'SaveTheme = True
         'LoadCFF(My.Computer.FileSystem.ReadAllText(My.Application.Info.DirectoryPath & "\Theme\" & sender.Text, System.Text.Encoding.Unicode))

@@ -1,9 +1,10 @@
-Imports System.Runtime.CompilerServices
-Imports System.Windows.Forms
 Imports iBMSC.Editor
 
 Public Class OpVisual
-    Dim lLeft() As Integer = {78, 110, 142, 174, 208, 240, 272, 304, 336, 368, 400, 432, 464, 498, 530, 562, 594, 626, 658, 690, 722, 754, 788, 820, 852, 884, 918, 950}
+    Dim ReadOnly _
+        lLeft() As Integer =
+            {78, 110, 142, 174, 208, 240, 272, 304, 336, 368, 400, 432, 464, 498, 530, 562, 594, 626, 658, 690, 722, 754,
+             788, 820, 852, 884, 918, 950}
 
     Structure ColumnOptionSet
         Public Width As NumericUpDown
@@ -41,13 +42,12 @@ Public Class OpVisual
     'Dim WithEvents eaFont As New ArrayList
     'Dim WithEvents eaI As New ArrayList
 
-    Dim VisualOptions As visualSettings
-    Dim TemporalColumns() As Column
-    Dim ColumnOptions() As ColumnOptionSet
+    Dim ReadOnly VisualOptions As visualSettings
+    Dim ReadOnly TemporalColumns() As Column
+    Dim ReadOnly ColumnOptions() As ColumnOptionSet
 
 
-
-    Public Sub New(ByVal xvo As visualSettings, ByVal xcol() As Column, ByVal monoFont As Font)
+    Public Sub New(xvo As visualSettings, xcol() As Column, monoFont As Font)
         InitializeComponent()
 
         'eColor = xeColor
@@ -78,7 +78,7 @@ Public Class OpVisual
         fButtonChange(fTSBPM, VisualOptions.PEBPMFont)
 
 
-        iNoteHeight.SetValClamped(VisualOptions.kHeight)
+        iNoteHeight.SetValClamped(VisualOptions.NoteHeight)
         iLabelVerticalShift.SetValClamped(VisualOptions.kLabelVShift)
         iLabelHorizShift.SetValClamped(VisualOptions.kLabelHShift)
         iLongLabelHorizShift.SetValClamped(VisualOptions.kLabelHShiftL)
@@ -89,7 +89,7 @@ Public Class OpVisual
         TemporalColumns = xcol.Clone
         ReDim ColumnOptions(UBound(TemporalColumns))
 
-        For i As Integer = 0 To UBound(TemporalColumns)
+        For i = 0 To UBound(TemporalColumns)
             Dim jw As New NumericUpDown
             With jw
                 .BorderStyle = BorderStyle.FixedSingle
@@ -164,7 +164,8 @@ Public Class OpVisual
                 .Location = New Point(lLeft(i), 323)
                 .Size = New Size(33, 66)
                 .BackColor = TemporalColumns(i).cBG
-                .ForeColor = IIf(CInt(TemporalColumns(i).cBG.GetBrightness * 255) + 255 - TemporalColumns(i).cBG.A >= 128, Color.Black, Color.White)
+                .ForeColor = IIf(CInt(TemporalColumns(i).cBG.GetBrightness*255) + 255 - TemporalColumns(i).cBG.A >= 128,
+                                 Color.Black, Color.White)
                 .Text = To4Hex(TemporalColumns(i).cBG.ToArgb)
                 .Name = "cBG"
                 .Tag = Nothing
@@ -194,18 +195,18 @@ Public Class OpVisual
         Next
     End Sub
 
-    Private Sub cButtonChange(ByVal xbutton As Button, ByVal c As Color)
+    Private Sub cButtonChange(xbutton As Button, c As Color)
         xbutton.Text = Hex(c.ToArgb)
         xbutton.BackColor = c
-        xbutton.ForeColor = IIf(CInt(c.GetBrightness * 255) + 255 - c.A >= 128, Color.Black, Color.White)
+        xbutton.ForeColor = IIf(CInt(c.GetBrightness*255) + 255 - c.A >= 128, Color.Black, Color.White)
     End Sub
 
-    Private Sub fButtonChange(ByVal xbutton As Button, ByVal f As Font)
+    Private Sub fButtonChange(xbutton As Button, f As Font)
         xbutton.Text = f.FontFamily.Name
         xbutton.Font = f
     End Sub
 
-    Private Sub OK_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles OK_Button.Click
+    Private Sub OK_Button_Click(sender As Object, e As EventArgs) Handles OK_Button.Click
         VisualOptions.ColumnTitle.Color = cColumnTitle.BackColor
         VisualOptions.Bg.Color = cBG.BackColor
         VisualOptions.pGrid.Color = cGrid.BackColor
@@ -228,7 +229,7 @@ Public Class OpVisual
         VisualOptions.kMFont = fMeasureLabel.Font
         VisualOptions.PEBPMFont = fTSBPM.Font
 
-        VisualOptions.kHeight = CInt(iNoteHeight.Value)
+        VisualOptions.NoteHeight = CInt(iNoteHeight.Value)
         VisualOptions.kLabelVShift = CInt(iLabelVerticalShift.Value)
         VisualOptions.kLabelHShift = CInt(iLabelHorizShift.Value)
         VisualOptions.kLabelHShiftL = CInt(iLongLabelHorizShift.Value)
@@ -238,7 +239,7 @@ Public Class OpVisual
 
         MainWindow.setVO(VisualOptions)
 
-        For i As Integer = 0 To ColumnOptions.Length - 1
+        For i = 0 To ColumnOptions.Length - 1
             TemporalColumns(i).Title = ColumnOptions(i).Title.Text
             TemporalColumns(i).Width = ColumnOptions(i).Width.Value
             TemporalColumns(i).setNoteColor(ColumnOptions(i).SNote.BackColor.ToArgb)
@@ -254,12 +255,12 @@ Public Class OpVisual
         Close()
     End Sub
 
-    Private Sub Cancel_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Cancel_Button.Click
+    Private Sub Cancel_Button_Click(sender As Object, e As EventArgs) Handles Cancel_Button.Click
         Me.DialogResult = DialogResult.Cancel
         Me.Close()
     End Sub
 
-    Private Sub OpVisual_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
+    Private Sub OpVisual_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Me.Font = MainWindow.Font
 
         'Language
@@ -548,7 +549,6 @@ Public Class OpVisual
         '    jBg.Add(xjColor)
         '    AddHandler xjColor.Click, AddressOf B5Click
         'Next
-
     End Sub
 
     'Private Sub rb1_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs)
@@ -559,29 +559,29 @@ Public Class OpVisual
     '    Panel2.Visible = rb2.Checked
     'End Sub
     '
-    Private Sub BCClick(ByVal sender As System.Object, ByVal e As System.EventArgs) _
-    Handles cColumnTitle.Click, _
-            cBG.Click, _
-            cGrid.Click, _
-            cSub.Click, _
-            cVerticalLine.Click, _
-            cMeasureBarLine.Click, _
-            cWaveForm.Click, _
-            cMouseOver.Click, _
-            cSelectedBorder.Click, _
-            cAdjustLengthBorder.Click, _
-            cSelectionBox.Click, _
-            cTSCursor.Click, _
-            cTSSplitter.Click, _
-            cTSMouseOver.Click, _
-            cTSSelectionFill.Click, _
-            cTSBPM.Click
+    Private Sub BCClick(sender As Object, e As EventArgs) _
+        Handles cColumnTitle.Click,
+                cBG.Click,
+                cGrid.Click,
+                cSub.Click,
+                cVerticalLine.Click,
+                cMeasureBarLine.Click,
+                cWaveForm.Click,
+                cMouseOver.Click,
+                cSelectedBorder.Click,
+                cAdjustLengthBorder.Click,
+                cSelectionBox.Click,
+                cTSCursor.Click,
+                cTSSplitter.Click,
+                cTSMouseOver.Click,
+                cTSSelectionFill.Click,
+                cTSBPM.Click
 
         'Dim xI As Integer = Val(sender.Tag)
-        Dim s As Button = CType(sender, Button)
+        Dim s = CType(sender, Button)
         Dim xColorPicker As New ColorPicker
         xColorPicker.SetOrigColor(s.BackColor)
-        If xColorPicker.ShowDialog(Me) = Windows.Forms.DialogResult.Cancel Then Exit Sub
+        If xColorPicker.ShowDialog(Me) = DialogResult.Cancel Then Exit Sub
 
         cButtonChange(s, xColorPicker.NewColor)
         'eColor(xI) = xColorPicker.NewColor
@@ -590,17 +590,17 @@ Public Class OpVisual
         'sender.ForeColor = IIf(eColor(xI).GetBrightness + (255 - eColor(xI).A) / 255 >= 0.5, Color.Black, Color.White)
     End Sub
 
-    Private Sub BFClick(ByVal sender As System.Object, ByVal e As System.EventArgs) _
-    Handles fColumnTitle.Click, _
-            fNoteLabel.Click, _
-            fMeasureLabel.Click, _
-            fTSBPM.Click
+    Private Sub BFClick(sender As Object, e As EventArgs) _
+        Handles fColumnTitle.Click,
+                fNoteLabel.Click,
+                fMeasureLabel.Click,
+                fTSBPM.Click
 
         'Dim xI As Integer = Val(sender.Tag)
-        Dim s As Button = CType(sender, Button)
+        Dim s = CType(sender, Button)
         Dim xDFont As New FontDialog
         xDFont.Font = s.Font
-        If xDFont.ShowDialog(Me) = Windows.Forms.DialogResult.Cancel Then Exit Sub
+        If xDFont.ShowDialog(Me) = DialogResult.Cancel Then Exit Sub
 
         fButtonChange(s, xDFont.Font)
         'eFont(xI) = xDFont.Font
@@ -673,16 +673,16 @@ Public Class OpVisual
     '    sender.BackColor = lBg(xI)
     '    sender.ForeColor = IIf(lBg(xI).GetBrightness + (255 - lBg(xI).A) / 255 >= 0.5, Color.Black, Color.White)
     'End Sub
-    Private Sub ButtonClick(ByVal sender As System.Object, ByVal e As System.EventArgs)
+    Private Sub ButtonClick(sender As Object, e As EventArgs)
         'Dim xI As Integer = Val(sender.Tag)
-        Dim s As Button = CType(sender, Button)
+        Dim s = CType(sender, Button)
         Dim xColorPicker As New ColorPicker
 
         'xColorPicker.SetOrigColor(lColor(xI))
         If s.Name = "cText" Then xColorPicker.SetOrigColor(s.ForeColor) _
-        Else xColorPicker.SetOrigColor(s.BackColor)
+            Else xColorPicker.SetOrigColor(s.BackColor)
 
-        If xColorPicker.ShowDialog(Me) = Windows.Forms.DialogResult.Cancel Then Exit Sub
+        If xColorPicker.ShowDialog(Me) = DialogResult.Cancel Then Exit Sub
 
         s.Text = To4Hex(xColorPicker.NewColor.ToArgb)
         Select Case s.Name
@@ -694,7 +694,8 @@ Public Class OpVisual
                 CType(s.Tag, Button).ForeColor = xColorPicker.NewColor
             Case "cBG"
                 s.BackColor = xColorPicker.NewColor
-                s.ForeColor = IIf(CInt(xColorPicker.NewColor.GetBrightness * 255) + 255 - xColorPicker.NewColor.A >= 128, Color.Black, Color.White)
+                s.ForeColor = IIf(CInt(xColorPicker.NewColor.GetBrightness*255) + 255 - xColorPicker.NewColor.A >= 128,
+                                  Color.Black, Color.White)
         End Select
         'lColor(xI) = xColorPicker.NewColor
         'sender.Text = To4Hex(lColor(xI).ToArgb)
@@ -702,15 +703,15 @@ Public Class OpVisual
         'jForeColor(xI).Backcolor = lColor(xI)
     End Sub
 
-    Private Function ColorArrayToIntArray(ByVal xC() As Color) As Integer()
+    Private Function ColorArrayToIntArray(xC() As Color) As Integer()
         Dim xI(UBound(xC)) As Integer
-        For i As Integer = 0 To UBound(xI)
+        For i = 0 To UBound(xI)
             xI(i) = xC(i).ToArgb
         Next
         Return xI
     End Function
 
-    Private Function To4Hex(ByVal xInt As Integer) As String
+    Private Function To4Hex(xInt As Integer) As String
         Dim xCl As Color = Color.FromArgb(xInt)
         Return Hex(xCl.A) & vbCrLf & Hex(xCl.R) & vbCrLf & Hex(xCl.G) & vbCrLf & Hex(xCl.B)
     End Function

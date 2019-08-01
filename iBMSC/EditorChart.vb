@@ -1,5 +1,4 @@
 ﻿
-
 Imports iBMSC.Editor
 
 Partial Public Class MainWindow
@@ -10,7 +9,7 @@ Partial Public Class MainWindow
     Dim BmsSTOP(1295) As Long
     Dim BmsSCROLL(1295) As Long
 
-    Public Notes() As Note = {New Note(ColumnType.BPM, -1, 1200000, 0, False)}
+    Public Notes() As Note = {New Note(ColumnType.BPM, - 1, 1200000, 0, False)}
     Dim LnObj As Integer = 0    '0 for none, 1-1295 for 01-ZZ
 
     Private Function FindNoteIndex(note As Note) As Integer
@@ -35,7 +34,7 @@ Partial Public Class MainWindow
         Dim j As Integer
         For i = 2 To Notes.Length - 1
             xNote = Notes(i)
-            For j = i - 1 To 1 Step -1
+            For j = i - 1 To 1 Step - 1
                 If Notes(j).VPosition > xNote.VPosition Then
                     Notes(j + 1) = Notes(j)
                     If j = 1 Then
@@ -48,10 +47,9 @@ Partial Public Class MainWindow
                 End If
             Next
         Next
-
     End Sub
 
-    Private Sub SortByVPositionQuick(ByVal xMin As Integer, ByVal xMax As Integer) 'Quick Sort
+    Private Sub SortByVPositionQuick(xMin As Integer, xMax As Integer) 'Quick Sort
         Dim xNote As Note
         Dim iHi As Integer
         Dim iLo As Integer
@@ -61,7 +59,7 @@ Partial Public Class MainWindow
         If xMin >= xMax Then Exit Sub
 
         ' Pick the dividing value.
-        i = CInt((xMax - xMin) / 2) + xMin
+        i = CInt((xMax - xMin)/2) + xMin
         xNote = Notes(i)
 
         ' Swap it to the front.
@@ -103,58 +101,49 @@ Partial Public Class MainWindow
         SortByVPositionQuick(xMin, iLo - 1)
         SortByVPositionQuick(iLo + 1, xMax)
     End Sub
-
-    Private Sub SortByVPositionQuick3(ByVal xMin As Integer, ByVal xMax As Integer)
-        Dim xxMin As Integer
-        Dim xxMax As Integer
-        Dim xxMid As Integer
-        Dim xNote As Note
-        Dim xNoteMid As Note
+    
+    Public Function MeasureAtDisplacement(xVPos As Double) As Integer
         Dim i As Integer
-        Dim j As Integer
-        Dim xI3 As Integer
+        For i = 1 To 999
+            If xVPos < MeasureBottom(i) Then Exit For
+        Next
+        Return i - 1
+    End Function
 
-        'If xMax = 0 Then
-        '    xMin = LBound(K1)
-        '    xMax = UBound(K1)
-        'End If
-        xxMin = xMin
-        xxMax = xMax
-        xxMid = xMax - xMin + 1
-        i = CInt(Int(xxMid * Rnd())) + xMin
-        j = CInt(Int(xxMid * Rnd())) + xMin
-        xI3 = CInt(Int(xxMid * Rnd())) + xMin
-        If Notes(i).VPosition <= Notes(j).VPosition And Notes(j).VPosition <= Notes(xI3).VPosition Then
-            xxMid = j
+    Public Function GetMaxVPosition() As Double
+        Return MeasureUpper(999)
+    End Function
+    
+    Public Function IsLabelMatch(note As Note, note2 As Note) As Boolean
+        If TBShowFileName.Checked Then
+            Dim wavidx = note2.Value/10000
+            Dim wav = BmsWAV(wavidx)
+            If BmsWAV(note.Value/10000) = wav Then
+                Return True
+            End If
         Else
-            If Notes(j).VPosition <= Notes(i).VPosition And Notes(i).VPosition <= Notes(xI3).VPosition Then
-                xxMid = i
-            Else
-                xxMid = xI3
+            If note.Value = note2.Value Then
+                Return True
             End If
         End If
-        xNoteMid = Notes(xxMid)
-        Do
-            Do While Notes(xxMin).VPosition < xNoteMid.VPosition And xxMin < xMax
-                xxMin = xxMin + 1
-            Loop
-            Do While xNoteMid.VPosition < Notes(xxMax).VPosition And xxMax > xMin
-                xxMax = xxMax - 1
-            Loop
-            If xxMin <= xxMax Then
-                xNote = Notes(xxMin)
-                Notes(xxMin) = Notes(xxMax)
-                Notes(xxMax) = xNote
-                xxMin = xxMin + 1
-                xxMax = xxMax - 1
+
+        Return False
+    End Function
+    
+    
+    Public Function IsLabelMatch(note As Note, index As Integer) As Boolean
+        If TBShowFileName.Checked Then
+            Dim wavidx = Notes(index).Value/10000
+            Dim wav = BmsWAV(wavidx)
+            If BmsWAV(note.Value/10000) = wav Then
+                Return True
             End If
-        Loop Until xxMin > xxMax
-        If xxMax - xMin < xMax - xxMin Then
-            If xMin < xxMax Then SortByVPositionQuick3(xMin, xxMax)
-            If xxMin < xMax Then SortByVPositionQuick3(xxMin, xMax)
         Else
-            If xxMin < xMax Then SortByVPositionQuick3(xxMin, xMax)
-            If xMin < xxMax Then SortByVPositionQuick3(xMin, xxMax)
+            If note.Value = Notes(index).Value Then
+                Return True
+            End If
         End If
-    End Sub
+
+        Return False
+    End Function
 End Class

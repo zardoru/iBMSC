@@ -1,9 +1,10 @@
-Imports System.Windows.Forms
+Imports System.Text
+Imports Microsoft.Win32
 
 Public Class OpGeneral
     Public zWheel As Integer
     Public zPgUpDn As Integer
-    Public zEncoding As System.Text.Encoding
+    Public zEncoding As Encoding
     Public zMiddle As Integer
     'Public zSort As Integer
     Public zAutoSave As Integer
@@ -11,11 +12,11 @@ Public Class OpGeneral
 
     'Dim lpfa() As String
 
-    <System.Runtime.InteropServices.DllImport("shell32.dll")> _
-    Shared Sub SHChangeNotify(ByVal wEventId As Integer, ByVal uFlags As Integer, ByVal dwItem1 As Integer, ByVal dwItem2 As Integer)
+    <DllImport("shell32.dll")>
+    Shared Sub SHChangeNotify(wEventId As Integer, uFlags As Integer, dwItem1 As Integer, dwItem2 As Integer)
     End Sub
 
-    Private Sub OK_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles OK_Button.Click
+    Private Sub OK_Button_Click(sender As Object, e As EventArgs) Handles OK_Button.Click
 
         Select Case CWheel.SelectedIndex
             Case 0 : zWheel = 192
@@ -33,32 +34,33 @@ Public Class OpGeneral
             Case 6 : zPgUpDn = 96
         End Select
         Select Case CTextEncoding.SelectedIndex
-            Case 0 : zEncoding = System.Text.Encoding.Default
-            Case 1 : zEncoding = System.Text.Encoding.Unicode
-            Case 2 : zEncoding = System.Text.Encoding.ASCII
-            Case 3 : zEncoding = System.Text.Encoding.BigEndianUnicode
-            Case 4 : zEncoding = System.Text.Encoding.UTF32
-            Case 5 : zEncoding = System.Text.Encoding.UTF7
-            Case 6 : zEncoding = System.Text.Encoding.UTF8
-            Case 7 : zEncoding = System.Text.Encoding.GetEncoding(932)
-            Case 8 : zEncoding = System.Text.Encoding.GetEncoding(51949)
+            Case 0 : zEncoding = Encoding.Default
+            Case 1 : zEncoding = Encoding.Unicode
+            Case 2 : zEncoding = Encoding.ASCII
+            Case 3 : zEncoding = Encoding.BigEndianUnicode
+            Case 4 : zEncoding = Encoding.UTF32
+            Case 5 : zEncoding = Encoding.UTF7
+            Case 6 : zEncoding = Encoding.UTF8
+            Case 7 : zEncoding = Encoding.GetEncoding(932)
+            Case 8 : zEncoding = Encoding.GetEncoding(51949)
         End Select
         'zSort = CSortingMethod.SelectedIndex
         zMiddle = IIf(rMiddleDrag.Checked, 1, 0)
-        zAutoSave = IIf(cAutoSave.Checked, 1, 0) * NAutoSave.Value * 60000
+        zAutoSave = IIf(cAutoSave.Checked, 1, 0)*NAutoSave.Value*60000
         zGridPartition = nGridPartition.Value
-        Me.DialogResult = System.Windows.Forms.DialogResult.OK
+        Me.DialogResult = DialogResult.OK
         Me.Close()
     End Sub
 
-    Private Sub Cancel_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Cancel_Button.Click
-        Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
+    Private Sub Cancel_Button_Click(sender As Object, e As EventArgs) Handles Cancel_Button.Click
+        Me.DialogResult = DialogResult.Cancel
         Me.Close()
     End Sub
 
-    Public Sub New(ByVal xMsWheel As Integer, ByVal xPgUpDn As Integer, ByVal xMiddleButton As Integer, ByVal xTextEncoding As Integer, ByVal xGridPartition As Integer, _
-                   ByVal xAutoSave As Integer, ByVal xBeep As Boolean, ByVal xBPMx As Boolean, ByVal xSTOPx As Boolean, _
-                   ByVal xMFEnter As Boolean, ByVal xMFClick As Boolean, ByVal xMStopPreview As Boolean)
+    Public Sub New(xMsWheel As Integer, xPgUpDn As Integer, xMiddleButton As Integer, xTextEncoding As Integer,
+                   xGridPartition As Integer,
+                   xAutoSave As Integer, xBeep As Boolean, xBPMx As Boolean, xSTOPx As Boolean,
+                   xMFEnter As Boolean, xMFClick As Boolean, xMStopPreview As Boolean)
         InitializeComponent()
 
         On Error Resume Next
@@ -84,12 +86,12 @@ Public Class OpGeneral
         nGridPartition.Value = xGridPartition
 
         If xMiddleButton = 0 Then rMiddleAuto.Checked = True _
-                             Else rMiddleDrag.Checked = True
+            Else rMiddleDrag.Checked = True
 
-        If xAutoSave / 60000 > NAutoSave.Maximum Or xAutoSave / 60000 < NAutoSave.Minimum Then
+        If xAutoSave/60000 > NAutoSave.Maximum Or xAutoSave/60000 < NAutoSave.Minimum Then
             cAutoSave.Checked = False
         Else
-            NAutoSave.Value = xAutoSave / 60000
+            NAutoSave.Value = xAutoSave/60000
         End If
 
         cBeep.Checked = xBeep
@@ -100,7 +102,7 @@ Public Class OpGeneral
         cMStopPreview.Checked = xMStopPreview
     End Sub
 
-    Private Sub OpGeneral_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
+    Private Sub OpGeneral_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Me.Font = MainWindow.Font
 
         'lpfa = Form1.lpfa
@@ -130,54 +132,56 @@ Public Class OpGeneral
         Label7.Text = Strings.fopGeneral.minutes
         cMStopPreview.Text = Strings.fopGeneral.StopPreviewOnClick
 
-        Dim enc = System.Text.Encoding.Default
+        Dim enc = Encoding.Default
         CTextEncoding.Items(0) = "System ANSI (" & enc.EncodingName & ")"
 
         OK_Button.Text = Strings.OK
         Cancel_Button.Text = Strings.Cancel
     End Sub
 
-    Private Sub TBAssociate_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TBAssociate.Click
+    Private Sub TBAssociate_Click(sender As Object, e As EventArgs) Handles TBAssociate.Click
         Associate(".bms", "iBMSC.BMS", Strings.FileAssociation.BMS, False)
     End Sub
 
-    Private Sub TBAssociateIBMSC_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TBAssociateIBMSC.Click
+    Private Sub TBAssociateIBMSC_Click(sender As Object, e As EventArgs) Handles TBAssociateIBMSC.Click
         Associate(".ibmsc", "iBMSC.iBMSC", Strings.FileAssociation.IBMSC, True)
     End Sub
 
-    Private Sub TBAssociateBME_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TBAssociateBME.Click
+    Private Sub TBAssociateBME_Click(sender As Object, e As EventArgs) Handles TBAssociateBME.Click
         Associate(".bme", "iBMSC.BME", Strings.FileAssociation.BME, False)
     End Sub
 
-    Private Sub TBAssociateBML_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TBAssociateBML.Click
+    Private Sub TBAssociateBML_Click(sender As Object, e As EventArgs) Handles TBAssociateBML.Click
         Associate(".bml", "iBMSC.BML", Strings.FileAssociation.BML, False)
     End Sub
 
-    Private Sub TBAssociatePMS_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TBAssociatePMS.Click
+    Private Sub TBAssociatePMS_Click(sender As Object, e As EventArgs) Handles TBAssociatePMS.Click
         Associate(".pms", "iBMSC.PMS", Strings.FileAssociation.PMS, False)
     End Sub
 
-    Private Sub Associate(ByVal xExt As String, ByVal xClass As String, ByVal xDescription As String, ByVal isIBMSC As Boolean)
-        If MsgBox(Replace(Strings.Messages.FileAssociationPrompt, "{}", "*" & xExt), MsgBoxStyle.YesNo Or MsgBoxStyle.Question) <> MsgBoxResult.Yes Then Exit Sub
+    Private Sub Associate(xExt As String, xClass As String, xDescription As String, isIBMSC As Boolean)
+        If _
+            MsgBox(Replace(Strings.Messages.FileAssociationPrompt, "{}", "*" & xExt),
+                   MsgBoxStyle.YesNo Or MsgBoxStyle.Question) <> MsgBoxResult.Yes Then Exit Sub
 
-        Dim xReg As Microsoft.Win32.RegistryKey
+        Dim xReg As RegistryKey
 
         Try
-            With Microsoft.Win32.Registry.ClassesRoot
-                If Array.IndexOf(.GetSubKeyNames(), xExt) <> -1 Then .DeleteSubKeyTree(xExt)
+            With Registry.ClassesRoot
+                If Array.IndexOf(.GetSubKeyNames(), xExt) <> - 1 Then .DeleteSubKeyTree(xExt)
                 .CreateSubKey(xExt)
                 xReg = .OpenSubKey(xExt, True)
-                xReg.SetValue("", xClass, Microsoft.Win32.RegistryValueKind.String)
+                xReg.SetValue("", xClass, RegistryValueKind.String)
 
-                If Array.IndexOf(.GetSubKeyNames(), xClass) <> -1 Then .DeleteSubKeyTree(xClass)
+                If Array.IndexOf(.GetSubKeyNames(), xClass) <> - 1 Then .DeleteSubKeyTree(xClass)
                 .CreateSubKey(xClass)
                 xReg = .OpenSubKey(xClass, True)
-                xReg.SetValue("", xDescription, Microsoft.Win32.RegistryValueKind.String)
+                xReg.SetValue("", xDescription, RegistryValueKind.String)
 
                 'Default Icon
                 xReg.CreateSubKey("DefaultIcon")
                 xReg = .OpenSubKey(xClass & "\DefaultIcon", True)
-                xReg.SetValue("", My.Application.Info.DirectoryPath & "\TypeBMS.ico", Microsoft.Win32.RegistryValueKind.String)
+                xReg.SetValue("", My.Application.Info.DirectoryPath & "\TypeBMS.ico", RegistryValueKind.String)
 
                 xReg = .OpenSubKey(xClass, True)
                 xReg.CreateSubKey("shell")
@@ -208,18 +212,20 @@ Public Class OpGeneral
                 End If
             End With
 
-            With Microsoft.Win32.Registry.CurrentUser
+            With Registry.CurrentUser
                 .CreateSubKey("Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\" & xExt)
 
                 xReg = .OpenSubKey("Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\" & xExt, True)
                 'xReg.DeleteSubKey("UserChoice")
                 xReg.CreateSubKey("UserChoice")
-                xReg = .OpenSubKey("Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\" & xExt & "\UserChoice", True)
+                xReg = .OpenSubKey("Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\" & xExt & "\UserChoice",
+                                   True)
                 xReg.SetValue("Progid", xClass)
             End With
 
         Catch ex As Exception
-            MsgBox(Strings.Messages.FileAssociationError & vbCrLf & vbCrLf & ex.Message, MsgBoxStyle.Exclamation, Strings.Messages.Err)
+            MsgBox(Strings.Messages.FileAssociationError & vbCrLf & vbCrLf & ex.Message, MsgBoxStyle.Exclamation,
+                   Strings.Messages.Err)
         End Try
 
         SHChangeNotify(&H8000000, 0, 0, 0)
@@ -356,7 +362,7 @@ Public Class OpGeneral
     '        Beep()
     '    End Sub
 
-    Private Sub cAutoSave_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cAutoSave.CheckedChanged
+    Private Sub cAutoSave_CheckedChanged(sender As Object, e As EventArgs) Handles cAutoSave.CheckedChanged
         NAutoSave.Enabled = cAutoSave.Checked
     End Sub
 End Class

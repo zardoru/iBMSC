@@ -22,7 +22,6 @@ Public Class UndoRedo
     Private Const falseByte As Byte = 0
 
 
-
     Public MustInherit Class LinkedURCmd
         Public [Next] As LinkedURCmd = Nothing
         Public MustOverride Function ofType() As Byte
@@ -31,8 +30,7 @@ Public Class UndoRedo
     End Class
 
 
-
-    Public Shared Function fromBytes(ByVal b() As Byte) As LinkedURCmd
+    Public Shared Function fromBytes(b() As Byte) As LinkedURCmd
         If b Is Nothing Then Return Nothing
         If b.Length = 0 Then Return Nothing
 
@@ -57,7 +55,8 @@ Public Class UndoRedo
     End Function
 
 
-    Public Class Void : Inherits LinkedURCmd
+    Public Class Void
+        Inherits LinkedURCmd
         '1 = 1
         Public Overrides Function toBytes() As Byte()
             toBytes = New Byte() {opVoid}
@@ -66,7 +65,7 @@ Public Class UndoRedo
         Public Sub New()
         End Sub
 
-        Public Sub New(ByVal b() As Byte)
+        Public Sub New(b() As Byte)
         End Sub
 
         Public Overrides Function ofType() As Byte
@@ -74,18 +73,18 @@ Public Class UndoRedo
         End Function
     End Class
 
-    Public MustInherit Class LinkedURNoteCmd : Inherits LinkedURCmd
+    Public MustInherit Class LinkedURNoteCmd
+        Inherits LinkedURCmd
         Public note As Note
 
         Public Sub New()
-
         End Sub
 
-        Public Sub New(ByVal b As Note)
+        Public Sub New(b As Note)
             note = b
         End Sub
 
-        Public Sub New(ByVal b() As Byte)
+        Public Sub New(b() As Byte)
             FromBinaryReader(New BinaryReader(New MemoryStream(b)))
         End Sub
 
@@ -110,12 +109,14 @@ Public Class UndoRedo
         End Function
     End Class
 
-    Public Class AddNote : Inherits LinkedURNoteCmd
+    Public Class AddNote
+        Inherits LinkedURNoteCmd
+
         Public Sub New(_note As Note)
             note = _note
         End Sub
 
-        Public Sub New(ByVal b() As Byte)
+        Public Sub New(b() As Byte)
             MyBase.New(b)
         End Sub
 
@@ -125,13 +126,14 @@ Public Class UndoRedo
     End Class
 
 
+    Public Class RemoveNote
+        Inherits LinkedURNoteCmd
 
-    Public Class RemoveNote : Inherits LinkedURNoteCmd
         Public Sub New(_note As Note)
             note = _note
         End Sub
 
-        Public Sub New(ByVal b() As Byte)
+        Public Sub New(b() As Byte)
             MyBase.New(b)
         End Sub
 
@@ -141,8 +143,8 @@ Public Class UndoRedo
     End Class
 
 
-
-    Public Class ChangeNote : Inherits LinkedURNoteCmd
+    Public Class ChangeNote
+        Inherits LinkedURNoteCmd
         Public NNote As Note
 
         Public Overrides Function toBytes() As Byte()
@@ -153,7 +155,7 @@ Public Class UndoRedo
             Return ms.GetBuffer()
         End Function
 
-        Public Sub New(ByVal b() As Byte)
+        Public Sub New(b() As Byte)
             Dim br = New BinaryReader(New MemoryStream(b))
             FromBinaryReader(br)
             NNote.FromBinReader(br)
@@ -170,8 +172,8 @@ Public Class UndoRedo
     End Class
 
 
-
-    Public Class MoveNote : Inherits LinkedURNoteCmd
+    Public Class MoveNote
+        Inherits LinkedURNoteCmd
         Public NColumnIndex As Integer = 0
         Public NVPosition As Double = 0
 
@@ -185,7 +187,7 @@ Public Class UndoRedo
             Return ms.GetBuffer()
         End Function
 
-        Public Sub New(ByVal b() As Byte)
+        Public Sub New(b() As Byte)
             Dim br As New BinaryReader(New MemoryStream(b))
             FromBinaryReader(br)
             NColumnIndex = br.ReadInt32()
@@ -204,8 +206,8 @@ Public Class UndoRedo
     End Class
 
 
-
-    Public Class LongNoteModify : Inherits LinkedURNoteCmd
+    Public Class LongNoteModify
+        Inherits LinkedURNoteCmd
         Public NVPosition As Double = 0
         Public NLongNote As Double = 0
 
@@ -219,14 +221,14 @@ Public Class UndoRedo
             Return ms.GetBuffer()
         End Function
 
-        Public Sub New(ByVal b() As Byte)
+        Public Sub New(b() As Byte)
             Dim br = New BinaryReader(New MemoryStream(b))
             FromBinaryReader(br)
             NLongNote = br.ReadDouble()
             NVPosition = br.ReadDouble()
         End Sub
 
-        Public Sub New(_note As Note, ByVal xNVPosition As Double, ByVal xNLongNote As Double)
+        Public Sub New(_note As Note, xNVPosition As Double, xNLongNote As Double)
             note = _note
             NVPosition = xNVPosition
             NLongNote = xNLongNote
@@ -238,8 +240,8 @@ Public Class UndoRedo
     End Class
 
 
-
-    Public Class HiddenNoteModify : Inherits LinkedURNoteCmd
+    Public Class HiddenNoteModify
+        Inherits LinkedURNoteCmd
         Public NHidden As Boolean = False
 
         Public Overrides Function toBytes() As Byte()
@@ -250,13 +252,13 @@ Public Class UndoRedo
             Return MS.GetBuffer()
         End Function
 
-        Public Sub New(ByVal b() As Byte)
+        Public Sub New(b() As Byte)
             Dim br = New BinaryReader(New MemoryStream(b))
             FromBinaryReader(br)
             NHidden = br.ReadBoolean()
         End Sub
 
-        Public Sub New(_note As Note, ByVal xNHidden As Boolean)
+        Public Sub New(_note As Note, xNHidden As Boolean)
             note = _note
             NHidden = xNHidden
         End Sub
@@ -267,8 +269,8 @@ Public Class UndoRedo
     End Class
 
 
-
-    Public Class RelabelNote : Inherits LinkedURNoteCmd
+    Public Class RelabelNote
+        Inherits LinkedURNoteCmd
         '1 + 25 + 4 + 1 = 31
 
         Public NValue As Long = 10000
@@ -282,13 +284,13 @@ Public Class UndoRedo
             Return ms.GetBuffer()
         End Function
 
-        Public Sub New(ByVal b() As Byte)
+        Public Sub New(b() As Byte)
             Dim br = New BinaryReader(New MemoryStream(b))
             FromBinaryReader(br)
             NValue = br.ReadInt64
         End Sub
 
-        Public Sub New(_note As Note, ByVal xNValue As Long)
+        Public Sub New(_note As Note, xNValue As Long)
             note = _note
             NValue = xNValue
         End Sub
@@ -299,14 +301,14 @@ Public Class UndoRedo
     End Class
 
 
-
-    Public Class RemoveAllNotes : Inherits LinkedURCmd
+    Public Class RemoveAllNotes
+        Inherits LinkedURCmd
         '1 = 1
         Public Overrides Function toBytes() As Byte()
             toBytes = New Byte() {opRemoveAllNotes}
         End Function
 
-        Public Sub New(ByVal b() As Byte)
+        Public Sub New(b() As Byte)
         End Sub
 
         Public Sub New()
@@ -318,8 +320,8 @@ Public Class UndoRedo
     End Class
 
 
-
-    Public Class ChangeMeasureLength : Inherits LinkedURCmd
+    Public Class ChangeMeasureLength
+        Inherits LinkedURCmd
         '1 + 8 + 4 + 4 * Indices.Length = 13 + 4 * Indices.Length
         Public Value As Double = 192
         Public Indices() As Integer = {}
@@ -330,9 +332,9 @@ Public Class UndoRedo
             Dim xToBytes() As Byte = {opChangeMeasureLength,
                                       xVal(0), xVal(1), xVal(2), xVal(3), xVal(4), xVal(5), xVal(6), xVal(7),
                                       xUbound(0), xUbound(1), xUbound(2), xUbound(3)}
-            ReDim Preserve xToBytes(12 + 4 * Indices.Length)
-            For i As Integer = 13 To UBound(xToBytes) Step 4
-                Dim xId() As Byte = BitConverter.GetBytes(Indices((i - 13) \ 4))
+            ReDim Preserve xToBytes(12 + 4*Indices.Length)
+            For i = 13 To UBound(xToBytes) Step 4
+                Dim xId() As Byte = BitConverter.GetBytes(Indices((i - 13)\4))
                 xToBytes(i + 0) = xId(0)
                 xToBytes(i + 1) = xId(1)
                 xToBytes(i + 2) = xId(2)
@@ -341,16 +343,16 @@ Public Class UndoRedo
             Return xToBytes
         End Function
 
-        Public Sub New(ByVal b() As Byte)
+        Public Sub New(b() As Byte)
             Value = BitConverter.ToDouble(b, 1)
             Dim xUbound As Integer = BitConverter.ToInt32(b, 9)
             ReDim Preserve Indices(xUbound)
-            For i As Integer = 13 To xUbound Step 4
-                Indices((i - 13) \ 4) = BitConverter.ToInt32(b, i)
+            For i = 13 To xUbound Step 4
+                Indices((i - 13)\4) = BitConverter.ToInt32(b, i)
             Next
         End Sub
 
-        Public Sub New(ByVal xValue As Double, ByVal xIndices() As Integer)
+        Public Sub New(xValue As Double, xIndices() As Integer)
             Value = xValue
             Indices = xIndices
         End Sub
@@ -361,8 +363,8 @@ Public Class UndoRedo
     End Class
 
 
-
-    Public Class ChangeTimeSelection : Inherits LinkedURCmd
+    Public Class ChangeTimeSelection
+        Inherits LinkedURCmd
         '1 + 8 + 8 + 8 + 1 = 26
         Public SelStart As Double = 0
         Public SelLength As Double = 0
@@ -380,14 +382,14 @@ Public Class UndoRedo
                                   IIf(Selected, trueByte, falseByte)}
         End Function
 
-        Public Sub New(ByVal b() As Byte)
+        Public Sub New(b() As Byte)
             SelStart = BitConverter.ToDouble(b, 1)
             SelLength = BitConverter.ToDouble(b, 9)
             SelHalf = BitConverter.ToDouble(b, 17)
             Selected = CBool(b(25))
         End Sub
 
-        Public Sub New(ByVal xSelStart As Double, ByVal xSelLength As Double, ByVal xSelHalf As Double, ByVal xSelected As Boolean)
+        Public Sub New(xSelStart As Double, xSelLength As Double, xSelHalf As Double, xSelected As Boolean)
             SelStart = xSelStart
             SelLength = xSelLength
             SelHalf = xSelHalf
@@ -400,8 +402,8 @@ Public Class UndoRedo
     End Class
 
 
-
-    Public Class NT : Inherits LinkedURCmd
+    Public Class NT
+        Inherits LinkedURCmd
         '1 + 1 + 1 = 3
         Public BecomeNT As Boolean = False
         Public AutoConvert As Boolean = False
@@ -412,12 +414,12 @@ Public Class UndoRedo
                                   IIf(AutoConvert, trueByte, falseByte)}
         End Function
 
-        Public Sub New(ByVal b() As Byte)
+        Public Sub New(b() As Byte)
             BecomeNT = CBool(b(1))
             AutoConvert = CBool(b(2))
         End Sub
 
-        Public Sub New(ByVal xBecomeNT As Boolean, ByVal xAutoConvert As Boolean)
+        Public Sub New(xBecomeNT As Boolean, xAutoConvert As Boolean)
             BecomeNT = xBecomeNT
             AutoConvert = xAutoConvert
         End Sub
@@ -427,31 +429,31 @@ Public Class UndoRedo
         End Function
     End Class
 
-    Public Class WavAutoincFlag : Inherits LinkedURCmd
+    Public Class WavAutoincFlag
+        Inherits LinkedURCmd
         Public Checked As Boolean = False
 
-        Public Sub New(ByVal _checked As Boolean)
+        Public Sub New(_checked As Boolean)
             Checked = _checked
         End Sub
+
         Public Overrides Function toBytes() As Byte()
             toBytes = New Byte() {opWavAutoincFlag,
                                   IIf(Checked, trueByte, falseByte)}
         End Function
 
-        Public Sub New(ByVal b() As Byte)
+        Public Sub New(b() As Byte)
             Checked = CBool(b(1))
         End Sub
 
         Public Overrides Function ofType() As Byte
             Return opWavAutoincFlag
         End Function
-
     End Class
 
 
-
-
-    Public Class NoOperation : Inherits LinkedURCmd
+    Public Class NoOperation
+        Inherits LinkedURCmd
         '1 = 1
         Public Overrides Function toBytes() As Byte()
             toBytes = New Byte() {opNoOperation}
@@ -460,7 +462,7 @@ Public Class UndoRedo
         Public Sub New()
         End Sub
 
-        Public Sub New(ByVal b() As Byte)
+        Public Sub New(b() As Byte)
         End Sub
 
         Public Overrides Function ofType() As Byte

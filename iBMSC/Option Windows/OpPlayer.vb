@@ -1,9 +1,9 @@
 Public Class OpPlayer
     Dim pArg() As PlayerArguments
     'Dim ImplicitChange As Boolean = False
-    Dim CurrPlayer As Integer = -1
+    Dim CurrPlayer As Integer = - 1
 
-    Private Sub OK_Button_Click(ByVal sender As System.Object, ByVal e As EventArgs) Handles OK_Button.Click
+    Private Sub OK_Button_Click(sender As Object, e As EventArgs) Handles OK_Button.Click
         DialogResult = DialogResult.OK
         Close()
 
@@ -13,13 +13,13 @@ Public Class OpPlayer
         Dispose()
     End Sub
 
-    Private Sub Cancel_Button_Click(ByVal sender As System.Object, ByVal e As EventArgs) Handles Cancel_Button.Click
+    Private Sub Cancel_Button_Click(sender As Object, e As EventArgs) Handles Cancel_Button.Click
         DialogResult = DialogResult.Cancel
         Close()
         Dispose()
     End Sub
 
-    Private Sub OpPlayer_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
+    Private Sub OpPlayer_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Me.Font = MainWindow.Font
 
         Me.Text = Strings.fopPlayer.Title
@@ -38,30 +38,30 @@ Public Class OpPlayer
         BDefault.Text = Strings.fopPlayer.RestoreDefault
     End Sub
 
-    Private Sub LPlayer_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles LPlayer.Click
+    Private Sub LPlayer_Click(sender As Object, e As EventArgs) Handles LPlayer.Click
         If pArg Is Nothing OrElse pArg.Length = 0 Then Exit Sub
 
         CurrPlayer = LPlayer.SelectedIndex
         ShowInTextbox()
     End Sub
 
-    Private Sub LPlayer_KeyDown(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyEventArgs) Handles LPlayer.KeyDown
+    Private Sub LPlayer_KeyDown(sender As Object, e As KeyEventArgs) Handles LPlayer.KeyDown
         LPlayer_Click(sender, New EventArgs)
     End Sub
 
-    Private Sub BPrevAdd_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles BAdd.Click
+    Private Sub BPrevAdd_Click(sender As Object, e As EventArgs) Handles BAdd.Click
         ReDim Preserve pArg(UBound(pArg) + 1)
         CurrPlayer += 1
-        For i As Integer = UBound(pArg) To CurrPlayer Step -1
+        For i As Integer = UBound(pArg) To CurrPlayer Step - 1
             pArg(i) = pArg(i - 1)
         Next
 
         LPlayer.Items.Insert(CurrPlayer,
-            GetFileName(pArg(CurrPlayer - 1).Path))
+                             GetFileName(pArg(CurrPlayer - 1).Path))
         LPlayer.SelectedIndex += 1
     End Sub
 
-    Private Sub BPrevDelete_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles BRemove.Click
+    Private Sub BPrevDelete_Click(sender As Object, e As EventArgs) Handles BRemove.Click
         If LPlayer.Items.Count = 1 Then
             MsgBox(Strings.Messages.PreviewDelError, MsgBoxStyle.Exclamation)
             Exit Sub
@@ -81,29 +81,31 @@ Public Class OpPlayer
         ShowInTextbox()
     End Sub
 
-    Private Sub BPrevBrowse_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles BBrowse.Click
+    Private Sub BPrevBrowse_Click(sender As Object, e As EventArgs) Handles BBrowse.Click
         Dim xDOpen As New OpenFileDialog
-        xDOpen.InitialDirectory = IIf(Path.GetDirectoryName(Replace(TPath.Text, "<apppath>", My.Application.Info.DirectoryPath)) = "",
-                                      My.Application.Info.DirectoryPath,
-                                      Path.GetDirectoryName(Replace(TPath.Text, "<apppath>", My.Application.Info.DirectoryPath)))
+        xDOpen.InitialDirectory =
+            IIf(Path.GetDirectoryName(Replace(TPath.Text, "<apppath>", My.Application.Info.DirectoryPath)) = "",
+                My.Application.Info.DirectoryPath,
+                Path.GetDirectoryName(Replace(TPath.Text, "<apppath>", My.Application.Info.DirectoryPath)))
         xDOpen.Filter = Strings.FileType.EXE & "|*.exe"
         xDOpen.DefaultExt = "exe"
-        If xDOpen.ShowDialog = Windows.Forms.DialogResult.Cancel Then Exit Sub
+        If xDOpen.ShowDialog = DialogResult.Cancel Then Exit Sub
         TPath.Text = Replace(xDOpen.FileName, My.Application.Info.DirectoryPath, "<apppath>")
     End Sub
 
-    Private Sub BPrevDefault_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles BDefault.Click
+    Private Sub BPrevDefault_Click(sender As Object, e As EventArgs) Handles BDefault.Click
         'ImplicitChange = True
-        If MsgBox(Strings.Messages.RestoreDefaultSettings, MsgBoxStyle.Question + MsgBoxStyle.YesNo) = MsgBoxResult.No Then Exit Sub
+        If MsgBox(Strings.Messages.RestoreDefaultSettings, MsgBoxStyle.Question + MsgBoxStyle.YesNo) = MsgBoxResult.No _
+            Then Exit Sub
 
         pArg = New PlayerArguments() {New PlayerArguments("<apppath>\uBMplay.exe",
-                                                            "-P -N0 ""<filename>""",
-                                                            "-P -N<measure> ""<filename>""",
-                                                            "-S"),
+                                                          "-P -N0 ""<filename>""",
+                                                          "-P -N<measure> ""<filename>""",
+                                                          "-S"),
                                       New PlayerArguments("<apppath>\o2play.exe",
-                                                            "-P -N0 ""<filename>""",
-                                                            "-P -N<measure> ""<filename>""",
-                                                            "-S")}
+                                                          "-P -N0 ""<filename>""",
+                                                          "-P -N<measure> ""<filename>""",
+                                                          "-S")}
         CurrPlayer = 0
         ResetLPlayer_ShowInTextbox()
         'ImplicitChange = False
@@ -112,7 +114,7 @@ Public Class OpPlayer
     'Affect LPlayer and all textboxes
     Private Sub ResetLPlayer_ShowInTextbox()
         LPlayer.Items.Clear()
-        For i As Integer = 0 To UBound(pArg)
+        For i = 0 To UBound(pArg)
             LPlayer.Items.Add(GetFileName(pArg(i).Path))
         Next
         'RemoveHandler LPlayer.SelectedIndexChanged, AddressOf LPlayer_SelectedIndexChanged
@@ -123,7 +125,7 @@ Public Class OpPlayer
     End Sub
 
     'affect current LPlayer index value
-    Private Sub LPlayerChangeCurrIndex(ByVal xStr As String)
+    Private Sub LPlayerChangeCurrIndex(xStr As String)
         'RemoveHandler LPlayer.SelectedIndexChanged, AddressOf LPlayer_SelectedIndexChanged
         LPlayer.Items.Item(CurrPlayer) = GetFileName(xStr)
         'AddHandler LPlayer.SelectedIndexChanged, AddressOf LPlayer_SelectedIndexChanged
@@ -156,11 +158,12 @@ Public Class OpPlayer
 
     Private Sub ValidateTextBox()
         For Each xT As TextBox In New TextBox() {TPath, TPlayB, TPlay, TStop}
-            Dim xText As String = xT.Text.Replace("<apppath>", "").Replace("<measure>", "").Replace("<filename>", "").Replace("""", "")
-            Dim xContainsInvalidChar As Boolean = False
+            Dim xText As String =
+                    xT.Text.Replace("<apppath>", "").Replace("<measure>", "").Replace("<filename>", "").Replace("""", "")
+            Dim xContainsInvalidChar = False
 
             For Each xC As Char In Path.GetInvalidPathChars
-                If xText.IndexOf(xC) <> -1 Then
+                If xText.IndexOf(xC) <> - 1 Then
                     xContainsInvalidChar = True
                     Exit For
                 End If
@@ -174,7 +177,7 @@ Public Class OpPlayer
         Next
     End Sub
 
-    Public Sub New(ByVal xCurrPlayer As Integer)
+    Public Sub New(xCurrPlayer As Integer)
         InitializeComponent()
 
         pArg = MainWindow.pArgs.Clone
@@ -182,16 +185,18 @@ Public Class OpPlayer
         ResetLPlayer_ShowInTextbox()
     End Sub
 
-    Private Sub TPath_KeyDown(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyEventArgs) Handles TPath.KeyUp, TPlay.KeyUp, TPlayB.KeyUp, TStop.KeyUp
+    Private Sub TPath_KeyDown(sender As Object, e As KeyEventArgs) _
+        Handles TPath.KeyUp, TPlay.KeyUp, TPlayB.KeyUp, TStop.KeyUp
         SavePArg()
-        If [Object].ReferenceEquals(sender, TPath) Then _
-           LPlayerChangeCurrIndex(pArg(CurrPlayer).Path)
+        If ReferenceEquals(sender, TPath) Then _
+            LPlayerChangeCurrIndex(pArg(CurrPlayer).Path)
     End Sub
 
-    Private Sub TPath_LostFocus(ByVal sender As Object, ByVal e As System.EventArgs) Handles TPath.LostFocus, TPlay.LostFocus, TPlayB.LostFocus, TStop.LostFocus
+    Private Sub TPath_LostFocus(sender As Object, e As EventArgs) _
+        Handles TPath.LostFocus, TPlay.LostFocus, TPlayB.LostFocus, TStop.LostFocus
         SavePArg()
-        If [Object].ReferenceEquals(sender, TPath) Then _
-           LPlayerChangeCurrIndex(pArg(CurrPlayer).Path)
+        If ReferenceEquals(sender, TPath) Then _
+            LPlayerChangeCurrIndex(pArg(CurrPlayer).Path)
         ValidateTextBox()
     End Sub
 
@@ -199,7 +204,7 @@ Public Class OpPlayer
     '    Return Mid(pArg(I), 1, InStr(pArg(I), vbCrLf) - 1)
     'End Function
 
-    Private Function GetFileName(ByVal s As String) As String
+    Private Function GetFileName(s As String) As String
         Dim fslash As Integer = InStrRev(s, "/")
         Dim bslash As Integer = InStrRev(s, "\")
         Return Mid(s, IIf(fslash > bslash, fslash, bslash) + 1)

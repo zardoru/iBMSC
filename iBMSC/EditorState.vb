@@ -18,19 +18,21 @@ Public Class TimeSelectState
     Public PStart As Double = 192.0# ' az TODO: what's the difference? What's the P for?
     Public PLength As Double = 0.0#
     Public PHalf As Double = 0.0#
+
     Public Property EndPoint As Double
         Get
             Return StartPoint + EndPointLength
         End Get
-        Set(value As Double)
+        Set
             EndPointLength = value - StartPoint
         End Set
     End Property
+
     Public Property HalfPoint As Double
         Get
             Return StartPoint + HalfPointLength
         End Get
-        Set(value As Double)
+        Set
             HalfPointLength = value - StartPoint
         End Set
     End Property
@@ -45,7 +47,7 @@ Public Class TimeSelectState
         End If
 
         If StartPoint + EndPointLength < 0 Then
-            EndPointLength = -StartPoint
+            EndPointLength = - StartPoint
         End If
 
         If StartPoint + EndPointLength > maxvpos - 1 Then
@@ -58,11 +60,13 @@ Public Class TimeSelectState
 End Class
 
 Public Class MouseState
-    Public CurrentMouseColumn As Integer = -1
-    Public CurrentMouseRow As Double = -1.0#
-    Public LastMouseDownLocation As PointF = New Point(-1, -1)  'Mouse is clicked on which point (location for display) (for selection box)
-    Public pMouseMove As PointF = New Point(-1, -1)             'Mouse is moved to which point   (location for display) (for selection box)
-    Public CurrentHoveredNoteIndex As Integer = -1              'Mouse is on which note (for drawing green outline)
+    Public CurrentMouseColumn As Integer = - 1
+    Public CurrentMouseRow As Double = - 1.0#
+    Public LastMouseDownLocation As PointF = New Point(- 1, - 1) _
+    'Mouse is clicked on which point (location for display) (for selection box)
+    Public pMouseMove As PointF = New Point(- 1, - 1) _
+    'Mouse is moved to which point   (location for display) (for selection box)
+    Public CurrentHoveredNoteIndex As Integer = - 1              'Mouse is on which note (for drawing green outline)
     Public MiddleButtonLocation As New Point(0, 0)
     Public MiddleButtonClicked As Boolean = False
     Public MouseMoveStatus As Point = New Point(0, 0)  'mouse is moved to which point (For Status Panel)
