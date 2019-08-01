@@ -158,7 +158,9 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="EditorColumns.vb" />
-    <Compile Include="EditorFindAndReplace.vb" />
+    <Compile Include="EditorFindAndReplace.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="EditorPanel.vb">
       <SubType>Component</SubType>
     </Compile>

@@ -148,7 +148,7 @@ Public Class EditorPanel
         'Vertical line
         If _editor.Grid.ShowVerticalLines Then
             For i = 0 To _editor.Columns.ColumnCount
-                Dim xpos = (_editor.Columns.GetColumnLeft(i) - HorizontalScroll)*_editor.Grid.WidthScale
+                Dim xpos = (_editor.Columns.GetColumnLeft(i) - HorizontalScroll) * _editor.Grid.WidthScale
                 If xpos + 1 < 0 Then Continue For
                 If xpos + 1 > Size.Width Then Exit For
                 If _editor.Columns.GetWidth(i) > 0 Then
@@ -160,7 +160,7 @@ Public Class EditorPanel
         End If
 
         'Grid, Sub, Measure
-        For Measure = _editor.MeasureAtDisplacement(- VerticalScroll) To _editor.MeasureAtDisplacement(xVSu)
+        For Measure = _editor.MeasureAtDisplacement(-VerticalScroll) To _editor.MeasureAtDisplacement(xVSu)
             'grid
             If _editor.Grid.ShowMainGrid Then
                 DrawGridLines(Measure, _editor.Grid.Divider, _theme.pGrid)
@@ -183,7 +183,7 @@ Public Class EditorPanel
             If _editor.Grid.ShowMeasureNumber Then
                 Dim brush = New SolidBrush(_editor.Columns.GetColumn(0).cText)
                 _buffer.DrawString("[" & Add3Zeros(Measure).ToString & "]",
-                                  _theme.kMFont, brush, - HorizontalScroll*_editor.Grid.WidthScale,
+                                  _theme.kMFont, brush, -HorizontalScroll * _editor.Grid.WidthScale,
                                   pHeight - _theme.kMFont.Height)
             End If
         Next
@@ -192,7 +192,7 @@ Public Class EditorPanel
         Dim mouseLineHeight = VPositionToPanelY(vpos)
         Dim p = New Pen(Color.White)
         _buffer.DrawLine(p, 0, mouseLineHeight, Size.Width, mouseLineHeight)
-    End Function
+    End Sub
 
     Private Sub DrawColumnCaptions()
         Dim columns = _editor.Columns
@@ -310,10 +310,10 @@ Public Class EditorPanel
     ''' <param name="sNote">Note to be drawn.</param>
 
         Private Sub DrawNote(sNote As Note)
-        Dim xAlpha = 1.0F
-        If sNote.Hidden Then xAlpha = _theme.kOpacity
+        Dim alpha = 1.0F
+        If sNote.Hidden Then alpha = _theme.kOpacity
 
-        Dim xLabel As String = C10to36(sNote.Value\10000)
+        Dim xLabel As String = C10to36(sNote.Value \ 10000)
         If _editor.ShowFileName Then
             If _editor.Columns.IsColumnSound(sNote.ColumnIndex) Then
                 If _editor.BmsWAV(C36to10(xLabel)) <> "" Then
@@ -335,9 +335,9 @@ Public Class EditorPanel
 
         Dim grid = _editor.Grid
         Dim columns = _editor.Columns
-        Dim colX = Columns.GetColumnLeft(sNote.ColumnIndex)
-        Dim colWidth = Columns.GetWidth(sNote.ColumnIndex)
-        Dim column = Columns.GetColumn(sNote.ColumnIndex)
+        Dim colX = columns.GetColumnLeft(sNote.ColumnIndex)
+        Dim colWidth = columns.GetWidth(sNote.ColumnIndex)
+        Dim column = columns.GetColumn(sNote.ColumnIndex)
         Dim startX = HPositionToPanelX(colX)
         Dim startY = VPositionToPanelY(sNote.VPosition) - _theme.NoteHeight
 
@@ -350,10 +350,10 @@ Public Class EditorPanel
                            endY + 10)
 
         If Not sNote.LongNote Then
-            xPen = New Pen(column.getBright(xAlpha))
+            xPen = New Pen(column.GetBright(alpha))
 
-            bright = column.getBright(xAlpha)
-            dark = column.getDark(xAlpha)
+            bright = column.GetBright(alpha)
+            dark = column.GetDark(alpha)
 
             If sNote.Landmine Then
                 bright = Color.Red
@@ -362,8 +362,8 @@ Public Class EditorPanel
 
             xBrush2 = New SolidBrush(column.cText)
         Else
-            bright = column.getLongBright(xAlpha)
-            dark = column.getLongDark(xAlpha)
+            bright = column.GetLongBright(alpha)
+            dark = column.GetLongDark(alpha)
 
             xBrush2 = New SolidBrush(column.cLText)
         End If
@@ -371,7 +371,7 @@ Public Class EditorPanel
         xPen = New Pen(bright)
         xBrush = New LinearGradientBrush(p1, p2, bright, dark)
 
-        Dim colDrawWidth = colWidth*_editor.Grid.WidthScale
+        Dim colDrawWidth = colWidth * _editor.Grid.WidthScale
 
         ' Fill
         _buffer.FillRectangle(xBrush,
@@ -387,7 +387,7 @@ Public Class EditorPanel
                              _theme.NoteHeight)
 
         ' Label
-        Dim label = IIf(Columns.IsColumnNumeric(sNote.ColumnIndex), sNote.Value/10000, xLabel)
+        Dim label = IIf(columns.IsColumnNumeric(sNote.ColumnIndex), sNote.Value / 10000, xLabel)
         _buffer.DrawString(label,
                           _theme.kFont, xBrush2,
                           startX + _theme.kLabelHShift,
@@ -395,14 +395,14 @@ Public Class EditorPanel
 
         If sNote.ColumnIndex < ColumnType.BGM Then
             If sNote.LNPair <> 0 Then
-                DrawPairedLNBody(sNote, xAlpha)
+                DrawPairedLnBody(sNote, alpha)
             End If
         End If
 
 
         If _editor.ErrorCheck AndAlso sNote.HasError Then
-            Dim ex = HPositionToPanelX(colX + colWidth/2)
-            Dim ey = VPositionToPanelY(sNote.VPosition) - _theme.NoteHeight/2
+            Dim ex = HPositionToPanelX(colX + colWidth / 2)
+            Dim ey = VPositionToPanelY(sNote.VPosition) - _theme.NoteHeight / 2
             _buffer.DrawImage(My.Resources.ImageError,
                              CInt(ex - 12),
                              CInt(ey - 12),
@@ -420,24 +420,23 @@ Public Class EditorPanel
     Private Sub DrawPairedLnBody(sNote As Note, xAlpha As Single)
         Dim column = _editor.Columns.GetColumn(sNote.ColumnIndex)
 
-        Dim xPen2 As New Pen(column.getLongBright(xAlpha))
+        Dim xPen2 As New Pen(column.GetLongBright(xAlpha))
 
         Dim colX = _editor.Columns.GetColumnLeft(sNote.ColumnIndex)
         Dim colWidth = _editor.Columns.GetWidth(sNote.ColumnIndex)
 
         Dim xBrush3 As New LinearGradientBrush(
-            New Point(HPositionToPanelX(colX - 0.5*colWidth),
+            New Point(HPositionToPanelX(colX - 0.5 * colWidth),
                       VPositionToPanelY(_editor.Notes(sNote.LNPair).VPosition)),
-            New Point(HPositionToPanelX(colX + 1.5*colWidth),
+            New Point(HPositionToPanelX(colX + 1.5 * colWidth),
                       VPositionToPanelY(sNote.VPosition) + _theme.NoteHeight),
-            column.getLongBright(xAlpha),
-            column.getLongDark(xAlpha))
+            column.GetLongBright(xAlpha),
+            column.GetLongDark(xAlpha))
 
         ' assume ln pair column = our column
-        Dim x1 = HPositionToPanelX(colX) _
-        ' HorizontalPositiontoDisplay(Editor.Columns.GetColumnLeft(Editor.Notes(sNote.LNPair).ColumnIndex))
+        Dim x1 = HPositionToPanelX(colX)
         Dim y1 = VPositionToPanelY(_editor.Notes(sNote.LNPair).VPosition)
-        Dim colDrawWidth = colWidth*_editor.Grid.WidthScale ' GetColumnWidth(Notes(sNote.LNPair).ColumnIndex) * GxWidth1
+        Dim colDrawWidth = colWidth * _editor.Grid.WidthScale ' GetColumnWidth(Notes(sNote.LNPair).ColumnIndex) * GxWidth1
         Dim bodyHeight = VPositionToPanelY(sNote.VPosition) - VPositionToPanelY(_editor.Notes(sNote.LNPair).VPosition)
         _buffer.FillRectangle(xBrush3,
                              x1 + 3,
@@ -462,9 +461,9 @@ Public Class EditorPanel
 
         Dim columns = _editor.Columns
         Dim column = _editor.Columns.GetColumn(sNote.ColumnIndex)
-        Dim xLabel As String = C10to36(sNote.Value\10000)
+        Dim xLabel As String = C10to36(sNote.Value \ 10000)
         If _editor.ShowFileName Then
-            If Columns.IsColumnSound(sNote.ColumnIndex) Then
+            If columns.IsColumnSound(sNote.ColumnIndex) Then
                 If _editor.BmsWAV(C36to10(xLabel)) <> "" Then
                     xLabel = Path.GetFileNameWithoutExtension(_editor.BmsWAV(C36to10(xLabel)))
                 End If
@@ -484,8 +483,8 @@ Public Class EditorPanel
         Dim bright As Color
         Dim dark As Color
 
-        Dim colX = Columns.GetColumnLeft(sNote.ColumnIndex)
-        Dim colWidth = Columns.GetWidth(sNote.ColumnIndex)
+        Dim colX = columns.GetColumnLeft(sNote.ColumnIndex)
+        Dim colWidth = columns.GetWidth(sNote.ColumnIndex)
         Dim startX = HPositionToPanelX(colX)
         Dim endX = HPositionToPanelX(colX + colWidth)
         Dim startY = VPositionToPanelY(sNote.VPosition)
@@ -498,8 +497,8 @@ Public Class EditorPanel
             p2 = New Point(endX,
                            startY + 10)
 
-            bright = column.getBright(alpha)
-            dark = column.getDark(alpha)
+            bright = column.GetBright(alpha)
+            dark = column.GetDark(alpha)
 
             If sNote.Landmine Then
                 bright = Color.Red
@@ -508,13 +507,13 @@ Public Class EditorPanel
 
             xBrush2 = New SolidBrush(column.cText)
         Else
-            p1 = New Point(HPositionToPanelX(colX - 0.5*colWidth),
+            p1 = New Point(HPositionToPanelX(colX - 0.5 * colWidth),
                            endY - _theme.NoteHeight)
-            p2 = New Point(HPositionToPanelX(colX + 1.5*colWidth),
+            p2 = New Point(HPositionToPanelX(colX + 1.5 * colWidth),
                            startY)
 
-            bright = column.getLongBright(alpha)
-            dark = column.getLongDark(alpha)
+            bright = column.GetLongBright(alpha)
+            dark = column.GetLongDark(alpha)
 
             xBrush2 = New SolidBrush(column.cLText)
         End If
@@ -522,23 +521,23 @@ Public Class EditorPanel
         xPen1 = New Pen(bright)
         xBrush = New LinearGradientBrush(p1, p2, bright, dark)
 
-        Dim colDrawWidth = Columns.GetWidth(sNote.ColumnIndex)*_editor.Grid.WidthScale
+        Dim colDrawWidth = columns.GetWidth(sNote.ColumnIndex) * _editor.Grid.WidthScale
         ' Note gradient
         _buffer.FillRectangle(xBrush,
                              startX + 1,
                              endY - _theme.NoteHeight + 1,
                              colDrawWidth - 1,
-                             CInt(sNote.Length*_editor.Grid.HeightScale) + _theme.NoteHeight - 1)
+                             CInt(sNote.Length * _editor.Grid.HeightScale) + _theme.NoteHeight - 1)
 
         ' Outline
         _buffer.DrawRectangle(xPen1,
                              startX + 1,
                              endY - _theme.NoteHeight,
                              colDrawWidth - 3,
-                             CInt(sNote.Length*_editor.Grid.HeightScale) + _theme.NoteHeight)
+                             CInt(sNote.Length * _editor.Grid.HeightScale) + _theme.NoteHeight)
 
         ' Note B36
-        Dim label = IIf(Columns.IsColumnNumeric(sNote.ColumnIndex), sNote.Value/10000, xLabel)
+        Dim label = IIf(columns.IsColumnNumeric(sNote.ColumnIndex), sNote.Value / 10000, xLabel)
         _buffer.DrawString(label,
                           _theme.kFont, xBrush2,
                           startX + _theme.kLabelHShiftL - 2,
@@ -547,7 +546,7 @@ Public Class EditorPanel
         ' Draw paired body
         If sNote.ColumnIndex < ColumnType.BGM Then
             If sNote.Length = 0 And sNote.LNPair <> 0 Then
-                DrawPairedLNBody(sNote, alpha)
+                DrawPairedLnBody(sNote, alpha)
             End If
         End If
 
@@ -557,14 +556,14 @@ Public Class EditorPanel
             _buffer.DrawRectangle(_theme.kSelected,
                                  startX,
                                  endY - _theme.NoteHeight - 1,
-                                 colWidth*_editor.Grid.WidthScale,
-                                 CInt(sNote.Length*_editor.Grid.HeightScale) + _theme.NoteHeight + 2)
+                                 colWidth * _editor.Grid.WidthScale,
+                                 CInt(sNote.Length * _editor.Grid.HeightScale) + _theme.NoteHeight + 2)
         End If
 
         ' Errors
         If _editor.ErrorCheck AndAlso sNote.HasError Then
-            Dim sx = HPositionToPanelX(colX + colWidth/2)
-            Dim sy = CInt(VPositionToPanelY(sNote.VPosition) - _theme.NoteHeight/2)
+            Dim sx = HPositionToPanelX(colX + colWidth / 2)
+            Dim sy = CInt(VPositionToPanelY(sNote.VPosition) - _theme.NoteHeight / 2)
             _buffer.DrawImage(My.Resources.ImageError,
                              sx - 12,
                              sy - 12,
@@ -577,24 +576,24 @@ Public Class EditorPanel
 
         Dim noteY As Integer =
                 IIf(
-                    Not _editor.NTInput Or
+                    Not _editor.NtInput Or
                     (_editor.State.NT.IsAdjustingNoteLength And Not _editor.State.NT.IsAdjustingUpperEnd),
                     VPositionToPanelY(note.VPosition) - _theme.NoteHeight - 1,
                     VPositionToPanelY(note.VPosition + note.Length) - _theme.NoteHeight - 1)
 
-        Dim colWidth As Integer = _editor.Columns.GetWidth(note.ColumnIndex)*_editor.Grid.WidthScale + 1
-        Dim noteHeight As Integer = IIf(Not _editor.NTInput Or _editor.State.NT.IsAdjustingNoteLength,
+        Dim colWidth As Integer = _editor.Columns.GetWidth(note.ColumnIndex) * _editor.Grid.WidthScale + 1
+        Dim noteHeight As Integer = IIf(Not _editor.NtInput Or _editor.State.NT.IsAdjustingNoteLength,
                                     _theme.NoteHeight + 3,
-                                    note.Length*_editor.Grid.WidthScale + _theme.NoteHeight + 3)
+                                    note.Length * _editor.Grid.WidthScale + _theme.NoteHeight + 3)
 
         Return New Rectangle(colLeft, noteY, colWidth, noteHeight)
     End Function
 
 
     Private Sub DrawMouseOver()
-        If _editor.NTInput Then
+        If _editor.NtInput Then
             If Not _editor.State.NT.IsAdjustingNoteLength Then
-                DrawNoteNT(_editor.CurrentMouseoverNote)
+                DrawNoteNt(_editor.CurrentMouseoverNote)
             End If
         Else
             DrawNote(_editor.CurrentMouseoverNote)
@@ -616,7 +615,7 @@ Public Class EditorPanel
     End Sub
 
     Private Sub DrawTempNote()
-        Dim xValue As Integer = (_editor.LWAV.SelectedIndex + 1)*10000
+        Dim xValue As Integer = (_editor.LWAV.SelectedIndex + 1) * 10000
 
         Dim alpha = 1.0F
         If ModifierHiddenActive() Then
@@ -624,7 +623,7 @@ Public Class EditorPanel
         End If
 
         Dim column = _editor.Columns.GetColumn(_editor.State.Mouse.CurrentMouseColumn)
-        Dim xText As String = C10to36(xValue\10000)
+        Dim xText As String = C10to36(xValue \ 10000)
         If _editor.Columns.IsColumnNumeric(_editor.State.Mouse.CurrentMouseColumn) Then
             xText = column.Title
         End If
@@ -647,16 +646,16 @@ Public Class EditorPanel
 
         Dim bright As Color
         Dim dark As Color
-        If _editor.NTInput Or Not ModifierLongNoteActive() Then
-            xPen = New Pen(column.getBright(alpha))
-            bright = column.getBright(alpha)
-            dark = column.getDark(alpha)
+        If _editor.NtInput Or Not ModifierLongNoteActive() Then
+            xPen = New Pen(column.GetBright(alpha))
+            bright = column.GetBright(alpha)
+            dark = column.GetDark(alpha)
 
             xBrush2 = New SolidBrush(column.cText)
         Else
-            xPen = New Pen(column.getLongBright(alpha))
-            bright = column.getLongBright(alpha)
-            dark = column.getLongDark(alpha)
+            xPen = New Pen(column.GetLongBright(alpha))
+            bright = column.GetLongBright(alpha)
+            dark = column.GetLongDark(alpha)
 
             xBrush2 = New SolidBrush(column.cLText)
         End If

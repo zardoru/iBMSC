@@ -72,19 +72,19 @@
         Private cCacheLB As Integer
         Private cCacheLD As Integer
 
-        Public Function getBright(opacity As Single) As Color
+        Public Function GetBright(opacity As Single) As Color
             Return Color.FromArgb((CInt(((cCacheB >> 24) And &HFF)*opacity) << 24) Or (cCacheB And &HFFFFFF))
         End Function
 
-        Public Function getDark(opacity As Single) As Color
+        Public Function GetDark(opacity As Single) As Color
             Return Color.FromArgb((CInt(((cCacheD >> 24) And &HFF)*opacity) << 24) Or (cCacheD And &HFFFFFF))
         End Function
 
-        Public Function getLongBright(opacity As Single) As Color
+        Public Function GetLongBright(opacity As Single) As Color
             Return Color.FromArgb((CInt(((cCacheLB >> 24) And &HFF)*opacity) << 24) Or (cCacheLB And &HFFFFFF))
         End Function
 
-        Public Function getLongDark(opacity As Single) As Color
+        Public Function GetLongDark(opacity As Single) As Color
             Return Color.FromArgb((CInt(((cCacheLD >> 24) And &HFF)*opacity) << 24) Or (cCacheLD And &HFFFFFF))
         End Function
 
