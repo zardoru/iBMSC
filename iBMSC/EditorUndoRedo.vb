@@ -143,15 +143,22 @@ Module Command
 
     Public Sub RedoMoveNote(note As Note, nCol As Integer, nVPos As Double, ByRef BaseUndo As UndoRedo.LinkedURCmd,
                             ByRef BaseRedo As UndoRedo.LinkedURCmd)
+        Debug.Indent()
         Dim noteAfterModification = note.Clone
         noteAfterModification.ColumnIndex = nCol
         noteAfterModification.VPosition = nVPos
+
+        Debug.WriteLine(String.Format("UR: move Col/VPos ({0} $ {1}) to ({2} $ {3})",
+                                      note.ColumnIndex, note.VPosition,
+                                      nCol, nVPos))
+
         Dim xUndo As New UndoRedo.MoveNote(noteAfterModification, note.ColumnIndex, note.VPosition)
         Dim xRedo As New UndoRedo.MoveNote(note, nCol, nVPos)
         xUndo.Next = BaseUndo
         BaseUndo = xUndo
         If BaseRedo IsNot Nothing Then BaseRedo.Next = xRedo
         BaseRedo = xRedo
+        Debug.Unindent()
     End Sub
 
 

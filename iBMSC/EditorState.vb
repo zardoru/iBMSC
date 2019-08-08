@@ -88,5 +88,5 @@ Public Class EditorState
     Public TimeSelect As TimeSelectState = New TimeSelectState
     Public IsDuplicatingSelectedNotes As Boolean = False 'Indicates if the CTRL key is pressed while mousedown
     Public SelectedNotesWereDuplicated As Boolean = False     'Indicates if duplicate notes of select/unselect note
-    Public uAdded As Boolean       'temp variables for undo, if undo command is added
+    Public OverwriteLastUndoRedoCommand As Boolean       'temp variables for undo, if undo command is added
 End Class

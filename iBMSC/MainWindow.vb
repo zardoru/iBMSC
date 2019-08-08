@@ -1325,7 +1325,7 @@ EndSearch:
                                           State.Mouse.MouseMoveStatus.X,
                                           State.Mouse.MouseMoveStatus.Y,
                                           0)
-        FocusedPanel.PMainInMouseMove(Me, xMeArgs)
+        FocusedPanel.MouseMoveEvent(Me, xMeArgs)
     End Sub
 
     Private Sub ValidateWavListView()
@@ -1949,7 +1949,7 @@ StartCount:     If Not NtInput Then
             IncreaseCurrentWav()
         End If
 
-        State.uAdded = False
+        State.OverwriteLastUndoRedoCommand = False
 
         Dim xUndo As UndoRedo.LinkedURCmd = Nothing
         Dim xRedo As UndoRedo.LinkedURCmd = Nothing

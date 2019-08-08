@@ -428,7 +428,7 @@ Partial Public Class EditorPanel
                 _editor.State.NT.IsAdjustingSingleNote = selectedCount = 1
                 ' Editor.RegenerateSelectedNotesArray()
 
-                _editor.State.uAdded = False
+                _editor.State.OverwriteLastUndoRedoCommand = False
             End If
         Else ' NoteIndex <= 0
             _editor.ClearSelectionArray()
@@ -502,12 +502,12 @@ Partial Public Class EditorPanel
     End Function
 
 
-    Public Sub OnMouseMove(sender As Panel)
+    Public Sub _MouseMoveEvent(sender As Panel)
         Dim p As Point = sender.PointToClient(Cursor.Position)
-        PMainInMouseMove(sender, New MouseEventArgs(MouseButtons.None, 0, p.X, p.Y, 0))
+        MouseMoveEvent(sender, New MouseEventArgs(MouseButtons.None, 0, p.X, p.Y, 0))
     End Sub
 
-    Public Sub PMainInMouseMove(sender As Object, e As MouseEventArgs) Handles Me.MouseMove
+    Public Sub MouseMoveEvent(sender As Object, e As MouseEventArgs) Handles Me.MouseMove
         _editor.State.Mouse.MouseMoveStatus = e.Location
 
         Dim notes = _editor.Notes
@@ -598,10 +598,10 @@ Partial Public Class EditorPanel
         If vps <> _lastVPos Or col <> _lastColumn Then
             _lastVPos = vps
             _lastColumn = col
-            _editor.PoStatusRefresh()
             _editor.RefreshPanelAll() 'az: refreshing the line is important now...
         End If
 
+        _editor.PoStatusRefresh()
         Refresh()
     End Sub
 
@@ -854,8 +854,8 @@ Partial Public Class EditorPanel
 
         'Add undo
         If dVPosition - minLength - maxHeight <> 0 Then
-            _editor.AddUndoChain(xUndo, xBaseRedo.Next, _editor.State.uAdded)
-            If Not _editor.State.uAdded Then _editor.State.uAdded = True
+            _editor.AddUndoChain(xUndo, xBaseRedo.Next, _editor.State.OverwriteLastUndoRedoCommand)
+            If Not _editor.State.OverwriteLastUndoRedoCommand Then _editor.State.OverwriteLastUndoRedoCommand = True
         End If
     End Sub
 
@@ -892,8 +892,8 @@ Partial Public Class EditorPanel
 
         'Add undo
         If dVPosition + minLength - minVPosition <> 0 Then
-            _editor.AddUndoChain(xUndo, xBaseRedo.Next, _editor.State.uAdded)
-            If Not _editor.State.uAdded Then _editor.State.uAdded = True
+            _editor.AddUndoChain(xUndo, xBaseRedo.Next, _editor.State.OverwriteLastUndoRedoCommand)
+            If Not _editor.State.OverwriteLastUndoRedoCommand Then _editor.State.OverwriteLastUndoRedoCommand = True
         End If
     End Sub
 
@@ -1031,6 +1031,7 @@ Partial Public Class EditorPanel
     End Sub
 
     Private Sub OnSelectModeMoveNotes(e As MouseEventArgs, currentNote As Note)
+        ' delta vpos
         Dim dVPosition As Single
         If _editor.DisableVerticalMove Then
             dVPosition = 0
@@ -1039,22 +1040,10 @@ Partial Public Class EditorPanel
             dVPosition = mouseVPosition - currentNote.VPosition
         End If
 
-        'delta VPosition
+        ' delta column
+        Dim mouseColumn = _editor.Columns.ColumnArrayIndexToEnabledColumnIndex(GetColumnAtX(e.X))
 
-        Dim mouseColumn As Integer
-        Dim i = 0
-        Dim mLeft As Integer = e.X / _editor.Grid.WidthScale + HorizontalPosition 'horizontal position of the mouse
-        If mLeft >= 0 Then
-            Do
-                If mLeft < _editor.Columns.GetColumnLeft(i + 1) Or i >= _editor.Columns.ColumnCount Then
-                    mouseColumn = _editor.Columns.ColumnArrayIndexToEnabledColumnIndex(i)
-                    Exit Do 'get the column where mouse is 
-                End If
-                i += 1
-            Loop
-        End If
-
-        'get the enabled delta column where mouse is 
+        'get the enabled delta column where the mouse is 
         Dim dColumn = mouseColumn - _editor.Columns.ColumnArrayIndexToEnabledColumnIndex(currentNote.ColumnIndex)
 
         ' Don't do anything if there's no change
@@ -1062,8 +1051,13 @@ Partial Public Class EditorPanel
             Return
         End If
 
+        Debug.Indent()
+        Debug.WriteLine(String.Format("dCol/dV: {0} $ {1} | noteCol/VPos: {2} $ {3}",
+                                      dColumn, dVPosition,
+                                      currentNote.ColumnIndex, currentNote.VPosition))
+
         'Ks cannot be beyond the left, the upper and the lower boundary
-        mLeft = 0
+        Dim mLeft = 0
         Dim mVPosition As Double = 0
         Dim muVPosition As Double = 191999
         For Each note In _editor.GetSelectedNotes()
@@ -1074,24 +1068,56 @@ Partial Public Class EditorPanel
         Next
         muVPosition -= 191999 ' az: this magic number again. why?
 
+        Debug.WriteLine(String.Format("mVPos/muVPos/mLeft: {0} and {1} and {2}", mVPosition, muVPosition, mLeft))
+
         Dim xUndo As UndoRedo.LinkedURCmd = Nothing
         Dim xRedo As UndoRedo.LinkedURCmd = New UndoRedo.Void
         Dim xBaseRedo As UndoRedo.LinkedURCmd = xRedo
 
+        ' az: Okay so uAdded (now OverwriteLastUndoRedoCommand, to be more descriptive!) 
+        ' does try to solve a real problem, which Is to 
+        ' try to overwrite a move if there already is one, so the Undo/Redo history isn't spammed to hell and back.
+        ' Thing is, you want to work with the columnindex and vpos of when the first uAdded was used
+        ' otherwise you end up with a nasty bug where only the last move is saved...
+        ' So this is where this MoveStartCol and MoveStartVPos crap comes in.
+        ' Those will store the position where the note originally was, 
+        ' so that this overwritten undo/redo works properly.
+
         'start moving
+        ' az: yeah, start moving I guess. 
         For Each note In _editor.GetSelectedNotes()
+
+            ' This is it. We Save MoveStart variables here
+            ' to perform the move - this is a new move command, not an old one we're overwriting.
+            If Not _editor.State.OverwriteLastUndoRedoCommand Then
+                note.MoveStartVPos = note.VPosition
+                note.MoveStartColumnIndex = note.ColumnIndex
+            End If
+
             Dim idx = _editor.Columns.ColumnArrayIndexToEnabledColumnIndex(note.ColumnIndex) + dColumn - mLeft
             Dim newColumn = _editor.Columns.EnabledColumnIndexToColumnArrayIndex(idx)
             Dim newVPosition = note.VPosition + dVPosition - mVPosition - muVPosition
-            RedoMoveNote(note, newColumn, newVPosition, xUndo, xRedo)
+
+            ' We could've done a, "if not uAdded note, else note.MoveStartClone" but effectively
+            ' it doesn't matter, because the vposition and columnindex is the same for either case
+            ' especially with the initialization of MoveStartVPos and MoveStartColumnIndex above.
+            RedoMoveNote(note.MoveStartClone(), newColumn, newVPosition, xUndo, xRedo)
 
             note.ColumnIndex = newColumn
             note.VPosition = newVPosition
         Next
 
-        _editor.AddUndoChain(xUndo, xBaseRedo.Next, _editor.State.uAdded)
-        If Not _editor.State.uAdded Then _editor.State.uAdded = True
 
+        Debug.WriteLine(String.Format("uAdded: {0}", _editor.State.OverwriteLastUndoRedoCommand))
+        _editor.AddUndoChain(xUndo, xBaseRedo.Next, _editor.State.OverwriteLastUndoRedoCommand)
+
+        ' az documentation: We set it to true so that on the moves that follow 
+        ' it overwrites the last UR until we release the mouse button.
+        If Not _editor.State.OverwriteLastUndoRedoCommand Then
+            _editor.State.OverwriteLastUndoRedoCommand = True
+        End If
+
+        Debug.Unindent()
         'End If
     End Sub
 
