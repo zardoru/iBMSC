@@ -243,5 +243,28 @@ Namespace Editor
         Public Function Clamp(i As Integer, Min As Integer, Max As Integer)
             Return Math.Max(Math.Min(i, Max), Min)
         End Function
+
+        Public Function FilterFileBySupported(xFile() As String, xFilter() As String) As String()
+            Dim xPath(-1) As String
+            For i = 0 To UBound(xFile)
+                If _
+                    My.Computer.FileSystem.FileExists(xFile(i)) And
+                    Array.IndexOf(xFilter, Path.GetExtension(xFile(i))) <> -1 Then
+                    ReDim Preserve xPath(UBound(xPath) + 1)
+                    xPath(UBound(xPath)) = xFile(i)
+                End If
+
+                If My.Computer.FileSystem.DirectoryExists(xFile(i)) Then
+                    Dim xFileNames() As FileInfo = My.Computer.FileSystem.GetDirectoryInfo(xFile(i)).GetFiles()
+                    For Each xStr As FileInfo In xFileNames
+                        If Array.IndexOf(xFilter, xStr.Extension) = -1 Then Continue For
+                        ReDim Preserve xPath(UBound(xPath) + 1)
+                        xPath(UBound(xPath)) = xStr.FullName
+                    Next
+                End If
+            Next
+
+            Return xPath
+        End Function
     End Module
 End Namespace

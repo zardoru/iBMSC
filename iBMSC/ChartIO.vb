@@ -378,7 +378,7 @@ Partial Public Class MainWindow
         xStrHeader &= "#GENRE " & THGenre.Text & vbCrLf
         xStrHeader &= "#TITLE " & THTitle.Text & vbCrLf
         xStrHeader &= "#ARTIST " & THArtist.Text & vbCrLf
-        xStrHeader &= "#BPM " & WriteDecimalWithDot(Notes(0).Value/10000) & vbCrLf
+        xStrHeader &= "#BPM " & WriteDecimalWithDot(Notes(0).Value / 10000) & vbCrLf
         xStrHeader &= "#PLAYLEVEL " & THPlayLevel.Text & vbCrLf
         xStrHeader &= "#RANK " & CHRank.SelectedIndex & vbCrLf
         xStrHeader &= vbCrLf
@@ -413,16 +413,16 @@ Partial Public Class MainWindow
         For i = 1 To UBound(BmsBPM)
             xStrHeader &= "#BPM" &
                           IIf(_bpMx1296, C10to36(i), Mid("0" & Hex(i), Len(Hex(i)))) &
-                          " " & WriteDecimalWithDot(BmsBPM(i)/10000) & vbCrLf
+                          " " & WriteDecimalWithDot(BmsBPM(i) / 10000) & vbCrLf
         Next
         For i = 1 To UBound(BmsSTOP)
             xStrHeader &= "#STOP" &
                           IIf(_stoPx1296, C10to36(i), Mid("0" & Hex(i), Len(Hex(i)))) &
-                          " " & WriteDecimalWithDot(BmsSTOP(i)/10000) & vbCrLf
+                          " " & WriteDecimalWithDot(BmsSTOP(i) / 10000) & vbCrLf
         Next
         For i = 1 To UBound(BmsSCROLL)
             xStrHeader &= "#SCROLL" &
-                          C10to36(i) & " " & WriteDecimalWithDot(BmsSCROLL(i)/10000) & vbCrLf
+                          C10to36(i) & " " & WriteDecimalWithDot(BmsSCROLL(i) / 10000) & vbCrLf
         Next
 
         Return xStrHeader
@@ -430,25 +430,25 @@ Partial Public Class MainWindow
 
     Private Sub GetMeasureLimits(measureIndex As Integer, ByRef lowerLimit As Integer, ByRef upperLimit As Integer)
         Dim noteCount = UBound(Notes)
-        LowerLimit = 0
+        lowerLimit = 0
 
-        For i = 1 To NoteCount 'Collect Ks in the same measure
-            If MeasureAtDisplacement(Notes(i).VPosition) >= MeasureIndex Then
-                LowerLimit = i
+        For i = 1 To noteCount 'Collect Ks in the same measure
+            If MeasureAtDisplacement(Notes(i).VPosition) >= measureIndex Then
+                lowerLimit = i
                 Exit For
             End If 'Lower limit found
         Next
 
-        UpperLimit = 0
+        upperLimit = 0
 
-        For i = LowerLimit To NoteCount
-            If MeasureAtDisplacement(Notes(i).VPosition) > MeasureIndex Then
-                UpperLimit = i
+        For i = lowerLimit To noteCount
+            If MeasureAtDisplacement(Notes(i).VPosition) > measureIndex Then
+                upperLimit = i
                 Exit For 'Upper limit found
             End If
         Next
 
-        If UpperLimit < LowerLimit Then UpperLimit = NoteCount + 1
+        If upperLimit < lowerLimit Then upperLimit = noteCount + 1
     End Sub
 
     Private Function GenerateKeyTracks(measureIndex As Integer, ByRef hasOverlapping As Boolean,
@@ -456,99 +456,99 @@ Partial Public Class MainWindow
         Dim currentBmsChannel As String
         Dim ret = ""
 
-        For Each CurrentBMSChannel In _bmsChannelList 'Start rendering other notes
-            Dim relativeMeasurePos(- 1) 'Ks in the same column
-            Dim noteStrings(- 1)      'Ks in the same column
+        For Each currentBmsChannel In _bmsChannelList 'Start rendering other notes
+            Dim relativeMeasurePos(-1) 'Ks in the same column
+            Dim noteStrings(-1)      'Ks in the same column
 
             ' Background tracks take care of this.
-            If CurrentBMSChannel = "01" Then Continue For
+            If currentBmsChannel = "01" Then Continue For
 
 
-            For NoteIndex = 0 To UBound(NotesInMeasure) 'Find Ks in the same column (xI4 is TK index)
+            For NoteIndex = 0 To UBound(notesInMeasure) 'Find Ks in the same column (xI4 is TK index)
 
-                Dim currentNote As Note = NotesInMeasure(NoteIndex)
-                If Columns.GetBMSChannelBy(currentNote) = CurrentBMSChannel Then
+                Dim currentNote As Note = notesInMeasure(NoteIndex)
+                If Columns.GetBMSChannelBy(currentNote) = currentBmsChannel Then
 
                     ReDim Preserve relativeMeasurePos(UBound(relativeMeasurePos) + 1)
-                    ReDim Preserve NoteStrings(UBound(NoteStrings) + 1)
+                    ReDim Preserve noteStrings(UBound(noteStrings) + 1)
                     relativeMeasurePos(UBound(relativeMeasurePos)) = currentNote.VPosition -
                                                                      MeasureBottom(
                                                                          MeasureAtDisplacement(currentNote.VPosition))
                     If relativeMeasurePos(UBound(relativeMeasurePos)) < 0 Then _
                         relativeMeasurePos(UBound(relativeMeasurePos)) = 0
 
-                    If CurrentBMSChannel = "03" Then 'If integer bpm
-                        NoteStrings(UBound(NoteStrings)) = Mid("0" & Hex(currentNote.Value\10000),
-                                                               Len(Hex(currentNote.Value\10000)))
-                    ElseIf CurrentBMSChannel = "08" Then 'If bpm requires declaration
+                    If currentBmsChannel = "03" Then 'If integer bpm
+                        noteStrings(UBound(noteStrings)) = Mid("0" & Hex(currentNote.Value \ 10000),
+                                                               Len(Hex(currentNote.Value \ 10000)))
+                    ElseIf currentBmsChannel = "08" Then 'If bpm requires declaration
                         Dim bpmIndex
-                        For BpmIndex = 1 To UBound(BmsBPM) ' find BPM value in existing array
-                            If currentNote.Value = BmsBPM(BpmIndex) Then Exit For
+                        For bpmIndex = 1 To UBound(BmsBPM) ' find BPM value in existing array
+                            If currentNote.Value = BmsBPM(bpmIndex) Then Exit For
                         Next
-                        If BpmIndex > UBound(BmsBPM) Then ' Didn't find it, add it
+                        If bpmIndex > UBound(BmsBPM) Then ' Didn't find it, add it
                             ReDim Preserve BmsBPM(UBound(BmsBPM) + 1)
                             BmsBPM(UBound(BmsBPM)) = currentNote.Value
                         End If
-                        NoteStrings(UBound(NoteStrings)) = IIf(_bpMx1296, C10to36(BpmIndex),
-                                                               Mid("0" & Hex(BpmIndex), Len(Hex(BpmIndex))))
-                    ElseIf CurrentBMSChannel = "09" Then 'If STOP
+                        noteStrings(UBound(noteStrings)) = IIf(_bpMx1296, C10to36(bpmIndex),
+                                                               Mid("0" & Hex(bpmIndex), Len(Hex(bpmIndex))))
+                    ElseIf currentBmsChannel = "09" Then 'If STOP
                         Dim stopIndex
-                        For StopIndex = 1 To UBound(BmsSTOP) ' find STOP value in existing array
-                            If currentNote.Value = BmsSTOP(StopIndex) Then Exit For
+                        For stopIndex = 1 To UBound(BmsSTOP) ' find STOP value in existing array
+                            If currentNote.Value = BmsSTOP(stopIndex) Then Exit For
                         Next
 
-                        If StopIndex > UBound(BmsSTOP) Then ' Didn't find it, add it
+                        If stopIndex > UBound(BmsSTOP) Then ' Didn't find it, add it
                             ReDim Preserve BmsSTOP(UBound(BmsSTOP) + 1)
                             BmsSTOP(UBound(BmsSTOP)) = currentNote.Value
                         End If
-                        NoteStrings(UBound(NoteStrings)) = IIf(_stoPx1296, C10to36(StopIndex),
-                                                               Mid("0" & Hex(StopIndex), Len(Hex(StopIndex))))
-                    ElseIf CurrentBMSChannel = "SC" Then 'If SCROLL
+                        noteStrings(UBound(noteStrings)) = IIf(_stoPx1296, C10to36(stopIndex),
+                                                               Mid("0" & Hex(stopIndex), Len(Hex(stopIndex))))
+                    ElseIf currentBmsChannel = "SC" Then 'If SCROLL
                         Dim scrollIndex
-                        For ScrollIndex = 1 To UBound(BmsSCROLL) ' find SCROLL value in existing array
-                            If currentNote.Value = BmsSCROLL(ScrollIndex) Then Exit For
+                        For scrollIndex = 1 To UBound(BmsSCROLL) ' find SCROLL value in existing array
+                            If currentNote.Value = BmsSCROLL(scrollIndex) Then Exit For
                         Next
 
-                        If ScrollIndex > UBound(BmsSCROLL) Then ' Didn't find it, add it
+                        If scrollIndex > UBound(BmsSCROLL) Then ' Didn't find it, add it
                             ReDim Preserve BmsSCROLL(UBound(BmsSCROLL) + 1)
                             BmsSCROLL(UBound(BmsSCROLL)) = currentNote.Value
                         End If
-                        NoteStrings(UBound(NoteStrings)) = C10to36(ScrollIndex)
+                        noteStrings(UBound(noteStrings)) = C10to36(scrollIndex)
                     Else
-                        NoteStrings(UBound(NoteStrings)) = C10to36(currentNote.Value\10000)
+                        noteStrings(UBound(noteStrings)) = C10to36(currentNote.Value \ 10000)
                     End If
                 End If
             Next
 
             If relativeMeasurePos.Length = 0 Then Continue For
 
-            Dim xGcd As Double = MeasureLength(MeasureIndex)
+            Dim xGcd As Double = MeasureLength(measureIndex)
             For i = 0 To UBound(relativeMeasurePos) 'find greatest common divisor
-                If relativeMeasurePos(i) > 0 Then xGCD = GCD(xGCD, relativeMeasurePos(i))
+                If relativeMeasurePos(i) > 0 Then xGcd = Gcd(xGcd, relativeMeasurePos(i))
             Next
 
             Dim xStrKey() As String
-            ReDim xStrKey(CInt(MeasureLength(MeasureIndex)/xGCD) - 1)
+            ReDim xStrKey(CInt(MeasureLength(measureIndex) / xGcd) - 1)
             For i = 0 To UBound(xStrKey) 'assign 00 to all keys
                 xStrKey(i) = "00"
             Next
 
             For i = 0 To UBound(relativeMeasurePos) 'assign K texts
-                If CInt(relativeMeasurePos(i)/xGCD) > UBound(xStrKey) Then
+                If CInt(relativeMeasurePos(i) / xGcd) > UBound(xStrKey) Then
                     ReDim Preserve xprevNotes(UBound(xprevNotes) + 1)
                     With xprevNotes(UBound(xprevNotes))
-                        .ColumnIndex = Columns.BMSChannelToColumn(_bmsChannelList(CurrentBMSChannel))
-                        .LongNote = IsChannelLongNote(_bmsChannelList(CurrentBMSChannel))
-                        .Hidden = IsChannelHidden(_bmsChannelList(CurrentBMSChannel))
-                        .VPosition = MeasureBottom(MeasureIndex)
-                        .Value = C36to10(NoteStrings(i))
+                        .ColumnIndex = Columns.BMSChannelToColumn(_bmsChannelList(currentBmsChannel))
+                        .LongNote = IsChannelLongNote(_bmsChannelList(currentBmsChannel))
+                        .Hidden = IsChannelHidden(_bmsChannelList(currentBmsChannel))
+                        .VPosition = MeasureBottom(measureIndex)
+                        .Value = C36to10(noteStrings(i))
                     End With
-                    If _bmsChannelList(CurrentBMSChannel) = "08" Then _
-                        xprevNotes(UBound(xprevNotes)).Value = IIf(_bpMx1296, BmsBPM(C36to10(NoteStrings(i))),
-                                                                   BmsBPM(Convert.ToInt32(NoteStrings(i), 16)))
-                    If _bmsChannelList(CurrentBMSChannel) = "09" Then _
-                        xprevNotes(UBound(xprevNotes)).Value = IIf(_stoPx1296, BmsSTOP(C36to10(NoteStrings(i))),
-                                                                   BmsSTOP(Convert.ToInt32(NoteStrings(i), 16)))
+                    If _bmsChannelList(currentBmsChannel) = "08" Then _
+                        xprevNotes(UBound(xprevNotes)).Value = IIf(_bpMx1296, BmsBPM(C36to10(noteStrings(i))),
+                                                                   BmsBPM(Convert.ToInt32(noteStrings(i), 16)))
+                    If _bmsChannelList(currentBmsChannel) = "09" Then _
+                        xprevNotes(UBound(xprevNotes)).Value = IIf(_stoPx1296, BmsSTOP(C36to10(noteStrings(i))),
+                                                                   BmsSTOP(Convert.ToInt32(noteStrings(i), 16)))
                     If _bmsChannelList(CurrentBMSChannel) = "SC" Then _
                         xprevNotes(UBound(xprevNotes)).Value = BmsSCROLL(C36to10(NoteStrings(i)))
                     Continue For

@@ -1,23 +1,23 @@
-﻿Imports iBMSC.Editor
+﻿Imports System.Linq
+Imports iBMSC.Editor
 
 Partial Public Class MainWindow
     Private xUndo As UndoRedo.LinkedURCmd
     Private xRedo As Object
 
-    Public ReadOnly Property CurrentHoveredNote As Note
-        Get
-            Return Notes(State.Mouse.CurrentHoveredNoteIndex)
-        End Get
-    End Property
 
     Private Sub KeyDownEvent(sender As Object, e As KeyEventArgs) Handles Me.KeyDown
         Dim xUndo As UndoRedo.LinkedURCmd = Nothing
         Dim xRedo As UndoRedo.LinkedURCmd = New UndoRedo.Void
         Dim xBaseRedo As UndoRedo.LinkedURCmd = xRedo
 
+        If Not _panelList.Any(Function(x) x.Focused) Then
+            Return
+        End If
+
         Select Case e.KeyCode
             Case Keys.Up
-                Dim xVPosition As Double = 192/Grid.Divider
+                Dim xVPosition As Double = 192 / Grid.Divider
                 If My.Computer.Keyboard.CtrlKeyDown Then xVPosition = 1
 
                 'Ks cannot be beyond the upper boundary
@@ -26,8 +26,8 @@ Partial Public Class MainWindow
                     If Notes(i).Selected Then
                         'K(i).VPosition = Math.Floor(K(i).VPosition / (192 / Grid.Divider)) * 192 / Grid.Divider
                         muVPosition =
-                            IIf(Notes(i).VPosition + IIf(NTInput, Notes(i).Length, 0) + xVPosition > muVPosition,
-                                Notes(i).VPosition + IIf(NTInput, Notes(i).Length, 0) + xVPosition,
+                            IIf(Notes(i).VPosition + IIf(NtInput, Notes(i).Length, 0) + xVPosition > muVPosition,
+                                Notes(i).VPosition + IIf(NtInput, Notes(i).Length, 0) + xVPosition,
                                 muVPosition)
                     End If
                 Next
@@ -52,8 +52,8 @@ Partial Public Class MainWindow
                 RefreshPanelAll()
 
             Case Keys.Down
-                Dim xVPosition As Double = - 192/Grid.Divider
-                If My.Computer.Keyboard.CtrlKeyDown Then xVPosition = - 1
+                Dim xVPosition As Double = -192 / Grid.Divider
+                If My.Computer.Keyboard.CtrlKeyDown Then xVPosition = -1
 
                 'Ks cannot be beyond the lower boundary
                 Dim mVPosition As Double = 0
@@ -103,7 +103,7 @@ Partial Public Class MainWindow
                 Next
                 'xUndo = sCmdKMs(1 + mLeft, 0, True)
 
-                If - 1 - mLeft <> 0 Then AddUndoChain(xUndo, xBaseRedo.Next)
+                If -1 - mLeft <> 0 Then AddUndoChain(xUndo, xBaseRedo.Next)
                 UpdatePairing()
                 CalculateTotalPlayableNotes()
                 RefreshPanelAll()
@@ -130,10 +130,10 @@ Partial Public Class MainWindow
 
 
             Case Keys.Oemcomma
-                If Grid.Divider*2 <= CGDivide.Maximum Then CGDivide.Value = Grid.Divider*2
+                If Grid.Divider * 2 <= CGDivide.Maximum Then CGDivide.Value = Grid.Divider * 2
 
             Case Keys.OemPeriod
-                If Grid.Divider\2 >= CGDivide.Minimum Then CGDivide.Value = Grid.Divider\2
+                If Grid.Divider \ 2 >= CGDivide.Minimum Then CGDivide.Value = Grid.Divider \ 2
 
             Case Keys.OemQuestion
                 'Dim xTempSwap As Integer = Grid.Slash
@@ -182,8 +182,7 @@ Partial Public Class MainWindow
             Case Keys.Oem8, Keys.NumPad8, Keys.D8 : MoveToColumn(ColumnType.A8, xUndo, xRedo)
         End Select
 
-        If _
-            My.Computer.Keyboard.CtrlKeyDown And (Not My.Computer.Keyboard.AltKeyDown) And
+        If My.Computer.Keyboard.CtrlKeyDown And (Not My.Computer.Keyboard.AltKeyDown) And
             (Not My.Computer.Keyboard.ShiftKeyDown) Then
             Select Case e.KeyCode
                 Case Keys.Z : TBUndo_Click(TBUndo, New EventArgs)
@@ -198,12 +197,12 @@ Partial Public Class MainWindow
         End If
 
         If ModifierMultiselectActive() Then
-            If e.KeyCode = Keys.A And State.Mouse.CurrentHoveredNoteIndex <> - 1 Then
+            If e.KeyCode = Keys.A And State.Mouse.CurrentHoveredNoteIndex <> -1 Then
                 SelectAllWithHoveredNoteLabel()
             End If
         End If
 
-        POStatusRefresh()
+        PoStatusRefresh()
     End Sub
 
     Private Sub MoveToBGM(xUndo As UndoRedo.LinkedURCmd, xRedo As UndoRedo.LinkedURCmd)
@@ -216,21 +215,23 @@ Partial Public Class MainWindow
                 Dim currentBGMColumn As Integer = ColumnType.BGM
 
                 'TODO: optimize the for loops below
-                If NTInput Then
-                    For xI0 = 1 To UBound(Notes)
-                        Dim IntersectA = Notes(xI0).VPosition <= Notes(j).VPosition + Notes(j).Length
-                        Dim IntersectB = Notes(xI0).VPosition + Notes(xI0).Length >= Notes(j).VPosition
-                        If Notes(xI0).ColumnIndex = currentBGMColumn AndAlso IntersectA And IntersectB Then
+                If NtInput Then
+                    For i = 1 To UBound(Notes)
+                        Dim IntersectA = Notes(i).VPosition <= Notes(j).VPosition + Notes(j).Length
+                        Dim IntersectB = Notes(i).VPosition + Notes(i).Length >= Notes(j).VPosition
+                        If Notes(i).ColumnIndex = currentBGMColumn AndAlso
+                            IntersectA And
+                            IntersectB Then
                             currentBGMColumn += 1
-                            xI0 = 1
+                            i = 1
                         End If
                     Next
                 Else
-                    For xI0 = 1 To UBound(Notes)
-                        If Notes(xI0).ColumnIndex = currentBGMColumn AndAlso Notes(xI0).VPosition = Notes(j).VPosition _
-                            Then
+                    For i = 1 To UBound(Notes)
+                        If Notes(i).ColumnIndex = currentBGMColumn AndAlso
+                            Notes(i).VPosition = Notes(j).VPosition Then
                             currentBGMColumn += 1
-                            xI0 = 1
+                            i = 1
                         End If
                     Next
                 End If
@@ -245,17 +246,18 @@ Partial Public Class MainWindow
         RefreshPanelAll()
     End Sub
 
-    Private Sub MoveToColumn(xTargetColumn As Integer, xUndo As UndoRedo.LinkedURCmd, xRedo As UndoRedo.LinkedURCmd)
+    Private Sub MoveToColumn(targetColumn As Integer, xUndo As UndoRedo.LinkedURCmd, xRedo As UndoRedo.LinkedURCmd)
+        If targetColumn = -1 Then Return
+        If Not Columns.IsEnabled(targetColumn) Then Return
+
         Dim xBaseRedo As UndoRedo.LinkedURCmd = xRedo
-        If xTargetColumn = - 1 Then Return
-        If Not Columns.IsEnabled(xTargetColumn) Then Return
         Dim bMoveAndDeselectFirstNote = My.Computer.Keyboard.ShiftKeyDown
 
         For j = 1 To UBound(Notes)
             If Not Notes(j).Selected Then Continue For
 
-            RedoMoveNote(Notes(j), xTargetColumn, Notes(j).VPosition, xUndo, xRedo)
-            Notes(j).ColumnIndex = xTargetColumn
+            RedoMoveNote(Notes(j), targetColumn, Notes(j).VPosition, xUndo, xRedo)
+            Notes(j).ColumnIndex = targetColumn
 
             If bMoveAndDeselectFirstNote Then
                 Notes(j).Selected = False
@@ -266,19 +268,21 @@ Partial Public Class MainWindow
                 ' this works because the note find
                 ' does not account for selection status
                 ' when checking equality! (equalsBMSE, equalsNT)
-                For xI3 = 1 To UBound(Notes)
-                    If xI3 = j Then Continue For
-                    If Notes(xI3).Selected Then
-                        RedoMoveNote(Notes(xI3), Notes(xI3).ColumnIndex, Notes(xI3).VPosition, xUndo, xRedo)
+                For i = 1 To UBound(Notes)
+                    If i = j Then Continue For
+                    If Notes(i).Selected Then
+                        RedoMoveNote(Notes(i), Notes(i).ColumnIndex, Notes(i).VPosition, xUndo, xRedo)
                     End If
                 Next
 
                 Exit For
             End If
         Next
+
         AddUndoChain(xUndo, xBaseRedo.Next)
-        UpdatePairing()
-        CalculateTotalPlayableNotes()
+
+        ValidateNotesArray()
+
         RefreshPanelAll()
     End Sub
 

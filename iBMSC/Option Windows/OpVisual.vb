@@ -42,12 +42,12 @@ Public Class OpVisual
     'Dim WithEvents eaFont As New ArrayList
     'Dim WithEvents eaI As New ArrayList
 
-    Dim ReadOnly VisualOptions As visualSettings
+    Dim ReadOnly VisualOptions As VisualSettings
     Dim ReadOnly TemporalColumns() As Column
     Dim ReadOnly ColumnOptions() As ColumnOptionSet
 
 
-    Public Sub New(xvo As visualSettings, xcol() As Column, monoFont As Font)
+    Public Sub New(xvo As VisualSettings, xcol() As Column, monoFont As Font)
         InitializeComponent()
 
         'eColor = xeColor

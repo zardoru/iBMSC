@@ -31,7 +31,7 @@ Partial Public Class EditorPanel
                 VerticalScrollBar.Value = Math.Min(VerticalScrollBar.Value + _editor.Grid.PageUpDnScroll, 0)
         End Select
 
-        OnMouseMove(sender)
+        Refresh()
     End Sub
 
     Private Sub ResizeEvent(sender As Object, e As EventArgs) Handles Me.Resize
@@ -92,6 +92,7 @@ Partial Public Class EditorPanel
 
                 'Find the clicked K
                 Dim noteIndex As Integer = GetClickedNote(e)
+                UpdateNtNoteAdjustingState(e, noteIndex)
 
                 _editor.PanelPreviewNoteIndex(noteIndex)
 
@@ -105,10 +106,10 @@ Partial Public Class EditorPanel
 
             Case MouseButtons.Middle
                 If _editor.MiddleButtonMoveMethod = 1 Then
-                    _editor.State.Mouse.tempX = e.X
-                    _editor.State.Mouse.tempY = e.Y
-                    _editor.State.Mouse.tempV = VerticalPosition
-                    _editor.State.Mouse.tempH = HorizontalPosition
+                    _editor.State.Mouse.PanX = e.X
+                    _editor.State.Mouse.PanY = e.Y
+                    _editor.State.Mouse.PanVerticalScroll = VerticalPosition
+                    _editor.State.Mouse.PanHorizontalScroll = HorizontalPosition
                 Else
                     _editor.State.Mouse.MiddleButtonLocation = Cursor.Position
                     _editor.State.Mouse.MiddleButtonClicked = True
@@ -118,6 +119,22 @@ Partial Public Class EditorPanel
             Case MouseButtons.Right
                 DeselectOrRemove(e)
         End Select
+    End Sub
+
+    ''' <summary>
+    ''' Update the state of the editor on whether the upper or the lower end is being adjusted for this note.
+    ''' </summary>
+    ''' <param name="e">Mouse event to update with</param>
+    ''' <param name="noteIndex">Note to check against</param>
+    Private Sub UpdateNtNoteAdjustingState(e As MouseEventArgs, noteIndex As Integer)
+        If noteIndex > 0 Then
+            Dim note = _editor.Notes(noteIndex)
+            If _editor.NtInput And My.Computer.Keyboard.ShiftKeyDown Then
+                _editor.State.NT.IsAdjustingUpperEnd = e.Y <= VPositionToPanelY(note.VPosition + note.Length)
+                _editor.State.NT.IsAdjustingNoteLength = e.Y >= VPositionToPanelY(note.VPosition) - _theme.NoteHeight Or
+                                                    _editor.State.NT.IsAdjustingUpperEnd
+            End If
+        End If
     End Sub
 
     Private Sub DeselectOrRemove(e As MouseEventArgs)
@@ -160,15 +177,7 @@ Partial Public Class EditorPanel
 
             If MouseInNote(e, note) Then
                 noteIndex = i
-
-                If _editor.NtInput And My.Computer.Keyboard.ShiftKeyDown Then
-                    _editor.State.NT.IsAdjustingUpperEnd = e.Y <= VPositionToPanelY(note.VPosition + note.Length)
-                    _editor.State.NT.IsAdjustingNoteLength = e.Y >= VPositionToPanelY(note.VPosition) - _theme.NoteHeight Or
-                                                            _editor.State.NT.IsAdjustingUpperEnd
-                End If
-
                 Exit For
-
             End If
         Next
 
@@ -266,7 +275,7 @@ Partial Public Class EditorPanel
                         .Landmine = landmine,
                         .TempMouseDown = True,
                         .LNPair = -1
-                        }
+                }
                 _editor.AppendNote(note)
             End If
 
@@ -547,12 +556,12 @@ Partial Public Class EditorPanel
             Case MouseButtons.Left
                 If _editor.TempFirstMouseDown And Not _editor.IsTimeSelectMode Then Exit Select
 
-                _editor.State.Mouse.tempX = 0
-                _editor.State.Mouse.tempY = 0
+                _editor.State.Mouse.PanX = 0
+                _editor.State.Mouse.PanY = 0
                 If Not (e.X < 0 Or e.X > Width Or e.Y < 0 Or e.Y > Height) Then
-                    If e.X < 0 Then _editor.State.Mouse.tempX = e.X
-                    If e.X > Width Then _editor.State.Mouse.tempX = e.X - Width
-                    If e.Y < 0 Then _editor.State.Mouse.tempY = e.Y
+                    If e.X < 0 Then _editor.State.Mouse.PanX = e.X
+                    If e.X > Width Then _editor.State.Mouse.PanX = e.X - Width
+                    If e.Y < 0 Then _editor.State.Mouse.PanY = e.Y
                     If e.Y > Height Then
                     Else
                         ' _editor.Timer1.Enabled = False
@@ -702,8 +711,8 @@ Partial Public Class EditorPanel
     Private Sub OnPanelMousePan(e As MouseEventArgs)
         If _editor.MiddleButtonMoveMethod = 1 Then
             Dim mouse = _editor.State.Mouse
-            Dim i As Integer = mouse.tempV + (mouse.tempY - e.Y) / _editor.Grid.HeightScale
-            Dim j As Integer = mouse.tempH + (mouse.tempX - e.X) / _editor.Grid.WidthScale
+            Dim i As Integer = mouse.PanVerticalScroll + (mouse.PanY - e.Y) / _editor.Grid.HeightScale
+            Dim j As Integer = mouse.PanHorizontalScroll + (mouse.PanX - e.X) / _editor.Grid.WidthScale
             If i > 0 Then i = 0
             If j < 0 Then j = 0
 
@@ -1191,10 +1200,10 @@ Partial Public Class EditorPanel
     End Function
 
     Private Sub PMainInMouseUp(sender As Object, e As MouseEventArgs) Handles Me.MouseUp
-        _editor.State.Mouse.tempX = 0
-        _editor.State.Mouse.tempY = 0
-        _editor.State.Mouse.tempV = 0
-        _editor.State.Mouse.tempH = 0
+        _editor.State.Mouse.PanX = 0
+        _editor.State.Mouse.PanY = 0
+        _editor.State.Mouse.PanVerticalScroll = 0
+        _editor.State.Mouse.PanHorizontalScroll = 0
         LastVerticalScroll = -1
         LastHorizontalScroll = -1
 

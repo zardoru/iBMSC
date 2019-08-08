@@ -1,5 +1,5 @@
 ﻿Namespace Editor
-    Public Class visualSettings
+    Public Class VisualSettings
         Public ColumnTitle As SolidBrush
         Public ColumnTitleFont As Font
         Public Bg As SolidBrush

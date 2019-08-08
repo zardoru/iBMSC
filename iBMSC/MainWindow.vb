@@ -38,6 +38,9 @@ Public Class MainWindow
     End Property
 
     'Dim SortingMethod As Integer = 1
+    ''' <summary>
+    ''' Way the middle mouse button should act. 0 is to continuously scroll, 1 is pan.
+    ''' </summary>
     Public MiddleButtonMoveMethod As Integer = 0
     Dim _textEncoding As Encoding = Encoding.UTF8
     Dim _dispLang As String = ""     'Display Language
@@ -68,10 +71,10 @@ Public Class MainWindow
 
     'Variables for Drag/Drop
     Public DragDropFilename() As String = {}
-    Dim ReadOnly _supportedFileExtension() As String = {".bms", ".bme", ".bml", ".pms", ".txt", ".sm", ".ibmsc"}
-    Dim ReadOnly _supportedAudioExtension() As String = {".wav", ".mp3", ".ogg"}
+    ReadOnly _supportedFileExtension() As String = {".bms", ".bme", ".bml", ".pms", ".txt", ".sm", ".ibmsc"}
+    ReadOnly _supportedAudioExtension() As String = {".wav", ".mp3", ".ogg"}
 
-    Dim ReadOnly _
+    ReadOnly _
         _supportedImageExtension() As String =
             {".bmp", ".png", ".jpg", ".jpeg", ".gif", ".mpg", ".mpeg", ".avi", ".m1v", ".m2v", ".m4v", ".mp4", ".webm",
              ".wmv"}
@@ -108,7 +111,7 @@ Public Class MainWindow
     Dim _previousWindowPosition As New Rectangle(0, 0, 0, 0)
 
     'Variables misc
-    Dim ReadOnly _menuVPosition As Double = 0.0#
+    ReadOnly _menuVPosition As Double = 0.0#
     Dim _tempResize As Integer = 0
 
     '----AutoSave Options
@@ -125,37 +128,26 @@ Public Class MainWindow
     Public Columns As ColumnList = New ColumnList
 
     '----Visual Options
-    Dim _vo As New visualSettings()
+    Dim _theme As New VisualSettings()
 
-    Public Sub SetVo(xvo As visualSettings)
-        _vo = xvo
-    End Sub
-
-    '----Preview Options
-
-
-    Public PArgs() As PlayerArguments = {New PlayerArguments("<apppath>\uBMplay.exe",
-                                                             "-P -N0 ""<filename>""",
-                                                             "-P -N<measure> ""<filename>""",
-                                                             "-S"),
-                                         New PlayerArguments("<apppath>\o2play.exe",
-                                                             "-P -N0 ""<filename>""",
-                                                             "-P -N<measure> ""<filename>""",
-                                                             "-S")}
-
-    Public CurrentPlayer As Integer = 0
     Dim _previewOnClick As Boolean = True
     Dim _previewErrorCheck As Boolean = False
     Dim _clickStopPreview As Boolean = True
     Dim _pTempFileNames() As String = {}
 
+    Public Sub SetVo(xvo As VisualSettings)
+        _theme = xvo
+    End Sub
+
+
+
     '----Split Panel Options
-    Dim ReadOnly _spLock() As Boolean = {False, False, False}
-    Dim ReadOnly _spDiff() As Integer = {0, 0, 0}
+    ReadOnly _spLock() As Boolean = {False, False, False}
+    ReadOnly _spDiff() As Integer = {0, 0, 0}
     Public PanelFocus As Integer = 0 '0 = Left, 1 = Middle, 2 = Right
     Public Property FocusedPanel As EditorPanel
         Get
-            Return _spMain(PanelFocus)
+            Return _panelList(PanelFocus)
         End Get
         Set
             'If value Is PMainL Then PanelFocus = 0
@@ -171,7 +163,7 @@ Public Class MainWindow
     Public FirstClickDisabled As Boolean = True
     Public TempFirstMouseDown As Boolean = False
 
-    Dim _spMain() As EditorPanel = {}
+    Dim _panelList() As EditorPanel = {}
 
 
     Public Sub New()
@@ -189,7 +181,7 @@ Public Class MainWindow
     End Function
 
     Private Sub DecreaseCurrentWav()
-        If LWAV.SelectedIndex = - 1 Then
+        If LWAV.SelectedIndex = -1 Then
             LWAV.SelectedIndex = 0
         Else
             Dim newIndex As Integer = LWAV.SelectedIndex - 1
@@ -200,7 +192,7 @@ Public Class MainWindow
     End Sub
 
     Private Sub IncreaseCurrentWav()
-        If LWAV.SelectedIndex = - 1 Then
+        If LWAV.SelectedIndex = -1 Then
             LWAV.SelectedIndex = 0
         Else
             Dim newIndex As Integer = LWAV.SelectedIndex + 1
@@ -232,7 +224,7 @@ Public Class MainWindow
         Dim maxVpos = GetMaxVPosition()
         Dim xI2 As Integer = -Math.Min(newMax, maxVpos)
 
-        For Each panel In _spMain
+        For Each panel In _panelList
             panel.OnUpdateScroll(xI2)
         Next
 
@@ -242,8 +234,8 @@ Public Class MainWindow
         'Play wav
         If _clickStopPreview Then PreviewNote("", True)
         'My.Computer.Audio.Stop()
-        If NoteIndex > 0 And _previewOnClick AndAlso Columns.IsColumnSound(Notes(NoteIndex).ColumnIndex) Then
-            Dim j As Integer = Notes(NoteIndex).Value\10000
+        If noteIndex > 0 And _previewOnClick AndAlso Columns.IsColumnSound(Notes(noteIndex).ColumnIndex) Then
+            Dim j As Integer = Notes(noteIndex).Value \ 10000
             If j <= 0 Then j = 1
             If j >= 1296 Then j = 1295
 
@@ -299,17 +291,7 @@ Public Class MainWindow
         Return File.Exists(sPath) Or Directory.Exists(sPath)
     End Function
 
-    Public Function PrevCodeToReal(initStr As String) As String
-        Dim xFileName As String = IIf(Not PathIsValid(_fileName),
-                                      IIf(_initPath = "", My.Application.Info.DirectoryPath, _initPath),
-                                      ExcludeFileName(_fileName)) _
-                                  & "\___TempBMS.bms"
-        Dim xMeasure As Integer = MeasureAtDisplacement(Math.Abs(FocusedPanel.VerticalPosition))
-        Dim xS1 As String = Replace(initStr, "<apppath>", My.Application.Info.DirectoryPath)
-        Dim xS2 As String = Replace(xS1, "<measure>", xMeasure)
-        Dim xS3 As String = Replace(xS2, "<filename>", xFileName)
-        Return xS3
-    End Function
+
 
     Private Sub SetFileName(xFileName As String)
         _fileName = xFileName.Trim
@@ -334,77 +316,6 @@ Public Class MainWindow
             StopPlaying()
         End If
         Play(xFileLocation)
-    End Sub
-
-    Public Sub AddNote(note As Note, Optional xSelected As Boolean = False, Optional overWrite As Boolean = True,
-                       Optional sortAndUpdatePairing As Boolean = True)
-
-        If note.VPosition < 0 Or note.VPosition >= GetMaxVPosition() Then Exit Sub
-
-        Dim i = 1
-
-        If overWrite Then
-            Do While i <= UBound(Notes)
-                If Notes(i).VPosition = note.VPosition And
-                   Notes(i).ColumnIndex = note.ColumnIndex Then
-                    RemoveNote(i)
-                Else
-                    i += 1
-                End If
-            Loop
-        End If
-
-        note.Selected = note.Selected And Columns.IsEnabled(note.ColumnIndex)
-        Notes = Notes.Concat({note}).ToArray()
-
-        If sortAndUpdatePairing Then
-            ValidateNotesArray()
-        Else
-            CalculateTotalPlayableNotes()
-        End If
-    End Sub
-
-    Public Sub RemoveNote(I As Integer, Optional ByVal sortAndUpdatePairing As Boolean = True)
-        State.Mouse.CurrentHoveredNoteIndex = -1 ' az: Why here???
-        Dim j As Integer
-
-        If TBWavIncrease.Checked Then
-            If Notes(I).Value = LWAV.SelectedIndex * 10000 Then
-                DecreaseCurrentWav()
-            End If
-        End If
-
-
-        For j = I + 1 To UBound(Notes)
-            Notes(j - 1) = Notes(j)
-        Next
-        ReDim Preserve Notes(UBound(Notes) - 1)
-        If sortAndUpdatePairing Then
-            ValidateNotesArray()
-        End If
-    End Sub
-
-
-    Private Sub RemoveNotes(Optional ByVal sortAndUpdatePairing As Boolean = True)
-        If UBound(Notes) = 0 Then Exit Sub
-
-        State.Mouse.CurrentHoveredNoteIndex = -1
-        Dim i = 1
-        Dim j As Integer
-        Do
-            If Notes(i).Selected Then
-                For j = i + 1 To UBound(Notes)
-                    Notes(j - 1) = Notes(j)
-                Next
-                ReDim Preserve Notes(UBound(Notes) - 1)
-                i = 0
-            End If
-            i += 1
-        Loop While i < UBound(Notes) + 1
-        If sortAndUpdatePairing Then
-            ValidateNotesArray()
-        End If
-        CalculateTotalPlayableNotes()
     End Sub
 
 
@@ -455,28 +366,7 @@ Public Class MainWindow
         End If
     End Sub
 
-    Private Function FilterFileBySupported(xFile() As String, xFilter() As String) As String()
-        Dim xPath(-1) As String
-        For i = 0 To UBound(xFile)
-            If _
-                My.Computer.FileSystem.FileExists(xFile(i)) And
-                Array.IndexOf(xFilter, Path.GetExtension(xFile(i))) <> -1 Then
-                ReDim Preserve xPath(UBound(xPath) + 1)
-                xPath(UBound(xPath)) = xFile(i)
-            End If
 
-            If My.Computer.FileSystem.DirectoryExists(xFile(i)) Then
-                Dim xFileNames() As FileInfo = My.Computer.FileSystem.GetDirectoryInfo(xFile(i)).GetFiles()
-                For Each xStr As FileInfo In xFileNames
-                    If Array.IndexOf(xFilter, xStr.Extension) = -1 Then Continue For
-                    ReDim Preserve xPath(UBound(xPath) + 1)
-                    xPath(UBound(xPath)) = xStr.FullName
-                Next
-            End If
-        Next
-
-        Return xPath
-    End Function
 
     Private Sub InitializeNewBms()
         THTitle.Text = ""
@@ -669,17 +559,14 @@ Public Class MainWindow
 
             POptionsResizer.Cursor = xLeftCursor
 
-            'SpL.Cursor = xRightCursor
-            'SpR.Cursor = xLeftCursor
         Catch ex As Exception
 
         End Try
 
-        _spMain = {EditorPanel1}
-        For Each panel In _spMain
-            panel.Init(Me, _vo)
+        _panelList = {EditorPanel1}
+        For Each panel In _panelList
+            panel.Init(Me, _theme)
         Next
-        ' PMain.BringToFront()
 
         Dim i As Integer
 
@@ -713,39 +600,8 @@ Public Class MainWindow
         'On Error GoTo 0
         SetIsSaved(True)
 
-        Dim xStr() As String = Environment.GetCommandLineArgs
+        TryToRestoreAutosave()
 
-        If xStr.Length = 2 Then
-            ReadFile(xStr(1))
-            If _
-                LCase(Path.GetExtension(xStr(1))) = ".ibmsc" AndAlso
-                GetFileName(xStr(1)).StartsWith("AutoSave_", True, Nothing) Then GoTo 1000
-        End If
-
-        'pIsSaved.Visible = Not IsSaved
-        _isInitializing = False
-
-        If Process.GetProcessesByName(Process.GetCurrentProcess.ProcessName).Length > 1 Then GoTo 1000
-        Dim xFiles() As FileInfo =
-                My.Computer.FileSystem.GetDirectoryInfo(My.Application.Info.DirectoryPath).GetFiles("AutoSave_*.IBMSC")
-        If xFiles Is Nothing OrElse xFiles.Length = 0 Then GoTo 1000
-
-        'Me.TopMost = True
-        If _
-            MsgBox(Replace(Strings.Messages.RestoreAutosavedFile, "{}", xFiles.Length),
-                   MsgBoxStyle.YesNo Or MsgBoxStyle.MsgBoxSetForeground) = MsgBoxResult.Yes Then
-            For Each xF As FileInfo In xFiles
-                'MsgBox(xF.FullName)
-                Process.Start(Application.ExecutablePath, """" & xF.FullName & """")
-            Next
-        End If
-
-        For Each xF As FileInfo In xFiles
-            ReDim Preserve _pTempFileNames(UBound(_pTempFileNames) + 1)
-            _pTempFileNames(UBound(_pTempFileNames)) = xF.FullName
-        Next
-
-1000:
         _isInitializing = False
         PoStatusRefresh()
         ResumeLayout()
@@ -754,6 +610,44 @@ Public Class MainWindow
         TopMost = False
 
         Visible = True
+    End Sub
+
+    Private Sub TryToRestoreAutosave()
+        Dim args() As String = Environment.GetCommandLineArgs
+
+        If args.Length = 2 Then
+            ReadFile(args(1))
+            If Path.GetExtension(args(1)).ToLower() = ".ibmsc" AndAlso
+                GetFileName(args(1)).StartsWith("AutoSave_", True, Nothing) Then
+                Return
+            End If
+        End If
+
+        'pIsSaved.Visible = Not IsSaved
+        _isInitializing = False
+
+        ' More than one instance running?
+        If Process.GetProcessesByName(Process.GetCurrentProcess.ProcessName).Length > 1 Then
+            Return
+        End If
+
+        Dim appPath = My.Application.Info.DirectoryPath
+        Dim fileList() As FileInfo = My.Computer.FileSystem.GetDirectoryInfo(appPath).GetFiles("AutoSave_*.IBMSC")
+
+        If fileList Is Nothing OrElse fileList.Length = 0 Then
+            Return
+        End If
+
+        'Me.TopMost = True
+        If MsgBox(Replace(Strings.Messages.RestoreAutosavedFile, "{}", fileList.Length),
+                   MsgBoxStyle.YesNo Or MsgBoxStyle.MsgBoxSetForeground) = MsgBoxResult.Yes Then
+            For Each xF As FileInfo In fileList
+                'MsgBox(xF.FullName)
+                Process.Start(Application.ExecutablePath, """" & xF.FullName & """")
+            Next
+        End If
+
+        _pTempFileNames = fileList.Select(Function(x) x.FullName).ToArray()
     End Sub
 
     Private Sub UpdatePairing()
@@ -1179,9 +1073,9 @@ EndSearch:
         _spLock(iI) = sender.Checked
         If Not _spLock(iI) Then Return
 
-        Dim currentPanel = _spMain(iI)
-        _spDiff(iI) = _spMain((iI + 1) Mod 3).VerticalPosition - currentPanel.VerticalPosition
-        _spDiff((iI + 2) Mod 3) = currentPanel.VerticalPosition - _spMain((iI + 2) Mod 3).VerticalPosition
+        Dim currentPanel = _panelList(iI)
+        _spDiff(iI) = _panelList((iI + 1) Mod 3).VerticalPosition - currentPanel.VerticalPosition
+        _spDiff((iI + 2) Mod 3) = currentPanel.VerticalPosition - _panelList((iI + 2) Mod 3).VerticalPosition
     End Sub
 
     Private Sub HsValueChanged(sender As Object, e As EventArgs)
@@ -1274,7 +1168,7 @@ EndSearch:
         Grid.WidthScale = CSng(CGWidth.Value)
         CGWidth2.Value = IIf(CGWidth.Value * 4 < CGWidth2.Maximum, CDec(CGWidth.Value * 4), CGWidth2.Maximum)
 
-        For Each panel In _spMain
+        For Each panel In _panelList
             panel.SetWidthScale(Grid.WidthScale)
         Next
 
@@ -1494,96 +1388,14 @@ EndSearch:
         Return Mid(s, 1, IIf(fslash > bslash, fslash, bslash) - 1)
     End Function
 
-    Private Sub PlayerMissingPrompt()
-        Dim xArg As PlayerArguments = PArgs(CurrentPlayer)
-        MsgBox(Strings.Messages.CannotFind.Replace("{}", PrevCodeToReal(xArg.Path)) & vbCrLf &
-               Strings.Messages.PleaseRespecifyPath, MsgBoxStyle.Critical, Strings.Messages.PlayerNotFound)
-
-        Dim xDOpen As New OpenFileDialog
-        xDOpen.InitialDirectory = IIf(ExcludeFileName(PrevCodeToReal(xArg.Path)) = "",
-                                      My.Application.Info.DirectoryPath,
-                                      ExcludeFileName(PrevCodeToReal(xArg.Path)))
-        xDOpen.FileName = PrevCodeToReal(xArg.Path)
-        xDOpen.Filter = Strings.FileType.EXE & "|*.exe"
-        xDOpen.DefaultExt = "exe"
-        If xDOpen.ShowDialog = DialogResult.Cancel Then Exit Sub
-
-        'pArgs(CurrentPlayer) = Replace(xDOpen.FileName, My.Application.Info.DirectoryPath, "<apppath>") & _
-        '                                           Mid(pArgs(CurrentPlayer), InStr(pArgs(CurrentPlayer), vbCrLf))
-        'xStr = Split(pArgs(CurrentPlayer), vbCrLf)
-        PArgs(CurrentPlayer).Path = Replace(xDOpen.FileName, My.Application.Info.DirectoryPath, "<apppath>")
-        xArg = PArgs(CurrentPlayer)
-    End Sub
-
-    Private Sub TBPlay_Click(sender As Object, e As EventArgs) Handles TBPlay.Click, mnPlay.Click
-        'Dim xStr() As String = Split(pArgs(CurrentPlayer), vbCrLf)
-        Dim xArg As PlayerArguments = PArgs(CurrentPlayer)
-
-        If Not File.Exists(PrevCodeToReal(xArg.Path)) Then
-            PlayerMissingPrompt()
-            xArg = PArgs(CurrentPlayer)
-        End If
-
-        ' az: Treat it like we cancelled the operation
-        If Not File.Exists(PrevCodeToReal(xArg.Path)) Then
-            Exit Sub
-        End If
-
-        Dim xStrAll As String = SaveBms()
-        Dim xFileName As String = IIf(Not PathIsValid(_fileName),
-                                      IIf(_initPath = "", My.Application.Info.DirectoryPath, _initPath),
-                                      ExcludeFileName(_fileName)) & "\___TempBMS.bms"
-        My.Computer.FileSystem.WriteAllText(xFileName, xStrAll, False, _textEncoding)
-
-        AddTempFileList(xFileName)
-        Process.Start(PrevCodeToReal(xArg.Path), PrevCodeToReal(xArg.AHere))
-    End Sub
-
-    Private Sub TBPlayB_Click(sender As Object, e As EventArgs) Handles TBPlayB.Click, mnPlayB.Click
-        'Dim xStr() As String = Split(pArgs(CurrentPlayer), vbCrLf)
-        Dim xArg As PlayerArguments = PArgs(CurrentPlayer)
-
-        If Not File.Exists(PrevCodeToReal(xArg.Path)) Then
-            PlayerMissingPrompt()
-            xArg = PArgs(CurrentPlayer)
-        End If
-
-        If Not File.Exists(PrevCodeToReal(xArg.Path)) Then
-            Exit Sub
-        End If
-
-        Dim xStrAll As String = SaveBms()
-        Dim xFileName As String = IIf(Not PathIsValid(_fileName),
-                                      IIf(_initPath = "", My.Application.Info.DirectoryPath, _initPath),
-                                      ExcludeFileName(_fileName)) & "\___TempBMS.bms"
-        My.Computer.FileSystem.WriteAllText(xFileName, xStrAll, False, _textEncoding)
-
-        AddTempFileList(xFileName)
-
-        Process.Start(PrevCodeToReal(xArg.Path), PrevCodeToReal(xArg.ABegin))
-    End Sub
-
-    Private Sub TBStop_Click(sender As Object, e As EventArgs) Handles TBStop.Click, mnStop.Click
-        'Dim xStr() As String = Split(pArgs(CurrentPlayer), vbCrLf)
-        Dim xArg As PlayerArguments = PArgs(CurrentPlayer)
-
-        If Not File.Exists(PrevCodeToReal(xArg.Path)) Then
-            PlayerMissingPrompt()
-            xArg = PArgs(CurrentPlayer)
-        End If
-
-        If Not File.Exists(PrevCodeToReal(xArg.Path)) Then
-            Exit Sub
-        End If
-
-        Process.Start(PrevCodeToReal(xArg.Path), PrevCodeToReal(xArg.AStop))
-    End Sub
-
-    Private Sub AddTempFileList(s As String)
+    Private Sub AddToTempFileList(s As String)
         Dim xAdd = True
         If _pTempFileNames IsNot Nothing Then
-            For Each xStr1 As String In _pTempFileNames
-                If xStr1 = s Then xAdd = False : Exit For
+            For Each xStr1 In _pTempFileNames
+                If xStr1 = s Then
+                    xAdd = False
+                    Exit For
+                End If
             Next
         End If
 
@@ -1762,53 +1574,7 @@ StartCount:     If Not NtInput Then
         End If
     End Sub
 
-    Private Function GetTimeFromVPosition(vpos As Double) As Double
-        Dim timingNotes = (From note In Notes
-                           Where note.ColumnIndex = ColumnType.BPM Or note.ColumnIndex = ColumnType.STOPS
-                           Group By column = note.ColumnIndex
-                Into noteGroups = Group).ToDictionary(Function(x) x.column, Function(x) x.noteGroups)
 
-        Dim bpmNotes = timingNotes.Item(ColumnType.BPM)
-
-        Dim stopNotes As IEnumerable(Of Note) = Nothing
-
-        If timingNotes.ContainsKey(ColumnType.STOPS) Then
-            stopNotes = timingNotes.Item(ColumnType.STOPS)
-        End If
-
-
-        Dim stopContrib As Double
-        Dim bpmContrib As Double
-
-        For i = 0 To bpmNotes.Count() - 1
-            ' az: sum bpm contribution first
-            Dim duration = 0.0
-            Dim currentNote = bpmNotes.ElementAt(i)
-            Dim notevpos = Math.Max(0, currentNote.VPosition)
-
-            If i + 1 <> bpmNotes.Count() Then
-                Dim nextNote = bpmNotes.ElementAt(i + 1)
-                duration = nextNote.VPosition - notevpos
-            Else
-                duration = vpos - notevpos
-            End If
-
-            Dim currentBps = 60 / (currentNote.Value / 10000)
-            bpmContrib += currentBps * duration / 48
-
-            If stopNotes Is Nothing Then Continue For
-
-            Dim stops = From stp In stopNotes
-                        Where stp.VPosition >= notevpos And
-                          stp.VPosition < notevpos + duration
-
-            Dim stopBeats = stops.Sum(Function(x) x.Value / 10000.0) / 48
-            stopContrib += currentBps * stopBeats
-
-        Next
-
-        Return stopContrib + bpmContrib
-    End Function
 
 
     Private Sub POBMirror_Click(sender As Object, e As EventArgs) Handles POBMirror.Click
@@ -1965,7 +1731,7 @@ StartCount:     If Not NtInput Then
 
     Private Sub TBOptions_Click(sender As Object, e As EventArgs) Handles TBVOptions.Click, mnVOptions.Click
 
-        Dim xDiag As New OpVisual(_vo, Columns.column, LWAV.Font)
+        Dim xDiag As New OpVisual(_theme, Columns.column, LWAV.Font)
         xDiag.ShowDialog(Me)
         UpdateColumnsX()
         RefreshPanelAll()
@@ -2321,14 +2087,14 @@ StartCount:     If Not NtInput Then
 
     Private Sub TWTransparency_ValueChanged(sender As Object, e As EventArgs) Handles TWTransparency.ValueChanged
         TWTransparency2.Value = TWTransparency.Value
-        _vo.pBGMWav.Color = Color.FromArgb(TWTransparency.Value, _vo.pBGMWav.Color)
+        _theme.pBGMWav.Color = Color.FromArgb(TWTransparency.Value, _theme.pBGMWav.Color)
         RefreshPanelAll()
     End Sub
 
     Private Sub TWSaturation_ValueChanged(sender As Object, e As EventArgs) Handles TWSaturation.ValueChanged
-        Dim xColor As Color = _vo.pBGMWav.Color
+        Dim xColor As Color = _theme.pBGMWav.Color
         TWSaturation2.Value = TWSaturation.Value
-        _vo.pBGMWav.Color = HSL2RGB(xColor.GetHue, TWSaturation.Value, xColor.GetBrightness * 1000, xColor.A)
+        _theme.pBGMWav.Color = HSL2RGB(xColor.GetHue, TWSaturation.Value, xColor.GetBrightness * 1000, xColor.A)
         RefreshPanelAll()
     End Sub
 
@@ -3260,10 +3026,13 @@ Jump2:
         ', TBMain.MouseDown  ', pttl.MouseDown, pIsSaved.MouseDown
         If e.Button = MouseButtons.Left Then
             ReleaseCapture()
-            SendMessage(Me.Handle, &H112, &HF012, 0)
+            SendMessage(Handle, &H112, &HF012, 0)
             If e.Clicks = 2 Then
-                If Me.WindowState = FormWindowState.Maximized Then Me.WindowState = FormWindowState.Normal Else _
-                    Me.WindowState = FormWindowState.Maximized
+                If WindowState = FormWindowState.Maximized Then
+                    WindowState = FormWindowState.Normal
+                Else
+                    WindowState = FormWindowState.Maximized
+                End If
             End If
         ElseIf e.Button = MouseButtons.Right Then
             'mnSys.Show(sender, e.Location)
@@ -3787,7 +3556,7 @@ case2:              Dim xI0 As Integer
     Public Sub RefreshPanelAll()
         If _isInitializing Then Exit Sub
 
-        For Each panel In _spMain
+        For Each panel In _panelList
             panel.Refresh()
         Next
     End Sub
@@ -3801,6 +3570,12 @@ case2:              Dim xI0 As Integer
     Public ReadOnly Property IsWriteMode As Boolean
         Get
             Return TBWrite.Checked
+        End Get
+    End Property
+
+    Public ReadOnly Property CurrentHoveredNote As Note
+        Get
+            Return Notes(State.Mouse.CurrentHoveredNoteIndex)
         End Get
     End Property
 End Class

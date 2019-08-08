@@ -166,6 +166,9 @@
     <Compile Include="EditorPanel.vb">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="EditorPreviewers.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="EditorRecent.vb">
       <SubType>Form</SubType>
     </Compile>

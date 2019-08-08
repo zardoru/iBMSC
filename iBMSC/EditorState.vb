@@ -70,10 +70,10 @@ Public Class MouseState
     Public MiddleButtonLocation As New Point(0, 0)
     Public MiddleButtonClicked As Boolean = False
     Public MouseMoveStatus As Point = New Point(0, 0)  'mouse is moved to which point (For Status Panel)
-    Public tempX As Integer
-    Public tempY As Integer
-    Public tempV As Integer ' vscroll when middle mouse was clicked
-    Public tempH As Integer ' hscroll when middle mouse was clicked
+    Public PanX As Integer
+    Public PanY As Integer
+    Public PanVerticalScroll As Integer ' vscroll when middle mouse was clicked
+    Public PanHorizontalScroll As Integer ' hscroll when middle mouse was clicked
 End Class
 
 Public Class NtState

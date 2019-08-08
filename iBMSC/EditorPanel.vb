@@ -18,7 +18,7 @@ Public Class EditorPanel
     End Property
 
     Private _buffer As Graphics
-    Private _theme As visualSettings
+    Private _theme As VisualSettings
     Private _editor As MainWindow
     Public WithEvents VerticalScrollBar As VScrollBar
     Public WithEvents HorizontalScrollBar As HScrollBar
@@ -56,7 +56,7 @@ Public Class EditorPanel
         Parent = paren
     End Sub
 
-    Public Sub Init(wnd As MainWindow, theme As visualSettings)
+    Public Sub Init(wnd As MainWindow, theme As VisualSettings)
 
         _theme = theme
         _editor = wnd
@@ -790,26 +790,26 @@ Public Class EditorPanel
     Private Sub DrawClickAndScroll()
         Dim xDeltaLocation As Point = PointToScreen(New Point(0, 0))
 
-        Dim xInitX As Single = _editor.State.Mouse.MiddleButtonLocation.X - xDeltaLocation.X
-        Dim xInitY As Single = _editor.State.Mouse.MiddleButtonLocation.Y - xDeltaLocation.Y
-        Dim xCurrX As Single = Cursor.Position.X - xDeltaLocation.X
-        Dim xCurrY As Single = Cursor.Position.Y - xDeltaLocation.Y
-        Dim xAngle As Double = Math.Atan2(xCurrY - xInitY, xCurrX - xInitX)
+        Dim startX As Single = _editor.State.Mouse.MiddleButtonLocation.X - xDeltaLocation.X
+        Dim startY As Single = _editor.State.Mouse.MiddleButtonLocation.Y - xDeltaLocation.Y
+        Dim currentX As Single = Cursor.Position.X - xDeltaLocation.X
+        Dim currentY As Single = Cursor.Position.Y - xDeltaLocation.Y
+        Dim angle As Double = Math.Atan2(currentY - startY, currentX - startX)
         _buffer.SmoothingMode = SmoothingMode.HighQuality
 
-        If Not (xInitX = xCurrX And xInitY = xCurrY) Then
-            Dim xPointx() As PointF = {New PointF(xCurrX, xCurrY),
-                                       New PointF(Math.Cos(xAngle + Math.PI / 2) * 10 + xInitX,
-                                                  Math.Sin(xAngle + Math.PI / 2) * 10 + xInitY),
-                                       New PointF(Math.Cos(xAngle - Math.PI / 2) * 10 + xInitX,
-                                                  Math.Sin(xAngle - Math.PI / 2) * 10 + xInitY)}
+        If Not (startX = currentX And startY = currentY) Then
+            Dim xPointx() As PointF = {New PointF(currentX, currentY),
+                                       New PointF(Math.Cos(angle + Math.PI / 2) * 10 + startX,
+                                                  Math.Sin(angle + Math.PI / 2) * 10 + startY),
+                                       New PointF(Math.Cos(angle - Math.PI / 2) * 10 + startX,
+                                                  Math.Sin(angle - Math.PI / 2) * 10 + startY)}
             _buffer.FillPolygon(
-                New LinearGradientBrush(New Point(xInitX, xInitY), New Point(xCurrX, xCurrY), Color.FromArgb(0),
+                New LinearGradientBrush(New Point(startX, startY), New Point(currentX, currentY), Color.FromArgb(0),
                                         Color.FromArgb(-1)), xPointx)
         End If
 
-        _buffer.FillEllipse(Brushes.LightGray, xInitX - 10, xInitY - 10, 20, 20)
-        _buffer.DrawEllipse(Pens.Black, xInitX - 8, xInitY - 8, 16, 16)
+        _buffer.FillEllipse(Brushes.LightGray, startX - 10, startY - 10, 20, 20)
+        _buffer.DrawEllipse(Pens.Black, startX - 8, startY - 8, 16, 16)
 
         _buffer.SmoothingMode = SmoothingMode.Default
     End Sub
