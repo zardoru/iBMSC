@@ -1,9 +1,9 @@
-﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
+﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class MainWindow
     Inherits System.Windows.Forms.Form
 
     'Form 重写 Dispose，以清理组件列表。
-    <System.Diagnostics.DebuggerNonUserCode()> _
+    <System.Diagnostics.DebuggerNonUserCode()>
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         If disposing AndAlso components IsNot Nothing Then
             components.Dispose()
@@ -17,9 +17,22 @@ Partial Class MainWindow
     '注意: 以下过程是 Windows 窗体设计器所必需的
     '可以使用 Windows 窗体设计器修改它。
     '不要使用代码编辑器修改它。
-    <System.Diagnostics.DebuggerStepThrough()> _
+    <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
+        Dim ToolStripSeparator14 As System.Windows.Forms.ToolStripSeparator
+        Dim ToolStripSeparator15 As System.Windows.Forms.ToolStripSeparator
+        Dim ToolStripSeparator16 As System.Windows.Forms.ToolStripSeparator
+        Dim ToolStripSeparator17 As System.Windows.Forms.ToolStripSeparator
+        Dim ToolStripSeparator18 As System.Windows.Forms.ToolStripSeparator
+        Dim ToolStripSeparator19 As System.Windows.Forms.ToolStripSeparator
+        Dim ToolStripSeparator23 As System.Windows.Forms.ToolStripSeparator
+        Dim ToolStripSeparator21 As System.Windows.Forms.ToolStripSeparator
+        Dim ToolStripSeparator22 As System.Windows.Forms.ToolStripSeparator
+        Dim ToolStripSeparator20 As System.Windows.Forms.ToolStripSeparator
+        Dim ToolStripSeparator10 As System.Windows.Forms.ToolStripSeparator
+        Dim ToolStripSeparator11 As System.Windows.Forms.ToolStripSeparator
+        Dim ToolStripSeparator12 As System.Windows.Forms.ToolStripSeparator
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(MainWindow))
         Me.cmnLanguage = New System.Windows.Forms.ContextMenuStrip(Me.components)
         Me.TBLangDef = New System.Windows.Forms.ToolStripMenuItem()
@@ -189,7 +202,6 @@ Partial Class MainWindow
         Me.Label8 = New System.Windows.Forms.Label()
         Me.Label6 = New System.Windows.Forms.Label()
         Me.POHeaderSwitch = New System.Windows.Forms.CheckBox()
-        Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
         Me.Menu1 = New System.Windows.Forms.ContextMenuStrip(Me.components)
         Me.MInsert = New System.Windows.Forms.ToolStripMenuItem()
         Me.MRemove = New System.Windows.Forms.ToolStripMenuItem()
@@ -200,36 +212,29 @@ Partial Class MainWindow
         Me.mnOpen = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnImportSM = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnImportIBMSC = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ToolStripSeparator14 = New System.Windows.Forms.ToolStripSeparator()
         Me.mnSave = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnSaveAs = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnExport = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ToolStripSeparator15 = New System.Windows.Forms.ToolStripSeparator()
         Me.mnOpenR0 = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnOpenR1 = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnOpenR2 = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnOpenR3 = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnOpenR4 = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ToolStripSeparator16 = New System.Windows.Forms.ToolStripSeparator()
         Me.mnQuit = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnEdit = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnUndo = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnRedo = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ToolStripSeparator17 = New System.Windows.Forms.ToolStripSeparator()
         Me.mnCut = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnCopy = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnPaste = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnDelete = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnSelectAll = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnGotoMeasure = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ToolStripSeparator18 = New System.Windows.Forms.ToolStripSeparator()
         Me.mnFind = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnStatistics = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ToolStripSeparator19 = New System.Windows.Forms.ToolStripSeparator()
         Me.mnTimeSelect = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnSelect = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnWrite = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ToolStripSeparator23 = New System.Windows.Forms.ToolStripSeparator()
         Me.mnMyO2 = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnSys = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnSMenu = New System.Windows.Forms.ToolStripMenuItem()
@@ -238,7 +243,6 @@ Partial Class MainWindow
         Me.mnSStatus = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnSLSplitter = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnSRSplitter = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ToolStripSeparator21 = New System.Windows.Forms.ToolStripSeparator()
         Me.CGShow = New System.Windows.Forms.ToolStripMenuItem()
         Me.CGShowS = New System.Windows.Forms.ToolStripMenuItem()
         Me.CGShowBG = New System.Windows.Forms.ToolStripMenuItem()
@@ -246,7 +250,6 @@ Partial Class MainWindow
         Me.CGShowMB = New System.Windows.Forms.ToolStripMenuItem()
         Me.CGShowV = New System.Windows.Forms.ToolStripMenuItem()
         Me.CGShowC = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ToolStripSeparator22 = New System.Windows.Forms.ToolStripSeparator()
         Me.CGBPM = New System.Windows.Forms.ToolStripMenuItem()
         Me.CGSTOP = New System.Windows.Forms.ToolStripMenuItem()
         Me.CGSCROLL = New System.Windows.Forms.ToolStripMenuItem()
@@ -256,7 +259,6 @@ Partial Class MainWindow
         Me.mnErrorCheck = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnPreviewOnClick = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnShowFileName = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ToolStripSeparator20 = New System.Windows.Forms.ToolStripSeparator()
         Me.mnGOptions = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnVOptions = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnPOptions = New System.Windows.Forms.ToolStripMenuItem()
@@ -265,11 +267,9 @@ Partial Class MainWindow
         Me.POBLong = New System.Windows.Forms.ToolStripMenuItem()
         Me.POBShort = New System.Windows.Forms.ToolStripMenuItem()
         Me.POBLongShort = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ToolStripSeparator10 = New System.Windows.Forms.ToolStripSeparator()
         Me.POBHidden = New System.Windows.Forms.ToolStripMenuItem()
         Me.POBVisible = New System.Windows.Forms.ToolStripMenuItem()
         Me.POBHiddenVisible = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ToolStripSeparator11 = New System.Windows.Forms.ToolStripSeparator()
         Me.POBModify = New System.Windows.Forms.ToolStripMenuItem()
         Me.POBMirror = New System.Windows.Forms.ToolStripMenuItem()
         Me.POConvert = New System.Windows.Forms.ToolStripDropDownButton()
@@ -285,7 +285,6 @@ Partial Class MainWindow
         Me.TBOpenR2 = New System.Windows.Forms.ToolStripMenuItem()
         Me.TBOpenR3 = New System.Windows.Forms.ToolStripMenuItem()
         Me.TBOpenR4 = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ToolStripSeparator12 = New System.Windows.Forms.ToolStripSeparator()
         Me.TBImportSM = New System.Windows.Forms.ToolStripMenuItem()
         Me.TBImportIBMSC = New System.Windows.Forms.ToolStripMenuItem()
         Me.TBSave = New System.Windows.Forms.ToolStripSplitButton()
@@ -350,22 +349,22 @@ Partial Class MainWindow
         Me.FSE = New System.Windows.Forms.ToolStripStatusLabel()
         Me.TimerMiddle = New System.Windows.Forms.Timer(Me.components)
         Me.ToolStripContainer1 = New System.Windows.Forms.ToolStripContainer()
-        Me.PMain = New System.Windows.Forms.Panel()
-        Me.MainPanelScroll = New System.Windows.Forms.VScrollBar()
-        Me.HS = New System.Windows.Forms.HScrollBar()
-        Me.SpR = New System.Windows.Forms.Button()
-        Me.SpL = New System.Windows.Forms.Button()
-        Me.PMainR = New System.Windows.Forms.Panel()
-        Me.RightPanelScroll = New System.Windows.Forms.VScrollBar()
-        Me.HSR = New System.Windows.Forms.HScrollBar()
-        Me.PMainL = New System.Windows.Forms.Panel()
-        Me.LeftPanelScroll = New System.Windows.Forms.VScrollBar()
-        Me.HSL = New System.Windows.Forms.HScrollBar()
+        Me.EditorPanel1 = New iBMSC.EditorPanel()
         Me.POptionsResizer = New System.Windows.Forms.Button()
         Me.ToolTipUniversal = New System.Windows.Forms.ToolTip(Me.components)
-        Me.PMainIn = New iBMSC.EditorPanel()
-        Me.PMainInR = New iBMSC.EditorPanel()
-        Me.PMainInL = New iBMSC.EditorPanel()
+        ToolStripSeparator14 = New System.Windows.Forms.ToolStripSeparator()
+        ToolStripSeparator15 = New System.Windows.Forms.ToolStripSeparator()
+        ToolStripSeparator16 = New System.Windows.Forms.ToolStripSeparator()
+        ToolStripSeparator17 = New System.Windows.Forms.ToolStripSeparator()
+        ToolStripSeparator18 = New System.Windows.Forms.ToolStripSeparator()
+        ToolStripSeparator19 = New System.Windows.Forms.ToolStripSeparator()
+        ToolStripSeparator23 = New System.Windows.Forms.ToolStripSeparator()
+        ToolStripSeparator21 = New System.Windows.Forms.ToolStripSeparator()
+        ToolStripSeparator22 = New System.Windows.Forms.ToolStripSeparator()
+        ToolStripSeparator20 = New System.Windows.Forms.ToolStripSeparator()
+        ToolStripSeparator10 = New System.Windows.Forms.ToolStripSeparator()
+        ToolStripSeparator11 = New System.Windows.Forms.ToolStripSeparator()
+        ToolStripSeparator12 = New System.Windows.Forms.ToolStripSeparator()
         Me.cmnLanguage.SuspendLayout()
         Me.cmnTheme.SuspendLayout()
         Me.POptionsScroll.SuspendLayout()
@@ -444,10 +443,72 @@ Partial Class MainWindow
         Me.ToolStripContainer1.ContentPanel.SuspendLayout()
         Me.ToolStripContainer1.TopToolStripPanel.SuspendLayout()
         Me.ToolStripContainer1.SuspendLayout()
-        Me.PMain.SuspendLayout()
-        Me.PMainR.SuspendLayout()
-        Me.PMainL.SuspendLayout()
         Me.SuspendLayout()
+        '
+        'ToolStripSeparator14
+        '
+        ToolStripSeparator14.Name = "ToolStripSeparator14"
+        ToolStripSeparator14.Size = New System.Drawing.Size(196, 6)
+        '
+        'ToolStripSeparator15
+        '
+        ToolStripSeparator15.Name = "ToolStripSeparator15"
+        ToolStripSeparator15.Size = New System.Drawing.Size(196, 6)
+        '
+        'ToolStripSeparator16
+        '
+        ToolStripSeparator16.Name = "ToolStripSeparator16"
+        ToolStripSeparator16.Size = New System.Drawing.Size(196, 6)
+        '
+        'ToolStripSeparator17
+        '
+        ToolStripSeparator17.Name = "ToolStripSeparator17"
+        ToolStripSeparator17.Size = New System.Drawing.Size(230, 6)
+        '
+        'ToolStripSeparator18
+        '
+        ToolStripSeparator18.Name = "ToolStripSeparator18"
+        ToolStripSeparator18.Size = New System.Drawing.Size(230, 6)
+        '
+        'ToolStripSeparator19
+        '
+        ToolStripSeparator19.Name = "ToolStripSeparator19"
+        ToolStripSeparator19.Size = New System.Drawing.Size(230, 6)
+        '
+        'ToolStripSeparator23
+        '
+        ToolStripSeparator23.Name = "ToolStripSeparator23"
+        ToolStripSeparator23.Size = New System.Drawing.Size(230, 6)
+        '
+        'ToolStripSeparator21
+        '
+        ToolStripSeparator21.Name = "ToolStripSeparator21"
+        ToolStripSeparator21.Size = New System.Drawing.Size(169, 6)
+        '
+        'ToolStripSeparator22
+        '
+        ToolStripSeparator22.Name = "ToolStripSeparator22"
+        ToolStripSeparator22.Size = New System.Drawing.Size(169, 6)
+        '
+        'ToolStripSeparator20
+        '
+        ToolStripSeparator20.Name = "ToolStripSeparator20"
+        ToolStripSeparator20.Size = New System.Drawing.Size(226, 6)
+        '
+        'ToolStripSeparator10
+        '
+        ToolStripSeparator10.Name = "ToolStripSeparator10"
+        ToolStripSeparator10.Size = New System.Drawing.Size(218, 6)
+        '
+        'ToolStripSeparator11
+        '
+        ToolStripSeparator11.Name = "ToolStripSeparator11"
+        ToolStripSeparator11.Size = New System.Drawing.Size(218, 6)
+        '
+        'ToolStripSeparator12
+        '
+        ToolStripSeparator12.Name = "ToolStripSeparator12"
+        ToolStripSeparator12.Size = New System.Drawing.Size(196, 6)
         '
         'cmnLanguage
         '
@@ -489,7 +550,7 @@ Partial Class MainWindow
         Me.TBLanguage.Image = Global.iBMSC.My.Resources.Resources.x16Language
         Me.TBLanguage.ImageTransparentColor = System.Drawing.Color.Magenta
         Me.TBLanguage.Name = "TBLanguage"
-        Me.TBLanguage.Size = New System.Drawing.Size(29, 22)
+        Me.TBLanguage.Size = New System.Drawing.Size(29, 20)
         Me.TBLanguage.Text = "Language"
         '
         'cmnTheme
@@ -545,7 +606,7 @@ Partial Class MainWindow
         Me.TBTheme.Image = Global.iBMSC.My.Resources.Resources.x16Theme
         Me.TBTheme.ImageTransparentColor = System.Drawing.Color.Magenta
         Me.TBTheme.Name = "TBTheme"
-        Me.TBTheme.Size = New System.Drawing.Size(29, 22)
+        Me.TBTheme.Size = New System.Drawing.Size(29, 20)
         Me.TBTheme.Text = "Theme"
         '
         'POptionsScroll
@@ -553,9 +614,9 @@ Partial Class MainWindow
         Me.POptionsScroll.AutoScroll = True
         Me.POptionsScroll.Controls.Add(Me.POptions)
         Me.POptionsScroll.Dock = System.Windows.Forms.DockStyle.Right
-        Me.POptionsScroll.Location = New System.Drawing.Point(680, 0)
+        Me.POptionsScroll.Location = New System.Drawing.Point(644, 0)
         Me.POptionsScroll.Name = "POptionsScroll"
-        Me.POptionsScroll.Size = New System.Drawing.Size(200, 410)
+        Me.POptionsScroll.Size = New System.Drawing.Size(200, 462)
         Me.POptionsScroll.TabIndex = 28
         '
         'POptions
@@ -2650,10 +2711,6 @@ Partial Class MainWindow
         Me.POHeaderSwitch.UseCompatibleTextRendering = True
         Me.POHeaderSwitch.UseVisualStyleBackColor = False
         '
-        'Timer1
-        '
-        Me.Timer1.Interval = 15
-        '
         'Menu1
         '
         Me.Menu1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.MInsert, Me.MRemove})
@@ -2689,12 +2746,12 @@ Partial Class MainWindow
         Me.mnMain.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow
         Me.mnMain.Location = New System.Drawing.Point(0, 0)
         Me.mnMain.Name = "mnMain"
-        Me.mnMain.Size = New System.Drawing.Size(674, 23)
+        Me.mnMain.Size = New System.Drawing.Size(638, 23)
         Me.mnMain.TabIndex = 57
         '
         'mnFile
         '
-        Me.mnFile.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnNew, Me.mnOpen, Me.mnImportSM, Me.mnImportIBMSC, Me.ToolStripSeparator14, Me.mnSave, Me.mnSaveAs, Me.mnExport, Me.ToolStripSeparator15, Me.mnOpenR0, Me.mnOpenR1, Me.mnOpenR2, Me.mnOpenR3, Me.mnOpenR4, Me.ToolStripSeparator16, Me.mnQuit})
+        Me.mnFile.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnNew, Me.mnOpen, Me.mnImportSM, Me.mnImportIBMSC, ToolStripSeparator14, Me.mnSave, Me.mnSaveAs, Me.mnExport, ToolStripSeparator15, Me.mnOpenR0, Me.mnOpenR1, Me.mnOpenR2, Me.mnOpenR3, Me.mnOpenR4, ToolStripSeparator16, Me.mnQuit})
         Me.mnFile.Name = "mnFile"
         Me.mnFile.Size = New System.Drawing.Size(37, 19)
         Me.mnFile.Text = "&File"
@@ -2729,11 +2786,6 @@ Partial Class MainWindow
         Me.mnImportIBMSC.Size = New System.Drawing.Size(199, 22)
         Me.mnImportIBMSC.Text = "Import from .&IBMSC file"
         '
-        'ToolStripSeparator14
-        '
-        Me.ToolStripSeparator14.Name = "ToolStripSeparator14"
-        Me.ToolStripSeparator14.Size = New System.Drawing.Size(196, 6)
-        '
         'mnSave
         '
         Me.mnSave.Image = Global.iBMSC.My.Resources.Resources.x16Save
@@ -2755,11 +2807,6 @@ Partial Class MainWindow
         Me.mnExport.Name = "mnExport"
         Me.mnExport.Size = New System.Drawing.Size(199, 22)
         Me.mnExport.Text = "&Export .IBMSC file"
-        '
-        'ToolStripSeparator15
-        '
-        Me.ToolStripSeparator15.Name = "ToolStripSeparator15"
-        Me.ToolStripSeparator15.Size = New System.Drawing.Size(196, 6)
         '
         'mnOpenR0
         '
@@ -2801,11 +2848,6 @@ Partial Class MainWindow
         Me.mnOpenR4.Tag = "4"
         Me.mnOpenR4.Text = "Recent #4"
         '
-        'ToolStripSeparator16
-        '
-        Me.ToolStripSeparator16.Name = "ToolStripSeparator16"
-        Me.ToolStripSeparator16.Size = New System.Drawing.Size(196, 6)
-        '
         'mnQuit
         '
         Me.mnQuit.Name = "mnQuit"
@@ -2814,7 +2856,7 @@ Partial Class MainWindow
         '
         'mnEdit
         '
-        Me.mnEdit.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnUndo, Me.mnRedo, Me.ToolStripSeparator17, Me.mnCut, Me.mnCopy, Me.mnPaste, Me.mnDelete, Me.mnSelectAll, Me.mnGotoMeasure, Me.ToolStripSeparator18, Me.mnFind, Me.mnStatistics, Me.ToolStripSeparator19, Me.mnTimeSelect, Me.mnSelect, Me.mnWrite, Me.ToolStripSeparator23, Me.mnMyO2})
+        Me.mnEdit.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnUndo, Me.mnRedo, ToolStripSeparator17, Me.mnCut, Me.mnCopy, Me.mnPaste, Me.mnDelete, Me.mnSelectAll, Me.mnGotoMeasure, ToolStripSeparator18, Me.mnFind, Me.mnStatistics, ToolStripSeparator19, Me.mnTimeSelect, Me.mnSelect, Me.mnWrite, ToolStripSeparator23, Me.mnMyO2})
         Me.mnEdit.Name = "mnEdit"
         Me.mnEdit.Size = New System.Drawing.Size(39, 19)
         Me.mnEdit.Text = "&Edit"
@@ -2836,11 +2878,6 @@ Partial Class MainWindow
         Me.mnRedo.ShortcutKeyDisplayString = "Ctrl+Y"
         Me.mnRedo.Size = New System.Drawing.Size(233, 22)
         Me.mnRedo.Text = "&Redo"
-        '
-        'ToolStripSeparator17
-        '
-        Me.ToolStripSeparator17.Name = "ToolStripSeparator17"
-        Me.ToolStripSeparator17.Size = New System.Drawing.Size(230, 6)
         '
         'mnCut
         '
@@ -2888,11 +2925,6 @@ Partial Class MainWindow
         Me.mnGotoMeasure.Size = New System.Drawing.Size(233, 22)
         Me.mnGotoMeasure.Text = "Go To Measure..."
         '
-        'ToolStripSeparator18
-        '
-        Me.ToolStripSeparator18.Name = "ToolStripSeparator18"
-        Me.ToolStripSeparator18.Size = New System.Drawing.Size(230, 6)
-        '
         'mnFind
         '
         Me.mnFind.Image = Global.iBMSC.My.Resources.Resources.x16Find
@@ -2908,11 +2940,6 @@ Partial Class MainWindow
         Me.mnStatistics.ShortcutKeyDisplayString = "Ctrl+T"
         Me.mnStatistics.Size = New System.Drawing.Size(233, 22)
         Me.mnStatistics.Text = "St&atistics"
-        '
-        'ToolStripSeparator19
-        '
-        Me.ToolStripSeparator19.Name = "ToolStripSeparator19"
-        Me.ToolStripSeparator19.Size = New System.Drawing.Size(230, 6)
         '
         'mnTimeSelect
         '
@@ -2943,11 +2970,6 @@ Partial Class MainWindow
         Me.mnWrite.Size = New System.Drawing.Size(233, 22)
         Me.mnWrite.Text = "&Write Tool"
         '
-        'ToolStripSeparator23
-        '
-        Me.ToolStripSeparator23.Name = "ToolStripSeparator23"
-        Me.ToolStripSeparator23.Size = New System.Drawing.Size(230, 6)
-        '
         'mnMyO2
         '
         Me.mnMyO2.Image = Global.iBMSC.My.Resources.Resources.x16MyO2
@@ -2957,7 +2979,7 @@ Partial Class MainWindow
         '
         'mnSys
         '
-        Me.mnSys.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnSMenu, Me.mnSTB, Me.mnSOP, Me.mnSStatus, Me.mnSLSplitter, Me.mnSRSplitter, Me.ToolStripSeparator21, Me.CGShow, Me.CGShowS, Me.CGShowBG, Me.CGShowM, Me.CGShowMB, Me.CGShowV, Me.CGShowC, Me.ToolStripSeparator22, Me.CGBPM, Me.CGSTOP, Me.CGSCROLL, Me.CGBLP})
+        Me.mnSys.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnSMenu, Me.mnSTB, Me.mnSOP, Me.mnSStatus, Me.mnSLSplitter, Me.mnSRSplitter, ToolStripSeparator21, Me.CGShow, Me.CGShowS, Me.CGShowBG, Me.CGShowM, Me.CGShowMB, Me.CGShowV, Me.CGShowC, ToolStripSeparator22, Me.CGBPM, Me.CGSTOP, Me.CGSCROLL, Me.CGBLP})
         Me.mnSys.Name = "mnSys"
         Me.mnSys.Size = New System.Drawing.Size(44, 19)
         Me.mnSys.Text = "&View"
@@ -3012,11 +3034,6 @@ Partial Class MainWindow
         Me.mnSRSplitter.Name = "mnSRSplitter"
         Me.mnSRSplitter.Size = New System.Drawing.Size(172, 22)
         Me.mnSRSplitter.Text = "&Right Splitter"
-        '
-        'ToolStripSeparator21
-        '
-        Me.ToolStripSeparator21.Name = "ToolStripSeparator21"
-        Me.ToolStripSeparator21.Size = New System.Drawing.Size(169, 6)
         '
         'CGShow
         '
@@ -3081,11 +3098,6 @@ Partial Class MainWindow
         Me.CGShowC.Size = New System.Drawing.Size(172, 22)
         Me.CGShowC.Text = "Column Caption"
         '
-        'ToolStripSeparator22
-        '
-        Me.ToolStripSeparator22.Name = "ToolStripSeparator22"
-        Me.ToolStripSeparator22.Size = New System.Drawing.Size(169, 6)
-        '
         'CGBPM
         '
         Me.CGBPM.Checked = True
@@ -3124,7 +3136,7 @@ Partial Class MainWindow
         '
         'mnOptions
         '
-        Me.mnOptions.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnNTInput, Me.mnErrorCheck, Me.mnPreviewOnClick, Me.mnShowFileName, Me.ToolStripSeparator20, Me.mnGOptions, Me.mnVOptions, Me.mnPOptions, Me.mnLanguage, Me.mnTheme})
+        Me.mnOptions.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnNTInput, Me.mnErrorCheck, Me.mnPreviewOnClick, Me.mnShowFileName, ToolStripSeparator20, Me.mnGOptions, Me.mnVOptions, Me.mnPOptions, Me.mnLanguage, Me.mnTheme})
         Me.mnOptions.Name = "mnOptions"
         Me.mnOptions.Size = New System.Drawing.Size(61, 19)
         Me.mnOptions.Text = "&Options"
@@ -3168,11 +3180,6 @@ Partial Class MainWindow
         Me.mnShowFileName.Size = New System.Drawing.Size(229, 22)
         Me.mnShowFileName.Text = "Show &File Name on Notes"
         '
-        'ToolStripSeparator20
-        '
-        Me.ToolStripSeparator20.Name = "ToolStripSeparator20"
-        Me.ToolStripSeparator20.Size = New System.Drawing.Size(226, 6)
-        '
         'mnGOptions
         '
         Me.mnGOptions.Image = Global.iBMSC.My.Resources.Resources.x16GeneralOptions
@@ -3203,7 +3210,7 @@ Partial Class MainWindow
         '
         'cmnConversion
         '
-        Me.cmnConversion.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.POBLong, Me.POBShort, Me.POBLongShort, Me.ToolStripSeparator10, Me.POBHidden, Me.POBVisible, Me.POBHiddenVisible, Me.ToolStripSeparator11, Me.POBModify, Me.POBMirror})
+        Me.cmnConversion.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.POBLong, Me.POBShort, Me.POBLongShort, ToolStripSeparator10, Me.POBHidden, Me.POBVisible, Me.POBHiddenVisible, ToolStripSeparator11, Me.POBModify, Me.POBMirror})
         Me.cmnConversion.Name = "cmnLanguage"
         Me.cmnConversion.OwnerItem = Me.mnConversion
         Me.cmnConversion.Size = New System.Drawing.Size(222, 192)
@@ -3231,11 +3238,6 @@ Partial Class MainWindow
         Me.POBLongShort.Size = New System.Drawing.Size(221, 22)
         Me.POBLongShort.Text = "Long Note ↔ Short Note"
         '
-        'ToolStripSeparator10
-        '
-        Me.ToolStripSeparator10.Name = "ToolStripSeparator10"
-        Me.ToolStripSeparator10.Size = New System.Drawing.Size(218, 6)
-        '
         'POBHidden
         '
         Me.POBHidden.Image = Global.iBMSC.My.Resources.Resources.ConvertNotesH
@@ -3256,11 +3258,6 @@ Partial Class MainWindow
         Me.POBHiddenVisible.Name = "POBHiddenVisible"
         Me.POBHiddenVisible.Size = New System.Drawing.Size(221, 22)
         Me.POBHiddenVisible.Text = "Hidden Note ↔ Visible Note"
-        '
-        'ToolStripSeparator11
-        '
-        Me.ToolStripSeparator11.Name = "ToolStripSeparator11"
-        Me.ToolStripSeparator11.Size = New System.Drawing.Size(218, 6)
         '
         'POBModify
         '
@@ -3325,7 +3322,7 @@ Partial Class MainWindow
         Me.TBMain.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.TBNew, Me.TBOpen, Me.TBSave, Me.ToolStripSeparator1, Me.TBCut, Me.TBCopy, Me.TBPaste, Me.TBFind, Me.ToolStripSeparator24, Me.TBStatistics, Me.POConvert, Me.TBMyO2, Me.ToolStripSeparator4, Me.TBErrorCheck, Me.TBPreviewOnClick, Me.TBShowFileName, Me.ToolStripSeparator8, Me.TBNTInput, Me.TBWavIncrease, Me.ToolStripSeparator2, Me.TBUndo, Me.TBRedo, Me.ToolStripSeparator5, Me.TBTimeSelect, Me.TBSelect, Me.TBWrite, Me.ToolStripSeparator3, Me.TBPlayB, Me.TBPlay, Me.TBStop, Me.TBPOptions, Me.ToolStripSeparator7, Me.TBVOptions, Me.TBGOptions, Me.TBLanguage, Me.TBTheme, Me.POBStorm})
         Me.TBMain.Location = New System.Drawing.Point(3, 23)
         Me.TBMain.Name = "TBMain"
-        Me.TBMain.Size = New System.Drawing.Size(671, 25)
+        Me.TBMain.Size = New System.Drawing.Size(635, 25)
         Me.TBMain.TabIndex = 64
         Me.TBMain.Text = "Main Toolbar"
         '
@@ -3341,7 +3338,7 @@ Partial Class MainWindow
         'TBOpen
         '
         Me.TBOpen.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
-        Me.TBOpen.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.TBOpenR0, Me.TBOpenR1, Me.TBOpenR2, Me.TBOpenR3, Me.TBOpenR4, Me.ToolStripSeparator12, Me.TBImportSM, Me.TBImportIBMSC})
+        Me.TBOpen.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.TBOpenR0, Me.TBOpenR1, Me.TBOpenR2, Me.TBOpenR3, Me.TBOpenR4, ToolStripSeparator12, Me.TBImportSM, Me.TBImportIBMSC})
         Me.TBOpen.Image = Global.iBMSC.My.Resources.Resources.x16Open
         Me.TBOpen.ImageTransparentColor = System.Drawing.Color.Magenta
         Me.TBOpen.Name = "TBOpen"
@@ -3387,11 +3384,6 @@ Partial Class MainWindow
         Me.TBOpenR4.Size = New System.Drawing.Size(199, 22)
         Me.TBOpenR4.Tag = "4"
         Me.TBOpenR4.Text = "Recent #4"
-        '
-        'ToolStripSeparator12
-        '
-        Me.ToolStripSeparator12.Name = "ToolStripSeparator12"
-        Me.ToolStripSeparator12.Size = New System.Drawing.Size(196, 6)
         '
         'TBImportSM
         '
@@ -3658,7 +3650,7 @@ Partial Class MainWindow
         Me.TBPOptions.Image = Global.iBMSC.My.Resources.Resources.x16PlayerOptions
         Me.TBPOptions.ImageTransparentColor = System.Drawing.Color.Magenta
         Me.TBPOptions.Name = "TBPOptions"
-        Me.TBPOptions.Size = New System.Drawing.Size(23, 22)
+        Me.TBPOptions.Size = New System.Drawing.Size(23, 20)
         Me.TBPOptions.Text = "Player Options"
         '
         'ToolStripSeparator7
@@ -3672,7 +3664,7 @@ Partial Class MainWindow
         Me.TBVOptions.Image = Global.iBMSC.My.Resources.Resources.x16VisualOptions
         Me.TBVOptions.ImageTransparentColor = System.Drawing.Color.Magenta
         Me.TBVOptions.Name = "TBVOptions"
-        Me.TBVOptions.Size = New System.Drawing.Size(23, 22)
+        Me.TBVOptions.Size = New System.Drawing.Size(23, 20)
         Me.TBVOptions.Text = "Visual Options"
         '
         'TBGOptions
@@ -3681,7 +3673,7 @@ Partial Class MainWindow
         Me.TBGOptions.Image = Global.iBMSC.My.Resources.Resources.x16GeneralOptions
         Me.TBGOptions.ImageTransparentColor = System.Drawing.Color.Magenta
         Me.TBGOptions.Name = "TBGOptions"
-        Me.TBGOptions.Size = New System.Drawing.Size(23, 22)
+        Me.TBGOptions.Size = New System.Drawing.Size(23, 20)
         Me.TBGOptions.Text = "General Options"
         '
         'POBStorm
@@ -3690,7 +3682,7 @@ Partial Class MainWindow
         Me.POBStorm.Image = Global.iBMSC.My.Resources.Resources.x16Storm
         Me.POBStorm.ImageTransparentColor = System.Drawing.Color.Magenta
         Me.POBStorm.Name = "POBStorm"
-        Me.POBStorm.Size = New System.Drawing.Size(23, 22)
+        Me.POBStorm.Size = New System.Drawing.Size(23, 20)
         Me.POBStorm.Text = "Storm"
         Me.POBStorm.Visible = False
         '
@@ -3701,9 +3693,9 @@ Partial Class MainWindow
         Me.pStatus.Controls.Add(Me.FStatus2)
         Me.pStatus.Controls.Add(Me.FStatus)
         Me.pStatus.Dock = System.Windows.Forms.DockStyle.Bottom
-        Me.pStatus.Location = New System.Drawing.Point(0, 388)
+        Me.pStatus.Location = New System.Drawing.Point(0, 440)
         Me.pStatus.Name = "pStatus"
-        Me.pStatus.Size = New System.Drawing.Size(674, 22)
+        Me.pStatus.Size = New System.Drawing.Size(638, 22)
         Me.pStatus.TabIndex = 62
         '
         'FStatus2
@@ -3713,7 +3705,7 @@ Partial Class MainWindow
         Me.FStatus2.Location = New System.Drawing.Point(0, 0)
         Me.FStatus2.Name = "FStatus2"
         Me.FStatus2.ShowItemToolTips = True
-        Me.FStatus2.Size = New System.Drawing.Size(876, 22)
+        Me.FStatus2.Size = New System.Drawing.Size(638, 22)
         Me.FStatus2.TabIndex = 0
         Me.FStatus2.Text = "Status"
         Me.FStatus2.Visible = False
@@ -3827,7 +3819,7 @@ Partial Class MainWindow
         Me.BConvertStop.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
         Me.BConvertStop.ImageTransparentColor = System.Drawing.Color.Magenta
         Me.BConvertStop.Name = "BConvertStop"
-        Me.BConvertStop.Size = New System.Drawing.Size(116, 20)
+        Me.BConvertStop.Size = New System.Drawing.Size(116, 19)
         Me.BConvertStop.Text = "Transform Into Stop"
         Me.BConvertStop.ToolTipText = "This will move notes within the selection and preserve the selection, given the B" &
     "PM value next to this button. Considers center bar."
@@ -3839,7 +3831,7 @@ Partial Class MainWindow
         Me.FStatus.Location = New System.Drawing.Point(0, 0)
         Me.FStatus.Name = "FStatus"
         Me.FStatus.ShowItemToolTips = True
-        Me.FStatus.Size = New System.Drawing.Size(674, 22)
+        Me.FStatus.Size = New System.Drawing.Size(638, 22)
         Me.FStatus.SizingGrip = False
         Me.FStatus.TabIndex = 62
         Me.FStatus.Text = "Status"
@@ -3910,7 +3902,7 @@ Partial Class MainWindow
         'TimeStatusLabel
         '
         Me.TimeStatusLabel.Name = "TimeStatusLabel"
-        Me.TimeStatusLabel.Size = New System.Drawing.Size(55, 17)
+        Me.TimeStatusLabel.Size = New System.Drawing.Size(55, 15)
         Me.TimeStatusLabel.Text = "00:00:000"
         '
         'FST
@@ -3918,21 +3910,21 @@ Partial Class MainWindow
         Me.FST.ForeColor = System.Drawing.Color.Olive
         Me.FST.LinkColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(0, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.FST.Name = "FST"
-        Me.FST.Size = New System.Drawing.Size(64, 17)
+        Me.FST.Size = New System.Drawing.Size(64, 15)
         Me.FST.Text = "Length = 0"
         '
         'FSH
         '
         Me.FSH.ForeColor = System.Drawing.Color.Blue
         Me.FSH.Name = "FSH"
-        Me.FSH.Size = New System.Drawing.Size(46, 17)
+        Me.FSH.Size = New System.Drawing.Size(46, 15)
         Me.FSH.Text = "Hidden"
         '
         'FSE
         '
         Me.FSE.ForeColor = System.Drawing.Color.Red
         Me.FSE.Name = "FSE"
-        Me.FSE.Size = New System.Drawing.Size(32, 17)
+        Me.FSE.Size = New System.Drawing.Size(32, 15)
         Me.FSE.Text = "Error"
         '
         'TimerMiddle
@@ -3944,16 +3936,15 @@ Partial Class MainWindow
         '
         'ToolStripContainer1.ContentPanel
         '
-        Me.ToolStripContainer1.ContentPanel.Controls.Add(Me.PMain)
-        Me.ToolStripContainer1.ContentPanel.Controls.Add(Me.SpR)
-        Me.ToolStripContainer1.ContentPanel.Controls.Add(Me.SpL)
-        Me.ToolStripContainer1.ContentPanel.Controls.Add(Me.PMainR)
-        Me.ToolStripContainer1.ContentPanel.Controls.Add(Me.PMainL)
-        Me.ToolStripContainer1.ContentPanel.Size = New System.Drawing.Size(674, 340)
+        Me.ToolStripContainer1.ContentPanel.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None
+        Me.ToolStripContainer1.ContentPanel.Controls.Add(Me.EditorPanel1)
+        Me.ToolStripContainer1.ContentPanel.Size = New System.Drawing.Size(638, 392)
         Me.ToolStripContainer1.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.ToolStripContainer1.LeftToolStripPanelVisible = False
         Me.ToolStripContainer1.Location = New System.Drawing.Point(0, 0)
         Me.ToolStripContainer1.Name = "ToolStripContainer1"
-        Me.ToolStripContainer1.Size = New System.Drawing.Size(674, 388)
+        Me.ToolStripContainer1.RightToolStripPanelVisible = False
+        Me.ToolStripContainer1.Size = New System.Drawing.Size(638, 440)
         Me.ToolStripContainer1.TabIndex = 65
         Me.ToolStripContainer1.Text = "ToolStripContainer1"
         '
@@ -3962,151 +3953,13 @@ Partial Class MainWindow
         Me.ToolStripContainer1.TopToolStripPanel.Controls.Add(Me.mnMain)
         Me.ToolStripContainer1.TopToolStripPanel.Controls.Add(Me.TBMain)
         '
-        'PMain
+        'EditorPanel1
         '
-        Me.PMain.AutoSize = True
-        Me.PMain.BackColor = System.Drawing.Color.Black
-        Me.PMain.Controls.Add(Me.PMainIn)
-        Me.PMain.Controls.Add(Me.MainPanelScroll)
-        Me.PMain.Controls.Add(Me.HS)
-        Me.PMain.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.PMain.Font = New System.Drawing.Font("Verdana", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.PMain.ForeColor = System.Drawing.Color.White
-        Me.PMain.Location = New System.Drawing.Point(5, 0)
-        Me.PMain.Name = "PMain"
-        Me.PMain.Size = New System.Drawing.Size(664, 340)
-        Me.PMain.TabIndex = 58
-        Me.PMain.Tag = "1"
-        '
-        'MainPanelScroll
-        '
-        Me.MainPanelScroll.AccessibleRole = System.Windows.Forms.AccessibleRole.ScrollBar
-        Me.MainPanelScroll.Dock = System.Windows.Forms.DockStyle.Right
-        Me.MainPanelScroll.LargeChange = 579
-        Me.MainPanelScroll.Location = New System.Drawing.Point(647, 0)
-        Me.MainPanelScroll.Maximum = 578
-        Me.MainPanelScroll.Minimum = -10000
-        Me.MainPanelScroll.Name = "MainPanelScroll"
-        Me.MainPanelScroll.Size = New System.Drawing.Size(17, 323)
-        Me.MainPanelScroll.SmallChange = 12
-        Me.MainPanelScroll.TabIndex = 2
-        Me.MainPanelScroll.Tag = "1"
-        '
-        'HS
-        '
-        Me.HS.AccessibleRole = System.Windows.Forms.AccessibleRole.ScrollBar
-        Me.HS.Dock = System.Windows.Forms.DockStyle.Bottom
-        Me.HS.LargeChange = 777
-        Me.HS.Location = New System.Drawing.Point(0, 323)
-        Me.HS.Maximum = 1233
-        Me.HS.Name = "HS"
-        Me.HS.Size = New System.Drawing.Size(664, 17)
-        Me.HS.TabIndex = 3
-        Me.HS.Tag = "1"
-        '
-        'SpR
-        '
-        Me.SpR.Dock = System.Windows.Forms.DockStyle.Right
-        Me.SpR.FlatAppearance.BorderSize = 0
-        Me.SpR.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.SpR.Location = New System.Drawing.Point(669, 0)
-        Me.SpR.Name = "SpR"
-        Me.SpR.Size = New System.Drawing.Size(5, 340)
-        Me.SpR.TabIndex = 59
-        Me.SpR.TabStop = False
-        Me.SpR.UseVisualStyleBackColor = True
-        Me.SpR.Visible = False
-        '
-        'SpL
-        '
-        Me.SpL.Dock = System.Windows.Forms.DockStyle.Left
-        Me.SpL.FlatAppearance.BorderSize = 0
-        Me.SpL.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.SpL.Location = New System.Drawing.Point(0, 0)
-        Me.SpL.Name = "SpL"
-        Me.SpL.Size = New System.Drawing.Size(5, 340)
-        Me.SpL.TabIndex = 60
-        Me.SpL.TabStop = False
-        Me.SpL.UseVisualStyleBackColor = True
-        Me.SpL.Visible = False
-        '
-        'PMainR
-        '
-        Me.PMainR.BackColor = System.Drawing.Color.Black
-        Me.PMainR.Controls.Add(Me.PMainInR)
-        Me.PMainR.Controls.Add(Me.RightPanelScroll)
-        Me.PMainR.Controls.Add(Me.HSR)
-        Me.PMainR.Dock = System.Windows.Forms.DockStyle.Right
-        Me.PMainR.Font = New System.Drawing.Font("Verdana", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.PMainR.ForeColor = System.Drawing.Color.White
-        Me.PMainR.Location = New System.Drawing.Point(674, 0)
-        Me.PMainR.Name = "PMainR"
-        Me.PMainR.Size = New System.Drawing.Size(0, 340)
-        Me.PMainR.TabIndex = 56
-        Me.PMainR.Tag = "2"
-        '
-        'RightPanelScroll
-        '
-        Me.RightPanelScroll.Dock = System.Windows.Forms.DockStyle.Right
-        Me.RightPanelScroll.LargeChange = 592
-        Me.RightPanelScroll.Location = New System.Drawing.Point(-17, 0)
-        Me.RightPanelScroll.Maximum = 591
-        Me.RightPanelScroll.Minimum = -10000
-        Me.RightPanelScroll.Name = "RightPanelScroll"
-        Me.RightPanelScroll.Size = New System.Drawing.Size(17, 323)
-        Me.RightPanelScroll.SmallChange = 12
-        Me.RightPanelScroll.TabIndex = 2
-        Me.RightPanelScroll.Tag = "2"
-        '
-        'HSR
-        '
-        Me.HSR.Dock = System.Windows.Forms.DockStyle.Bottom
-        Me.HSR.LargeChange = 777
-        Me.HSR.Location = New System.Drawing.Point(0, 323)
-        Me.HSR.Maximum = 1233
-        Me.HSR.Name = "HSR"
-        Me.HSR.Size = New System.Drawing.Size(0, 17)
-        Me.HSR.TabIndex = 3
-        Me.HSR.Tag = "2"
-        '
-        'PMainL
-        '
-        Me.PMainL.BackColor = System.Drawing.Color.Black
-        Me.PMainL.Controls.Add(Me.PMainInL)
-        Me.PMainL.Controls.Add(Me.LeftPanelScroll)
-        Me.PMainL.Controls.Add(Me.HSL)
-        Me.PMainL.Dock = System.Windows.Forms.DockStyle.Left
-        Me.PMainL.Font = New System.Drawing.Font("Verdana", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.PMainL.ForeColor = System.Drawing.Color.White
-        Me.PMainL.Location = New System.Drawing.Point(0, 0)
-        Me.PMainL.Name = "PMainL"
-        Me.PMainL.Size = New System.Drawing.Size(0, 340)
-        Me.PMainL.TabIndex = 54
-        Me.PMainL.Tag = "0"
-        '
-        'LeftPanelScroll
-        '
-        Me.LeftPanelScroll.Dock = System.Windows.Forms.DockStyle.Right
-        Me.LeftPanelScroll.LargeChange = 592
-        Me.LeftPanelScroll.Location = New System.Drawing.Point(-17, 0)
-        Me.LeftPanelScroll.Maximum = 591
-        Me.LeftPanelScroll.Minimum = -10000
-        Me.LeftPanelScroll.Name = "LeftPanelScroll"
-        Me.LeftPanelScroll.Size = New System.Drawing.Size(17, 323)
-        Me.LeftPanelScroll.SmallChange = 12
-        Me.LeftPanelScroll.TabIndex = 2
-        Me.LeftPanelScroll.Tag = "0"
-        '
-        'HSL
-        '
-        Me.HSL.Dock = System.Windows.Forms.DockStyle.Bottom
-        Me.HSL.LargeChange = 777
-        Me.HSL.Location = New System.Drawing.Point(0, 323)
-        Me.HSL.Maximum = 1233
-        Me.HSL.Name = "HSL"
-        Me.HSL.Size = New System.Drawing.Size(0, 17)
-        Me.HSL.TabIndex = 3
-        Me.HSL.Tag = "0"
+        Me.EditorPanel1.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.EditorPanel1.Location = New System.Drawing.Point(0, 0)
+        Me.EditorPanel1.Name = "EditorPanel1"
+        Me.EditorPanel1.Size = New System.Drawing.Size(638, 392)
+        Me.EditorPanel1.TabIndex = 0
         '
         'POptionsResizer
         '
@@ -4115,64 +3968,18 @@ Partial Class MainWindow
         Me.POptionsResizer.Dock = System.Windows.Forms.DockStyle.Right
         Me.POptionsResizer.FlatAppearance.BorderSize = 0
         Me.POptionsResizer.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.POptionsResizer.Location = New System.Drawing.Point(674, 0)
+        Me.POptionsResizer.Location = New System.Drawing.Point(638, 0)
         Me.POptionsResizer.Name = "POptionsResizer"
-        Me.POptionsResizer.Size = New System.Drawing.Size(6, 410)
+        Me.POptionsResizer.Size = New System.Drawing.Size(6, 462)
         Me.POptionsResizer.TabIndex = 67
         Me.POptionsResizer.TabStop = False
         Me.POptionsResizer.UseVisualStyleBackColor = True
-        '
-        'PMainIn
-        '
-        Me.PMainIn.AutoSize = True
-        Me.PMainIn.BackColor = System.Drawing.Color.Black
-        Me.PMainIn.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.PMainIn.Font = New System.Drawing.Font("Verdana", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.PMainIn.ForeColor = System.Drawing.Color.White
-        Me.PMainIn.HorizontalScrollBar = Me.HS
-        Me.PMainIn.Location = New System.Drawing.Point(0, 0)
-        Me.PMainIn.Name = "PMainIn"
-        Me.PMainIn.Size = New System.Drawing.Size(647, 323)
-        Me.PMainIn.TabIndex = 0
-        Me.PMainIn.TabStop = True
-        Me.PMainIn.Tag = "1"
-        Me.PMainIn.VerticalScrollBar = Me.MainPanelScroll
-        '
-        'PMainInR
-        '
-        Me.PMainInR.BackColor = System.Drawing.Color.Black
-        Me.PMainInR.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.PMainInR.Font = New System.Drawing.Font("Verdana", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.PMainInR.ForeColor = System.Drawing.Color.White
-        Me.PMainInR.HorizontalScrollBar = Me.HSR
-        Me.PMainInR.Location = New System.Drawing.Point(0, 0)
-        Me.PMainInR.Name = "PMainInR"
-        Me.PMainInR.Size = New System.Drawing.Size(0, 323)
-        Me.PMainInR.TabIndex = 0
-        Me.PMainInR.TabStop = True
-        Me.PMainInR.Tag = "2"
-        Me.PMainInR.VerticalScrollBar = Me.RightPanelScroll
-        '
-        'PMainInL
-        '
-        Me.PMainInL.BackColor = System.Drawing.Color.Black
-        Me.PMainInL.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.PMainInL.Font = New System.Drawing.Font("Verdana", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.PMainInL.ForeColor = System.Drawing.Color.White
-        Me.PMainInL.HorizontalScrollBar = Me.HSL
-        Me.PMainInL.Location = New System.Drawing.Point(0, 0)
-        Me.PMainInL.Name = "PMainInL"
-        Me.PMainInL.Size = New System.Drawing.Size(0, 323)
-        Me.PMainInL.TabIndex = 0
-        Me.PMainInL.TabStop = True
-        Me.PMainInL.Tag = "0"
-        Me.PMainInL.VerticalScrollBar = Me.LeftPanelScroll
         '
         'MainWindow
         '
         Me.AllowDrop = True
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None
-        Me.ClientSize = New System.Drawing.Size(880, 410)
+        Me.ClientSize = New System.Drawing.Size(844, 462)
         Me.Controls.Add(Me.ToolStripContainer1)
         Me.Controls.Add(Me.pStatus)
         Me.Controls.Add(Me.POptionsResizer)
@@ -4291,15 +4098,10 @@ Partial Class MainWindow
         Me.FStatus.ResumeLayout(False)
         Me.FStatus.PerformLayout()
         Me.ToolStripContainer1.ContentPanel.ResumeLayout(False)
-        Me.ToolStripContainer1.ContentPanel.PerformLayout()
         Me.ToolStripContainer1.TopToolStripPanel.ResumeLayout(False)
         Me.ToolStripContainer1.TopToolStripPanel.PerformLayout()
         Me.ToolStripContainer1.ResumeLayout(False)
         Me.ToolStripContainer1.PerformLayout()
-        Me.PMain.ResumeLayout(False)
-        Me.PMain.PerformLayout()
-        Me.PMainR.ResumeLayout(False)
-        Me.PMainL.ResumeLayout(False)
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -4307,7 +4109,6 @@ Partial Class MainWindow
     Friend WithEvents POptionsScroll As System.Windows.Forms.Panel
     Friend WithEvents LWAV As System.Windows.Forms.ListBox
     Friend WithEvents LBMP As System.Windows.Forms.ListBox
-    Friend WithEvents Timer1 As System.Windows.Forms.Timer
     Friend WithEvents MInsert As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents MRemove As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents Menu1 As System.Windows.Forms.ContextMenuStrip
@@ -4318,32 +4119,26 @@ Partial Class MainWindow
     Friend WithEvents mnOpen As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnImportSM As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnImportIBMSC As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents ToolStripSeparator14 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents mnSave As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnSaveAs As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnExport As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents ToolStripSeparator15 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents mnOpenR0 As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnOpenR1 As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnOpenR2 As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnOpenR3 As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnOpenR4 As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents ToolStripSeparator16 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents mnQuit As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnEdit As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnUndo As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnRedo As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents ToolStripSeparator17 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents mnCut As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnCopy As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnPaste As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents ToolStripSeparator18 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents mnFind As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnStatistics As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnDelete As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnSelectAll As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnMyO2 As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents ToolStripSeparator19 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents mnOptions As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnPreview As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnPlayB As System.Windows.Forms.ToolStripMenuItem
@@ -4352,12 +4147,10 @@ Partial Class MainWindow
     Friend WithEvents mnTimeSelect As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnSelect As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnWrite As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents ToolStripSeparator23 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents mnConversion As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnErrorCheck As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnPreviewOnClick As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnShowFileName As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents ToolStripSeparator20 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents mnGOptions As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnVOptions As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnLanguage As System.Windows.Forms.ToolStripMenuItem
@@ -4374,11 +4167,9 @@ Partial Class MainWindow
     Friend WithEvents POBLong As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents POBShort As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents POBLongShort As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents ToolStripSeparator10 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents POBHidden As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents POBVisible As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents POBHiddenVisible As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents ToolStripSeparator11 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents POBMirror As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents POBModify As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnSys As System.Windows.Forms.ToolStripMenuItem
@@ -4424,7 +4215,6 @@ Partial Class MainWindow
     Friend WithEvents TBOpenR2 As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents TBOpenR3 As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents TBOpenR4 As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents ToolStripSeparator12 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents TBImportSM As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents TBImportIBMSC As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents TBSave As System.Windows.Forms.ToolStripSplitButton
@@ -4461,7 +4251,6 @@ Partial Class MainWindow
     Friend WithEvents FSSH As System.Windows.Forms.ToolStripButton
     Friend WithEvents TExpansion As System.Windows.Forms.TextBox
     Friend WithEvents TimerMiddle As System.Windows.Forms.Timer
-    Friend WithEvents ToolStripSeparator21 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents CGShow As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents CGShowS As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents CGShowBG As System.Windows.Forms.ToolStripMenuItem
@@ -4469,7 +4258,6 @@ Partial Class MainWindow
     Friend WithEvents CGShowMB As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents CGShowV As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents CGShowC As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents ToolStripSeparator22 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents CGBLP As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents CGSTOP As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents CGSCROLL As System.Windows.Forms.ToolStripMenuItem
@@ -4479,14 +4267,6 @@ Partial Class MainWindow
     Friend WithEvents BBeatApply As System.Windows.Forms.Button
     Friend WithEvents mnPOptions As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents ToolStripContainer1 As System.Windows.Forms.ToolStripContainer
-    Friend WithEvents PMainR As System.Windows.Forms.Panel
-    Friend WithEvents PMainInR As EditorPanel
-    Friend WithEvents RightPanelScroll As System.Windows.Forms.VScrollBar
-    Friend WithEvents HSR As System.Windows.Forms.HScrollBar
-    Friend WithEvents PMainL As System.Windows.Forms.Panel
-    Friend WithEvents PMainInL As EditorPanel
-    Friend WithEvents LeftPanelScroll As System.Windows.Forms.VScrollBar
-    Friend WithEvents HSL As System.Windows.Forms.HScrollBar
     Friend WithEvents POConvert As System.Windows.Forms.ToolStripDropDownButton
     Friend WithEvents TBLanguage As System.Windows.Forms.ToolStripDropDownButton
     Friend WithEvents TBTheme As System.Windows.Forms.ToolStripDropDownButton
@@ -4618,8 +4398,6 @@ Partial Class MainWindow
     Friend WithEvents POExpansionResizer As System.Windows.Forms.Button
     Friend WithEvents POBeatResizer As System.Windows.Forms.Button
     Friend WithEvents POptionsResizer As System.Windows.Forms.Button
-    Friend WithEvents SpR As System.Windows.Forms.Button
-    Friend WithEvents SpL As System.Windows.Forms.Button
     Friend WithEvents TBThemeLoadComptability As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents POWAVExpander As System.Windows.Forms.CheckBox
     Friend WithEvents POWAVPart2 As System.Windows.Forms.TableLayoutPanel
@@ -4645,8 +4423,5 @@ Partial Class MainWindow
     Friend WithEvents TBWavIncrease As ToolStripButton
     Friend WithEvents TimeStatusLabel As ToolStripStatusLabel
     Friend WithEvents BConvertStop As ToolStripButton
-    Friend WithEvents PMain As Panel
-    Friend WithEvents PMainIn As EditorPanel
-    Friend WithEvents MainPanelScroll As VScrollBar
-    Friend WithEvents HS As HScrollBar
+    Friend WithEvents EditorPanel1 As EditorPanel
 End Class

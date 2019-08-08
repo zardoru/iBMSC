@@ -14,7 +14,7 @@ Public Class TimeSelectState
     Public HalfPointLength As Double = 0.0#
     Public MouseOverLine As TimeSelectLine = TimeSelectLine.None
     Public Adjust As Boolean = False
-    Public K() As Note = {} ' Editor.State.TimeSelect.K -> Notes
+    Public Notes() As Note = {} ' Editor.State.TimeSelect.K -> Notes
     Public PStart As Double = 192.0# ' az TODO: what's the difference? What's the P for?
     Public PLength As Double = 0.0#
     Public PHalf As Double = 0.0#

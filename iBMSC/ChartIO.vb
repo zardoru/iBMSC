@@ -801,10 +801,8 @@ Partial Public Class MainWindow
         LBMP.Visible = True
 
         THBPM.Value = Notes(0).Value/10000
-        SortByVPositionQuick(0, UBound(Notes))
-        UpdatePairing()
-        CalculateTotalPlayableNotes()
-        
+        ValidateNotesArray()
+
         RefreshPanelAll()
         POStatusRefresh()
         Return False
@@ -1030,8 +1028,7 @@ Partial Public Class MainWindow
         LBMP.Visible = True
 
         THBPM.Value = Notes(0).Value/10000
-        SortByVPositionQuick(0, UBound(Notes))
-        UpdatePairing()
+        ValidateNotesArray()
         UpdateMeasureBottom()
         CalculateTotalPlayableNotes()
         
@@ -1040,9 +1037,8 @@ Partial Public Class MainWindow
     End Sub
 
     Private Sub SaveiBmsc(path As String)
-        
-        SortByVPositionInsertion()
-        UpdatePairing()
+
+        ValidateNotesArray()
 
         Try
 

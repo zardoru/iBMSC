@@ -1,6 +1,6 @@
 ﻿Partial Public Class MainWindow
     Public Sub MyO2ConstBPM(vBPM As Integer)
-        SortByVPositionInsertion()
+        ValidateNotesArray()
         Dim xUndo As UndoRedo.LinkedURCmd = Nothing
         Dim xRedo As UndoRedo.LinkedURCmd = New UndoRedo.Void
         Dim xBaseRedo As UndoRedo.LinkedURCmd = xRedo
@@ -76,19 +76,18 @@
         RedoRelabelNote(Notes(0), vBPM, xUndo, xRedo)
 
         AddUndoChain(xUndo, xBaseRedo.Next)
-        SortByVPositionInsertion()
-        UpdatePairing()
+        ValidateNotesArray()
         Notes(0).Value = vBPM
-        THBPM.Value = vBPM/10000
-        CalculateTotalPlayableNotes()
-        
+        THBPM.Value = vBPM / 10000
+
         RefreshPanelAll()
         POStatusRefresh()
     End Sub
 
     Public Function MyO2GridCheck() As String()
-        
-        SortByVPositionInsertion()
+
+        ValidateNotesArray()
+
         Dim xResult(- 1) As String
         Dim xResult2(- 1) As String
         Dim Identifiers() As String = {"01", "03", "04", "06", "07", "08", "09",
@@ -279,10 +278,8 @@
         RedoAddNoteAll(Notes, xUndo, xRedo)
 
         AddUndoChain(xUndo, xBaseRedo.Next)
-        SortByVPositionInsertion()
-        UpdatePairing()
-        CalculateTotalPlayableNotes()
-        
+        ValidateNotesArray()
+
         RefreshPanelAll()
         POStatusRefresh()
         Beep()

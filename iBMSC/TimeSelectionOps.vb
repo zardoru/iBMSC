@@ -5,11 +5,10 @@ Partial Public Class MainWindow
     Private Sub BVCCalculate_Click(sender As Object, e As EventArgs) Handles BVCCalculate.Click
         If Not TBTimeSelect.Checked Then Exit Sub
 
-        SortByVPositionInsertion()
+        ValidateNotesArray()
         BPMChangeByValue(Val(TVCBPM.Text)*10000)
+        ValidateNotesArray() ' XXX: what???
 
-        SortByVPositionInsertion()
-        UpdatePairing()
         RefreshPanelAll()
         POStatusRefresh()
 
@@ -20,7 +19,7 @@ Partial Public Class MainWindow
     Private Sub BVCApply_Click(sender As Object, e As EventArgs) Handles BVCApply.Click
         If Not TBTimeSelect.Checked Then Exit Sub
 
-        SortByVPositionInsertion()
+        ValidateNotesArray()
         BPMChangeTop(Val(TVCM.Text)/Val(TVCD.Text))
 
         RefreshPanelAll()
@@ -182,7 +181,7 @@ Partial Public Class MainWindow
 
         EndofSub:
         If bAddUndo Then AddUndoChain(xUndo, xBaseRedo.Next, bOverWriteUndo)
-        SortByVPositionInsertion()
+        ValidateNotesArray()
         UpdatePairing()
     End Sub
 
@@ -418,7 +417,7 @@ Partial Public Class MainWindow
         EndofSub:
         If bAddUndo Then AddUndoChain(xUndo, xBaseRedo.Next, bOverWriteUndo)
 
-        SortByVPositionInsertion()
+        ValidateNotesArray()
         UpdatePairing()
     End Sub
 
@@ -478,18 +477,18 @@ Partial Public Class MainWindow
 
         'Calculate Constant BPM
         For i = 0 To xU
-            xConstBPM += (xVPos(i + 1) - xVPos(i))/xVal(i)
+            xConstBPM += (xVPos(i + 1) - xVPos(i)) / xVal(i)
         Next
-        xConstBPM = (xVUpper - xVLower)/xConstBPM
+        xConstBPM = (xVUpper - xVLower) / xConstBPM
 
         'Compare BPM        '(xVHalf - xVLower) / xValue + (xVUpper - xVHalf) / xResult = (xVUpper - xVLower) / xConstBPM
-        If (xVUpper - xVLower)/xConstBPM <= (xVHalf - xVLower)/xValue Then
-            Dim Limit = ((xVHalf - xVLower)*xConstBPM/(xVUpper - xVLower)/10000)
+        If (xVUpper - xVLower) / xConstBPM <= (xVHalf - xVLower) / xValue Then
+            Dim Limit = ((xVHalf - xVLower) * xConstBPM / (xVUpper - xVLower) / 10000)
             MsgBox("Please enter a value that is greater than " & Limit & ".", MsgBoxStyle.Critical,
                    Strings.Messages.Err)
             Return
         End If
-        Dim xTempDivider As Double = xConstBPM*(xVHalf - xVLower) - xValue*(xVUpper - xVLower)
+        Dim xTempDivider As Double = xConstBPM * (xVHalf - xVLower) - xValue * (xVUpper - xVLower)
 
         ' az: I want to allow negative values, maybe...
         If xTempDivider = 0 Then
@@ -497,12 +496,12 @@ Partial Public Class MainWindow
         End If
 
         ' apply div. by 10k to nullify mult. caused by divider being divided by 10k
-        Dim xResult = (xVHalf - xVUpper)*xValue/xTempDivider*xConstBPM ' order here is important to avoid an overflow
+        Dim xResult = (xVHalf - xVUpper) * xValue / xTempDivider * xConstBPM ' order here is important to avoid an overflow
 
         RedoRemoveNoteAll(Notes, xUndo, xRedo)
 
         'Adjust note
-        If Not NTInput Then
+        If Not NtInput Then
             'Below Selection
             For i = 1 To UBound(Notes)
                 If Notes(i).VPosition > xVLower Then Exit For
@@ -520,14 +519,14 @@ Partial Public Class MainWindow
                 xTempVPos = Notes(i).VPosition
                 For xI3 = 0 To xU
                     If xTempVPos < xVPos(xI3 + 1) Then Exit For
-                    xTempTime += (xVPos(xI3 + 1) - xVPos(xI3))/xVal(xI3)
+                    xTempTime += (xVPos(xI3 + 1) - xVPos(xI3)) / xVal(xI3)
                 Next
-                xTempTime += (xTempVPos - xVPos(xI3))/xVal(xI3)
+                xTempTime += (xTempVPos - xVPos(xI3)) / xVal(xI3)
 
-                If xTempTime - (xVHalf - xVLower)/xValue > 0 Then
-                    Notes(i).VPosition = (xTempTime - (xVHalf - xVLower)/xValue)*xResult + xVHalf
+                If xTempTime - (xVHalf - xVLower) / xValue > 0 Then
+                    Notes(i).VPosition = (xTempTime - (xVHalf - xVLower) / xValue) * xResult + xVHalf
                 Else
-                    Notes(i).VPosition = xTempTime*xValue + xVLower
+                    Notes(i).VPosition = xTempTime * xValue + xVLower
                 End If
             Next
 
@@ -545,14 +544,14 @@ Partial Public Class MainWindow
                     xTempVPos = Notes(i).VPosition
                     For xI3 = 0 To xU
                         If xTempVPos < xVPos(xI3 + 1) Then Exit For
-                        xTempTime += (xVPos(xI3 + 1) - xVPos(xI3))/xVal(xI3)
+                        xTempTime += (xVPos(xI3 + 1) - xVPos(xI3)) / xVal(xI3)
                     Next
-                    xTempTime += (xTempVPos - xVPos(xI3))/xVal(xI3)
+                    xTempTime += (xTempVPos - xVPos(xI3)) / xVal(xI3)
 
-                    If xTempTime - (xVHalf - xVLower)/xValue > 0 Then
-                        Notes(i).VPosition = (xTempTime - (xVHalf - xVLower)/xValue)*xResult + xVHalf
+                    If xTempTime - (xVHalf - xVLower) / xValue > 0 Then
+                        Notes(i).VPosition = (xTempTime - (xVHalf - xVLower) / xValue) * xResult + xVHalf
                     Else
-                        Notes(i).VPosition = xTempTime*xValue + xVLower
+                        Notes(i).VPosition = xTempTime * xValue + xVLower
                     End If
                 End If
 
@@ -562,15 +561,15 @@ Partial Public Class MainWindow
 
                         For xI3 = 0 To xU
                             If xTempEnd < xVPos(xI3 + 1) Then Exit For
-                            xTempTime += (xVPos(xI3 + 1) - xVPos(xI3))/xVal(xI3)
+                            xTempTime += (xVPos(xI3 + 1) - xVPos(xI3)) / xVal(xI3)
                         Next
-                        xTempTime += (xTempEnd - xVPos(xI3))/xVal(xI3)
+                        xTempTime += (xTempEnd - xVPos(xI3)) / xVal(xI3)
 
-                        If xTempTime - (xVHalf - xVLower)/xValue > 0 Then
-                            Notes(i).Length = (xTempTime - (xVHalf - xVLower)/xValue)*xResult + xVHalf -
+                        If xTempTime - (xVHalf - xVLower) / xValue > 0 Then
+                            Notes(i).Length = (xTempTime - (xVHalf - xVLower) / xValue) * xResult + xVHalf -
                                               Notes(i).VPosition
                         Else
-                            Notes(i).Length = xTempTime*xValue + xVLower - Notes(i).VPosition
+                            Notes(i).Length = xTempTime * xValue + xVLower - Notes(i).VPosition
                         End If
 
                     Else
@@ -581,7 +580,7 @@ Partial Public Class MainWindow
             Next
         End If
 
-        EndOfAdjustment:
+EndOfAdjustment:
 
         'Delete BPMs
         i = 1
@@ -625,7 +624,7 @@ Partial Public Class MainWindow
                       State.TimeSelect.StartPoint + State.TimeSelect.EndPointLength)
         xVUpper = IIf(State.TimeSelect.EndPointLength < 0, State.TimeSelect.StartPoint,
                       State.TimeSelect.StartPoint + State.TimeSelect.EndPointLength)
-        If Not NTInput Then
+        If Not NtInput Then
             For xI3 = 1 To UBound(Notes)
                 Notes(xI3).Selected = Notes(xI3).VPosition >= xVLower And
                                       Notes(xI3).VPosition < xVUpper And
@@ -656,8 +655,8 @@ Partial Public Class MainWindow
                                     State.TimeSelect.StartPoint + State.TimeSelect.EndPointLength)
 
         Dim notesInRange = From note In Notes
-                Where note.VPosition > xVLower And note.VPosition <= xVUpper
-                Select note
+                           Where note.VPosition > xVLower And note.VPosition <= xVUpper
+                           Select note
 
         If notesInRange.Count() > 0 Then
             MessageBox.Show("The selected area can't have notes anywhere but at the start.")
@@ -677,7 +676,7 @@ Partial Public Class MainWindow
         Dim stopNote = New Note With {
                 .ColumnIndex = ColumnType.STOPS,
                 .VPosition = xVLower,
-                .Value = State.TimeSelect.EndPointLength*10000
+                .Value = State.TimeSelect.EndPointLength * 10000
                 }
         Notes = Notes.Concat({stopNote}).ToArray()
 
@@ -686,11 +685,10 @@ Partial Public Class MainWindow
     End Sub
 
     Private Sub BConvertStop_Click(sender As Object, e As EventArgs) Handles BConvertStop.Click
-        SortByVPositionInsertion()
+        ValidateNotesArray()
         ConvertAreaToStop()
+        ValidateNotesArray() ' XXX: Hmmm
 
-        SortByVPositionInsertion()
-        UpdatePairing()
         RefreshPanelAll()
         POStatusRefresh()
 

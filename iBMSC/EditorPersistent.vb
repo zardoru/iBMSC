@@ -603,8 +603,7 @@ Partial Public Class MainWindow
                 Dim fBold As New Font(fRegular, FontStyle.Bold)
 
                 Dim bList() As Object =
-                        {TBStatistics, FSSS, FSSL, FSSH, TVCM, TVCD, TVCBPM, FSP1, FSP3, FSP2, PMain, PMainIn, PMainR,
-                         PMainInR, PMainL, PMainInL}
+                        {TBStatistics, FSSS, FSSL, FSSH, TVCM, TVCD, TVCBPM, FSP1, FSP3, FSP2}
                 For Each c As Object In bList
                     Try
                         c.Font = fBold

@@ -5,9 +5,18 @@ Imports iBMSC.Editor
 Public Class EditorPanel
     Inherits Panel
 
-    Public Shadows HorizontalScroll As Integer
-    Public Shadows VerticalScroll As Integer
-    Private _doubleBuffer As BufferedGraphics
+    Public ReadOnly Property HorizontalPosition As Integer
+        Get
+            Return HorizontalScrollBar.Value
+        End Get
+    End Property
+
+    Public ReadOnly Property VerticalPosition As Integer
+        Get
+            Return VerticalScrollBar.Value
+        End Get
+    End Property
+
     Private _buffer As Graphics
     Private _theme As visualSettings
     Private _editor As MainWindow
@@ -17,26 +26,41 @@ Public Class EditorPanel
     Public LastHorizontalScroll As Integer
 
     Private Sub HsValueChanged(sender As Object, e As EventArgs) Handles HorizontalScrollBar.ValueChanged
-        HorizontalScroll = sender.Value
         LastHorizontalScroll = sender.Value
         Refresh()
     End Sub
 
     Private Sub VsValueChanged(sender As Object, e As EventArgs) Handles VerticalScrollBar.ValueChanged
-        VerticalScroll = sender.Value
         LastVerticalScroll = sender.Value
         Refresh()
     End Sub
 
+    Public Sub New()
+        MyBase.New()
+        HorizontalScrollBar = New HScrollBar()
+        VerticalScrollBar = New VScrollBar()
+
+        HorizontalScrollBar.Dock = DockStyle.Bottom
+        VerticalScrollBar.Dock = DockStyle.Right
+
+        Controls.Add(HorizontalScrollBar)
+        Controls.Add(VerticalScrollBar)
+        SetStyle(ControlStyles.AllPaintingInWmPaint, True)
+        SetStyle(ControlStyles.OptimizedDoubleBuffer, True)
+
+        VerticalScrollBar.Minimum = -10000
+        VerticalScrollBar.Maximum = 500
+    End Sub
+
+    Public Sub New(paren As Control)
+        Parent = paren
+    End Sub
+
     Public Sub Init(wnd As MainWindow, theme As visualSettings)
-        
-        Me._theme = theme
-        Parent = wnd
+
+        _theme = theme
         _editor = wnd
 
-        ' az: there's ought to be a Better Way, but for now we adapt what iBMSC originally had
-        ' BringToFront()
-        DoubleBuffered = True
     End Sub
 
     Private Sub DrawDragAndDrop()
@@ -46,7 +70,7 @@ Public Class EditorPanel
             Dim format As New StringFormat With {
                     .Alignment = StringAlignment.Center,
                     .LineAlignment = StringAlignment.Center
-                    }
+            }
             _buffer.DrawString(filenames, _editor.Font, brush, DisplayRectangle, format)
         End If
     End Sub
@@ -54,16 +78,16 @@ Public Class EditorPanel
     Private Function GetColumnHighlightColor(col As Color, Optional factor As Double = 2.0)
         Dim clamp = Function(x) IIf(x > 255, 255, x)
         Return Color.FromArgb(
-            clamp(col.A*factor),
-            clamp(col.R*factor),
-            clamp(col.G*factor),
-            clamp(col.B*factor))
+            clamp(col.A * factor),
+            clamp(col.R * factor),
+            clamp(col.G * factor),
+            clamp(col.B * factor))
     End Function
 
     Public Function GetColumnAtX(x As Integer) As Integer
         Dim i = 0
         'horizontal position of the mouse
-        Dim mLeft As Integer = x/_editor.Grid.WidthScale + HorizontalScroll
+        Dim mLeft As Integer = x / _editor.Grid.WidthScale + HorizontalPosition
         Dim col = 0
         If mLeft >= 0 Then
             Do
@@ -73,25 +97,25 @@ Public Class EditorPanel
             Loop
         End If
 
-        Dim eci = _editor.Columns.ColumnArrayIndexToEnabledColumnIndex(col)
-        Return _editor.Columns.EnabledColumnIndexToColumnArrayIndex(eci)  'get the enabled column where mouse is 
+        'get the enabled column where mouse is 
+        Return _editor.Columns.NormalizeIndex(col)
     End Function
 
     Private Sub DrawBackgroundColor()
         Dim grid = _editor.Grid
         Dim columns = _editor.Columns
 
-        For i = 0 To Columns.ColumnCount
-            If HPositionToPanelX(Columns.GetColumnLeft(i + 1)) + 1 < 0 Then
+        For i = 0 To columns.ColumnCount
+            If HPositionToPanelX(columns.GetColumnLeft(i + 1)) + 1 < 0 Then
                 Continue For
             End If
 
-            If (Columns.GetColumnLeft(i) - HorizontalScroll)*Grid.WidthScale + 1 > Size.Width Then
+            If (columns.GetColumnLeft(i) - HorizontalPosition) * grid.WidthScale + 1 > Size.Width Then
                 Exit For
             End If
 
-            If Not Columns.GetColumn(i).cBG.GetBrightness = 0 And Columns.GetWidth(i) > 0 Then
-                Dim col = Columns.GetColumn(i).cBG
+            If Not columns.GetColumn(i).cBG.GetBrightness = 0 And columns.GetWidth(i) > 0 Then
+                Dim col = columns.GetColumn(i).cBG
                 If i = GetColumnAtX(_editor.State.Mouse.MouseMoveStatus.X) Then
                     Dim bf = 1.2
                     col = GetColumnHighlightColor(col)
@@ -99,33 +123,33 @@ Public Class EditorPanel
                 Dim brush = New SolidBrush(col)
 
                 _buffer.FillRectangle(brush,
-                                     HPositionToPanelX(Columns.GetColumnLeft(i)) + 1,
+                                     HPositionToPanelX(columns.GetColumnLeft(i)) + 1,
                                      0,
-                                     Columns.GetWidth(i)*_editor.Grid.WidthScale,
+                                     columns.GetWidth(i) * _editor.Grid.WidthScale,
                                      Size.Height)
             End If
         Next
     End Sub
 
     Private Function IsNoteVisible(note As Note) As Boolean
-        Dim xUpperBorder As Single = Math.Abs(VerticalScroll) + Size.Height/_editor.Grid.HeightScale
-        Dim xLowerBorder As Single = Math.Abs(VerticalScroll) - _theme.NoteHeight/_editor.Grid.HeightScale
+        Dim xUpperBorder As Single = Math.Abs(VerticalPosition) + Size.Height / _editor.Grid.HeightScale
+        Dim xLowerBorder As Single = Math.Abs(VerticalPosition) - _theme.NoteHeight / _editor.Grid.HeightScale
 
         Dim aboveLower = note.VPosition >= xLowerBorder
         Dim headBelow = note.VPosition <= xLowerBorder
         Dim tailAbove = note.VPosition + note.Length >= xLowerBorder
-        Dim intersectsNt = HeadBelow And TailAbove
+        Dim intersectsNt = headBelow And tailAbove
         Dim intersects = (note.VPosition <= xLowerBorder And
                           _editor.Notes(note.LNPair).VPosition >= xLowerBorder)
         Dim aboveUpper = note.VPosition > xUpperBorder
 
-        Dim noteInside = (Not AboveUpper) And AboveLower
+        Dim noteInside = (Not aboveUpper) And aboveLower
 
-        Return NoteInside OrElse IntersectsNT OrElse Intersects
+        Return noteInside OrElse intersectsNt OrElse intersects
     End Function
 
     Private Function IsNoteVisible(noteIndex As Integer) As Boolean
-        Return IsNoteVisible(_editor.Notes(noteindex))
+        Return IsNoteVisible(_editor.Notes(noteIndex))
     End Function
 
     Private Sub DrawGridLines(measureIndex As Integer,
@@ -133,14 +157,14 @@ Public Class EditorPanel
         Dim row = 0
         Dim xUpper As Double = _editor.MeasureUpper(measureIndex)
         Dim xCurr = _editor.MeasureBottom(measureIndex)
-        Dim rowSize = 192/divisions
+        Dim rowSize = 192 / divisions
         Do While xCurr < xUpper
             Dim y = VPositionToPanelY(xCurr)
             _buffer.DrawLine(pen,
                             0, y,
                             Size.Width, y)
             row += 1
-            xCurr = _editor.MeasureBottom(measureIndex) + row*rowSize
+            xCurr = _editor.MeasureBottom(measureIndex) + row * rowSize
         Loop
     End Sub
 
@@ -148,7 +172,7 @@ Public Class EditorPanel
         'Vertical line
         If _editor.Grid.ShowVerticalLines Then
             For i = 0 To _editor.Columns.ColumnCount
-                Dim xpos = (_editor.Columns.GetColumnLeft(i) - HorizontalScroll) * _editor.Grid.WidthScale
+                Dim xpos = (_editor.Columns.GetColumnLeft(i) - HorizontalPosition) * _editor.Grid.WidthScale
                 If xpos + 1 < 0 Then Continue For
                 If xpos + 1 > Size.Width Then Exit For
                 If _editor.Columns.GetWidth(i) > 0 Then
@@ -160,7 +184,7 @@ Public Class EditorPanel
         End If
 
         'Grid, Sub, Measure
-        For Measure = _editor.MeasureAtDisplacement(-VerticalScroll) To _editor.MeasureAtDisplacement(xVSu)
+        For Measure = _editor.MeasureAtDisplacement(-VerticalPosition) To _editor.MeasureAtDisplacement(xVSu)
             'grid
             If _editor.Grid.ShowMainGrid Then
                 DrawGridLines(Measure, _editor.Grid.Divider, _theme.pGrid)
@@ -183,7 +207,7 @@ Public Class EditorPanel
             If _editor.Grid.ShowMeasureNumber Then
                 Dim brush = New SolidBrush(_editor.Columns.GetColumn(0).cText)
                 _buffer.DrawString("[" & Add3Zeros(Measure).ToString & "]",
-                                  _theme.kMFont, brush, -HorizontalScroll * _editor.Grid.WidthScale,
+                                  _theme.kMFont, brush, -HorizontalPosition * _editor.Grid.WidthScale,
                                   pHeight - _theme.kMFont.Height)
             End If
         Next
@@ -197,22 +221,22 @@ Public Class EditorPanel
     Private Sub DrawColumnCaptions()
         Dim columns = _editor.Columns
         For i = 0 To _editor.Columns.ColumnCount
-            Dim colEnd = (Columns.GetColumnLeft(i + 1) - HorizontalScroll)*_editor.Grid.WidthScale
-            If ColEnd + 1 < 0 Then
+            Dim colEnd = (columns.GetColumnLeft(i + 1) - HorizontalPosition) * _editor.Grid.WidthScale
+            If colEnd + 1 < 0 Then
                 Continue For
             End If
 
-            Dim colStart = (Columns.GetColumnLeft(i) - HorizontalScroll)*_editor.Grid.WidthScale
-            If ColStart + 1 > Size.Width Then
+            Dim colStart = (columns.GetColumnLeft(i) - HorizontalPosition) * _editor.Grid.WidthScale
+            If colStart + 1 > Size.Width Then
                 Exit For
             End If
 
-            If Columns.GetWidth(i) > 0 Then
+            If columns.GetWidth(i) > 0 Then
                 _buffer.DrawString(
-                    Columns.GetName(i),
+                    columns.GetName(i),
                     _theme.ColumnTitleFont,
                     _theme.ColumnTitle,
-                    ColStart, 0)
+                    colStart, 0)
             End If
         Next
     End Sub
@@ -222,13 +246,13 @@ Public Class EditorPanel
         Dim lastMouseDownLocation = _editor.State.Mouse.LastMouseDownLocation
         If _editor.IsSelectMode AndAlso
            (_editor.FocusedPanel Is Me) AndAlso
-           Not (pMouseMove = New Point(- 1, - 1) Or
-                LastMouseDownLocation = New Point(- 1, - 1)) Then
-            Dim mdx = pMouseMove.X - LastMouseDownLocation.X
-            Dim mdy = pMouseMove.Y - LastMouseDownLocation.Y
+           Not (pMouseMove = New Point(-1, -1) Or
+                lastMouseDownLocation = New Point(-1, -1)) Then
+            Dim mdx = pMouseMove.X - lastMouseDownLocation.X
+            Dim mdy = pMouseMove.Y - lastMouseDownLocation.Y
             _buffer.DrawRectangle(_theme.SelBox,
-                                 Math.Min(LastMouseDownLocation.X, pMouseMove.X),
-                                 Math.Min(LastMouseDownLocation.Y, pMouseMove.Y),
+                                 Math.Min(lastMouseDownLocation.X, pMouseMove.X),
+                                 Math.Min(lastMouseDownLocation.Y, pMouseMove.Y),
                                  Math.Abs(mdx), Math.Abs(mdy))
         End If
     End Sub
@@ -287,8 +311,8 @@ Public Class EditorPanel
     End Sub
 
     Private Sub DrawNotes()
-        Dim upperBorder = Math.Abs(VerticalScroll) + Size.Height/_editor.Grid.HeightScale
-        Dim lowerBorder = Math.Abs(VerticalScroll) - _theme.NoteHeight/_editor.Grid.HeightScale
+        Dim upperBorder = Math.Abs(VerticalPosition) + Size.Height / _editor.Grid.HeightScale
+        Dim lowerBorder = Math.Abs(VerticalPosition) - _theme.NoteHeight / _editor.Grid.HeightScale
 
         Dim renderNotes = _editor.Notes.
                 Where(Function(x) x.VPosition <= upperBorder).
@@ -296,8 +320,8 @@ Public Class EditorPanel
                 Where(Function(x) _editor.Columns.IsEnabled(x.ColumnIndex))
 
         For Each Note In renderNotes
-            If _editor.NTInput Then
-                DrawNoteNT(Note)
+            If _editor.NtInput Then
+                DrawNoteNt(Note)
             Else
                 DrawNote(Note)
             End If
@@ -309,7 +333,7 @@ Public Class EditorPanel
     ''' </summary>
     ''' <param name="sNote">Note to be drawn.</param>
 
-        Private Sub DrawNote(sNote As Note)
+    Private Sub DrawNote(sNote As Note)
         Dim alpha = 1.0F
         If sNote.Hidden Then alpha = _theme.kOpacity
 
@@ -376,13 +400,13 @@ Public Class EditorPanel
         ' Fill
         _buffer.FillRectangle(xBrush,
                              startX + 2,
-                             startY - _theme.NoteHeight + 1,
+                             startY + 1,
                              colDrawWidth - 3,
                              _theme.NoteHeight - 1)
         ' Outline
         _buffer.DrawRectangle(xPen,
                              startX + 1,
-                             startY - _theme.NoteHeight,
+                             startY,
                              colDrawWidth - 2,
                              _theme.NoteHeight)
 
@@ -413,7 +437,7 @@ Public Class EditorPanel
             _buffer.DrawRectangle(
                 _theme.kSelected,
                 colX, VPositionToPanelY(sNote.VPosition) - _theme.NoteHeight - 1,
-                colX + colDrawWidth, _theme.NoteHeight + 2)
+                colDrawWidth, _theme.NoteHeight + 2)
         End If
     End Sub
 
@@ -668,7 +692,7 @@ Public Class EditorPanel
 
         xBrush = New LinearGradientBrush(point1, point2, bright, dark)
 
-        Dim colDrawWidth = _editor.Columns.GetWidth(_editor.State.Mouse.CurrentMouseColumn)*_editor.Grid.WidthScale
+        Dim colDrawWidth = _editor.Columns.GetWidth(_editor.State.Mouse.CurrentMouseColumn) * _editor.Grid.WidthScale
 
         _buffer.FillRectangle(xBrush,
                              colStartDrawX + 2,
@@ -682,7 +706,7 @@ Public Class EditorPanel
                              _theme.NoteHeight)
 
         _buffer.DrawString(xText, _theme.kFont, xBrush2,
-                          colX + _theme.kLabelHShiftL - 2,
+                          colStartDrawX + _theme.kLabelHShiftL - 2,
                           startY - _theme.NoteHeight + _theme.kLabelVShift)
     End Sub
 
@@ -694,13 +718,13 @@ Public Class EditorPanel
         For Each note In _editor.Notes
             If note.ColumnIndex = ColumnType.BPM Then
                 If note.VPosition <= _editor.State.TimeSelect.StartPoint Then
-                    xBPMStart = note.Value
+                    xBpmStart = note.Value
                 End If
                 If note.VPosition <= _editor.State.TimeSelect.HalfPoint Then
-                    xBPMHalf = note.Value
+                    xBpmHalf = note.Value
                 End If
                 If note.VPosition <= _editor.State.TimeSelect.EndPoint Then
-                    xBPMEnd = note.Value
+                    xBpmEnd = note.Value
                 End If
             End If
             If note.VPosition > _editor.State.TimeSelect.EndPoint Then
@@ -712,7 +736,7 @@ Public Class EditorPanel
         Dim startDrawX = HPositionToPanelX(bpmColStartX)
         Dim halfLineY = VPositionToPanelY(_editor.State.TimeSelect.StartPoint + _editor.State.TimeSelect.HalfPointLength)
         Dim endLineY = VPositionToPanelY(_editor.State.TimeSelect.StartPoint + _editor.State.TimeSelect.EndPointLength)
-        Dim selectionDrawHeight = CInt(Math.Abs(_editor.State.TimeSelect.EndPointLength)*_editor.Grid.HeightScale)
+        Dim selectionDrawHeight = CInt(Math.Abs(_editor.State.TimeSelect.EndPointLength) * _editor.Grid.HeightScale)
         Dim startLineY =
                 VPositionToPanelY(
                     _editor.State.TimeSelect.StartPoint + Math.Max(_editor.State.TimeSelect.EndPointLength, 0))
@@ -732,17 +756,17 @@ Public Class EditorPanel
                         0, halfLineY,
                         Size.Width, halfLineY)
         'Start BPM
-        _buffer.DrawString(xBPMStart/10000,
+        _buffer.DrawString(xBpmStart / 10000,
                           _theme.PEBPMFont, _theme.PEBPM,
                           startDrawX,
                           startLineStringY - _theme.PEBPMFont.Height + 3)
         'Half BPM
-        _buffer.DrawString(xBPMHalf/10000,
+        _buffer.DrawString(xBpmHalf / 10000,
                           _theme.PEBPMFont, _theme.PEBPM,
                           startDrawX,
                           halfLineY - _theme.PEBPMFont.Height + 3)
         'End BPM
-        _buffer.DrawString(xBPMEnd/10000,
+        _buffer.DrawString(xBpmEnd / 10000,
                           _theme.PEBPMFont, _theme.PEBPM,
                           startDrawX,
                           endLineY - _theme.PEBPMFont.Height + 3)
@@ -775,13 +799,13 @@ Public Class EditorPanel
 
         If Not (xInitX = xCurrX And xInitY = xCurrY) Then
             Dim xPointx() As PointF = {New PointF(xCurrX, xCurrY),
-                                       New PointF(Math.Cos(xAngle + Math.PI/2)*10 + xInitX,
-                                                  Math.Sin(xAngle + Math.PI/2)*10 + xInitY),
-                                       New PointF(Math.Cos(xAngle - Math.PI/2)*10 + xInitX,
-                                                  Math.Sin(xAngle - Math.PI/2)*10 + xInitY)}
+                                       New PointF(Math.Cos(xAngle + Math.PI / 2) * 10 + xInitX,
+                                                  Math.Sin(xAngle + Math.PI / 2) * 10 + xInitY),
+                                       New PointF(Math.Cos(xAngle - Math.PI / 2) * 10 + xInitX,
+                                                  Math.Sin(xAngle - Math.PI / 2) * 10 + xInitY)}
             _buffer.FillPolygon(
                 New LinearGradientBrush(New Point(xInitX, xInitY), New Point(xCurrX, xCurrY), Color.FromArgb(0),
-                                        Color.FromArgb(- 1)), xPointx)
+                                        Color.FromArgb(-1)), xPointx)
         End If
 
         _buffer.FillEllipse(Brushes.LightGray, xInitX - 10, xInitY - 10, 20, 20)
@@ -794,14 +818,11 @@ Public Class EditorPanel
     Protected Overrides Sub OnPaint(e As PaintEventArgs)
         ' TODO: move this
         ' If Me.WindowState = FormWindowState.Minimized Then Return
-        If DisplayRectangle.Width <= 0 Or DisplayRectangle.Height <= 0 Then Return
+        ' If DisplayRectangle.Width <= 0 Or DisplayRectangle.Height <= 0 Then Return
 
-        ' MyBase.OnPaint(e)
-        If _doubleBuffer Is Nothing Then
-            _doubleBuffer = BufferedGraphicsManager.Current.Allocate(e.Graphics, DisplayRectangle)
-        End If
+        MyBase.OnPaint(e)
 
-        _buffer = _doubleBuffer.Graphics
+        _buffer = e.Graphics
 
         If _theme Is Nothing Then
             e.Graphics.FillRectangle(New SolidBrush(BackColor), DisplayRectangle)
@@ -811,7 +832,7 @@ Public Class EditorPanel
 
         _buffer.Clear(_theme.Bg.Color)
 
-        Dim xVSu As Integer = Math.Min(- VerticalScroll + Size.Height/_editor.Grid.HeightScale, _editor.GetMaxVPosition())
+        Dim xVSu As Integer = Math.Min(-VerticalPosition + Size.Height / _editor.Grid.HeightScale, _editor.GetMaxVPosition())
 
         'Bg color
         If _editor.Grid.ShowBackground Then
@@ -827,7 +848,7 @@ Public Class EditorPanel
         End If
 
         'WaveForm
-        DrawWaveform(- VerticalScroll)
+        DrawWaveform(-VerticalPosition)
 
         'K
         'If Not K Is Nothing Then
@@ -839,14 +860,14 @@ Public Class EditorPanel
         DrawSelectionBox()
 
         'Mouse Over
-        If _editor.IsSelectMode AndAlso _editor.State.Mouse.CurrentHoveredNoteIndex <> - 1 Then
+        If _editor.IsSelectMode AndAlso _editor.State.Mouse.CurrentHoveredNoteIndex <> -1 Then
             ' DrawNoteHoverHighlight(iI, HorizontalScroll, VerticalScroll, panelHeight, foundNoteIndex)
             DrawMouseOver()
         End If
 
         If _editor.ShouldDrawTempNote AndAlso
-           _editor.State.Mouse.CurrentMouseColumn > - 1 AndAlso
-           _editor.State.Mouse.CurrentMouseRow > - 1 Then
+           _editor.State.Mouse.CurrentMouseColumn > -1 AndAlso
+           _editor.State.Mouse.CurrentMouseRow > -1 Then
             DrawTempNote()
         End If
 
@@ -862,8 +883,6 @@ Public Class EditorPanel
 
         'Drag/Drop
         DrawDragAndDrop()
-
-        _doubleBuffer.Render(e.Graphics)
     End Sub
 
     ''' <summary>
@@ -871,7 +890,7 @@ Public Class EditorPanel
     ''' </summary>
     ''' <param name="xHPosition">Original horizontal position.</param>
     Private Function HPositionToPanelX(xHPosition As Integer) As Integer
-        Return (xHPosition - HorizontalScroll)*_editor.Grid.WidthScale
+        Return (xHPosition - HorizontalPosition) * _editor.Grid.WidthScale
     End Function
 
     ''' <summary>
@@ -880,12 +899,44 @@ Public Class EditorPanel
     ''' </summary>
     ''' <param name="xVPosition">Original vertical position.</param>
     Private Function VPositionToPanelY(xVPosition As Double) As Integer
-        Return Size.Height - CInt((xVPosition + VerticalScroll)*_editor.Grid.HeightScale) - 1
+        Return Size.Height - CInt((xVPosition + VerticalPosition) * _editor.Grid.HeightScale) - 1
     End Function
 
     Public Function SnapToGrid(vpos As Double) As Double
         Dim offset As Double = _editor.MeasureBottom(_editor.MeasureAtDisplacement(vpos))
-        Dim divisor As Double = 192.0R/_editor.Grid.Divider
-        Return Math.Floor((vpos - offset)/divisor)*divisor + offset
+        Dim divisor As Double = 192.0R / _editor.Grid.Divider
+        Return Math.Floor((vpos - offset) / divisor) * divisor + offset
     End Function
+
+    Friend Sub SetWidthScale(widthScale As Single)
+        HorizontalScrollBar.LargeChange = Width / widthScale
+        With HorizontalScrollBar
+            If .Value > .Maximum - .LargeChange + 1 Then
+                .Value = .Maximum - .LargeChange + 1
+            End If
+        End With
+    End Sub
+
+    Friend Sub ScrollChart(xAmount As Double, yAmount As Double)
+        With VerticalScrollBar
+            Dim i = .Value + yAmount
+            If i > 0 Then i = 0
+            If i < .Minimum Then i = .Minimum
+            .Value = i
+        End With
+        With HorizontalScrollBar
+            Dim dx = .Value + xAmount
+            If dx > .Maximum - .LargeChange + 1 Then
+                dx = .Maximum - .LargeChange + 1
+            End If
+            If dx < .Minimum Then dx = .Minimum
+            .Value = dx
+        End With
+    End Sub
+
+    Friend Sub ScrollTo(v As Double)
+        VerticalScrollBar.Minimum = Math.Min(v, VerticalScrollBar.Minimum)
+        VerticalScrollBar.Maximum = Math.Max(v, VerticalScrollBar.Maximum)
+        VerticalScrollBar.Value = v
+    End Sub
 End Class

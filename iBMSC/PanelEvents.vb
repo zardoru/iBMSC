@@ -5,14 +5,14 @@ Partial Public Class EditorPanel
     Private Sub PreviewKeyDownEvent(sender As Object, e As PreviewKeyDownEventArgs) Handles Me.PreviewKeyDown
         If e.KeyCode = Keys.ShiftKey Or e.KeyCode = Keys.ControlKey Then
             _editor.RefreshPanelAll()
-            _editor.POStatusRefresh()
+            _editor.PoStatusRefresh()
             Exit Sub
         End If
 
         If e.KeyCode = 18 Then Exit Sub
 
         Dim iI As Integer = sender.Tag
-        Dim xTargetColumn As Integer = - 1
+        Dim xTargetColumn As Integer = -1
         Dim xUndo As UndoRedo.LinkedURCmd = Nothing
         Dim xRedo As UndoRedo.LinkedURCmd = New UndoRedo.Void
 
@@ -31,7 +31,7 @@ Partial Public Class EditorPanel
                 VerticalScrollBar.Value = Math.Min(VerticalScrollBar.Value + _editor.Grid.PageUpDnScroll, 0)
         End Select
 
-        PMainInMouseMove(sender)
+        OnMouseMove(sender)
     End Sub
 
     Private Sub ResizeEvent(sender As Object, e As EventArgs) Handles Me.Resize
@@ -43,9 +43,9 @@ Partial Public Class EditorPanel
             Exit Sub
         End If
 
-        VerticalScrollBar.LargeChange = sender.Height*0.9
+        VerticalScrollBar.LargeChange = sender.Height * 0.9
         VerticalScrollBar.Maximum = VerticalScrollBar.LargeChange - 1
-        HorizontalScrollBar.LargeChange = sender.Width/_editor.Grid.WidthScale
+        HorizontalScrollBar.LargeChange = sender.Width / _editor.Grid.WidthScale
 
         If HorizontalScrollBar.Value > HorizontalScrollBar.Maximum - HorizontalScrollBar.LargeChange + 1 Then
             HorizontalScrollBar.Value = HorizontalScrollBar.Maximum - HorizontalScrollBar.LargeChange + 1
@@ -60,14 +60,14 @@ Partial Public Class EditorPanel
 
     Private Sub MouseDownEvent(sender As Object, e As MouseEventArgs) Handles Me.MouseDown
         ' az: the hell is this for?
-        _editor.tempFirstMouseDown = _editor.FirstClickDisabled And Not sender.Focused
+        _editor.TempFirstMouseDown = _editor.FirstClickDisabled And Not sender.Focused
 
         _editor.PanelFocus = sender.Tag
         sender.Focus()
-        _editor.State.Mouse.LastMouseDownLocation = New Point(- 1, - 1)
-        LastVerticalScroll = VerticalScroll
+        _editor.State.Mouse.LastMouseDownLocation = New Point(-1, -1)
+        LastVerticalScroll = VerticalPosition
 
-        If _editor.NTInput Then
+        If _editor.NtInput Then
             _editor.State.NT.IsAdjustingUpperEnd = False
             _editor.State.NT.IsAdjustingNoteLength = False
         End If
@@ -82,33 +82,33 @@ Partial Public Class EditorPanel
 
         Select Case e.Button
             Case MouseButtons.Left
-                If _editor.tempFirstMouseDown And Not _editor.IsTimeSelectMode Then
+                If _editor.TempFirstMouseDown And Not _editor.IsTimeSelectMode Then
                     _editor.RefreshPanelAll()
                     Exit Select
                 End If
 
-                _editor.State.Mouse.CurrentHoveredNoteIndex = - 1
+                _editor.State.Mouse.CurrentHoveredNoteIndex = -1
                 'If K Is Nothing Then pMouseDown = e.Location : Exit Select
 
                 'Find the clicked K
                 Dim noteIndex As Integer = GetClickedNote(e)
 
-                _editor.PanelPreviewNoteIndex(NoteIndex)
+                _editor.PanelPreviewNoteIndex(noteIndex)
 
                 For Each note In _editor.Notes
                     note.TempMouseDown = False
                 Next
 
-                HandleCurrentModeOnClick(e, NoteIndex)
+                HandleCurrentModeOnClick(e, noteIndex)
                 _editor.RefreshPanelAll()
-                _editor.POStatusRefresh()
+                _editor.PoStatusRefresh()
 
             Case MouseButtons.Middle
                 If _editor.MiddleButtonMoveMethod = 1 Then
                     _editor.State.Mouse.tempX = e.X
                     _editor.State.Mouse.tempY = e.Y
-                    _editor.State.Mouse.tempV = VerticalScroll
-                    _editor.State.Mouse.tempH = HorizontalScroll
+                    _editor.State.Mouse.tempV = VerticalPosition
+                    _editor.State.Mouse.tempH = HorizontalPosition
                 Else
                     _editor.State.Mouse.MiddleButtonLocation = Cursor.Position
                     _editor.State.Mouse.MiddleButtonClicked = True
@@ -121,13 +121,13 @@ Partial Public Class EditorPanel
     End Sub
 
     Private Sub DeselectOrRemove(e As MouseEventArgs)
-        _editor.State.Mouse.CurrentHoveredNoteIndex = - 1
+        _editor.State.Mouse.CurrentHoveredNoteIndex = -1
 
         _editor.ClearSelectionArray()
 
-        If Not _editor.tempFirstMouseDown Then
+        If Not _editor.TempFirstMouseDown Then
             Dim i As Integer
-            For i = _editor.Notes.Length - 1 To 1 Step - 1
+            For i = _editor.Notes.Length - 1 To 1 Step -1
                 Dim note = _editor.Notes(i)
                 'If mouse is clicking on a K
                 If MouseInNote(e, note) Then
@@ -154,14 +154,14 @@ Partial Public Class EditorPanel
     End Sub
 
     Private Function GetClickedNote(e As MouseEventArgs) As Integer
-        Dim noteIndex As Integer = - 1
-        For i = UBound(_editor.Notes) To 0 Step - 1
+        Dim noteIndex As Integer = -1
+        For i = UBound(_editor.Notes) To 0 Step -1
             Dim note = _editor.Notes(i)
 
             If MouseInNote(e, note) Then
-                NoteIndex = i
+                noteIndex = i
 
-                If _editor.NTInput And My.Computer.Keyboard.ShiftKeyDown Then
+                If _editor.NtInput And My.Computer.Keyboard.ShiftKeyDown Then
                     _editor.State.NT.IsAdjustingUpperEnd = e.Y <= VPositionToPanelY(note.VPosition + note.Length)
                     _editor.State.NT.IsAdjustingNoteLength = e.Y >= VPositionToPanelY(note.VPosition) - _theme.NoteHeight Or
                                                             _editor.State.NT.IsAdjustingUpperEnd
@@ -172,7 +172,7 @@ Partial Public Class EditorPanel
             End If
         Next
 
-        Return NoteIndex
+        Return noteIndex
     End Function
 
 
@@ -186,15 +186,15 @@ Partial Public Class EditorPanel
 
         If _editor.IsSelectMode Then
             OnSelectModeLeftClick(e, clickedNoteIndex)
-        ElseIf _editor.NTInput And _editor.IsWriteMode Then
-            _editor.State.Mouse.CurrentMouseRow = - 1
-            _editor.State.Mouse.CurrentMouseColumn = - 1
+        ElseIf _editor.NtInput And _editor.IsWriteMode Then
+            _editor.State.Mouse.CurrentMouseRow = -1
+            _editor.State.Mouse.CurrentMouseColumn = -1
 
             If mouseVPos < 0 Or mouseVPos >= _editor.GetMaxVPosition() Then Exit Sub
 
             Dim col = GetColumnAtEvent(e)
 
-            For j As Integer = UBound(_editor.Notes) To 1 Step - 1
+            For j As Integer = UBound(_editor.Notes) To 1 Step -1
                 If _editor.Notes(j).VPosition = mouseVPos And
                    _editor.Notes(j).ColumnIndex = col Then
                     clickedNoteIndex = j
@@ -229,7 +229,7 @@ Partial Public Class EditorPanel
                 If col = ColumnType.SCROLLS Then xMessage = Strings.Messages.PromptEnterSCROLL
 
                 Dim valstr As String = InputBox(xMessage, Text)
-                Dim value As Double = Val(valstr)*10000
+                Dim value As Double = Val(valstr) * 10000
 
                 If (col = ColumnType.SCROLLS And valstr = "0") Or value <> 0 Then
                     If col <> ColumnType.SCROLLS And value <= 0 Then value = 1
@@ -244,7 +244,7 @@ Partial Public Class EditorPanel
                         End If
                     Next
 
-                    Dim n = New Note(col, mouseVPos, value, 0, Hidden)
+                    Dim n = New Note(col, mouseVPos, value, 0, hidden)
                     RedoAddNote(n, xUndo, xRedo)
 
                     _editor.AddNote(n)
@@ -254,7 +254,7 @@ Partial Public Class EditorPanel
                 ' ShouldDrawTempNote = True (az: Why?)
 
             Else
-                Dim xLbl As Integer = _editor.CurrentWavSelectedIndex*10000
+                Dim xLbl As Integer = _editor.CurrentWavSelectedIndex * 10000
 
                 Dim landmine As Boolean = ModifierLandmineActive()
 
@@ -262,10 +262,10 @@ Partial Public Class EditorPanel
                         .VPosition = mouseVPos,
                         .ColumnIndex = col,
                         .Value = xLbl,
-                        .Hidden = Hidden,
-                        .Landmine = Landmine,
+                        .Hidden = hidden,
+                        .Landmine = landmine,
                         .TempMouseDown = True,
-                        .LNPair = - 1
+                        .LNPair = -1
                         }
                 _editor.AppendNote(note)
             End If
@@ -312,12 +312,11 @@ Partial Public Class EditorPanel
 
             Else
                 If _editor.State.TimeSelect.MouseOverLine = TimeSelectLine.HalfLine Then
-                    _editor.SortByVPositionInsertion()
+                    _editor.ValidateNotesArray()
                     _editor.State.TimeSelect.PStart = _editor.State.TimeSelect.StartPoint
                     _editor.State.TimeSelect.PLength = _editor.State.TimeSelect.EndPointLength
                     _editor.State.TimeSelect.PHalf = _editor.State.TimeSelect.HalfPointLength
-                    _editor.State.TimeSelect.K = Notes
-                    ReDim Preserve _editor.State.TimeSelect.K(UBound(_editor.State.TimeSelect.K))
+                    _editor.State.TimeSelect.Notes = notes.Clone()
 
                     If _editor.Grid.IsSnapEnabled And clickedNoteIndex <= 0 And Not My.Computer.Keyboard.CtrlKeyDown Then _
                         mouseVPos = SnapToGrid(mouseVPos)
@@ -329,12 +328,12 @@ Partial Public Class EditorPanel
                 ElseIf _
                     _editor.State.TimeSelect.MouseOverLine = TimeSelectLine.EndLine Or
                     _editor.State.TimeSelect.MouseOverLine = TimeSelectLine.StartLine Then
-                    _editor.SortByVPositionInsertion()
+                    _editor.ValidateNotesArray()
                     _editor.State.TimeSelect.PStart = _editor.State.TimeSelect.StartPoint
                     _editor.State.TimeSelect.PLength = _editor.State.TimeSelect.EndPointLength
                     _editor.State.TimeSelect.PHalf = _editor.State.TimeSelect.HalfPointLength
-                    _editor.State.TimeSelect.K = Notes.Clone()
-                    ReDim Preserve _editor.State.TimeSelect.K(UBound(_editor.State.TimeSelect.K))
+                    _editor.State.TimeSelect.Notes = notes.Clone()
+                    ReDim Preserve _editor.State.TimeSelect.Notes(UBound(_editor.State.TimeSelect.Notes))
 
                     If _editor.Grid.IsSnapEnabled And clickedNoteIndex <= 0 And Not My.Computer.Keyboard.CtrlKeyDown Then _
                         mouseVPos = SnapToGrid(mouseVPos)
@@ -343,7 +342,7 @@ Partial Public Class EditorPanel
                                 mouseVPos - _editor.State.TimeSelect.StartPoint,
                                 _editor.State.TimeSelect.EndPoint - mouseVPos)
 
-                    _editor.BPMChangeTop(v/_editor.State.TimeSelect.EndPointLength, , True)
+                    _editor.BPMChangeTop(v / _editor.State.TimeSelect.EndPointLength, , True)
                 Else
                     _editor.State.TimeSelect.EndPointLength = mouseVPos
                     If _editor.Grid.IsSnapEnabled And clickedNoteIndex <= 0 And Not My.Computer.Keyboard.CtrlKeyDown Then _
@@ -356,14 +355,14 @@ Partial Public Class EditorPanel
             If _editor.State.TimeSelect.EndPointLength Then
                 Dim xVLower As Double = Math.Min(_editor.State.TimeSelect.StartPoint, _editor.State.TimeSelect.EndPoint)
                 Dim xVUpper As Double = Math.Max(_editor.State.TimeSelect.StartPoint, _editor.State.TimeSelect.EndPoint)
-                If _editor.NTInput Then
-                    For Each note In Notes.Skip(1)
+                If _editor.NtInput Then
+                    For Each note In notes.Skip(1)
                         note.Selected = Not note.VPosition >= xVUpper And
                                         Not note.VPosition + note.Length < xVLower And
                                         _editor.Columns.IsEnabled(note.ColumnIndex)
                     Next
                 Else
-                    For Each note In Notes.Skip(1)
+                    For Each note In notes.Skip(1)
                         note.Selected = note.VPosition >= xVLower And
                                         note.VPosition < xVUpper And
                                         _editor.Columns.IsEnabled(note.ColumnIndex)
@@ -400,15 +399,15 @@ Partial Public Class EditorPanel
 
 
             'KMouseDown = xITemp
-            Notes(clickedNoteIndex).TempMouseDown = True
+            notes(clickedNoteIndex).TempMouseDown = True
 
             If My.Computer.Keyboard.CtrlKeyDown And Not ModifierMultiselectActive() Then
                 _editor.State.IsDuplicatingSelectedNotes = True
             ElseIf ModifierMultiselectActive() Then
-                For i = 0 To UBound(Notes)
+                For i = 0 To UBound(notes)
                     If IsNoteVisible(i) Then
-                        If _editor.IsLabelMatch(Notes(i), clickedNoteIndex) Then
-                            Notes(i).Selected = Not Notes(i).Selected
+                        If _editor.IsLabelMatch(notes(i), clickedNoteIndex) Then
+                            notes(i).Selected = Not notes(i).Selected
                         End If
                     End If
                 Next
@@ -416,17 +415,17 @@ Partial Public Class EditorPanel
                 ' az description: If the clicked note is not selected, select only this one.
                 'Otherwise, we clicked an already selected note
                 'and we should rebuild the selected note array.
-                If Not Notes(clickedNoteIndex).Selected Then
-                    For i = 0 To UBound(Notes)
-                        If Notes(i).Selected Then Notes(i).Selected = False
+                If Not notes(clickedNoteIndex).Selected Then
+                    For i = 0 To UBound(notes)
+                        If notes(i).Selected Then notes(i).Selected = False
                     Next
-                    Notes(clickedNoteIndex).Selected = True
+                    notes(clickedNoteIndex).Selected = True
                 End If
 
                 Dim selectedCount As Integer = _editor.GetSelectedNotes().Count()
 
                 ' adjustsingle if selectedcount is 1
-                _editor.State.NT.IsAdjustingSingleNote = SelectedCount = 1
+                _editor.State.NT.IsAdjustingSingleNote = selectedCount = 1
                 ' Editor.RegenerateSelectedNotesArray()
 
                 _editor.State.uAdded = False
@@ -436,13 +435,13 @@ Partial Public Class EditorPanel
             _editor.State.Mouse.LastMouseDownLocation = e.Location
 
             If Not My.Computer.Keyboard.CtrlKeyDown Then
-                For i = 0 To UBound(Notes)
-                    Notes(i).Selected = False
-                    Notes(i).TempSelected = False
+                For i = 0 To UBound(notes)
+                    notes(i).Selected = False
+                    notes(i).TempSelected = False
                 Next
             Else
-                For i = 0 To UBound(Notes)
-                    Notes(i).TempSelected = Notes(i).Selected
+                For i = 0 To UBound(notes)
+                    notes(i).TempSelected = notes(i).Selected
                 Next
             End If
         End If
@@ -462,16 +461,16 @@ Partial Public Class EditorPanel
 
 
             Dim valstr As String = InputBox(xMessage, Me.Text)
-            Dim promptValue As Double = Val(valstr)*10000
-            If (noteColumn = ColumnType.SCROLLS And valstr = "0") Or PromptValue <> 0 Then
+            Dim promptValue As Double = Val(valstr) * 10000
+            If (noteColumn = ColumnType.SCROLLS And valstr = "0") Or promptValue <> 0 Then
 
                 Dim xUndo As UndoRedo.LinkedURCmd = Nothing
                 Dim xRedo As UndoRedo.LinkedURCmd = Nothing
-                RedoRelabelNote(note, PromptValue, xUndo, xRedo)
+                RedoRelabelNote(note, promptValue, xUndo, xRedo)
                 If clickedNoteIndex = 0 Then
-                    _editor.THBPM.Value = PromptValue/10000
+                    _editor.THBPM.Value = promptValue / 10000
                 Else
-                    _editor.Notes(clickedNoteIndex).Value = PromptValue
+                    _editor.Notes(clickedNoteIndex).Value = promptValue
                 End If
                 _editor.AddUndoChain(xUndo, xRedo)
             End If
@@ -484,8 +483,8 @@ Partial Public Class EditorPanel
             If IsBase36(xStr) And Not (xStr = "00" Or xStr = "0") Then
                 Dim xUndo As UndoRedo.LinkedURCmd = Nothing
                 Dim xRedo As UndoRedo.LinkedURCmd = Nothing
-                RedoRelabelNote(note, C36to10(xStr)*10000, xUndo, xRedo)
-                _editor.Notes(clickedNoteIndex).Value = C36to10(xStr)*10000
+                RedoRelabelNote(note, C36to10(xStr) * 10000, xUndo, xRedo)
+                _editor.Notes(clickedNoteIndex).Value = C36to10(xStr) * 10000
                 _editor.AddUndoChain(xUndo, xRedo)
                 Return
             Else
@@ -498,12 +497,12 @@ Partial Public Class EditorPanel
     Private Function MouseInNote(e As MouseEventArgs, note As Note) As Boolean
         Return e.X >= HPositionToPanelX(_editor.Columns.GetColumnLeft(note.ColumnIndex)) + 1 And
                e.X <= HPositionToPanelX(_editor.Columns.GetColumnRight(note.ColumnIndex)) - 1 And
-               e.Y >= VPositionToPanelY(note.VPosition + IIf(_editor.NTInput, note.Length, 0)) - _theme.NoteHeight And
+               e.Y >= VPositionToPanelY(note.VPosition + IIf(_editor.NtInput, note.Length, 0)) - _theme.NoteHeight And
                e.Y <= VPositionToPanelY(note.VPosition)
     End Function
 
 
-    Public Sub PMainInMouseMove(sender As Panel)
+    Public Sub OnMouseMove(sender As Panel)
         Dim p As Point = sender.PointToClient(Cursor.Position)
         PMainInMouseMove(sender, New MouseEventArgs(MouseButtons.None, 0, p.X, p.Y, 0))
     End Sub
@@ -523,12 +522,12 @@ Partial Public Class EditorPanel
                 End If
 
                 Dim mouseRemainInSameRegion = False
-                Dim foundNoteIndex = UpdateNTInputState(e, Notes, mouseRemainInSameRegion)
+                Dim foundNoteIndex = UpdateNtInputState(e, notes, mouseRemainInSameRegion)
 
                 If _editor.IsSelectMode Then
 
                     If mouseRemainInSameRegion Then Exit Select
-                    _editor.State.Mouse.CurrentHoveredNoteIndex = - 1
+                    _editor.State.Mouse.CurrentHoveredNoteIndex = -1
 
                     UpdateTimeSelectLineOver(e)
 
@@ -537,26 +536,26 @@ Partial Public Class EditorPanel
                 ElseIf _editor.IsWriteMode Then
                     _editor.UpdateMouseRowAndColumn()
 
-                    _editor.LNDisplayLength = 0
-                    If foundNoteIndex > - 1 Then
-                        _editor.LNDisplayLength = Notes(foundNoteIndex).Length
+                    _editor.LnDisplayLength = 0
+                    If foundNoteIndex > -1 Then
+                        _editor.LnDisplayLength = notes(foundNoteIndex).Length
                     End If
 
                     _editor.RefreshPanelAll()
                 End If
 
             Case MouseButtons.Left
-                If _editor.tempFirstMouseDown And Not _editor.IsTimeSelectMode Then Exit Select
+                If _editor.TempFirstMouseDown And Not _editor.IsTimeSelectMode Then Exit Select
 
                 _editor.State.Mouse.tempX = 0
                 _editor.State.Mouse.tempY = 0
-                If e.X < 0 Or e.X > Width Or e.Y < 0 Or e.Y > Height Then
+                If Not (e.X < 0 Or e.X > Width Or e.Y < 0 Or e.Y > Height) Then
                     If e.X < 0 Then _editor.State.Mouse.tempX = e.X
                     If e.X > Width Then _editor.State.Mouse.tempX = e.X - Width
                     If e.Y < 0 Then _editor.State.Mouse.tempY = e.Y
                     If e.Y > Height Then
                     Else
-                        _editor.Timer1.Enabled = False
+                        ' _editor.Timer1.Enabled = False
                     End If
 
                     If _editor.IsSelectMode Then
@@ -565,7 +564,7 @@ Partial Public Class EditorPanel
 
                         'If K Is Nothing Then RefreshPanelAll() : Exit Select
 
-                        If Not _editor.State.Mouse.LastMouseDownLocation = New Point(- 1, - 1) Then
+                        If Not _editor.State.Mouse.LastMouseDownLocation = New Point(-1, -1) Then
                             UpdateSelectionBox()
 
                             'ElseIf Not KMouseDown = -1 Then
@@ -577,7 +576,7 @@ Partial Public Class EditorPanel
 
                     ElseIf _editor.IsWriteMode Then
 
-                        If _editor.NTInput Then
+                        If _editor.NtInput Then
                             OnWriteModeMouseMove()
                         Else
                             _editor.State.Mouse.CurrentMouseRow = _editor.GetMouseVPosition(_editor.Grid.IsSnapEnabled)
@@ -599,9 +598,11 @@ Partial Public Class EditorPanel
         If vps <> _lastVPos Or col <> _lastColumn Then
             _lastVPos = vps
             _lastColumn = col
-            _editor.POStatusRefresh()
+            _editor.PoStatusRefresh()
             _editor.RefreshPanelAll() 'az: refreshing the line is important now...
         End If
+
+        Refresh()
     End Sub
 
     ''' <summary>
@@ -612,15 +613,15 @@ Partial Public Class EditorPanel
     ''' <returns>The index of the note that the event's coordinates hovers above.</returns>
     Private Function UpdateNtInputState(e As MouseEventArgs, notes() As Note, ByRef xMouseRemainInSameRegion As Boolean) _
         As Integer
-        Dim foundNoteIndex = - 1
+        Dim foundNoteIndex = -1
 
-        For noteIndex = UBound(Notes) To 0 Step - 1
-            If MouseInNote(e, Notes(noteIndex)) Then
+        For noteIndex = UBound(notes) To 0 Step -1
+            If MouseInNote(e, notes(noteIndex)) Then
                 foundNoteIndex = noteIndex
 
                 xMouseRemainInSameRegion = foundNoteIndex = _editor.State.Mouse.CurrentHoveredNoteIndex
-                If _editor.NTInput Then
-                    Dim vy = VPositionToPanelY(Notes(noteIndex).VPosition + Notes(noteIndex).Length)
+                If _editor.NtInput Then
+                    Dim vy = VPositionToPanelY(notes(noteIndex).VPosition + notes(noteIndex).Length)
 
                     Dim xbAdjustUpper As Boolean = (e.Y <= vy) And ModifierLongNoteActive()
                     Dim xbAdjustLength As Boolean = (e.Y >= vy - _theme.NoteHeight Or xbAdjustUpper) And
@@ -641,8 +642,8 @@ Partial Public Class EditorPanel
         Return foundNoteIndex
     End Function
 
-    Dim _lastVPos = - 1
-    Dim _lastColumn = - 1
+    Dim _lastVPos = -1
+    Dim _lastColumn = -1
 
     Private Sub UpdateSelectedNotes(e As MouseEventArgs)
         Dim currentClickedNoteIndex As Integer
@@ -666,14 +667,14 @@ Partial Public Class EditorPanel
 
                 _editor.State.NT.IsAdjustingUpperEnd = False
                 clickedNote.VPosition += clickedNote.Length
-                clickedNote.Length *= - 1
+                clickedNote.Length *= -1
 
             ElseIf Not _editor.State.NT.IsAdjustingUpperEnd AndAlso
                    mouseVPosition > clickedNote.VPosition + clickedNote.Length Then
 
                 _editor.State.NT.IsAdjustingUpperEnd = True
                 clickedNote.VPosition += clickedNote.Length
-                clickedNote.Length *= - 1
+                clickedNote.Length *= -1
             End If
 
         End If
@@ -701,8 +702,8 @@ Partial Public Class EditorPanel
     Private Sub OnPanelMousePan(e As MouseEventArgs)
         If _editor.MiddleButtonMoveMethod = 1 Then
             Dim mouse = _editor.State.Mouse
-            Dim i As Integer = Mouse.tempV + (Mouse.tempY - e.Y)/_editor.Grid.HeightScale
-            Dim j As Integer = Mouse.tempH + (Mouse.tempX - e.X)/_editor.Grid.WidthScale
+            Dim i As Integer = mouse.tempV + (mouse.tempY - e.Y) / _editor.Grid.HeightScale
+            Dim j As Integer = mouse.tempH + (mouse.tempX - e.X) / _editor.Grid.WidthScale
             If i > 0 Then i = 0
             If j < 0 Then j = 0
 
@@ -725,10 +726,10 @@ Partial Public Class EditorPanel
 
     Private Sub OnTimeSelectClick(e As MouseEventArgs)
         Dim i As Integer
-        Dim hoverNoteIndex As Integer = - 1
+        Dim hoverNoteIndex As Integer = -1
         Dim note As Note = Nothing
         If _editor.Notes IsNot Nothing Then
-            For i = _editor.Notes.Length - 1 To 0 Step - 1
+            For i = _editor.Notes.Length - 1 To 0 Step -1
                 If MouseInNote(e, _editor.Notes(i)) Then
                     hoverNoteIndex = i
                     note = _editor.Notes(i)
@@ -744,8 +745,8 @@ Partial Public Class EditorPanel
 
             If _editor.State.TimeSelect.MouseOverLine = TimeSelectLine.StartLine Then
                 Dim startPointDy = _editor.State.TimeSelect.StartPoint - mouseRow
-                _editor.State.TimeSelect.EndPointLength += StartPointDY
-                _editor.State.TimeSelect.HalfPointLength += StartPointDY
+                _editor.State.TimeSelect.EndPointLength += startPointDy
+                _editor.State.TimeSelect.HalfPointLength += startPointDy
                 _editor.State.TimeSelect.StartPoint = mouseRow
 
             ElseIf _editor.State.TimeSelect.MouseOverLine = TimeSelectLine.HalfLine Then
@@ -755,7 +756,7 @@ Partial Public Class EditorPanel
                 _editor.State.TimeSelect.EndPoint = mouseRow
             Else
                 _editor.State.TimeSelect.EndPoint = mouseRow
-                _editor.State.TimeSelect.HalfPointLength = _editor.State.TimeSelect.EndPointLength/2
+                _editor.State.TimeSelect.HalfPointLength = _editor.State.TimeSelect.EndPointLength / 2
             End If
 
             _editor.State.TimeSelect.ValidateSelection(_editor.GetMaxVPosition())
@@ -767,7 +768,7 @@ Partial Public Class EditorPanel
                 _editor.State.TimeSelect.StartPoint = _editor.State.TimeSelect.PStart
                 _editor.State.TimeSelect.EndPointLength = _editor.State.TimeSelect.PLength
                 _editor.State.TimeSelect.HalfPointLength = _editor.State.TimeSelect.PHalf
-                _editor.Notes = _editor.State.TimeSelect.K
+                _editor.Notes = _editor.State.TimeSelect.Notes
                 ReDim Preserve _editor.Notes(_editor.Notes.Length - 1)
 
                 _editor.BPMChangeHalf(xL1 - _editor.State.TimeSelect.HalfPointLength - _editor.State.TimeSelect.StartPoint,
@@ -780,13 +781,13 @@ Partial Public Class EditorPanel
                 _editor.State.TimeSelect.StartPoint = _editor.State.TimeSelect.PStart
                 _editor.State.TimeSelect.EndPointLength = _editor.State.TimeSelect.PLength
                 _editor.State.TimeSelect.HalfPointLength = _editor.State.TimeSelect.PHalf
-                _editor.Notes = _editor.State.TimeSelect.K
+                _editor.Notes = _editor.State.TimeSelect.Notes
                 ReDim Preserve _editor.Notes(UBound(_editor.Notes))
 
                 _editor.BPMChangeTop(
                     IIf(_editor.State.TimeSelect.MouseOverLine = TimeSelectLine.EndLine,
                         xL1 - _editor.State.TimeSelect.StartPoint,
-                        _editor.State.TimeSelect.EndPoint - xL1)/_editor.State.TimeSelect.EndPointLength, , True)
+                        _editor.State.TimeSelect.EndPoint - xL1) / _editor.State.TimeSelect.EndPointLength, , True)
 
 
             Else
@@ -801,17 +802,17 @@ Partial Public Class EditorPanel
             Dim xVLower As Double = Math.Min(_editor.State.TimeSelect.StartPoint, _editor.State.TimeSelect.EndPoint)
             Dim xVUpper As Double = Math.Max(_editor.State.TimeSelect.StartPoint, _editor.State.TimeSelect.EndPoint)
 
-            If _editor.NTInput Then
-                For j = 1 To UBound(Notes)
-                    Notes(j).Selected = Notes(j).VPosition < xVUpper And
-                                        Notes(j).VPosition + Notes(j).Length >= xVLower And
-                                        _editor.Columns.IsEnabled(Notes(j).ColumnIndex)
+            If _editor.NtInput Then
+                For j = 1 To UBound(notes)
+                    notes(j).Selected = notes(j).VPosition < xVUpper And
+                                        notes(j).VPosition + notes(j).Length >= xVLower And
+                                        _editor.Columns.IsEnabled(notes(j).ColumnIndex)
                 Next
             Else
-                For j = 1 To UBound(Notes)
-                    Notes(j).Selected = Notes(j).VPosition >= xVLower And
-                                        Notes(j).VPosition < xVUpper And
-                                        _editor.Columns.IsEnabled(Notes(j).ColumnIndex)
+                For j = 1 To UBound(notes)
+                    notes(j).Selected = notes(j).VPosition >= xVLower And
+                                        notes(j).VPosition < xVUpper And
+                                        _editor.Columns.IsEnabled(notes(j).ColumnIndex)
                 Next
             End If
         Else
@@ -823,7 +824,7 @@ Partial Public Class EditorPanel
         Dim minLength As Double = 0
         Dim maxHeight As Double = 191999
         Dim notes = _editor.Notes
-        For Each note In Notes.Skip(1).Where(Function(x) x.Selected)
+        For Each note In notes.Skip(1).Where(Function(x) x.Selected)
 
             If note.Length + dVPosition < minLength Then
                 minLength = note.Length + dVPosition
@@ -863,7 +864,7 @@ Partial Public Class EditorPanel
         Dim minLength As Double = 0
         Dim minVPosition As Double = 0
         Dim notes = _editor.Notes
-        For Each note In Notes.Skip(1).Where(Function(x) x.Selected)
+        For Each note In notes.Skip(1).Where(Function(x) x.Selected)
             If note.Length - dVPosition < minLength Then
                 minLength = note.Length - dVPosition
             End If
@@ -880,7 +881,7 @@ Partial Public Class EditorPanel
         'start moving
         ' az refactoring: same as OnAdjustUpperEnd. Why use SelectedNotes here.
 
-        For Each note In Notes.Where(Function(x) x.Selected)
+        For Each note In notes.Where(Function(x) x.Selected)
             Dim newVPos = note.VPosition + dVPosition + minLength - minVPosition
             Dim newLen = note.Length - dVPosition - minLength + minVPosition
             RedoLongNoteModify(note, newVPos, newLen, xUndo, xRedo)
@@ -899,26 +900,26 @@ Partial Public Class EditorPanel
     Private Sub OnDuplicateSelectedNotes(e As MouseEventArgs)
         Dim notes = _editor.Notes
         Dim tempNoteIndex As Integer
-        For tempNoteIndex = 1 To UBound(Notes)
-            If Notes(tempNoteIndex).TempMouseDown Then Exit For
+        For tempNoteIndex = 1 To UBound(notes)
+            If notes(tempNoteIndex).TempMouseDown Then Exit For
         Next
 
         Dim mouseVPosition = _editor.GetMouseVPosition(_editor.Grid.IsSnapEnabled)
         If _editor.DisableVerticalMove Then
-            mouseVPosition = Notes(tempNoteIndex).VPosition
+            mouseVPosition = notes(tempNoteIndex).VPosition
         End If
 
-        Dim dVPosition As Double = mouseVPosition - Notes(tempNoteIndex).VPosition  'delta VPosition
+        Dim dVPosition As Double = mouseVPosition - notes(tempNoteIndex).VPosition  'delta VPosition
 
         Dim currCol = _editor.Columns.ColumnArrayIndexToEnabledColumnIndex(GetColumnAtEvent(e))
-        Dim noteCol = _editor.Columns.ColumnArrayIndexToEnabledColumnIndex(Notes(tempNoteIndex).ColumnIndex)
+        Dim noteCol = _editor.Columns.ColumnArrayIndexToEnabledColumnIndex(notes(tempNoteIndex).ColumnIndex)
         Dim colChange As Integer = currCol - noteCol 'delta Column
 
         'Ks cannot be beyond the left, the upper and the lower boundary
         Dim dstColumn = 0
         Dim mVPosition As Double = 0
         Dim muVPosition As Double = 191999
-        For Each note In Notes.Skip(1).Where(Function(x) x.Selected)
+        For Each note In notes.Skip(1).Where(Function(x) x.Selected)
 
             If _editor.Columns.ColumnArrayIndexToEnabledColumnIndex(note.ColumnIndex) + colChange < dstColumn Then
                 dstColumn = _editor.Columns.ColumnArrayIndexToEnabledColumnIndex(note.ColumnIndex) + colChange
@@ -928,7 +929,7 @@ Partial Public Class EditorPanel
                 mVPosition = note.VPosition + dVPosition
             End If
 
-            Dim noteTailPos = note.VPosition + IIf(_editor.NTInput, note.Length, 0)
+            Dim noteTailPos = note.VPosition + IIf(_editor.NtInput, note.Length, 0)
             If noteTailPos + dVPosition > muVPosition Then
                 muVPosition = noteTailPos + dVPosition
             End If
@@ -972,30 +973,30 @@ Partial Public Class EditorPanel
 
         If selectedNotes.Count() <> 0 Then
             Dim note As Note = _editor.Notes.
-                    Skip(1).First(Function (x) x.TempMouseDown)
+                    Skip(1).First(Function(x) x.TempMouseDown)
 
             Dim mouseVPosition = _editor.GetMouseVPosition(_editor.Grid.IsSnapEnabled)
             Dim maxVPos = _editor.GetMaxVPosition()
             Dim nt = _editor.State.NT
 
             With note
-                If NT.IsAdjustingUpperEnd AndAlso
+                If nt.IsAdjustingUpperEnd AndAlso
                    mouseVPosition < .VPosition Then
 
-                    NT.IsAdjustingUpperEnd = False
+                    nt.IsAdjustingUpperEnd = False
                     .VPosition += .Length
-                    .Length *= - 1
+                    .Length *= -1
 
-                ElseIf Not NT.IsAdjustingUpperEnd AndAlso
+                ElseIf Not nt.IsAdjustingUpperEnd AndAlso
                        mouseVPosition > .VPosition + .Length Then
 
-                    NT.IsAdjustingUpperEnd = True
+                    nt.IsAdjustingUpperEnd = True
                     .VPosition += .Length
-                    .Length *= - 1
+                    .Length *= -1
 
                 End If
 
-                If NT.IsAdjustingUpperEnd Then
+                If nt.IsAdjustingUpperEnd Then
                     .Length = mouseVPosition - .VPosition
                 Else
                     .Length = .VPosition + .Length - mouseVPosition
@@ -1005,7 +1006,7 @@ Partial Public Class EditorPanel
                 If .VPosition < 0 Then .Length += .VPosition : .VPosition = 0
                 If .VPosition + .Length >= maxVPos Then .Length = maxVPos - 1 - .VPosition
 
-                If selectedNotes(0).LNPair = - 1 Then 'If new note
+                If selectedNotes(0).LNPair = -1 Then 'If new note
                     Dim xUndo As UndoRedo.LinkedURCmd = Nothing
                     Dim xRedo As UndoRedo.LinkedURCmd = Nothing
                     RedoAddNote(note, xUndo, xRedo)
@@ -1020,7 +1021,7 @@ Partial Public Class EditorPanel
 
                 _editor.State.Mouse.CurrentMouseColumn = .ColumnIndex
                 _editor.State.Mouse.CurrentMouseRow = mouseVPosition
-                _editor.LNDisplayLength = .Length
+                _editor.LnDisplayLength = .Length
 
             End With
 
@@ -1030,17 +1031,19 @@ Partial Public Class EditorPanel
     End Sub
 
     Private Sub OnSelectModeMoveNotes(e As MouseEventArgs, currentNote As Note)
-        Dim mouseVPosition = _editor.GetMouseVPosition(_editor.Grid.IsSnapEnabled)
-
+        Dim dVPosition As Single
         If _editor.DisableVerticalMove Then
-            mouseVPosition = _editor.GetSelectedNotes().First().VPosition
+            dVPosition = 0
+        Else
+            Dim mouseVPosition = _editor.GetMouseVPosition(_editor.Grid.IsSnapEnabled)
+            dVPosition = mouseVPosition - currentNote.VPosition
         End If
 
-        Dim dVPosition = mouseVPosition - currentNote.VPosition  'delta VPosition
+        'delta VPosition
 
         Dim mouseColumn As Integer
         Dim i = 0
-        Dim mLeft As Integer = e.X/_editor.Grid.WidthScale + HorizontalScroll 'horizontal position of the mouse
+        Dim mLeft As Integer = e.X / _editor.Grid.WidthScale + HorizontalPosition 'horizontal position of the mouse
         If mLeft >= 0 Then
             Do
                 If mLeft < _editor.Columns.GetColumnLeft(i + 1) Or i >= _editor.Columns.ColumnCount Then
@@ -1054,6 +1057,11 @@ Partial Public Class EditorPanel
         'get the enabled delta column where mouse is 
         Dim dColumn = mouseColumn - _editor.Columns.ColumnArrayIndexToEnabledColumnIndex(currentNote.ColumnIndex)
 
+        ' Don't do anything if there's no change
+        If dColumn = 0 AndAlso dVPosition = 0 Then
+            Return
+        End If
+
         'Ks cannot be beyond the left, the upper and the lower boundary
         mLeft = 0
         Dim mVPosition As Double = 0
@@ -1062,7 +1070,7 @@ Partial Public Class EditorPanel
             Dim idx = _editor.Columns.ColumnArrayIndexToEnabledColumnIndex(note.ColumnIndex)
             mLeft = Math.Min(idx + dColumn, mLeft)
             mVPosition = Math.Min(note.VPosition + dVPosition, mVPosition)
-            muVPosition = Math.Max(note.VPosition + IIf(_editor.NTInput, note.Length, 0) + dVPosition, muVPosition)
+            muVPosition = Math.Max(note.VPosition + IIf(_editor.NtInput, note.Length, 0) + dVPosition, muVPosition)
         Next
         muVPosition -= 191999 ' az: this magic number again. why?
 
@@ -1090,27 +1098,27 @@ Partial Public Class EditorPanel
     Private Sub UpdateSelectionBox()
         Dim pMouseMove = _editor.State.Mouse.pMouseMove
         Dim lastMouseDownLocation = _editor.State.Mouse.LastMouseDownLocation
-        Dim selectionBox As New Rectangle(Math.Min(pMouseMove.X, LastMouseDownLocation.X),
-                                          Math.Min(pMouseMove.Y, LastMouseDownLocation.Y),
-                                          Math.Abs(pMouseMove.X - LastMouseDownLocation.X),
-                                          Math.Abs(pMouseMove.Y - LastMouseDownLocation.Y))
+        Dim selectionBox As New Rectangle(Math.Min(pMouseMove.X, lastMouseDownLocation.X),
+                                          Math.Min(pMouseMove.Y, lastMouseDownLocation.Y),
+                                          Math.Abs(pMouseMove.X - lastMouseDownLocation.X),
+                                          Math.Abs(pMouseMove.Y - lastMouseDownLocation.Y))
         Dim noteRect As Rectangle
 
         Dim columns = _editor.Columns
         For Each note In _editor.Notes.Skip(1)
-            Dim noteStartX = Columns.GetColumnLeft(note.ColumnIndex)
-            Dim noteTailPos = note.VPosition + IIf(_editor.NTInput, note.Length, 0)
-            Dim drawWidth = Columns.GetWidth(note.ColumnIndex)*_editor.Grid.WidthScale - 2
-            Dim drawHeight = _theme.NoteHeight + IIf(_editor.NTInput, note.Length*_editor.Grid.HeightScale, 0)
-            NoteRect = New Rectangle(HPositionToPanelX(noteStartX) + 1,
+            Dim noteStartX = columns.GetColumnLeft(note.ColumnIndex)
+            Dim noteTailPos = note.VPosition + IIf(_editor.NtInput, note.Length, 0)
+            Dim drawWidth = columns.GetWidth(note.ColumnIndex) * _editor.Grid.WidthScale - 2
+            Dim drawHeight = _theme.NoteHeight + IIf(_editor.NtInput, note.Length * _editor.Grid.HeightScale, 0)
+            noteRect = New Rectangle(HPositionToPanelX(noteStartX) + 1,
                                      VPositionToPanelY(noteTailPos) - _theme.NoteHeight,
                                      drawWidth,
                                      drawHeight)
 
 
-            Dim columnEnabled = Columns.IsEnabled(note.ColumnIndex)
+            Dim columnEnabled = columns.IsEnabled(note.ColumnIndex)
 
-            If NoteRect.IntersectsWith(SelectionBox) Then
+            If noteRect.IntersectsWith(selectionBox) Then
                 note.Selected = Not note.TempSelected And
                                 columnEnabled
             Else
@@ -1161,22 +1169,21 @@ Partial Public Class EditorPanel
         _editor.State.Mouse.tempY = 0
         _editor.State.Mouse.tempV = 0
         _editor.State.Mouse.tempH = 0
-        LastVerticalScroll = - 1
-        LastHorizontalScroll = - 1
-        _editor.Timer1.Enabled = False
+        LastVerticalScroll = -1
+        LastHorizontalScroll = -1
 
         Dim iI As Integer = sender.Tag
 
         Dim dv = (_editor.State.Mouse.MiddleButtonLocation - Cursor.Position)
         If _editor.State.Mouse.MiddleButtonClicked AndAlso
            e.Button = MouseButtons.Middle AndAlso
-           dv.X^2 + dv.Y^2 >= _theme.MiddleDeltaRelease Then
+           dv.X ^ 2 + dv.Y ^ 2 >= _theme.MiddleDeltaRelease Then
             _editor.State.Mouse.MiddleButtonClicked = False
         End If
 
         If _editor.IsSelectMode Then
-            _editor.State.Mouse.LastMouseDownLocation = New Point(- 1, - 1)
-            _editor.State.Mouse.pMouseMove = New Point(- 1, - 1)
+            _editor.State.Mouse.LastMouseDownLocation = New Point(-1, -1)
+            _editor.State.Mouse.pMouseMove = New Point(-1, -1)
 
             If _editor.State.IsDuplicatingSelectedNotes And
                Not _editor.State.SelectedNotesWereDuplicated And
@@ -1195,7 +1202,7 @@ Partial Public Class EditorPanel
 
         ElseIf _editor.IsWriteMode Then
 
-            If Not _editor.NTInput And Not _editor.tempFirstMouseDown Then
+            If Not _editor.NtInput And Not _editor.TempFirstMouseDown Then
                 Dim xVPosition = _editor.GetMouseVPosition(_editor.Grid.IsSnapEnabled)
 
                 Dim xColumn = GetColumnAtEvent(e)
@@ -1216,15 +1223,15 @@ Partial Public Class EditorPanel
                         If xColumn = ColumnType.SCROLLS Then xMessage = Strings.Messages.PromptEnterSCROLL
 
                         Dim valstr As String = InputBox(xMessage, Me.Text)
-                        Dim value As Long = Val(valstr)*10000
+                        Dim value As Long = Val(valstr) * 10000
 
                         If (xColumn = ColumnType.SCROLLS And valstr = "0") Or value <> 0 Then
-                            For i = 1 To UBound(Notes)
-                                If Notes(i).VPosition = xVPosition AndAlso Notes(i).ColumnIndex = xColumn Then _
-                                    RedoRemoveNote(Notes(i), xUndo, xRedo)
+                            For i = 1 To UBound(notes)
+                                If notes(i).VPosition = xVPosition AndAlso notes(i).ColumnIndex = xColumn Then _
+                                    RedoRemoveNote(notes(i), xUndo, xRedo)
                             Next
 
-                            Dim n = New Note(xColumn, xVPosition, value, LongNote, HiddenNote)
+                            Dim n = New Note(xColumn, xVPosition, value, longNote, hiddenNote)
                             RedoAddNote(n, xUndo, xRedo)
                             _editor.AddNote(n)
 
@@ -1232,15 +1239,15 @@ Partial Public Class EditorPanel
                         End If
 
                     Else
-                        Dim xValue As Integer = _editor.CurrentWavSelectedIndex*10000
+                        Dim xValue As Integer = _editor.CurrentWavSelectedIndex * 10000
 
-                        For i = 1 To UBound(Notes)
-                            If Notes(i).VPosition = xVPosition AndAlso Notes(i).ColumnIndex = xColumn Then _
-                                RedoRemoveNote(Notes(i), xUndo, xRedo)
+                        For i = 1 To UBound(notes)
+                            If notes(i).VPosition = xVPosition AndAlso notes(i).ColumnIndex = xColumn Then _
+                                RedoRemoveNote(notes(i), xUndo, xRedo)
                         Next
 
                         Dim n = New Note(xColumn, xVPosition, xValue,
-                                         LongNote, HiddenNote, True, Landmine)
+                                         longNote, hiddenNote, True, landmine)
 
                         RedoAddNote(n, xUndo, xRedo)
                         _editor.AddNote(n)
@@ -1250,8 +1257,8 @@ Partial Public Class EditorPanel
                 End If
             End If
 
-            _editor.State.Mouse.CurrentMouseRow = - 1
-            _editor.State.Mouse.CurrentMouseColumn = - 1
+            _editor.State.Mouse.CurrentMouseRow = -1
+            _editor.State.Mouse.CurrentMouseColumn = -1
         End If
 
         ' az refactoring: Not a full note refresh?
@@ -1263,7 +1270,11 @@ Partial Public Class EditorPanel
             _editor.State.Mouse.MiddleButtonClicked = False
         End If
 
-        Dim i = VerticalScroll - Math.Sign(e.Delta)*_editor.Grid.WheelScroll
+        Dim i = VerticalPosition - Math.Sign(e.Delta) * _editor.Grid.WheelScroll + HorizontalScrollBar.Height
         VerticalScrollBar.Value = Clamp(i, VerticalScrollBar.Minimum, 0)
+    End Sub
+
+    Public Sub OnUpdateScroll(newMin As Integer)
+        VerticalScrollBar.Minimum = newMin
     End Sub
 End Class

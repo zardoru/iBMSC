@@ -153,10 +153,9 @@ Public Partial Class MainWindow
         Loop
 
         AddUndoChain(xUndo, xBaseRedo.Next)
-        SortByVPositionInsertion()
-        UpdatePairing()
+        ValidateNotesArray()
         RefreshPanelAll()
-        CalculateTotalPlayableNotes()
+
         Beep()
     End Sub
 

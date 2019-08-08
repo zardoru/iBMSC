@@ -10,7 +10,7 @@ Partial Public Class MainWindow
             Notes(i).Selected = False
         Next
 
-        Dim verticalScroll As Long = FocusedPanel.VerticalScroll
+        Dim verticalScroll As Long = FocusedPanel.VerticalPosition
         Dim xTempVP As Double
         Dim xKbu() As Note = Notes
 
@@ -153,7 +153,9 @@ Partial Public Class MainWindow
             End If
         End If
 
-        If SortAndUpdatePairing Then SortByVPositionInsertion() : UpdatePairing()
+        If SortAndUpdatePairing Then
+            ValidateNotesArray()
+        End If
         CalculateTotalPlayableNotes()
     End Sub
 

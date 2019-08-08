@@ -437,10 +437,8 @@ Partial Public Class MainWindow
         THBPM.Value = Notes(0).Value/10000
         If _isSaved Then SetIsSaved(False)
 
-        SortByVPositionInsertion()
-        UpdatePairing()
-        CalculateTotalPlayableNotes()
-        
+        ValidateNotesArray()
+
         RefreshPanelAll()
         POStatusRefresh()
     End Sub
