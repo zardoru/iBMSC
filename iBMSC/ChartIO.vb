@@ -177,6 +177,9 @@ Partial Public Class MainWindow
             End If
         Next
 
+        THLandMine.Text = BmsWAV(0)
+        THMissBMP.Text = BmsBMP(0)
+
         UpdateMeasureBottom()
 
         xStack = 0
@@ -402,11 +405,11 @@ Partial Public Class MainWindow
     Private Function GenerateHeaderIndexedData() As String
         Dim xStrHeader = ""
 
-        For i = 1 To UBound(BmsWAV)
+        For i = 0 To UBound(BmsWAV)
             If Not BmsWAV(i) = "" Then xStrHeader &= "#WAV" & C10to36(i) &
                                                      " " & BmsWAV(i) & vbCrLf
         Next
-        For i = 1 To UBound(BmsBMP)
+        For i = 0 To UBound(BmsBMP)
             If Not BmsBMP(i) = "" Then xStrHeader &= "#BMP" & C10to36(i) &
                                                      " " & BmsBMP(i) & vbCrLf
         Next
@@ -828,6 +831,7 @@ Partial Public Class MainWindow
         Me.InitializeNewBMS()
         Me.InitializeOpenBMS()
 
+        Notes(0) = New Note
         With Notes(0)
             .ColumnIndex = ColumnType.BPM
             .VPosition = - 1
@@ -970,6 +974,7 @@ Partial Public Class MainWindow
                     Dim xNoteUbound As Integer = br.ReadInt32
                     ReDim Preserve Notes(xNoteUbound)
                     For i = 1 To UBound(Notes)
+                        Notes(i) = New Note
                         Notes(i).FromBinReader(br)
                     Next
 
@@ -1027,8 +1032,12 @@ Partial Public Class MainWindow
         LBMP.SelectedIndex = 0
         LBMP.Visible = True
 
+        THLandMine.Text = BmsWAV(0)
+        THMissBMP.Text = BmsBMP(0)
+
         THBPM.Value = Notes(0).Value/10000
         ValidateNotesArray()
+
         UpdateMeasureBottom()
         CalculateTotalPlayableNotes()
         
@@ -1082,8 +1091,8 @@ Partial Public Class MainWindow
             If _spLock(1) Then xPref = xPref Or &H8000000
             If _spLock(2) Then xPref = xPref Or &H10000000
             bw.Write(xPref)
-            bw.Write(BitConverter.GetBytes(Grid.ShowMainGrid))
-            bw.Write(BitConverter.GetBytes(Grid.ShowSubGrid))
+            bw.Write(BitConverter.GetBytes(Grid.Divider))
+            bw.Write(BitConverter.GetBytes(Grid.Subdivider))
             bw.Write(BitConverter.GetBytes(Grid.Slash))
             bw.Write(BitConverter.GetBytes(Grid.HeightScale))
             bw.Write(BitConverter.GetBytes(Grid.WidthScale))
@@ -1126,12 +1135,12 @@ Partial Public Class MainWindow
             bw.Write(CByte(xWAVOptions))
 
             Dim xWavCount = 0
-            For i = 1 To UBound(BmsWAV)
+            For i = 0 To UBound(BmsWAV)
                 If BmsWAV(i) <> "" Then xWAVCount += 1
             Next
             bw.Write(xWAVCount)
 
-            For i = 1 To UBound(BmsWAV)
+            For i = 0 To UBound(BmsWAV)
                 If BmsWAV(i) = "" Then Continue For
                 bw.Write(CShort(i))
                 bw.Write(BmsWAV(i))
@@ -1142,12 +1151,12 @@ Partial Public Class MainWindow
             bw.Write(&H504D42)
 
             Dim xBmpCount = 0
-            For i = 1 To UBound(BmsBMP)
+            For i = 0 To UBound(BmsBMP)
                 If BmsBMP(i) <> "" Then xBMPCount += 1
             Next
             bw.Write(xBMPCount)
 
-            For i = 1 To UBound(BmsBMP)
+            For i = 0 To UBound(BmsBMP)
                 If BmsBMP(i) = "" Then Continue For
                 bw.Write(CShort(i))
                 bw.Write(BmsBMP(i))

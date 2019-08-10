@@ -868,6 +868,8 @@ Partial Public Class MainWindow
                     XMLLoadLocale(eHeader.Item("Comment"), Label19.Text)
                     'XMLLoadLocale(eHeader.Item("LnType"), Label13.Text)
                     XMLLoadLocale(eHeader.Item("LnObj"), Label24.Text)
+                    XMLLoadLocale(eHeader.Item("LandMine"), Label26.Text)
+                    XMLLoadLocale(eHeader.Item("MissBMP"), Label27.Text)
 
                     RemoveHandler CHPlayer.SelectedIndexChanged, AddressOf CHPlayer_SelectedIndexChanged
                     XMLLoadLocale(eHeader.Item("Player1"), CHPlayer.Items.Item(0))
