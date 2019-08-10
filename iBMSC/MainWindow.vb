@@ -236,8 +236,12 @@ Public Class MainWindow
         'My.Computer.Audio.Stop()
         If noteIndex > 0 And _previewOnClick AndAlso Columns.IsColumnSound(Notes(noteIndex).ColumnIndex) Then
             Dim j As Integer = Notes(noteIndex).Value \ 10000
-            If j <= 0 Then j = 1
-            If j >= 1296 Then j = 1295
+            If Notes(noteIndex).Landmine Then
+                j = 0
+            Else
+                If j <= 0 Then j = 1
+                If j >= 1296 Then j = 1295
+            End If
 
             If Not BmsWAV(j) = "" Then ' AndAlso Path.GetExtension(hWAV(j)).ToLower = ".wav" Then
                 Dim xFileLocation As String = IIf(ExcludeFileName(_fileName) = "", _initPath, ExcludeFileName(_fileName)) &
@@ -388,6 +392,8 @@ Public Class MainWindow
         'THLnType.Text = "1"
         CHLnObj.SelectedIndex = 0
 
+        THLandMine.Text = ""
+        THMissBMP.Text = ""
         TExpansion.Text = ""
 
         LBeat.Items.Clear()
@@ -1920,6 +1926,12 @@ StartCount:     If Not NtInput Then
               THExRank.TextChanged, THTotal.TextChanged,
               THComment.TextChanged
         If _isSaved Then SetIsSaved(False)
+
+        If [Object].ReferenceEquals(sender, THLandMine) Then
+            BmsWAV(0) = THLandMine.Text
+        ElseIf [Object].ReferenceEquals(sender, THMissBMP) Then
+            BmsBMP(0) = THMissBMP.Text
+        End If
     End Sub
 
     Private Sub CHLnObj_SelectedIndexChanged(sender As Object, e As EventArgs) Handles CHLnObj.SelectedIndexChanged
@@ -3390,7 +3402,7 @@ case2:              Dim xI0 As Integer
 
 
     Private Sub BHStageFile_Click(sender As Object, e As EventArgs) _
-        Handles BHStageFile.Click, BHBanner.Click, BHBackBMP.Click
+        Handles BHStageFile.Click, BHBanner.Click, BHBackBMP.Click, BHMissBMP.Click
         Dim xDiag As New OpenFileDialog
         xDiag.Filter = Strings.FileType._image & "|*.bmp;*.png;*.jpeg;*.jpg;*.gif|" &
                        Strings.FileType._all & "|*.*"
@@ -3406,18 +3418,37 @@ case2:              Dim xI0 As Integer
             THBanner.Text = GetFileName(xDiag.FileName)
         ElseIf ReferenceEquals(sender, BHBackBMP) Then
             THBackBMP.Text = GetFileName(xDiag.FileName)
+        ElseIf [Object].ReferenceEquals(sender, BHMissBMP) Then
+            THMissBMP.Text = GetFileName(xDiag.FileName)
+            BmsBMP(0) = THMissBMP.Text
         End If
     End Sub
 
-    Private Sub Switches_CheckedChanged(sender As Object, e As EventArgs) Handles _
-                                                                              POHeaderSwitch.CheckedChanged,
-                                                                              POGridSwitch.CheckedChanged,
-                                                                              POWaveFormSwitch.CheckedChanged,
-                                                                              POWAVSwitch.CheckedChanged,
-                                                                              POBMPSwitch.CheckedChanged,
-                                                                              POBeatSwitch.CheckedChanged,
-                                                                              POExpansionSwitch.CheckedChanged
+    Private Sub BHWavFile_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles BHLandMine.Click
+        Dim xDiag As New OpenFileDialog
+        xDiag.Filter = Strings.FileType._wave & "|*.wav;*.ogg;*.mp3|" &
+                       Strings.FileType.WAV & "|*.wav|" &
+                       Strings.FileType.OGG & "|*.ogg|" &
+                       Strings.FileType.MP3 & "|*.mp3|" &
+                       Strings.FileType._all & "|*.*"
+        xDiag.InitialDirectory = IIf(ExcludeFileName(_fileName) = "", _initPath, ExcludeFileName(_fileName))
+        xDiag.DefaultExt = "wav"
 
+        If xDiag.ShowDialog = Windows.Forms.DialogResult.Cancel Then Exit Sub
+
+        _initPath = ExcludeFileName(xDiag.FileName)
+        THLandMine.Text = GetFileName(xDiag.FileName)
+        BmsWAV(0) = THLandMine.Text
+    End Sub
+
+    Private Sub Switches_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _
+    POHeaderSwitch.CheckedChanged,
+    POGridSwitch.CheckedChanged,
+    POWaveFormSwitch.CheckedChanged,
+    POWAVSwitch.CheckedChanged,
+    POBMPSwitch.CheckedChanged,
+    POBeatSwitch.CheckedChanged,
+    POExpansionSwitch.CheckedChanged
         Try
             Dim source = CType(sender, CheckBox)
             Dim target As Panel = Nothing

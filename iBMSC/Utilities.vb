@@ -36,7 +36,7 @@ Namespace Editor
         End Function
 
         Public Function C10to36(xStart As Long) As String
-            If xStart < 1 Then xStart = 1
+            If xStart < 0 Then xStart = 0
             If xStart > 1295 Then xStart = 1295
             Return C10to36S(xStart\36) & C10to36S(xStart Mod 36)
         End Function

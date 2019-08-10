@@ -185,6 +185,12 @@ Partial Class MainWindow
         Me.THStageFile = New System.Windows.Forms.TextBox()
         Me.THSubTitle = New System.Windows.Forms.TextBox()
         Me.THSubArtist = New System.Windows.Forms.TextBox()
+        Me.Label26 = New System.Windows.Forms.Label()
+        Me.Label27 = New System.Windows.Forms.Label()
+        Me.THLandMine = New System.Windows.Forms.TextBox()
+        Me.BHLandMine = New System.Windows.Forms.Button()
+        Me.THMissBMP = New System.Windows.Forms.TextBox()
+        Me.BHMissBMP = New System.Windows.Forms.Button()
         Me.POHeaderExpander = New System.Windows.Forms.CheckBox()
         Me.POHeaderPart1 = New System.Windows.Forms.TableLayoutPanel()
         Me.Label3 = New System.Windows.Forms.Label()
@@ -2200,10 +2206,18 @@ Partial Class MainWindow
         Me.POHeaderPart2.Controls.Add(Me.THStageFile, 1, 2)
         Me.POHeaderPart2.Controls.Add(Me.THSubTitle, 1, 0)
         Me.POHeaderPart2.Controls.Add(Me.THSubArtist, 1, 1)
+        Me.POHeaderPart2.Controls.Add(Me.Label26, 0, 10)
+        Me.POHeaderPart2.Controls.Add(Me.Label27, 0, 11)
+        Me.POHeaderPart2.Controls.Add(Me.THLandMine, 1, 10)
+        Me.POHeaderPart2.Controls.Add(Me.BHLandMine, 2, 10)
+        Me.POHeaderPart2.Controls.Add(Me.THMissBmp, 1, 11)
+        Me.POHeaderPart2.Controls.Add(Me.BHMissBmp, 2, 11)
         Me.POHeaderPart2.Dock = System.Windows.Forms.DockStyle.Top
         Me.POHeaderPart2.Location = New System.Drawing.Point(0, 186)
         Me.POHeaderPart2.Name = "POHeaderPart2"
-        Me.POHeaderPart2.RowCount = 10
+        Me.POHeaderPart2.RowCount = 12
+        Me.POHeaderPart2.RowStyles.Add(New System.Windows.Forms.RowStyle())
+        Me.POHeaderPart2.RowStyles.Add(New System.Windows.Forms.RowStyle())
         Me.POHeaderPart2.RowStyles.Add(New System.Windows.Forms.RowStyle())
         Me.POHeaderPart2.RowStyles.Add(New System.Windows.Forms.RowStyle())
         Me.POHeaderPart2.RowStyles.Add(New System.Windows.Forms.RowStyle())
@@ -2487,6 +2501,70 @@ Partial Class MainWindow
         Me.THSubArtist.Name = "THSubArtist"
         Me.THSubArtist.Size = New System.Drawing.Size(116, 23)
         Me.THSubArtist.TabIndex = 7
+        '
+        'Label26
+        '
+        Me.Label26.Anchor = System.Windows.Forms.AnchorStyles.Right
+        Me.Label26.AutoSize = True
+        Me.Label26.Location = New System.Drawing.Point(25, 214)
+        Me.Label26.Name = "Label26"
+        Me.Label26.Size = New System.Drawing.Size(39, 15)
+        Me.Label26.TabIndex = 29
+        Me.Label26.Text = "#WAV00"
+        Me.Label26.TextAlign = System.Drawing.ContentAlignment.MiddleRight
+        '
+        'Label27
+        '
+        Me.Label27.Anchor = System.Windows.Forms.AnchorStyles.Right
+        Me.Label27.AutoSize = True
+        Me.Label27.Location = New System.Drawing.Point(25, 214)
+        Me.Label27.Name = "Label27"
+        Me.Label27.Size = New System.Drawing.Size(39, 15)
+        Me.Label27.TabIndex = 32
+        Me.Label27.Text = "#BMP00"
+        Me.Label27.TextAlign = System.Drawing.ContentAlignment.MiddleRight
+        '
+        'THLandMine
+        '
+        Me.THLandMine.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.THLandMine.Location = New System.Drawing.Point(67, 46)
+        Me.THLandMine.Margin = New System.Windows.Forms.Padding(0)
+        Me.THLandMine.Name = "THLandMine"
+        Me.THLandMine.Size = New System.Drawing.Size(88, 23)
+        Me.THLandMine.TabIndex = 30
+        '
+        'BHLandMine
+        '
+        Me.BHLandMine.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.BHLandMine.FlatStyle = System.Windows.Forms.FlatStyle.System
+        Me.BHLandMine.Location = New System.Drawing.Point(158, 94)
+        Me.BHLandMine.Margin = New System.Windows.Forms.Padding(3, 0, 0, 0)
+        Me.BHLandMine.Name = "BHLandMine"
+        Me.BHLandMine.Size = New System.Drawing.Size(25, 24)
+        Me.BHLandMine.TabIndex = 31
+        Me.BHLandMine.Text = "..."
+        Me.BHLandMine.UseVisualStyleBackColor = True
+        '
+        'THMissBMP
+        '
+        Me.THMissBMP.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.THMissBMP.Location = New System.Drawing.Point(67, 46)
+        Me.THMissBMP.Margin = New System.Windows.Forms.Padding(0)
+        Me.THMissBMP.Name = "THMissBMP"
+        Me.THMissBMP.Size = New System.Drawing.Size(88, 23)
+        Me.THMissBMP.TabIndex = 33
+        '
+        'BHMissBMP
+        '
+        Me.BHMissBMP.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.BHMissBMP.FlatStyle = System.Windows.Forms.FlatStyle.System
+        Me.BHMissBMP.Location = New System.Drawing.Point(158, 94)
+        Me.BHMissBMP.Margin = New System.Windows.Forms.Padding(3, 0, 0, 0)
+        Me.BHMissBMP.Name = "BMissBMP"
+        Me.BHMissBMP.Size = New System.Drawing.Size(25, 24)
+        Me.BHMissBMP.TabIndex = 34
+        Me.BHMissBMP.Text = "..."
+        Me.BHMissBMP.UseVisualStyleBackColor = True
         '
         'POHeaderExpander
         '
@@ -4322,6 +4400,12 @@ Partial Class MainWindow
     Friend WithEvents THStageFile As System.Windows.Forms.TextBox
     Friend WithEvents THSubTitle As System.Windows.Forms.TextBox
     Friend WithEvents THSubArtist As System.Windows.Forms.TextBox
+    Friend WithEvents Label26 As System.Windows.Forms.Label
+    Friend WithEvents Label27 As System.Windows.Forms.Label
+    Friend WithEvents THLandMine As System.Windows.Forms.TextBox
+    Friend WithEvents BHLandMine As System.Windows.Forms.Button
+    Friend WithEvents THMissBMP As System.Windows.Forms.TextBox
+    Friend WithEvents BHMissBMP As System.Windows.Forms.Button
     Friend WithEvents POHeaderExpander As System.Windows.Forms.CheckBox
     Friend WithEvents POHeaderPart1 As System.Windows.Forms.TableLayoutPanel
     Friend WithEvents Label3 As System.Windows.Forms.Label
