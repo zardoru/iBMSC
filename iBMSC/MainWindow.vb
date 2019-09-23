@@ -432,8 +432,8 @@ Public Class MainWindow
         Dim xOrigPath = CType(e.Data.GetData(DataFormats.FileDrop), String())
         Dim xPath() As String = FilterFileBySupported(xOrigPath, _supportedFileExtension)
         If xPath.Length > 0 Then
-            Dim xProg As New fLoadFileProgress(xPath, _isSaved)
-            xProg.ShowDialog(Me)
+            Dim loadFileProgress As New fLoadFileProgress(xPath, _isSaved)
+            loadFileProgress.ShowDialog(Me)
         End If
 
         RefreshPanelAll()
@@ -1028,50 +1028,7 @@ EndSearch:
     End Sub
 
 
-    'Private Sub PanelVerticalScrollChanged(sender As Object,
-    '                                       e As EventArgs) Handles 
-    '                                                               LeftPanelScroll.ValueChanged
-    '    Dim iI As Integer = sender.Tag
-
-    '    ' az: We got a wheel event when we're zooming in/out
-    '    If My.Computer.Keyboard.CtrlKeyDown Then
-    '        sender.Value = FocusedPanel.LastVerticalScroll ' Undo the scroll
-    '        Exit Sub
-    '    End If
-
-    '    Dim currentPanel = _spMain(iI)
-    '    If iI = PanelFocus And
-    '       Not State.Mouse.LastMouseDownLocation = New Point(-1, -1) And
-    '       Not FocusedPanel.LastVerticalScroll = -1 Then
-    '        State.Mouse.LastMouseDownLocation.Y += (FocusedPanel.LastVerticalScroll - sender.Value) * Grid.HeightScale
-    '    End If
-
-
-    '    If _spLock((iI + 1) Mod 3) Then
-    '        Dim verticalScroll As Integer = currentPanel.VerticalScroll + _spDiff(iI)
-    '        If verticalScroll > 0 Then verticalScroll = 0
-    '        If verticalScroll < MainPanelScroll.Minimum Then verticalScroll = MainPanelScroll.Minimum
-    '        Select Case iI
-    '            Case 0 : MainPanelScroll.Value = verticalScroll
-    '            Case 1 : RightPanelScroll.Value = verticalScroll
-    '            Case 2 : LeftPanelScroll.Value = verticalScroll
-    '        End Select
-    '    End If
-
-    '    If _spLock((iI + 2) Mod 3) Then
-    '        Dim verticalScroll As Integer = currentPanel.VerticalScroll - _spDiff((iI + 2) Mod 3)
-    '        If verticalScroll > 0 Then verticalScroll = 0
-    '        If verticalScroll < MainPanelScroll.Minimum Then verticalScroll = MainPanelScroll.Minimum
-    '        Select Case iI
-    '            Case 0 : RightPanelScroll.Value = verticalScroll
-    '            Case 1 : LeftPanelScroll.Value = verticalScroll
-    '            Case 2 : MainPanelScroll.Value = verticalScroll
-    '        End Select
-    '    End If
-
-    '    _spDiff(iI) = _spMain((iI + 1) Mod 3).VerticalScroll - currentPanel.VerticalScroll
-    '    _spDiff((iI + 2) Mod 3) = currentPanel.VerticalScroll - _spMain((iI + 2) Mod 3).VerticalScroll
-    'End Sub
+    
 
     Private Sub cVSLock_CheckedChanged(sender As Object, e As EventArgs) _
         Handles cVSLockL.CheckedChanged, cVSLock.CheckedChanged, cVSLockR.CheckedChanged
@@ -1502,39 +1459,39 @@ StartCount:     If Not NtInput Then
 
                 UpdateMouseRowAndColumn()
 
-                Dim xMeasure As Integer = MeasureAtDisplacement(State.Mouse.CurrentMouseRow)
-                Dim xMLength As Double = MeasureLength(xMeasure)
-                Dim xVposMod As Double = State.Mouse.CurrentMouseRow - MeasureBottom(xMeasure)
-                Dim xGcd As Double = Gcd(IIf(xVposMod = 0, xMLength, xVposMod), xMLength)
+                Dim measure As Integer = MeasureAtDisplacement(State.Mouse.CurrentMouseRow)
+                Dim length As Double = MeasureLength(measure)
+                Dim vposMod As Double = State.Mouse.CurrentMouseRow - MeasureBottom(measure)
+                Dim mgcd As Double = Gcd(IIf(vposMod = 0, length, vposMod), length)
 
-                FSP1.Text = (xVposMod * Grid.Divider / 192).ToString & " / " & (xMLength * Grid.Divider / 192).ToString & "  "
-                FSP2.Text = xVposMod.ToString & " / " & xMLength & "  "
-                FSP3.Text = CInt(xVposMod / xGcd).ToString & " / " & CInt(xMLength / xGcd).ToString & "  "
+                FSP1.Text = String.Format("{0} / {1}", vposMod * Grid.Divider / 192, length * Grid.Divider / 192)
+                FSP2.Text = vposMod.ToString & " / " & length & "  "
+                FSP3.Text = CInt(vposMod / mgcd).ToString & " / " & CInt(length / mgcd).ToString & "  "
                 FSP4.Text = State.Mouse.CurrentMouseRow.ToString() & "  "
                 TimeStatusLabel.Text = GetTimeFromVPosition(State.Mouse.CurrentMouseRow).ToString("F4")
                 FSC.Text = Columns.GetName(State.Mouse.CurrentMouseColumn)
                 FSW.Text = ""
-                FSM.Text = Add3Zeros(xMeasure)
+                FSM.Text = Add3Zeros(measure)
                 FST.Text = ""
                 FSH.Text = ""
                 FSE.Text = ""
 
             Else
-                Dim xMeasure As Integer = MeasureAtDisplacement(Notes(i).VPosition)
-                Dim xMLength As Double = MeasureLength(xMeasure)
-                Dim xVposMod As Double = Notes(i).VPosition - MeasureBottom(xMeasure)
-                Dim xGcd As Double = Gcd(IIf(xVposMod = 0, xMLength, xVposMod), xMLength)
+                Dim measure As Integer = MeasureAtDisplacement(Notes(i).VPosition)
+                Dim length As Double = MeasureLength(measure)
+                Dim vposMod As Double = Notes(i).VPosition - MeasureBottom(measure)
+                Dim mgcd As Double = Gcd(IIf(vposMod = 0, length, vposMod), length)
 
-                FSP1.Text = (xVposMod * Grid.Divider / 192).ToString & " / " & (xMLength * Grid.Divider / 192).ToString & "  "
-                FSP2.Text = xVposMod.ToString & " / " & xMLength & "  "
-                FSP3.Text = CInt(xVposMod / xGcd).ToString & " / " & CInt(xMLength / xGcd).ToString & "  "
+                FSP1.Text = (vposMod * Grid.Divider / 192).ToString & " / " & (length * Grid.Divider / 192).ToString & "  "
+                FSP2.Text = vposMod.ToString & " / " & length & "  "
+                FSP3.Text = CInt(vposMod / mgcd).ToString & " / " & CInt(length / mgcd).ToString & "  "
                 FSP4.Text = Notes(i).VPosition.ToString() & "  "
                 TimeStatusLabel.Text = GetTimeFromVPosition(State.Mouse.CurrentMouseRow).ToString("F4")
                 FSC.Text = Columns.GetName(Notes(i).ColumnIndex)
                 FSW.Text = IIf(Columns.IsColumnNumeric(Notes(i).ColumnIndex),
                                Notes(i).Value / 10000,
                                C10to36(Notes(i).Value \ 10000))
-                FSM.Text = Add3Zeros(xMeasure)
+                FSM.Text = Add3Zeros(measure)
                 FST.Text = IIf(NtInput, Strings.StatusBar.Length & " = " & Notes(i).Length,
                                IIf(Notes(i).LongNote, Strings.StatusBar.LongNote, ""))
                 FSH.Text = IIf(Notes(i).Hidden, Strings.StatusBar.Hidden, "")
@@ -1739,7 +1696,7 @@ StartCount:     If Not NtInput Then
 
         Dim xDiag As New OpVisual(_theme, Columns.column, LWAV.Font)
         xDiag.ShowDialog(Me)
-        UpdateColumnsX()
+        Columns.RecalculatePositions()
         RefreshPanelAll()
     End Sub
 
@@ -1848,12 +1805,8 @@ StartCount:     If Not NtInput Then
 
         'Dim j As Integer = 0
         For i = 0 To UBound(xPath)
-            'If j > UBound(xIndices) Then Exit For
-            'hBMP(xIndices(j) + 1) = GetFileName(xPath(i))
-            'LBMP.Items.Item(xIndices(j)) = C10to36(xIndices(j) + 1) & ": " & GetFileName(xPath(i))
             BmsBMP(xIndices(i) + 1) = GetFileName(xPath(i))
             LBMP.Items.Item(xIndices(i)) = C10to36(xIndices(i) + 1) & ": " & GetFileName(xPath(i))
-            'j += 1
         Next
 
         LBMP.SelectedIndices.Clear()
@@ -2159,14 +2112,6 @@ StartCount:     If Not NtInput Then
     End Sub
 
 
-    Private Sub UpdateColumnsX()
-        Columns.RecalculatePositions()
-
-        'HSL.Maximum = Columns.GetRightBoundry()
-        'HS.Maximum = Columns.GetRightBoundry()
-        'HSR.Maximum = Columns.GetRightBoundry()
-    End Sub
-
     Private Sub CHPlayer_SelectedIndexChanged(sender As Object, e As EventArgs) Handles CHPlayer.SelectedIndexChanged
         If CHPlayer.SelectedIndex = -1 Then CHPlayer.SelectedIndex = 0
 
@@ -2175,9 +2120,7 @@ StartCount:     If Not NtInput Then
         Columns.SetP2SideVisible(xGp2)
 
         UpdateNoteSelectionStatus()
-
-        UpdateColumnsX()
-
+        
         If _isInitializing Then Exit Sub
         RefreshPanelAll()
     End Sub
@@ -2190,7 +2133,6 @@ StartCount:     If Not NtInput Then
 
     Private Sub CGB_ValueChanged(sender As Object, e As EventArgs) Handles CGB.ValueChanged
         Columns.ColumnCount = ColumnType.BGM + CGB.Value - 1
-        UpdateColumnsX()
         RefreshPanelAll()
     End Sub
 
@@ -2221,7 +2163,6 @@ StartCount:     If Not NtInput Then
                 Grid.WheelScroll = .zWheel
                 Grid.PageUpDnScroll = .zPgUpDn
                 _textEncoding = .zEncoding
-                'SortingMethod = .zSort
                 MiddleButtonMoveMethod = .zMiddle
                 _autoSaveInterval = .zAutoSave
                 _bmsGridLimit = 192.0R / .zGridPartition
@@ -2650,7 +2591,7 @@ Jump2:
         Dim xMin As Double = IIf(State.TimeSelect.EndPointLength < 0, -State.TimeSelect.EndPointLength, 0)
         Dim xDouble As Double = InputBoxDouble("Please enter a number between " & xMin & " and " & xMax & ".", xMin,
                                                xMax, , State.TimeSelect.StartPoint)
-        If xDouble = Double.PositiveInfinity Then Return
+        If Double.IsPositiveInfinity(xDouble) Then Return
 
         State.TimeSelect.StartPoint = xDouble
         State.TimeSelect.ValidateSelection(GetMaxVPosition())
@@ -2663,7 +2604,7 @@ Jump2:
         Dim xMin As Double = -State.TimeSelect.StartPoint
         Dim xDouble As Double = InputBoxDouble("Please enter a number between " & xMin & " and " & xMax & ".", xMin,
                                                xMax, , State.TimeSelect.EndPointLength)
-        If xDouble = Double.PositiveInfinity Then Return
+        If Double.IsPositiveInfinity(xDouble) Then Return
 
         State.TimeSelect.EndPointLength = xDouble
         State.TimeSelect.ValidateSelection(GetMaxVPosition())
@@ -2676,7 +2617,7 @@ Jump2:
         Dim xMin As Double = IIf(State.TimeSelect.EndPointLength > 0, 0, -State.TimeSelect.EndPointLength)
         Dim xDouble As Double = InputBoxDouble("Please enter a number between " & xMin & " and " & xMax & ".", xMin,
                                                xMax, , State.TimeSelect.HalfPointLength)
-        If xDouble = Double.PositiveInfinity Then Return
+        If Double.IsPositiveInfinity(xDouble) Then Return
 
         State.TimeSelect.HalfPointLength = xDouble
         State.TimeSelect.ValidateSelection(GetMaxVPosition())
@@ -3139,7 +3080,7 @@ Jump2:
 
     Private Sub FixedColumnVisibilityChanged(col As ColumnType(), isVisible As Boolean)
         For Each c In col
-            Columns.GetColumn(c).IsVisible = isVisible
+            Columns.SetColumnVisible(c, isVisible)
         Next
 
 
@@ -3148,7 +3089,6 @@ Jump2:
             note.Selected = note.Selected And Columns.IsEnabled(note.ColumnIndex)
         Next
 
-        UpdateColumnsX()
         RefreshPanelAll()
     End Sub
 

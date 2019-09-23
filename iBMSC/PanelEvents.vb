@@ -1312,4 +1312,17 @@ Partial Public Class EditorPanel
     Public Sub OnUpdateScroll(newMin As Integer)
         VerticalScrollBar.Minimum = newMin
     End Sub
+    
+    Private Sub ColumnBoundaryChangedEvent(boundary As Integer) Handles _columns.OnRightBoundaryChanged
+        HorizontalScrollBar.Maximum = boundary * _editor.Grid.WidthScale + VerticalScrollBar.Width
+    End Sub
+    
+    Private Sub PanelVerticalScrollChanged(sender As Object,
+                                           e As EventArgs) Handles VerticalScrollBar.ValueChanged
+        ' az: We got a wheel event when we're zooming in/out
+        If My.Computer.Keyboard.CtrlKeyDown Then
+            sender.Value = LastVerticalScroll ' Undo the scroll
+            Exit Sub
+        End If
+    End Sub
 End Class

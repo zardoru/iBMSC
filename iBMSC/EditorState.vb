@@ -62,10 +62,13 @@ End Class
 Public Class MouseState
     Public CurrentMouseColumn As Integer = - 1
     Public CurrentMouseRow As Double = - 1.0#
-    Public LastMouseDownLocation As PointF = New Point(- 1, - 1) _
+    
     'Mouse is clicked on which point (location for display) (for selection box)
-    Public pMouseMove As PointF = New Point(- 1, - 1) _
+    Public LastMouseDownLocation As PointF = New Point(- 1, - 1) 
+    
     'Mouse is moved to which point   (location for display) (for selection box)
+    Public pMouseMove As PointF = New Point(- 1, - 1) 
+    
     Public CurrentHoveredNoteIndex As Integer = - 1              'Mouse is on which note (for drawing green outline)
     Public MiddleButtonLocation As New Point(0, 0)
     Public MiddleButtonClicked As Boolean = False

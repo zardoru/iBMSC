@@ -528,7 +528,7 @@ Partial Public Class MainWindow
         End If
 
         EndOfSub:
-        UpdateColumnsX()
+        Columns.RecalculatePositions()
         FileStream.Close()
         'File.Delete(xTempFileName)
     End Sub
@@ -1259,8 +1259,7 @@ Partial Public Class MainWindow
             MsgBox(ex.Message, MsgBoxStyle.Exclamation, Strings.Messages.Err)
 
         Finally
-            UpdateColumnsX()
-
+            Columns.RecalculatePositions()
         End Try
     End Sub
 

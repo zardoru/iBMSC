@@ -13,13 +13,14 @@ Public Class EditorPanel
 
     Public ReadOnly Property VerticalPosition As Integer
         Get
-            Return VerticalScrollBar.Value
+            Return VerticalScrollBar.Value + HorizontalScrollBar.Height
         End Get
     End Property
 
     Private _buffer As Graphics
     Private _theme As VisualSettings
-    Private _editor As MainWindow
+    Private WithEvents _editor As MainWindow
+    Private WithEvents _columns As ColumnList
     Public WithEvents VerticalScrollBar As VScrollBar
     Public WithEvents HorizontalScrollBar As HScrollBar
     Public LastVerticalScroll As Integer
@@ -60,6 +61,7 @@ Public Class EditorPanel
 
         _theme = theme
         _editor = wnd
+        _columns = _editor.Columns
 
     End Sub
 
@@ -92,18 +94,18 @@ Public Class EditorPanel
         If mLeft >= 0 Then
             Do
                 'get the column where mouse is 
-                If mLeft < _editor.Columns.GetColumnLeft(i + 1) Or i >= _editor.Columns.ColumnCount Then col = i : Exit Do
+                If mLeft < _columns.GetColumnLeft(i + 1) Or i >= _columns.ColumnCount Then col = i : Exit Do
                 i += 1
             Loop
         End If
 
         'get the enabled column where mouse is 
-        Return _editor.Columns.NormalizeIndex(col)
+        Return _columns.NormalizeIndex(col)
     End Function
 
     Private Sub DrawBackgroundColor()
         Dim grid = _editor.Grid
-        Dim columns = _editor.Columns
+        Dim columns = _columns
 
         For i = 0 To columns.ColumnCount
             If HPositionToPanelX(columns.GetColumnLeft(i + 1)) + 1 < 0 Then
@@ -171,11 +173,11 @@ Public Class EditorPanel
     Private Sub DrawPanelLines(xVSu As Integer)
         'Vertical line
         If _editor.Grid.ShowVerticalLines Then
-            For i = 0 To _editor.Columns.ColumnCount
-                Dim xpos = (_editor.Columns.GetColumnLeft(i) - HorizontalPosition) * _editor.Grid.WidthScale
+            For i = 0 To _columns.ColumnCount
+                Dim xpos = (_columns.GetColumnLeft(i) - HorizontalPosition) * _editor.Grid.WidthScale
                 If xpos + 1 < 0 Then Continue For
                 If xpos + 1 > Size.Width Then Exit For
-                If _editor.Columns.GetWidth(i) > 0 Then
+                If _columns.GetWidth(i) > 0 Then
                     _buffer.DrawLine(_theme.pVLine,
                                     xpos, 0,
                                     xpos, Size.Height)
@@ -205,7 +207,7 @@ Public Class EditorPanel
                                 Size.Width, pHeight)
             End If
             If _editor.Grid.ShowMeasureNumber Then
-                Dim brush = New SolidBrush(_editor.Columns.GetColumn(0).cText)
+                Dim brush = New SolidBrush(_columns.GetColumn(0).cText)
                 _buffer.DrawString("[" & Add3Zeros(Measure).ToString & "]",
                                   _theme.kMFont, brush, -HorizontalPosition * _editor.Grid.WidthScale,
                                   pHeight - _theme.kMFont.Height)
@@ -219,8 +221,8 @@ Public Class EditorPanel
     End Sub
 
     Private Sub DrawColumnCaptions()
-        Dim columns = _editor.Columns
-        For i = 0 To _editor.Columns.ColumnCount
+        Dim columns = _columns
+        For i = 0 To _columns.ColumnCount
             Dim colEnd = (columns.GetColumnLeft(i + 1) - HorizontalPosition) * _editor.Grid.WidthScale
             If colEnd + 1 < 0 Then
                 Continue For
@@ -257,58 +259,6 @@ Public Class EditorPanel
         End If
     End Sub
 
-    Private Sub DrawWaveform(xVsr As Integer)
-        'If wWavL IsNot Nothing And wWavR IsNot Nothing And wPrecision > 0 Then
-        '    If wLock Then
-        '        For xI0 As Integer = 1 To UBound(Notes)
-        '            If Notes(xI0).ColumnIndex >= ColumnType.BGM Then wPosition = Notes(xI0).VPosition : Exit For
-        '        Next
-        '    End If
-
-        '    Dim xPtsL(xTHeight * wPrecision) As PointF
-        '    Dim xPtsR(xTHeight * wPrecision) As PointF
-
-        '    Dim xD1 As Double
-
-        '    Dim bVPosition() As Double = {wPosition}
-        '    Dim bBPM() As Decimal = {Notes(0).Value / 10000}
-        '    Dim bWavDataIndex() As Decimal = {0}
-
-        '    For Each Note In Editor.Notes.Skip(1).Where(Function(x) x.ColumnIndex = ColumnType.BPM)
-        '        If Note.VPosition >= wPosition Then
-        '            ReDim Preserve bVPosition(bVPosition.Length)
-        '            ReDim Preserve bBPM(bBPM.Length)
-        '            ReDim Preserve bWavDataIndex(bWavDataIndex.Length)
-        '            bVPosition(UBound(bVPosition)) = Note.VPosition
-        '            bBPM(UBound(bBPM)) = Note.Value / 10000
-        '            bWavDataIndex(UBound(bWavDataIndex)) = (Note.VPosition - bVPosition(UBound(bVPosition) - 1)) * 1.25 * wSampleRate / bBPM(UBound(bBPM) - 1) + bWavDataIndex(UBound(bWavDataIndex) - 1)
-        '        Else
-        '            bBPM(0) = Note.Value / 10000
-        '        End If
-        '    Next
-
-
-        '    For i = xTHeight * wPrecision To 0 Step -1
-        '        Dim xI3 = (-i / wPrecision + xTHeight + xVSR * GxHeight - 1) / GxHeight
-        '        For j = 1 To UBound(bVPosition)
-        '            If bVPosition(j) >= xI3 Then Exit For
-        '        Next
-
-        '        xD1 = bWavDataIndex(-1) +
-        '              (xI3 - bVPosition(-1)) * 1.25 * wSampleRate / bBPM(-1)
-
-        '        If xD1 <= UBound(wWavL) And xD1 >= 0 Then
-        '            xPtsL(i) = New PointF(wWavL(Int(xD1)) * wWidth + wLeft, i / wPrecision)
-        '            xPtsR(i) = New PointF(wWavR(Int(xD1)) * wWidth + wLeft, i / wPrecision)
-        '        Else
-        '            xPtsL(i) = New PointF(wLeft, i / wPrecision)
-        '            xPtsR(i) = New PointF(wLeft, i / wPrecision)
-        '        End If
-        '    Next
-        '    Buffer.DrawLines(Theme.pBGMWav, xPtsL)
-        '    Buffer.DrawLines(Theme.pBGMWav, xPtsR)
-        'End If
-    End Sub
 
     Private Sub DrawNotes()
         Dim upperBorder = Math.Abs(VerticalPosition) + Size.Height / _editor.Grid.HeightScale
@@ -317,7 +267,7 @@ Public Class EditorPanel
         Dim renderNotes = _editor.Notes.
                 Where(Function(x) x.VPosition <= upperBorder).
                 Where(Function(x) IsNoteVisible(x)).
-                Where(Function(x) _editor.Columns.IsEnabled(x.ColumnIndex))
+                Where(Function(x) _columns.IsEnabled(x.ColumnIndex))
 
         For Each Note In renderNotes
             If _editor.NtInput Then
@@ -339,7 +289,7 @@ Public Class EditorPanel
 
         Dim xLabel As String = C10to36(sNote.Value \ 10000)
         If _editor.ShowFileName Then
-            If _editor.Columns.IsColumnSound(sNote.ColumnIndex) Then
+            If _columns.IsColumnSound(sNote.ColumnIndex) Then
                 If _editor.BmsWAV(C36to10(xLabel)) <> "" Then
                     xLabel = Path.GetFileNameWithoutExtension(_editor.BmsWAV(C36to10(xLabel)))
                 End If
@@ -358,7 +308,7 @@ Public Class EditorPanel
         Dim dark As Color
 
         Dim grid = _editor.Grid
-        Dim columns = _editor.Columns
+        Dim columns = _columns
         Dim colX = columns.GetColumnLeft(sNote.ColumnIndex)
         Dim colWidth = columns.GetWidth(sNote.ColumnIndex)
         Dim column = columns.GetColumn(sNote.ColumnIndex)
@@ -442,12 +392,12 @@ Public Class EditorPanel
     End Sub
 
     Private Sub DrawPairedLnBody(sNote As Note, xAlpha As Single)
-        Dim column = _editor.Columns.GetColumn(sNote.ColumnIndex)
+        Dim column = _columns.GetColumn(sNote.ColumnIndex)
 
         Dim xPen2 As New Pen(column.GetLongBright(xAlpha))
 
-        Dim colX = _editor.Columns.GetColumnLeft(sNote.ColumnIndex)
-        Dim colWidth = _editor.Columns.GetWidth(sNote.ColumnIndex)
+        Dim colX = _columns.GetColumnLeft(sNote.ColumnIndex)
+        Dim colWidth = _columns.GetWidth(sNote.ColumnIndex)
 
         Dim xBrush3 As New LinearGradientBrush(
             New Point(HPositionToPanelX(colX - 0.5 * colWidth),
@@ -483,8 +433,8 @@ Public Class EditorPanel
         Dim alpha = 1.0F
         If sNote.Hidden Then alpha = _theme.kOpacity
 
-        Dim columns = _editor.Columns
-        Dim column = _editor.Columns.GetColumn(sNote.ColumnIndex)
+        Dim columns = _columns
+        Dim column = _columns.GetColumn(sNote.ColumnIndex)
         Dim xLabel As String = C10to36(sNote.Value \ 10000)
         If _editor.ShowFileName Then
             If columns.IsColumnSound(sNote.ColumnIndex) Then
@@ -596,7 +546,7 @@ Public Class EditorPanel
     End Sub
 
     Private Function GetNoteRectangle(note As Note) As Rectangle
-        Dim colLeft As Integer = HPositionToPanelX(_editor.Columns.GetColumnLeft(note.ColumnIndex))
+        Dim colLeft As Integer = HPositionToPanelX(_columns.GetColumnLeft(note.ColumnIndex))
 
         Dim noteY As Integer =
                 IIf(
@@ -605,7 +555,7 @@ Public Class EditorPanel
                     VPositionToPanelY(note.VPosition) - _theme.NoteHeight - 1,
                     VPositionToPanelY(note.VPosition + note.Length) - _theme.NoteHeight - 1)
 
-        Dim colWidth As Integer = _editor.Columns.GetWidth(note.ColumnIndex) * _editor.Grid.WidthScale + 1
+        Dim colWidth As Integer = _columns.GetWidth(note.ColumnIndex) * _editor.Grid.WidthScale + 1
         Dim noteHeight As Integer = IIf(Not _editor.NtInput Or _editor.State.NT.IsAdjustingNoteLength,
                                     _theme.NoteHeight + 3,
                                     note.Length * _editor.Grid.WidthScale + _theme.NoteHeight + 3)
@@ -646,9 +596,9 @@ Public Class EditorPanel
             alpha = _theme.kOpacity
         End If
 
-        Dim column = _editor.Columns.GetColumn(_editor.State.Mouse.CurrentMouseColumn)
+        Dim column = _columns.GetColumn(_editor.State.Mouse.CurrentMouseColumn)
         Dim xText As String = C10to36(xValue \ 10000)
-        If _editor.Columns.IsColumnNumeric(_editor.State.Mouse.CurrentMouseColumn) Then
+        If _columns.IsColumnNumeric(_editor.State.Mouse.CurrentMouseColumn) Then
             xText = column.Title
         End If
 
@@ -656,9 +606,9 @@ Public Class EditorPanel
         Dim xBrush As LinearGradientBrush
         Dim xBrush2 As SolidBrush
 
-        Dim colX = _editor.Columns.GetColumnLeft(_editor.State.Mouse.CurrentMouseColumn)
+        Dim colX = _columns.GetColumnLeft(_editor.State.Mouse.CurrentMouseColumn)
         Dim colStartDrawX = HPositionToPanelX(colX)
-        Dim colWidth = _editor.Columns.GetWidth(_editor.State.Mouse.CurrentMouseColumn)
+        Dim colWidth = _columns.GetWidth(_editor.State.Mouse.CurrentMouseColumn)
         Dim colEndDrawX = HPositionToPanelX(colX + colWidth)
         Dim colRightDrawX = HPositionToPanelX(colX + colWidth)
         Dim startY = VPositionToPanelY(_editor.State.Mouse.CurrentMouseRow)
@@ -692,7 +642,7 @@ Public Class EditorPanel
 
         xBrush = New LinearGradientBrush(point1, point2, bright, dark)
 
-        Dim colDrawWidth = _editor.Columns.GetWidth(_editor.State.Mouse.CurrentMouseColumn) * _editor.Grid.WidthScale
+        Dim colDrawWidth = _columns.GetWidth(_editor.State.Mouse.CurrentMouseColumn) * _editor.Grid.WidthScale
 
         _buffer.FillRectangle(xBrush,
                              colStartDrawX + 2,
@@ -732,7 +682,7 @@ Public Class EditorPanel
             End If
         Next
 
-        Dim bpmColStartX = _editor.Columns.GetColumnLeft(ColumnType.BPM)
+        Dim bpmColStartX = _columns.GetColumnLeft(ColumnType.BPM)
         Dim startDrawX = HPositionToPanelX(bpmColStartX)
         Dim halfLineY = VPositionToPanelY(_editor.State.TimeSelect.StartPoint + _editor.State.TimeSelect.HalfPointLength)
         Dim endLineY = VPositionToPanelY(_editor.State.TimeSelect.StartPoint + _editor.State.TimeSelect.EndPointLength)
@@ -846,9 +796,6 @@ Public Class EditorPanel
         If _editor.Grid.ShowColumnCaptions Then
             DrawColumnCaptions()
         End If
-
-        'WaveForm
-        DrawWaveform(-VerticalPosition)
 
         'K
         'If Not K Is Nothing Then

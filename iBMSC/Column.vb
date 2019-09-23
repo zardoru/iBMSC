@@ -1,6 +1,6 @@
 ﻿Namespace Editor
     Public Class Column
-        Private _Width As Integer
+        Private _width As Integer
         Private _isNoteCol As Boolean
         Private _isVisible As Boolean
         Private _isEnabledAfterAll As Boolean
@@ -57,57 +57,57 @@
 
         Public Left As Integer
         Public Title As String
-        Public isNumeric As Boolean
-        Public isSound As Boolean
+        Public IsNumeric As Boolean
+        Public IsSound As Boolean
         Public BmsChannel As Integer
 
-        Public cNote As Integer
-        Public cText As Color
-        Public cLNote As Integer
-        Public cLText As Color
-        Public cBG As Color
+        Public CNote As Integer
+        Public CText As Color
+        Public CLNote As Integer
+        Public CLText As Color
+        Public CBg As Color
 
-        Private cCacheB As Integer
-        Private cCacheD As Integer
-        Private cCacheLB As Integer
-        Private cCacheLD As Integer
+        Private _cCacheB As Integer
+        Private _cCacheD As Integer
+        Private _cCacheLb As Integer
+        Private _cCacheLd As Integer
 
         Public Function GetBright(opacity As Single) As Color
-            Return Color.FromArgb((CInt(((cCacheB >> 24) And &HFF)*opacity) << 24) Or (cCacheB And &HFFFFFF))
+            Return Color.FromArgb((CInt(((_cCacheB >> 24) And &HFF)*opacity) << 24) Or (_cCacheB And &HFFFFFF))
         End Function
 
         Public Function GetDark(opacity As Single) As Color
-            Return Color.FromArgb((CInt(((cCacheD >> 24) And &HFF)*opacity) << 24) Or (cCacheD And &HFFFFFF))
+            Return Color.FromArgb((CInt(((_cCacheD >> 24) And &HFF)*opacity) << 24) Or (_cCacheD And &HFFFFFF))
         End Function
 
         Public Function GetLongBright(opacity As Single) As Color
-            Return Color.FromArgb((CInt(((cCacheLB >> 24) And &HFF)*opacity) << 24) Or (cCacheLB And &HFFFFFF))
+            Return Color.FromArgb((CInt(((_cCacheLb >> 24) And &HFF)*opacity) << 24) Or (_cCacheLb And &HFFFFFF))
         End Function
 
         Public Function GetLongDark(opacity As Single) As Color
-            Return Color.FromArgb((CInt(((cCacheLD >> 24) And &HFF)*opacity) << 24) Or (cCacheLD And &HFFFFFF))
+            Return Color.FromArgb((CInt(((_cCacheLd >> 24) And &HFF)*opacity) << 24) Or (_cCacheLd And &HFFFFFF))
         End Function
 
-        Public Sub setNoteColor(c As Integer)
+        Public Sub SetNoteColor(c As Integer)
             cNote = c
             'cCacheB = (c And &HFF000000) Or &H808080 Or ((c And &HFFFFFF) >> 1)
             'cCacheD = (c And &HFF000000) Or ((c And &HFEFEFE) >> 1)
-            cCacheB = AdjustBrightness(Color.FromArgb(c), 50, ((c >> 24) And &HFF)/255).ToArgb
-            cCacheD = AdjustBrightness(Color.FromArgb(c), - 25, ((c >> 24) And &HFF)/255).ToArgb
+            _cCacheB = AdjustBrightness(Color.FromArgb(c), 50, ((c >> 24) And &HFF)/255).ToArgb
+            _cCacheD = AdjustBrightness(Color.FromArgb(c), - 25, ((c >> 24) And &HFF)/255).ToArgb
         End Sub
 
-        Public Sub setLNoteColor(c As Integer)
+        Public Sub SetLNoteColor(c As Integer)
             cLNote = c
             'cCacheLB = (c And &HFF000000) Or &H808080 Or ((c And &HFFFFFF) >> 1)
             'cCacheLD = (c And &HFF000000) Or ((c And &HFEFEFE) >> 1)
-            cCacheLB = AdjustBrightness(Color.FromArgb(c), 50, ((c >> 24) And &HFF)/255).ToArgb
-            cCacheLD = AdjustBrightness(Color.FromArgb(c), - 25, ((c >> 24) And &HFF)/255).ToArgb
+            _cCacheLb = AdjustBrightness(Color.FromArgb(c), 50, ((c >> 24) And &HFF)/255).ToArgb
+            _cCacheLd = AdjustBrightness(Color.FromArgb(c), - 25, ((c >> 24) And &HFF)/255).ToArgb
         End Sub
 
         Public Sub New(xLeft As Integer, xWidth As Integer, xTitle As String,
                        xNoteCol As Boolean, xisNumeric As Boolean, xisSound As Boolean, xVisible As Boolean,
                        xIdentifier As Integer,
-                       xcNote As Integer, xcText As Integer, xcLNote As Integer, xcLText As Integer, xcBG As Integer)
+                       xcNote As Integer, xcText As Integer, xcLNote As Integer, xcLText As Integer, xcBg As Integer)
             Left = xLeft
             Title = xTitle
             isNumeric = xisNumeric

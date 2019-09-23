@@ -92,7 +92,17 @@ Public Class ColumnList
                                                &HFFDC8585, &HFF000000, 0)
                                 }
 
-    Public Property ColumnCount As Integer = 46
+    Private _columnCount = 46
+    Public Property ColumnCount As Integer
+        Get
+            Return _columnCount
+        End Get
+        Set
+            _columnCount = value
+            RaiseEvent OnRightBoundaryChanged(RightBoundary)
+        End Set
+
+    End Property
 
     Public Const idflBPM As Integer = 5
 
@@ -255,11 +265,15 @@ Public Class ColumnList
             Dim lastWidth = IIf(column(i - 1).IsVisible, column(i - 1).Width, 0)
             column(i).Left = column(i - 1).Left + lastWidth
         Next
+        
+        RaiseEvent OnRightBoundaryChanged(RightBoundary)
     End Sub
 
-    Friend Function GetRightBoundry() As Integer
-        Return GetColumnLeft(ColumnCount) + column(ColumnType.BGM).Width
-    End Function
+    Public ReadOnly Property RightBoundary As Integer
+        get
+            Return GetColumnLeft(ColumnCount) + column(ColumnType.BGM).Width
+        end get
+    end property
 
     Friend Sub SetP2SideVisible(visible As Boolean)
         column(ColumnType.D1).IsVisible = visible
@@ -271,9 +285,19 @@ Public Class ColumnList
         column(ColumnType.D7).IsVisible = visible
         column(ColumnType.D8).IsVisible = visible
         column(ColumnType.S3).IsVisible = visible
+        
+        RecalculatePositions()
     End Sub
 
     Friend Function NormalizeIndex(v As Integer) As Integer
         Return EnabledColumnIndexToColumnArrayIndex(ColumnArrayIndexToEnabledColumnIndex(v))
     End Function
+    
+    Public Sub SetColumnVisible(col As ColumnType, visible As Boolean)
+        GetColumn(col).IsVisible = visible
+        
+        RecalculatePositions()
+    End Sub
+    
+    Event OnRightBoundaryChanged(boundary As Integer)
 End Class

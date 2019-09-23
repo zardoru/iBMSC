@@ -275,9 +275,7 @@ Partial Public Class MainWindow
             ConvertNt2Bmse()
         End If
 
-        Dim xprevNotes(-1) As Note  'Notes too close to the next measure
-
-        Dim measureString = CreateBmsMeasureData(hasOverlapping, xprevNotes)
+        Dim measureString = CreateBmsMeasureData(hasOverlapping)
 
         ' Warn about 255 limit if neccesary.
         If hasOverlapping Then MsgBox(Strings.Messages.SaveWarning & vbCrLf &
@@ -324,7 +322,10 @@ Partial Public Class MainWindow
         Return outputBms
     End Function
 
-    Private Function CreateBmsMeasureData(ByRef hasOverlapping As Boolean, ByRef xprevNotes() As Note) As String
+    Private Function CreateBmsMeasureData(ByRef hasOverlapping As Boolean) As String
+        
+        Dim prevNotes = New List(Of Note)  'Notes too close to the next measure
+
         Dim measureString(MeasureAtDisplacement(GreatestVPosition) + 1) As String
         Dim measureIndex As Integer
 
@@ -332,8 +333,11 @@ Partial Public Class MainWindow
             Dim consistentDecimalStr = WriteDecimalWithDot(MeasureLength(measureIndex) / 192.0R)
 
             ' Handle fractional measure
-            If MeasureLength(measureIndex) <> 192.0R Then _
-                measureString(measureIndex) &= String.Format("#{0}02:{1}\r\n", Add3Zeros(measureIndex), consistentDecimalStr)
+            If MeasureLength(measureIndex) <> 192.0R Then 
+                Dim s = String.Format("#{0}02:{1}" & vbCrLf, Add3Zeros(measureIndex), consistentDecimalStr)
+                measureString(measureIndex) &= s
+            End If
+                
 
             ' Get note count in current measure
             Dim lowerLimit As Integer = Nothing
@@ -345,17 +349,16 @@ Partial Public Class MainWindow
             End If
 
             ' Get notes from this measure
-            Dim xUPrevText As Integer = UBound(xprevNotes)
-            Dim notesInMeasure(upperLimit - lowerLimit + xUPrevText) As Note
+            Dim notesInMeasure(upperLimit - lowerLimit + prevNotes.Count) As Note
 
             ' Copy notes from previous array
-            For i = 0 To xUPrevText
-                notesInMeasure(i) = xprevNotes(i)
+            For i = 0 To prevNotes.Count
+                notesInMeasure(i) = prevNotes(i)
             Next
 
             ' Copy notes in current measure
             For i = lowerLimit To upperLimit - 1
-                notesInMeasure(i - lowerLimit + xprevNotes.Length) = Notes(i)
+                notesInMeasure(i - lowerLimit + prevNotes.Count) = Notes(i)
             Next
 
             ' Find greatest column.
@@ -363,13 +366,16 @@ Partial Public Class MainWindow
             ' this - Columns.BGM will yield the number of B columns.
             Dim greatestColumn = (From tn In notesInMeasure Select tn.ColumnIndex).Concat({0}).Max()
 
-            ReDim xprevNotes(-1)
+            prevNotes.Clear()
             measureString(measureIndex) &= GenerateBackgroundTracks(measureIndex,
                                                                     hasOverlapping,
                                                                     notesInMeasure,
                                                                     greatestColumn,
-                                                                    xprevNotes)
-            measureString(measureIndex) &= GenerateKeyTracks(measureIndex, hasOverlapping, notesInMeasure, xprevNotes)
+                                                                    prevNotes)
+            measureString(measureIndex) &= GenerateKeyTracks(measureIndex, 
+                                                             hasOverlapping, 
+                                                             notesInMeasure, 
+                                                             prevNotes)
         Next
 
         Return Join(measureString, vbCrLf)
@@ -455,47 +461,47 @@ Partial Public Class MainWindow
     End Sub
 
     Private Function GenerateKeyTracks(measureIndex As Integer, ByRef hasOverlapping As Boolean,
-                                       notesInMeasure() As Note, ByRef xprevNotes() As Note) As String
+                                       notesInMeasure() As Note, ByRef prevNotes As List(Of Note)) As String
         Dim currentBmsChannel As String
         Dim ret = ""
 
         For Each currentBmsChannel In _bmsChannelList 'Start rendering other notes
-            Dim relativeMeasurePos(-1) 'Ks in the same column
-            Dim noteStrings(-1)      'Ks in the same column
+            ' Ks in the same column
+            Dim relativeMeasurePos = new List(Of Double) 
+            Dim noteStrings = new List(Of String)      
 
             ' Background tracks take care of this.
             If currentBmsChannel = "01" Then Continue For
-
-
-            For NoteIndex = 0 To UBound(notesInMeasure) 'Find Ks in the same column (xI4 is TK index)
+            
+            For NoteIndex = 0 To UBound(notesInMeasure) 'Find Ks in the same column
 
                 Dim currentNote As Note = notesInMeasure(NoteIndex)
                 If Columns.GetBMSChannelBy(currentNote) = currentBmsChannel Then
 
-                    ReDim Preserve relativeMeasurePos(UBound(relativeMeasurePos) + 1)
-                    ReDim Preserve noteStrings(UBound(noteStrings) + 1)
-                    relativeMeasurePos(UBound(relativeMeasurePos)) = currentNote.VPosition -
-                                                                     MeasureBottom(
-                                                                         MeasureAtDisplacement(currentNote.VPosition))
-                    If relativeMeasurePos(UBound(relativeMeasurePos)) < 0 Then _
-                        relativeMeasurePos(UBound(relativeMeasurePos)) = 0
+                    Dim noteMeasureBottom = MeasureBottom(MeasureAtDisplacement(currentNote.VPosition))
+                    Dim relativePos = Math.Max(currentNote.VPosition - noteMeasureBottom, 0)
+                    
+                    relativeMeasurePos.Add(relativePos)
 
                     If currentBmsChannel = "03" Then 'If integer bpm
-                        noteStrings(UBound(noteStrings)) = Mid("0" & Hex(currentNote.Value \ 10000),
-                                                               Len(Hex(currentNote.Value \ 10000)))
+                        noteStrings.Add(Mid("0" & Hex(currentNote.Value \ 10000),
+                                                               Len(Hex(currentNote.Value \ 10000))))
                     ElseIf currentBmsChannel = "08" Then 'If bpm requires declaration
-                        Dim bpmIndex
+                        Dim bpmIndex As Integer
                         For bpmIndex = 1 To UBound(BmsBPM) ' find BPM value in existing array
                             If currentNote.Value = BmsBPM(bpmIndex) Then Exit For
                         Next
+                        
                         If bpmIndex > UBound(BmsBPM) Then ' Didn't find it, add it
                             ReDim Preserve BmsBPM(UBound(BmsBPM) + 1)
                             BmsBPM(UBound(BmsBPM)) = currentNote.Value
                         End If
-                        noteStrings(UBound(noteStrings)) = IIf(_bpMx1296, C10to36(bpmIndex),
-                                                               Mid("0" & Hex(bpmIndex), Len(Hex(bpmIndex))))
+                        
+                        noteStrings.Add(IIf(_bpMx1296, 
+                                            C10to36(bpmIndex),
+                                            Mid("0" & Hex(bpmIndex), Len(Hex(bpmIndex)))))
                     ElseIf currentBmsChannel = "09" Then 'If STOP
-                        Dim stopIndex
+                        Dim stopIndex As Integer
                         For stopIndex = 1 To UBound(BmsSTOP) ' find STOP value in existing array
                             If currentNote.Value = BmsSTOP(stopIndex) Then Exit For
                         Next
@@ -504,8 +510,10 @@ Partial Public Class MainWindow
                             ReDim Preserve BmsSTOP(UBound(BmsSTOP) + 1)
                             BmsSTOP(UBound(BmsSTOP)) = currentNote.Value
                         End If
-                        noteStrings(UBound(noteStrings)) = IIf(_stoPx1296, C10to36(stopIndex),
-                                                               Mid("0" & Hex(stopIndex), Len(Hex(stopIndex))))
+                        
+                        noteStrings.Add(IIf(_stoPx1296, 
+                                            C10to36(stopIndex),
+                                            Mid("0" & Hex(stopIndex), Len(Hex(stopIndex)))))
                     ElseIf currentBmsChannel = "SC" Then 'If SCROLL
                         Dim scrollIndex
                         For scrollIndex = 1 To UBound(BmsSCROLL) ' find SCROLL value in existing array
@@ -516,17 +524,19 @@ Partial Public Class MainWindow
                             ReDim Preserve BmsSCROLL(UBound(BmsSCROLL) + 1)
                             BmsSCROLL(UBound(BmsSCROLL)) = currentNote.Value
                         End If
-                        noteStrings(UBound(noteStrings)) = C10to36(scrollIndex)
+                        noteStrings.Add(C10to36(scrollIndex))
                     Else
-                        noteStrings(UBound(noteStrings)) = C10to36(currentNote.Value \ 10000)
+                        noteStrings.Add(C10to36(currentNote.Value \ 10000))
                     End If
                 End If
             Next
 
-            If relativeMeasurePos.Length = 0 Then Continue For
+            If relativeMeasurePos.Count = 0 Then 
+                Continue For
+            End If
 
             Dim xGcd As Double = MeasureLength(measureIndex)
-            For i = 0 To UBound(relativeMeasurePos) 'find greatest common divisor
+            For i = 0 To relativeMeasurePos.Count - 1 'find greatest common divisor
                 If relativeMeasurePos(i) > 0 Then xGcd = Gcd(xGcd, relativeMeasurePos(i))
             Next
 
@@ -536,26 +546,40 @@ Partial Public Class MainWindow
                 xStrKey(i) = "00"
             Next
 
-            For i = 0 To UBound(relativeMeasurePos) 'assign K texts
+            For i = 0 To relativeMeasurePos.Count - 1 'assign K texts
+                
+                ' az refactor note: Out of bounds of the current measure? add to prevNotes
                 If CInt(relativeMeasurePos(i) / xGcd) > UBound(xStrKey) Then
-                    ReDim Preserve xprevNotes(UBound(xprevNotes) + 1)
-                    With xprevNotes(UBound(xprevNotes))
-                        .ColumnIndex = Columns.BMSChannelToColumn(_bmsChannelList(currentBmsChannel))
-                        .LongNote = IsChannelLongNote(_bmsChannelList(currentBmsChannel))
-                        .Hidden = IsChannelHidden(_bmsChannelList(currentBmsChannel))
-                        .VPosition = MeasureBottom(measureIndex)
+                    Dim note = new Note() With {
+                        .ColumnIndex = Columns.BMSChannelToColumn(_bmsChannelList(currentBmsChannel)),
+                        .LongNote = IsChannelLongNote(_bmsChannelList(currentBmsChannel)),
+                        .Hidden = IsChannelHidden(_bmsChannelList(currentBmsChannel)),
+                        .VPosition = MeasureBottom(measureIndex),
                         .Value = C36to10(noteStrings(i))
-                    End With
-                    If _bmsChannelList(currentBmsChannel) = "08" Then _
-                        xprevNotes(UBound(xprevNotes)).Value = IIf(_bpMx1296, BmsBPM(C36to10(noteStrings(i))),
-                                                                   BmsBPM(Convert.ToInt32(noteStrings(i), 16)))
-                    If _bmsChannelList(currentBmsChannel) = "09" Then _
-                        xprevNotes(UBound(xprevNotes)).Value = IIf(_stoPx1296, BmsSTOP(C36to10(noteStrings(i))),
-                                                                   BmsSTOP(Convert.ToInt32(noteStrings(i), 16)))
-                    If _bmsChannelList(CurrentBMSChannel) = "SC" Then _
-                        xprevNotes(UBound(xprevNotes)).Value = BmsSCROLL(C36to10(NoteStrings(i)))
+                    }
+                    
+                    
+                    If _bmsChannelList(currentBmsChannel) = "08" Then 
+                        note.Value = IIf(_bpMx1296, 
+                                         BmsBPM(C36to10(noteStrings(i))),
+                                         BmsBPM(Convert.ToInt32(noteStrings(i), 16)))
+                    End If
+                    
+                    If _bmsChannelList(currentBmsChannel) = "09" Then 
+                        note.Value = IIf(_stoPx1296, 
+                                         BmsSTOP(C36to10(noteStrings(i))),
+                                         BmsSTOP(Convert.ToInt32(noteStrings(i), 16)))
+                    End If
+                    
+                    If _bmsChannelList(CurrentBMSChannel) = "SC" Then 
+                        note.Value = BmsSCROLL(C36to10(NoteStrings(i)))
+                    End If
+                        
+                    
+                    prevNotes.Add(note)
                     Continue For
                 End If
+                
                 If xStrKey(CInt(relativeMeasurePos(i)/xGCD)) <> "00" Then
                     hasOverlapping = True
                 End If
@@ -563,7 +587,11 @@ Partial Public Class MainWindow
                 xStrKey(CInt(relativeMeasurePos(i)/xGCD)) = NoteStrings(i)
             Next
 
-            Ret &= "#" & Add3Zeros(MeasureIndex) & CurrentBMSChannel & ":" & Join(xStrKey, "") & vbCrLf
+            Dim s = String.Format("#{0}{1}:{2}" & vbCrLf, 
+                                  Add3Zeros(MeasureIndex), 
+                                  CurrentBMSChannel, 
+                                  Join(xStrKey, ""))
+            Ret &= s
         Next
 
         Return Ret
@@ -571,56 +599,56 @@ Partial Public Class MainWindow
 
     Private Function GenerateBackgroundTracks(measureIndex As Integer, ByRef hasOverlapping As Boolean,
                                               notesInMeasure() As Note, greatestColumn As Integer,
-                                              ByRef xprevNotes() As Note) As String
-        Dim relativeNotePositions() As Double 'Ks in the same column
+                                              prevNotes As List(Of Note)) As String
+        Dim relativeNotePositions = New List(Of Double) 'Ks in the same column
         Dim ret = ""
 
         For ColIndex = ColumnType.BGM To greatestColumn 'Start rendering B notes (xI3 is columnindex)
-            ReDim relativeNotePositions(-1) 'Ks in the same column
-            Dim columnNoteStrings(-1) As String     'Ks in the same column
+            relativeNotePositions.Clear()
+            Dim columnNoteStrings = New List(Of String)     'Ks in the same column
 
             For I = 0 To UBound(notesInMeasure) 'Find Ks in the same column (xI4 is TK index)
                 If notesInMeasure(I).ColumnIndex = ColIndex Then
-
-                    ReDim Preserve relativeNotePositions(UBound(relativeNotePositions) + 1)
-                    ReDim Preserve columnNoteStrings(UBound(columnNoteStrings) + 1)
-
-                    relativeNotePositions(UBound(relativeNotePositions)) = notesInMeasure(I).VPosition -
-                                                                           MeasureBottom(
-                                                                               MeasureAtDisplacement(
-                                                                                   notesInMeasure(I).VPosition))
-                    If relativeNotePositions(UBound(relativeNotePositions)) < 0 Then _
-                        relativeNotePositions(UBound(relativeNotePositions)) = 0
-
-                    columnNoteStrings(UBound(columnNoteStrings)) = C10to36(notesInMeasure(I).Value \ 10000)
+                    Dim noteMeasureBottom = MeasureBottom(MeasureAtDisplacement(notesInMeasure(I).VPosition))
+                    Dim relativePos = Math.Max(notesInMeasure(I).VPosition - noteMeasureBottom, 0)
+                               
+                    relativeNotePositions.Add(relativePos)
+                    
+                    columnNoteStrings.Add(C10to36(notesInMeasure(I).Value \ 10000))
                 End If
             Next
 
-            Dim xGcd As Double = MeasureLength(measureIndex)
-            For i = 0 To UBound(relativeNotePositions) 'find greatest common divisor
-                If relativeNotePositions(i) > 0 Then xGcd = Gcd(xGcd, relativeNotePositions(i))
+            'find greatest common divisor
+            Dim measureGcd As Double = MeasureLength(measureIndex)
+            For i = 0 To relativeNotePositions.Count - 1 
+                If relativeNotePositions(i) > 0 Then 
+                    measureGcd = Gcd(measureGcd, relativeNotePositions(i))
+                End If
             Next
-
-            Dim notesString(CInt(MeasureLength(measureIndex) / xGcd) - 1) As String
+            
+            Dim notesString(CInt(MeasureLength(measureIndex) / measureGcd) - 1) As String
             For i = 0 To UBound(notesString) 'assign 00 to all keys
                 notesString(i) = "00"
             Next
 
-            For i = 0 To UBound(relativeNotePositions) 'assign K texts
-                If CInt(relativeNotePositions(i) / xGcd) > UBound(notesString) Then
-
-                    ReDim Preserve xprevNotes(UBound(xprevNotes) + 1)
-
-                    With xprevNotes(UBound(xprevNotes))
-                        .ColumnIndex = ColIndex
-                        .VPosition = MeasureBottom(measureIndex)
+            For i = 0 To relativeNotePositions.Count - 1 'assign K texts
+                If CInt(relativeNotePositions(i) / measureGcd) > UBound(notesString) Then
+                    Dim note = new Note With {
+                        .ColumnIndex = ColIndex,
+                        .VPosition = MeasureBottom(measureIndex),
                         .Value = C36to10(columnNoteStrings(i))
-                    End With
-
+                    }
+                    
+                    prevNotes.Add(note)
+                    
                     Continue For
                 End If
-                If notesString(relativeNotePositions(i) / xGcd) <> "00" Then hasOverlapping = True
-                notesString(relativeNotePositions(i) / xGcd) = columnNoteStrings(i)
+                
+                If notesString(relativeNotePositions(i) / measureGcd) <> "00" Then 
+                    hasOverlapping = True
+                End If
+                
+                notesString(relativeNotePositions(i) / measureGcd) = columnNoteStrings(i)
             Next
 
             ret &= String.Format("#{0}01:{1}\r\n", Add3Zeros(measureIndex), Join(notesString, ""))
