@@ -3,28 +3,14 @@
 µBMSC is a modified version of iBMSC to add features and clean up the iBMSC code, fix bugs and so on.
 See README.md.old for original iBMSC README file.
 
-Changes
+Changes in this fork
 =====
-* Out of the box OGG previews
-  * Seeks for WAV if OGG doesn't exist, and viceversa
-* Bugfixes
-  * BMSE clipboard input fixed
-* Additions
-  * Landmine support (Shift + Ctrl + Click)
-  * Several new encodings (EUC-KR, Shift-JIS)
-  * Go To Measure (Ctrl+G)
-  * Mouse Row/Column Highlight
-  * Ctrl+Scroll wheel changes zoom level
-  * Huge BPM support (10e12)
-  * UI improvements
-  * **Time select mode** Convert Area to Stop 
-  * **Select Mode** Select notes with labels on screen, all notes with labels (Shift+Ctrl+Click, Shift+Ctrl+A)
-  * Non-locale dependant number output (No more commas instead of periods)
-  * **Write mode** Autowav Increase functionality 
-  * **dtinth** Move and Deselect (Shift+Number)
-  * **NS-Kazuki** #SCROLL Support
-* Development
-  * Codebase reorganized for developers
+* Changed keybinding to allow note placement between D1 and D8.
+ * Numpad keys are now assigned to 2P lanes.
+ * QWERTYUI keys are also assigned to 2P lanes.
+ * 1 to 7 are now assigned to A1 to A7, and 8 is now assigned to A8.
+* Fixed the search function such that notes on lane A8 and D8 are now searchable.
+* Fixed the mirror function such that notes between A1 and D8 are reflected locally.
 
 
 Check appveyor for automated builds.
