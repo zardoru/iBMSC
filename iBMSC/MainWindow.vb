@@ -2131,18 +2131,19 @@ StartCount:     If Not NTInput Then
 
         If Not NTInput Then
             For xI1 = 1 To UBound(Notes)
-                If Notes(xI1).ColumnIndex >= niA1 And Notes(xI1).ColumnIndex <= niA8 Then xIAll += 1
+                If Notes(xI1).ColumnIndex >= niA1 And Notes(xI1).ColumnIndex <= niD8 Then xIAll += 1
             Next
 
         Else
             For xI1 = 1 To UBound(Notes)
-                If Notes(xI1).ColumnIndex >= niA1 And Notes(xI1).ColumnIndex <= niA8 Then
+                If Notes(xI1).ColumnIndex >= niA1 And Notes(xI1).ColumnIndex <= niD8 Then
                     xIAll += 1
                     If Notes(xI1).Length <> 0 Then xIAll += 1
                 End If
             Next
         End If
 
+        TBTotalValue.Text = xIAll * 7.605 / (0.01 * xIAll + 6.5)
         TBStatistics.Text = xIAll
     End Sub
 

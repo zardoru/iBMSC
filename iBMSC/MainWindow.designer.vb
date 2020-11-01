@@ -359,6 +359,8 @@ Partial Class MainWindow
         Me.HSL = New System.Windows.Forms.HScrollBar()
         Me.POptionsResizer = New System.Windows.Forms.Button()
         Me.ToolTipUniversal = New System.Windows.Forms.ToolTip(Me.components)
+        Me.ToolStrip1 = New System.Windows.Forms.ToolStrip()
+        Me.TBTotalValue = New System.Windows.Forms.ToolStripLabel()
         Me.cmnLanguage.SuspendLayout()
         Me.cmnTheme.SuspendLayout()
         Me.POptionsScroll.SuspendLayout()
@@ -437,6 +439,7 @@ Partial Class MainWindow
         Me.PMain.SuspendLayout()
         Me.PMainR.SuspendLayout()
         Me.PMainL.SuspendLayout()
+        Me.ToolStrip1.SuspendLayout()
         Me.SuspendLayout()
         '
         'cmnLanguage
@@ -3847,6 +3850,7 @@ Partial Class MainWindow
         '
         'ToolStripContainer1.TopToolStripPanel
         '
+        Me.ToolStripContainer1.TopToolStripPanel.Controls.Add(Me.ToolStrip1)
         Me.ToolStripContainer1.TopToolStripPanel.Controls.Add(Me.mnMain)
         Me.ToolStripContainer1.TopToolStripPanel.Controls.Add(Me.TBMain)
         '
@@ -4048,6 +4052,22 @@ Partial Class MainWindow
         Me.POptionsResizer.TabStop = False
         Me.POptionsResizer.UseVisualStyleBackColor = True
         '
+        'ToolStrip1
+        '
+        Me.ToolStrip1.Dock = System.Windows.Forms.DockStyle.None
+        Me.ToolStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.TBTotalValue})
+        Me.ToolStrip1.Location = New System.Drawing.Point(754, 23)
+        Me.ToolStrip1.Name = "ToolStrip1"
+        Me.ToolStrip1.Size = New System.Drawing.Size(56, 25)
+        Me.ToolStrip1.TabIndex = 0
+        Me.ToolStrip1.Text = "ToolStrip1"
+        '
+        'TBTotalValue
+        '
+        Me.TBTotalValue.Name = "TBTotalValue"
+        Me.TBTotalValue.Size = New System.Drawing.Size(13, 22)
+        Me.TBTotalValue.Text = "0"
+        '
         'MainWindow
         '
         Me.AllowDrop = True
@@ -4174,6 +4194,8 @@ Partial Class MainWindow
         Me.PMain.ResumeLayout(False)
         Me.PMainR.ResumeLayout(False)
         Me.PMainL.ResumeLayout(False)
+        Me.ToolStrip1.ResumeLayout(False)
+        Me.ToolStrip1.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -4516,4 +4538,6 @@ Partial Class MainWindow
     Friend WithEvents BConvertStop As ToolStripButton
     Friend WithEvents POBRandom As ToolStripMenuItem
     Friend WithEvents POBSRandom As ToolStripMenuItem
+    Friend WithEvents ToolStrip1 As ToolStrip
+    Friend WithEvents TBTotalValue As ToolStripLabel
 End Class
