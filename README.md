@@ -13,7 +13,8 @@ Changes in this fork
 * Fixed the search function such that notes on lane A8 and D8 are now searchable.
 * Fixed the mirror function such that notes between A1 and D8 are reflected locally.
 * Added Random and S-Random. For S-random, note overlapping can occur.
-
+* Fixed the Statistic Label not including notes between D1-D8. Statistic window still not fixed.
+* Added a display for recommended #TOTAL.
 
 Check appveyor for automated builds.
 [![Build status](https://ci.appveyor.com/api/projects/status/m7iygj9sje2yqf43?svg=true)](https://ci.appveyor.com/project/zardoru/ibmsc)
