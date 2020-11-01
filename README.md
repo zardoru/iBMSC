@@ -12,6 +12,7 @@ Changes in this fork
   * Ctrl+1 to 7 are now assigned to D1-D8.
 * Fixed the search function such that notes on lane A8 and D8 are now searchable.
 * Fixed the mirror function such that notes between A1 and D8 are reflected locally.
+* Added Random and S-Random. For S-random, note overlapping can occur.
 
 
 Check appveyor for automated builds.
