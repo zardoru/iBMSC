@@ -17,3 +17,5 @@ Changes in this fork
 * Added a display for recommended #TOTAL.
 * The application now saves the option "Disable Vertical Moves".
 * Changed the temporary bms file extension from .bms to .bmsc.
+* Allows selecting all file types when opening files
+* Fixed the total note count on the toolbar
