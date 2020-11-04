@@ -465,7 +465,7 @@ Public Class MainWindow
         Dim xFileName As String = IIf(Not PathIsValid(FileName),
                                         IIf(InitPath = "", My.Application.Info.DirectoryPath, InitPath),
                                         ExcludeFileName(FileName)) _
-                                        & "\___TempBMS.bms"
+                                        & "\___TempBMS.bmsc"
         Dim xMeasure As Integer = MeasureAtDisplacement(Math.Abs(PanelVScroll(PanelFocus)))
         Dim xS1 As String = Replace(InitStr, "<apppath>", My.Application.Info.DirectoryPath)
         Dim xS2 As String = Replace(xS1, "<measure>", xMeasure)
@@ -1731,6 +1731,8 @@ EndSearch:
         RefreshPanelAll()
     End Sub
 
+
+
     Private Sub Timer1_Tick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Timer1.Tick
         Dim xI1 As Integer
 
@@ -2013,7 +2015,7 @@ EndSearch:
         Dim xStrAll As String = SaveBMS()
         Dim xFileName As String = IIf(Not PathIsValid(FileName),
                                       IIf(InitPath = "", My.Application.Info.DirectoryPath, InitPath),
-                                      ExcludeFileName(FileName)) & "\___TempBMS.bms"
+                                      ExcludeFileName(FileName)) & "\___TempBMS.bmsc"
         My.Computer.FileSystem.WriteAllText(xFileName, xStrAll, False, TextEncoding)
 
         AddTempFileList(xFileName)
@@ -2036,7 +2038,7 @@ EndSearch:
         Dim xStrAll As String = SaveBMS()
         Dim xFileName As String = IIf(Not PathIsValid(FileName),
                                       IIf(InitPath = "", My.Application.Info.DirectoryPath, InitPath),
-                                      ExcludeFileName(FileName)) & "\___TempBMS.bms"
+                                      ExcludeFileName(FileName)) & "\___TempBMS.bmsc"
         My.Computer.FileSystem.WriteAllText(xFileName, xStrAll, False, TextEncoding)
 
         AddTempFileList(xFileName)
