@@ -1408,7 +1408,13 @@ EndSearch:
         If ClosingPopSave() Then Exit Sub
 
         Dim xDOpen As New OpenFileDialog
-        xDOpen.Filter = Strings.FileType._bms & "|*.bms;*.bme;*.bml;*.pms;*.txt"
+        xDOpen.Filter = Strings.FileType._bms & "|*.bms;*.bme;*.bml;*.pms;*.txt|" &
+                            Strings.FileType.BMS & "|*.bms|" &
+                            Strings.FileType.BME & "|*.bme|" &
+                            Strings.FileType.BML & "|*.bml|" &
+                            Strings.FileType.PMS & "|*.pms|" &
+                            Strings.FileType.TXT & "|*.txt|" &
+                            Strings.FileType._all & "|*.*"
         xDOpen.DefaultExt = "bms"
         xDOpen.InitialDirectory = IIf(ExcludeFileName(FileName) = "", InitPath, ExcludeFileName(FileName))
 
@@ -2139,8 +2145,8 @@ StartCount:     If Not NTInput Then
         Else
             For xI1 = 1 To UBound(Notes)
                 If Notes(xI1).ColumnIndex >= niA1 And Notes(xI1).ColumnIndex <= niD8 Then
-                    xIAll += 1
-                    If Notes(xI1).Length <> 0 Then xIAll += 1
+                    If Not (Notes(xI1).LongNote Or Notes(xI1).Hidden Or Notes(xI1).Landmine Or Notes(xI1).Hidden Or Notes(xI1).Value \ 10000 = LnObj) Then xIAll += 1
+                    ' If Notes(xI1).Length <> 0 Then xIAll += 1
                 End If
             Next
         End If
