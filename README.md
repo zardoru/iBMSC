@@ -19,3 +19,4 @@ Changes in this fork
 * Changed the temporary bms file extension from .bms to .bmsc.
 * Allows selecting all file types when opening files
 * Fixed the total note count on the toolbar
+* Added advanced statistics (Ctrl+Shift+T)
