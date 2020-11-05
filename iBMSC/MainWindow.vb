@@ -2091,13 +2091,13 @@ EndSearch:
             With Notes(i)
                 Dim row As Integer = -1
                 Select Case .ColumnIndex
-                    Case niSCROLL : row = 0
-                    Case niBPM : row = 1
-                    Case niSTOP : row = 2
-                    Case niA1, niA2, niA3, niA4, niA5, niA6, niA7, niA8 : row = 3
-                    Case niD1, niD2, niD3, niD4, niD5, niD6, niD7, niD8 : row = 4
-                    Case Is >= niB : row = 5
-                    Case Else : row = 6
+                    ' Case niSCROLL : row = 0
+                    Case niBPM : row = 0
+                    Case niSTOP : row = 1
+                    Case niA1, niA2, niA3, niA4, niA5, niA6, niA7, niA8 : row = 2
+                    Case niD1, niD2, niD3, niD4, niD5, niD6, niD7, niD8 : row = 3
+                    Case Is >= niB : row = 4
+                    Case Else : row = 5
                 End Select
 
 
@@ -2125,7 +2125,89 @@ StartCount:     If Not NTInput Then
             End With
         Next
 
-        Dim dStat As New dgStatistics(data)
+        Dim dStat As New dgStatisticsLegacy(data)
+        dStat.ShowDialog()
+    End Sub
+
+    Private Sub TBStatisticsAdvanced_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnStatisticsAdvanced.Click
+        SortByVPositionInsertion()
+        UpdatePairing()
+        Dim rows = 26 - 2 ' TableLayoutPanel1.RowCount doesn't work
+        Dim cols = 8 - 2  ' Size of tables including names sub 2
+        Dim Labels As New Strings.fStatistics()
+        Dim rowLabels = {Labels.lSCROLL, Labels.lBPM, Labels.lSTOP, Labels.lA1, Labels.lA2, Labels.lA3, Labels.lA4, Labels.lA5, Labels.lA6, Labels.lA7, Labels.lA8, Labels.lD1, Labels.lD2, Labels.lD3, Labels.lD4, Labels.lD5, Labels.lD6, Labels.lD7, Labels.lD8, Labels.lA, Labels.lD, Labels.lBGA, Labels.lBGM, Labels.lNotes, Labels.lTotal}
+        Dim colLabels = {Labels.lShort, Labels.lLong, Labels.lLnObj, Labels.lHidden, Labels.lLandmines, Labels.lErrors, Labels.lTotal}
+        Dim data(rows, cols) As Integer
+
+        For i As Integer = 1 To UBound(Notes)
+            With Notes(i)
+                Dim row As Integer
+                Select Case .ColumnIndex
+                    Case niSCROLL : row = 1 - 1
+                    Case niBPM : row = 2 - 1
+                    Case niSTOP : row = 3 - 1
+                    Case niA1 : row = 4 - 1
+                    Case niA2 : row = 5 - 1
+                    Case niA3 : row = 6 - 1
+                    Case niA4 : row = 7 - 1
+                    Case niA5 : row = 8 - 1
+                    Case niA6 : row = 9 - 1
+                    Case niA7 : row = 10 - 1
+                    Case niA8 : row = 11 - 1
+                    Case niD1 : row = 12 - 1
+                    Case niD2 : row = 13 - 1
+                    Case niD3 : row = 14 - 1
+                    Case niD4 : row = 15 - 1
+                    Case niD5 : row = 16 - 1
+                    Case niD6 : row = 17 - 1
+                    Case niD7 : row = 18 - 1
+                    Case niD8 : row = 19 - 1
+                    Case Is >= niB : row = 23 - 1
+                    Case Else : row = 22 - 1
+                End Select
+
+
+StartCount:     If Not NTInput Then
+                    If Not (.LongNote Or .Hidden Or .Landmine Or .Hidden Or .Value \ 10000 = LnObj) Then data(row, 0) += 1
+                    If .LongNote Then data(row, 1) += 1
+                    If .Value \ 10000 = LnObj Then data(row, 2) += 1
+                    If .Hidden Then data(row, 3) += 1
+                    If .Landmine Then data(row, 4) += 1
+                    If .HasError Then data(row, 5) += 1
+
+                Else
+                    If Not (.LongNote Or .Hidden Or .Landmine Or .Hidden Or .Value \ 10000 = LnObj) Then data(row, 0) += 1
+                    If .Length <> 0 Then data(row, 1) += 1
+                    If .Value \ 10000 = LnObj Then data(row, 2) += 1
+                    If .Hidden Then data(row, 3) += 1
+                    If .Landmine Then data(row, 4) += 1
+                    If .HasError Then data(row, 5) += 1
+
+                End If
+
+            End With
+        Next
+
+        ' Calculate Total notes on column and row
+        For r As Integer = 0 To rows - 1
+            For c As Integer = 0 To cols - 1
+                data(r, cols) += data(r, c) ' Total in row
+
+                ' Ignore rows "A1-A8" and "D1-D8"
+                Select Case r
+                    Case 19 To 20 : Continue For
+                    Case Else : data(rows, c) += data(r, c) ' Total in column
+                End Select
+
+                Select Case r
+                    Case 3 To 10 : data(19, c) += data(r, c) : data(23, c) += data(r, c)
+                    Case 11 To 18 : data(20, c) += data(r, c) : data(23, c) += data(r, c)
+                End Select
+            Next
+        Next
+        data(rows, cols) = UBound(Notes)
+        ' Change to the whole table cause more convenient
+        Dim dStat As New dgStatistics(data, rowLabels, colLabels)
         dStat.ShowDialog()
     End Sub
 
