@@ -20,3 +20,4 @@ Changes in this fork
 * Allows selecting all file types when opening files
 * Fixed the total note count on the toolbar
 * Added advanced statistics (Ctrl+Shift+T)
+* Added custom color for a specified range of notes. XML must be typed out manually for now.
