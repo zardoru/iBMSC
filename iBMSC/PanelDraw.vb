@@ -309,13 +309,62 @@ Partial Public Class MainWindow
         Dim xUpperBorder As Single = Math.Abs(xVS) + xTHeight / gxHeight
         Dim xLowerBorder As Single = Math.Abs(xVS) - vo.kHeight / gxHeight
 
+        ' Recent(0)
+
+        Dim CO As New COverride(5, 0, 0, 0, 0, 0)
+
+        Dim F As String = "Colors\" + GetFileName(FileName) + ".xml"
+        ' If My.Computer.FileSystem.FileExists("Color.xml") Then
+        If My.Computer.FileSystem.FileExists(F) Then
+
+            Dim Doc As New XmlDocument
+            Dim FileStream As New IO.FileStream(F, FileMode.Open, FileAccess.Read)
+            Doc.Load(FileStream)
+            ' Dim Root As XmlElement = Doc.Item("iBMSC")
+            ' Dim eColor As XmlElement = Root.Item("ColorOverride")
+
+            Dim Root As XmlElement = Doc.Item("ColorOverride")
+            ' Dim eColor As XmlElement = Root.Item("Color")
+            ' If eColor IsNot Nothing Then
+            '     With eColor
+            '         ' RangeL
+            '         ' RangeR
+            '         ' NoteColor
+            '         ' LongNoteColor
+            '         ' LongTextColor
+            '         ' BG
+            '         XMLLoadAttribute(.GetAttribute("RangeL"), CO.RangeL(0))
+            '         XMLLoadAttribute(.GetAttribute("RangeR"), CO.RangeR(0))
+            '         XMLLoadAttribute(.GetAttribute("NoteColor"), CO.NoteColor(0))
+            '         XMLLoadAttribute(.GetAttribute("LongNoteColor"), CO.LongNoteColor(0))
+            '         XMLLoadAttribute(.GetAttribute("LongTextColor"), CO.LongTextColor(0))
+            '         XMLLoadAttribute(.GetAttribute("BG"), CO.BG(0))
+            '     End With
+            Dim i = 0
+            For Each eColor As XmlElement In Root.ChildNodes
+                CO.Resize(i + 1)
+                With eColor
+                    XMLLoadAttribute(.GetAttribute("RangeL"), CO.RangeL(i))
+                    XMLLoadAttribute(.GetAttribute("RangeR"), CO.RangeR(i))
+                    XMLLoadAttribute(.GetAttribute("NoteColor"), CO.NoteColor(i))
+                    XMLLoadAttribute(.GetAttribute("LongNoteColor"), CO.LongNoteColor(i))
+                    XMLLoadAttribute(.GetAttribute("LongTextColor"), CO.LongTextColor(i))
+                    XMLLoadAttribute(.GetAttribute("BG"), CO.BG(i))
+                End With
+                i += 1
+            Next
+            ' End If
+            FileStream.Close()
+
+        End If
+
         For xI1 = 0 To UBound(Notes)
             If Notes(xI1).VPosition > xUpperBorder Then Exit For
             If Not IsNoteVisible(xI1, xTHeight, xVS) Then Continue For
             If NTInput Then
-                DrawNoteNT(Notes(xI1), e1, xHS, xVS, xTHeight)
+                DrawNoteNT(Notes(xI1), e1, xHS, xVS, xTHeight, CO)
             Else
-                DrawNote(Notes(xI1), e1, xHS, xVS, xTHeight)
+                DrawNote(Notes(xI1), e1, xHS, xVS, xTHeight) ' , CO)
             End If
         Next
     End Sub
@@ -343,10 +392,11 @@ Partial Public Class MainWindow
 
 
     Private Sub DrawMouseOver(e1 As BufferedGraphics, xTHeight As Integer, xHS As Integer, xVS As Integer)
+        Dim CO As New COverride(0, 0, 0, 0, 0, 0)
         If NTInput Then
-            If Not bAdjustLength Then DrawNoteNT(Notes(KMouseOver), e1, xHS, xVS, xTHeight)
+            If Not bAdjustLength Then DrawNoteNT(Notes(KMouseOver), e1, xHS, xVS, xTHeight, CO)
         Else
-            DrawNote(Notes(KMouseOver), e1, xHS, xVS, xTHeight)
+            DrawNote(Notes(KMouseOver), e1, xHS, xVS, xTHeight) ', CO
         End If
 
         Dim rect = GetNoteRectangle(KMouseOver, xTHeight, xHS, xVS)
@@ -518,18 +568,14 @@ Partial Public Class MainWindow
     ''' <param name="xVS">VS.Value.</param>
     ''' <param name="xHeight">Display height of the panel. (not ClipRectangle.Height)</param>
 
-    Private Sub DrawNote(ByVal sNote As Note, ByVal e As BufferedGraphics, ByVal xHS As Long, ByVal xVS As Long, ByVal xHeight As Integer) ', Optional ByVal CheckError As Boolean = True) ', Optional ByVal ConnectToIndex As Long = 0)
+    Private Sub DrawNote(ByVal sNote As Note, ByVal e As BufferedGraphics, ByVal xHS As Long, ByVal xVS As Long, ByVal xHeight As Integer) ' , ByVal CO As COverride) ', Optional ByVal CheckError As Boolean = True) ', Optional ByVal ConnectToIndex As Long = 0)
         If Not nEnabled(sNote.ColumnIndex) Then Exit Sub
         Dim xAlpha As Single = 1.0F
         If sNote.Hidden Then xAlpha = vo.kOpacity
 
         Dim xLabel As String = C10to36(sNote.Value \ 10000)
-        If ShowFileName Then
-            If IsColumnSound(sNote.ColumnIndex) Then
-                If hWAV(C36to10(xLabel)) <> "" Then xLabel = Path.GetFileNameWithoutExtension(hWAV(C36to10(xLabel)))
-            Else
-                If hBMP(C36to10(xLabel)) <> "" Then xLabel = Path.GetFileNameWithoutExtension(hBMP(C36to10(xLabel)))
-            End If
+        If ShowFileName AndAlso hWAV(C36to10(xLabel)) <> "" Then
+            xLabel = Path.GetFileNameWithoutExtension(hWAV(C36to10(xLabel)))
         End If
 
         Dim xPen As Pen
@@ -549,10 +595,19 @@ Partial Public Class MainWindow
             bright = GetColumn(sNote.ColumnIndex).getBright(xAlpha)
             dark = GetColumn(sNote.ColumnIndex).getDark(xAlpha)
 
+            ' Color override
+            'Dim RangeL = 30000
+            'Dim RangeR = 50000
+            'Dim coC = -5592406
+            ' If sNote.Value >= RangeL And sNote.Value <= RangeR Then
+            ' bright = Color.FromArgb(coC)
+            ' dark = bright
+            ' ElseIf sNote.Landmine Then
             If sNote.Landmine Then
                 bright = Color.Red
                 dark = Color.Red
             End If
+
 
             xBrush2 = New SolidBrush(GetColumn(sNote.ColumnIndex).cText)
         Else
@@ -627,19 +682,13 @@ Partial Public Class MainWindow
     ''' <param name="xVS">VS.Value.</param>
     ''' <param name="xHeight">Display height of the panel. (not ClipRectangle.Height)</param>
 
-    Private Sub DrawNoteNT(ByVal sNote As Note, ByVal e As BufferedGraphics, ByVal xHS As Long, ByVal xVS As Long, ByVal xHeight As Integer) ', Optional ByVal CheckError As Boolean = True)
+    Private Sub DrawNoteNT(ByVal sNote As Note, ByVal e As BufferedGraphics, ByVal xHS As Long, ByVal xVS As Long, ByVal xHeight As Integer, ByVal CO As COverride) ', Optional ByVal CheckError As Boolean = True)
         If Not nEnabled(sNote.ColumnIndex) Then Exit Sub
         Dim xAlpha As Single = 1.0F
         If sNote.Hidden Then xAlpha = vo.kOpacity
 
         Dim xLabel As String = C10to36(sNote.Value \ 10000)
-        If ShowFileName Then
-            If IsColumnSound(sNote.ColumnIndex) Then
-                If hWAV(C36to10(xLabel)) <> "" Then xLabel = Path.GetFileNameWithoutExtension(hWAV(C36to10(xLabel)))
-            Else
-                If hBMP(C36to10(xLabel)) <> "" Then xLabel = Path.GetFileNameWithoutExtension(hBMP(C36to10(xLabel)))
-            End If
-        End If
+        If ShowFileName AndAlso hWAV(C36to10(xLabel)) <> "" Then xLabel = Path.GetFileNameWithoutExtension(hWAV(C36to10(xLabel)))
 
         Dim xPen1 As Pen
         Dim xBrush As Drawing2D.LinearGradientBrush
@@ -660,6 +709,19 @@ Partial Public Class MainWindow
             bright = GetColumn(sNote.ColumnIndex).getBright(xAlpha)
             dark = GetColumn(sNote.ColumnIndex).getDark(xAlpha)
 
+            ' Color override
+            For i = 0 To CO.Len
+
+
+                Dim RangeL = CO.RangeL(i) * 10000
+                Dim RangeR = CO.RangeR(i) * 10000
+                Dim NoteColorO = CO.NoteColor(i)
+                If sNote.Value >= RangeL And sNote.Value <= RangeR Then
+                    bright = Color.FromArgb(NoteColorO)
+                    dark = bright
+                End If
+
+            Next
             If sNote.Landmine Then
                 bright = Color.Red
                 dark = Color.Red

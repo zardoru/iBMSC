@@ -248,16 +248,16 @@ Partial Public Class MainWindow
                     MoveToColumn(niA8, xUndo, xRedo)
                 End If
 
-            Case Keys.Q, Keys.NumPad1 : MoveToColumn(niD1, xUndo, xRedo)
-            Case Keys.W, Keys.NumPad2 : MoveToColumn(niD2, xUndo, xRedo)
-            Case Keys.E, Keys.NumPad3 : MoveToColumn(niD3, xUndo, xRedo)
-            Case Keys.R, Keys.NumPad4 : MoveToColumn(niD4, xUndo, xRedo)
-            Case Keys.T, Keys.NumPad5 : MoveToColumn(niD5, xUndo, xRedo)
-            Case Keys.Y, Keys.NumPad6 : MoveToColumn(niD6, xUndo, xRedo)
-            Case Keys.U, Keys.NumPad7 : MoveToColumn(niD7, xUndo, xRedo)
-            Case Keys.I, Keys.NumPad8 : MoveToColumn(niD8, xUndo, xRedo)
-			
-			
+            Case Keys.Q, Keys.NumPad1 : If Not My.Computer.Keyboard.CtrlKeyDown Then MoveToColumn(niD1, xUndo, xRedo)
+            Case Keys.W, Keys.NumPad2 : If Not My.Computer.Keyboard.CtrlKeyDown Then MoveToColumn(niD2, xUndo, xRedo)
+            Case Keys.E, Keys.NumPad3 : If Not My.Computer.Keyboard.CtrlKeyDown Then MoveToColumn(niD3, xUndo, xRedo)
+            Case Keys.R, Keys.NumPad4 : If Not My.Computer.Keyboard.CtrlKeyDown Then MoveToColumn(niD4, xUndo, xRedo)
+            Case Keys.T, Keys.NumPad5 : If Not My.Computer.Keyboard.CtrlKeyDown Then MoveToColumn(niD5, xUndo, xRedo)
+            Case Keys.Y, Keys.NumPad6 : If Not My.Computer.Keyboard.CtrlKeyDown Then MoveToColumn(niD6, xUndo, xRedo)
+            Case Keys.U, Keys.NumPad7 : If Not My.Computer.Keyboard.CtrlKeyDown Then MoveToColumn(niD7, xUndo, xRedo)
+            Case Keys.I, Keys.NumPad8 : If Not My.Computer.Keyboard.CtrlKeyDown Then MoveToColumn(niD8, xUndo, xRedo)
+
+
 
         End Select
 
@@ -269,8 +269,6 @@ Partial Public Class MainWindow
                 Case Keys.C : TBCopy_Click(TBCopy, New EventArgs)
                 Case Keys.V : TBPaste_Click(TBPaste, New EventArgs)
                 Case Keys.A : mnSelectAll_Click(mnSelectAll, New EventArgs)
-                Case Keys.F : TBFind_Click(TBFind, New EventArgs)
-                Case Keys.T : TBStatistics_Click(TBStatistics, New EventArgs)
             End Select
         End If
 
@@ -1601,7 +1599,8 @@ Partial Public Class MainWindow
         Dim e1 As BufferedGraphics = BufferedGraphicsManager.Current.Allocate(spMain(iI).CreateGraphics, New Rectangle(xDispX, xDispY, xDispW, xDispH))
         e1.Graphics.FillRectangle(vo.Bg, New Rectangle(xDispX, xDispY, xDispW, xDispH))
 
-        If NTInput Then DrawNoteNT(Notes(foundNoteIndex), e1, xHS, xVS, xHeight) Else DrawNote(Notes(foundNoteIndex), e1, xHS, xVS, xHeight)
+        Dim CO As New COverride(0, 0, 0, 0, 0, 0)
+        If NTInput Then DrawNoteNT(Notes(foundNoteIndex), e1, xHS, xVS, xHeight, CO) Else DrawNote(Notes(foundNoteIndex), e1, xHS, xVS, xHeight)
 
         e1.Graphics.DrawRectangle(IIf(bAdjustLength, vo.kMouseOverE, vo.kMouseOver), xDispX, xDispY, xDispW - 1, xDispH - 1)
 
