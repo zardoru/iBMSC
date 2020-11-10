@@ -913,14 +913,14 @@ Public Class MainWindow
 
     Private Sub Form1_DragDrop(ByVal sender As Object, ByVal e As DragEventArgs) Handles Me.DragDrop
         ReDim DDFileName(-1)
-        If Not e.Data.GetDataPresent(DataFormats.FileDrop) Then Return
+        ' If Not e.Data.GetDataPresent(DataFormats.FileDrop) Then Return
 
         Dim xOrigPath() As String = CType(e.Data.GetData(DataFormats.FileDrop), String())
-        Dim xPath() As String = FilterFileBySupported(xOrigPath, SupportedFileExtension)
-        If xPath.Length > 0 Then
-            Dim xProg As New fLoadFileProgress(xPath, IsSaved)
-            xProg.ShowDialog(Me)
-        End If
+        ' Dim xPath() As String = FilterFileBySupported(xOrigPath, SupportedFileExtension)
+        ' If xPath.Length > 0 Then
+        Dim xProg As New fLoadFileProgress(xOrigPath, IsSaved)
+        xProg.ShowDialog(Me)
+        ' End If
 
         RefreshPanelAll()
     End Sub
@@ -992,6 +992,13 @@ Public Class MainWindow
                 NewRecent(xPath)
                 SetFileName("Imported_" & GetFileName(xPath))
                 SetIsSaved(False)
+
+            Case Else
+                OpenBMS(My.Computer.FileSystem.ReadAllText(xPath, TextEncoding))
+                ClearUndo()
+                NewRecent(xPath)
+                SetFileName(xPath)
+                SetIsSaved(True)
 
         End Select
     End Sub
@@ -2785,9 +2792,16 @@ DoNothing:
         'End If
     End Sub
 
-    Private Sub TBOptions_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TBVOptions.Click, mnVOptions.Click
+    Private Sub TBVOptions_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TBVOptions.Click, mnVOptions.Click
 
         Dim xDiag As New OpVisual(vo, column, LWAV.Font)
+        xDiag.ShowDialog(Me)
+        UpdateColumnsX()
+        RefreshPanelAll()
+    End Sub
+
+    Private Sub TBVCOptions_Click(sender As Object, e As EventArgs) Handles mnVCOptions.Click
+        Dim xDiag As New OpVisualCO(vo, column, LWAV.Font)
         xDiag.ShowDialog(Me)
         UpdateColumnsX()
         RefreshPanelAll()
@@ -3451,12 +3465,12 @@ Jump2:
 
         'Main process
         For xI1 As Integer = 1 To UBound(Notes)
-            Dim bbba As Boolean = xbSel And xSel(xI1)
-            Dim bbbb As Boolean = xbUnsel And Not xSel(xI1)
-            Dim bbbc As Boolean = nEnabled(Notes(xI1).ColumnIndex)
-            Dim bbbd As Boolean = fdrRangeS(xbShort, xbLong, IIf(NTInput, Notes(xI1).Length, Notes(xI1).LongNote))
-            Dim bbbe As Boolean = fdrRangeS(xbVisible, xbHidden, Notes(xI1).Hidden)
-            Dim bbbf As Boolean = fdrCheck(Notes(xI1))
+            ' Dim bbba As Boolean = xbSel And xSel(xI1)
+            ' Dim bbbb As Boolean = xbUnsel And Not xSel(xI1)
+            ' Dim bbbc As Boolean = nEnabled(Notes(xI1).ColumnIndex)
+            ' Dim bbbd As Boolean = fdrRangeS(xbShort, xbLong, IIf(NTInput, Notes(xI1).Length, Notes(xI1).LongNote))
+            ' Dim bbbe As Boolean = fdrRangeS(xbVisible, xbHidden, Notes(xI1).Hidden)
+            ' Dim bbbf As Boolean = fdrCheck(Notes(xI1))
 
             If ((xbSel And xSel(xI1)) Or (xbUnsel And Not xSel(xI1))) AndAlso
                     nEnabled(Notes(xI1).ColumnIndex) AndAlso fdrRangeS(xbShort, xbLong, IIf(NTInput, Notes(xI1).Length, Notes(xI1).LongNote)) And fdrRangeS(xbVisible, xbHidden, Notes(xI1).Hidden) Then
@@ -3499,6 +3513,96 @@ Jump2:
             If ((xbSel And xSel(xI1)) Or (xbUnsel And Not xSel(xI1))) AndAlso
                         nEnabled(Notes(xI1).ColumnIndex) AndAlso fdrRangeS(xbShort, xbLong, IIf(NTInput, Notes(xI1).Length, Notes(xI1).LongNote)) And fdrRangeS(xbVisible, xbHidden, Notes(xI1).Hidden) Then
                 Notes(xI1).Selected = Not fdrCheck(Notes(xI1))
+            End If
+        Next
+
+        RefreshPanelAll()
+        Beep()
+    End Sub
+
+    Public Sub fdrPrevious(ByVal iRange As Integer,
+                           ByVal xMesL As Integer, ByVal xMesU As Integer,
+                           ByVal xLblL As String, ByVal xLblU As String,
+                           ByVal xValL As Integer, ByVal xValU As Integer,
+                           ByVal iCol() As Integer)
+
+        fdriMesL = xMesL
+        fdriMesU = xMesU
+        fdriLblL = C36to10(xLblL) * 10000
+        fdriLblU = C36to10(xLblU) * 10000
+        fdriValL = xValL
+        fdriValU = xValU
+        fdriCol = iCol
+
+        Dim xbSel As Boolean = iRange Mod 2 = 0
+        Dim xbUnsel As Boolean = iRange Mod 3 = 0
+        Dim xbShort As Boolean = iRange Mod 5 = 0
+        Dim xbLong As Boolean = iRange Mod 7 = 0
+        Dim xbHidden As Boolean = iRange Mod 11 = 0
+        Dim xbVisible As Boolean = iRange Mod 13 = 0
+
+        Dim xSel(UBound(Notes)) As Boolean
+        For xI1 As Integer = 1 To UBound(Notes)
+            xSel(xI1) = Notes(xI1).Selected
+            Notes(xI1).Selected = False
+        Next
+
+        Dim i = 0
+        For xI1 = 1 To UBound(Notes)
+            ' If fdriLblL <= Notes(xI1).Value And Notes(xI1).Value <= fdriLblU Then ' Core condition
+            If fdriLblL <= Notes(xI1).Value And Notes(xI1).Value <= fdriLblU AndAlso ' Core condition
+                    ((xbSel And xSel(xI1)) Or (xbUnsel And Not xSel(xI1))) AndAlso
+                    nEnabled(Notes(xI1).ColumnIndex) AndAlso fdrRangeS(xbShort, xbLong, IIf(NTInput, Notes(xI1).Length, Notes(xI1).LongNote)) And fdrRangeS(xbVisible, xbHidden, Notes(xI1).Hidden) Then
+                If Notes(xI1).VPosition >= -PanelVScroll(PanelFocus) Then
+                    If i = 0 Then Exit For
+                    PanelVScroll(PanelFocus) = -Notes(i).VPosition
+                    Notes(i).Selected = True
+                    Exit For
+                Else
+                    i = xI1
+                End If
+
+            End If
+        Next
+
+        RefreshPanelAll()
+        Beep()
+    End Sub
+    Public Sub fdrNext(ByVal iRange As Integer,
+                           ByVal xMesL As Integer, ByVal xMesU As Integer,
+                           ByVal xLblL As String, ByVal xLblU As String,
+                           ByVal xValL As Integer, ByVal xValU As Integer,
+                           ByVal iCol() As Integer)
+        fdriMesL = xMesL
+        fdriMesU = xMesU
+        fdriLblL = C36to10(xLblL) * 10000
+        fdriLblU = C36to10(xLblU) * 10000
+        fdriValL = xValL
+        fdriValU = xValU
+        fdriCol = iCol
+
+        Dim xbSel As Boolean = iRange Mod 2 = 0
+        Dim xbUnsel As Boolean = iRange Mod 3 = 0
+        Dim xbShort As Boolean = iRange Mod 5 = 0
+        Dim xbLong As Boolean = iRange Mod 7 = 0
+        Dim xbHidden As Boolean = iRange Mod 11 = 0
+        Dim xbVisible As Boolean = iRange Mod 13 = 0
+
+        Dim xSel(UBound(Notes)) As Boolean
+        For xI1 As Integer = 1 To UBound(Notes)
+            xSel(xI1) = Notes(xI1).Selected
+            Notes(xI1).Selected = False
+        Next
+
+        For xI1 = 1 To UBound(Notes)
+            If fdriLblL <= Notes(xI1).Value And Notes(xI1).Value <= fdriLblU And ' Core conditions
+                    ((xbSel And xSel(xI1)) Or (xbUnsel And Not xSel(xI1))) AndAlso
+                    nEnabled(Notes(xI1).ColumnIndex) AndAlso fdrRangeS(xbShort, xbLong, IIf(NTInput, Notes(xI1).Length, Notes(xI1).LongNote)) And fdrRangeS(xbVisible, xbHidden, Notes(xI1).Hidden) And
+                    Notes(xI1).VPosition > -PanelVScroll(PanelFocus) Then
+
+                PanelVScroll(PanelFocus) = -Notes(xI1).VPosition
+                Notes(xI1).Selected = True
+                Exit For
             End If
         Next
 
@@ -4643,14 +4747,9 @@ case2:              Dim xI0 As Integer
         Dim s = InputBox(Strings.Messages.PromptEnterMeasure, "Enter Measure")
 
         Dim i As Integer
-        If Int32.TryParse(s, i) Then
-            If i < 0 Or i > 999 Then
-                Exit Sub
-            End If
-
-            PanelVScroll(PanelFocus) = -MeasureBottom(i)
-        End If
+        If Int32.TryParse(s, i) AndAlso i < 0 Or i > 999 Then PanelVScroll(PanelFocus) = -MeasureBottom(i)
     End Sub
+
 
     ' Generic shuffle for basic type arrays
     Public Function Shuffle(Of T)(items As T(), Len As Integer)
