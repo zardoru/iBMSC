@@ -3525,7 +3525,7 @@ Jump2:
                            ByVal xLblL As String, ByVal xLblU As String,
                            ByVal xValL As Integer, ByVal xValU As Integer,
                            ByVal iCol() As Integer)
-
+        ' P: 1 note on 1 line at a time. Good enough.
         fdriMesL = xMesL
         fdriMesU = xMesU
         fdriLblL = C36to10(xLblL) * 10000
@@ -3547,12 +3547,13 @@ Jump2:
             Notes(xI1).Selected = False
         Next
 
+
         Dim i = 0
         For xI1 = 1 To UBound(Notes)
             ' If fdriLblL <= Notes(xI1).Value And Notes(xI1).Value <= fdriLblU Then ' Core condition
-            If fdriLblL <= Notes(xI1).Value And Notes(xI1).Value <= fdriLblU AndAlso ' Core condition
-                    ((xbSel And xSel(xI1)) Or (xbUnsel And Not xSel(xI1))) AndAlso
-                    nEnabled(Notes(xI1).ColumnIndex) AndAlso fdrRangeS(xbShort, xbLong, IIf(NTInput, Notes(xI1).Length, Notes(xI1).LongNote)) And fdrRangeS(xbVisible, xbHidden, Notes(xI1).Hidden) Then
+            If ((xbSel And xSel(xI1)) Or (xbUnsel And Not xSel(xI1))) AndAlso
+                    nEnabled(Notes(xI1).ColumnIndex) AndAlso fdrRangeS(xbShort, xbLong, IIf(NTInput, Notes(xI1).Length, Notes(xI1).LongNote)) And fdrRangeS(xbVisible, xbHidden, Notes(xI1).Hidden) AndAlso
+                    fdrCheck(Notes(xI1)) Then
                 If Notes(xI1).VPosition >= -PanelVScroll(PanelFocus) Then
                     If i = 0 Then Exit For
                     PanelVScroll(PanelFocus) = -Notes(i).VPosition
@@ -3573,6 +3574,7 @@ Jump2:
                            ByVal xLblL As String, ByVal xLblU As String,
                            ByVal xValL As Integer, ByVal xValU As Integer,
                            ByVal iCol() As Integer)
+        ' P: 1 note on 1 line at a time. Good enough.
         fdriMesL = xMesL
         fdriMesU = xMesU
         fdriLblL = C36to10(xLblL) * 10000
@@ -3595,11 +3597,10 @@ Jump2:
         Next
 
         For xI1 = 1 To UBound(Notes)
-            If fdriLblL <= Notes(xI1).Value And Notes(xI1).Value <= fdriLblU And ' Core conditions
-                    ((xbSel And xSel(xI1)) Or (xbUnsel And Not xSel(xI1))) AndAlso
-                    nEnabled(Notes(xI1).ColumnIndex) AndAlso fdrRangeS(xbShort, xbLong, IIf(NTInput, Notes(xI1).Length, Notes(xI1).LongNote)) And fdrRangeS(xbVisible, xbHidden, Notes(xI1).Hidden) And
+            If ((xbSel And xSel(xI1)) Or (xbUnsel And Not xSel(xI1))) AndAlso
+                    nEnabled(Notes(xI1).ColumnIndex) AndAlso fdrRangeS(xbShort, xbLong, IIf(NTInput, Notes(xI1).Length, Notes(xI1).LongNote)) And fdrRangeS(xbVisible, xbHidden, Notes(xI1).Hidden) AndAlso
+                    fdrCheck(Notes(xI1)) AndAlso
                     Notes(xI1).VPosition > -PanelVScroll(PanelFocus) Then
-
                 PanelVScroll(PanelFocus) = -Notes(xI1).VPosition
                 Notes(xI1).Selected = True
                 Exit For
