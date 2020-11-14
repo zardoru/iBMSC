@@ -22,3 +22,4 @@ Changes in this fork
 * Added advanced statistics (Ctrl+Shift+T)
 * Added custom color for a specified range of notes. XML must be typed out manually for now.
 * Removed restriction for drag and dropping files. Mainly for opening bms template files, not tested thoroughly.
+* Added note search function (goto measure except it's goto note)
