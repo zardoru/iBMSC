@@ -23,64 +23,66 @@ Partial Class diagFind
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(diagFind))
-        Me.Label1 = New System.Windows.Forms.Label
-        Me.Label2 = New System.Windows.Forms.Label
-        Me.mr1 = New System.Windows.Forms.NumericUpDown
-        Me.mr2 = New System.Windows.Forms.NumericUpDown
-        Me.lr1 = New System.Windows.Forms.TextBox
-        Me.lr2 = New System.Windows.Forms.TextBox
-        Me.vr2 = New System.Windows.Forms.NumericUpDown
-        Me.vr1 = New System.Windows.Forms.NumericUpDown
-        Me.cb1 = New System.Windows.Forms.CheckBox
-        Me.cb2 = New System.Windows.Forms.CheckBox
-        Me.cba1 = New System.Windows.Forms.CheckBox
-        Me.cba2 = New System.Windows.Forms.CheckBox
-        Me.cba3 = New System.Windows.Forms.CheckBox
-        Me.cba4 = New System.Windows.Forms.CheckBox
-        Me.cba5 = New System.Windows.Forms.CheckBox
-        Me.cba6 = New System.Windows.Forms.CheckBox
-        Me.cba7 = New System.Windows.Forms.CheckBox
-        Me.cba8 = New System.Windows.Forms.CheckBox
-        Me.cbd1 = New System.Windows.Forms.CheckBox
-        Me.cbd2 = New System.Windows.Forms.CheckBox
-        Me.cbd3 = New System.Windows.Forms.CheckBox
-        Me.cbd4 = New System.Windows.Forms.CheckBox
-        Me.cbd5 = New System.Windows.Forms.CheckBox
-        Me.cbd6 = New System.Windows.Forms.CheckBox
-        Me.cbd7 = New System.Windows.Forms.CheckBox
-        Me.cbd8 = New System.Windows.Forms.CheckBox
-        Me.cb3 = New System.Windows.Forms.CheckBox
-        Me.cb4 = New System.Windows.Forms.CheckBox
-        Me.cb5 = New System.Windows.Forms.CheckBox
-        Me.cbb1 = New System.Windows.Forms.CheckBox
-        Me.Panel1 = New System.Windows.Forms.Panel
-        Me.BSAll = New System.Windows.Forms.Button
-        Me.BSInv = New System.Windows.Forms.Button
-        Me.BSNone = New System.Windows.Forms.Button
-        Me.Label3 = New System.Windows.Forms.Label
-        Me.Label4 = New System.Windows.Forms.Label
-        Me.TBSelect = New System.Windows.Forms.Button
-        Me.TBClose = New System.Windows.Forms.Button
-        Me.TBDelete = New System.Windows.Forms.Button
-        Me.TBrl = New System.Windows.Forms.Button
-        Me.TBrv = New System.Windows.Forms.Button
-        Me.Label5 = New System.Windows.Forms.Label
-        Me.Label6 = New System.Windows.Forms.Label
-        Me.Label7 = New System.Windows.Forms.Label
-        Me.Ttv = New System.Windows.Forms.NumericUpDown
-        Me.Ttl = New System.Windows.Forms.TextBox
-        Me.Label8 = New System.Windows.Forms.Label
-        Me.Label9 = New System.Windows.Forms.Label
-        Me.PictureBox3 = New System.Windows.Forms.PictureBox
-        Me.PictureBox2 = New System.Windows.Forms.PictureBox
-        Me.PictureBox1 = New System.Windows.Forms.PictureBox
-        Me.cbx1 = New System.Windows.Forms.CheckBox
-        Me.cbx2 = New System.Windows.Forms.CheckBox
-        Me.cbx3 = New System.Windows.Forms.CheckBox
-        Me.TBUnselect = New System.Windows.Forms.Button
-        Me.cbx4 = New System.Windows.Forms.CheckBox
-        Me.cbx5 = New System.Windows.Forms.CheckBox
-        Me.cbx6 = New System.Windows.Forms.CheckBox
+        Me.Label1 = New System.Windows.Forms.Label()
+        Me.Label2 = New System.Windows.Forms.Label()
+        Me.mr1 = New System.Windows.Forms.NumericUpDown()
+        Me.mr2 = New System.Windows.Forms.NumericUpDown()
+        Me.lr1 = New System.Windows.Forms.TextBox()
+        Me.lr2 = New System.Windows.Forms.TextBox()
+        Me.vr2 = New System.Windows.Forms.NumericUpDown()
+        Me.vr1 = New System.Windows.Forms.NumericUpDown()
+        Me.cb1 = New System.Windows.Forms.CheckBox()
+        Me.cb2 = New System.Windows.Forms.CheckBox()
+        Me.cba1 = New System.Windows.Forms.CheckBox()
+        Me.cba2 = New System.Windows.Forms.CheckBox()
+        Me.cba3 = New System.Windows.Forms.CheckBox()
+        Me.cba4 = New System.Windows.Forms.CheckBox()
+        Me.cba5 = New System.Windows.Forms.CheckBox()
+        Me.cba6 = New System.Windows.Forms.CheckBox()
+        Me.cba7 = New System.Windows.Forms.CheckBox()
+        Me.cba8 = New System.Windows.Forms.CheckBox()
+        Me.cbd1 = New System.Windows.Forms.CheckBox()
+        Me.cbd2 = New System.Windows.Forms.CheckBox()
+        Me.cbd3 = New System.Windows.Forms.CheckBox()
+        Me.cbd4 = New System.Windows.Forms.CheckBox()
+        Me.cbd5 = New System.Windows.Forms.CheckBox()
+        Me.cbd6 = New System.Windows.Forms.CheckBox()
+        Me.cbd7 = New System.Windows.Forms.CheckBox()
+        Me.cbd8 = New System.Windows.Forms.CheckBox()
+        Me.cb3 = New System.Windows.Forms.CheckBox()
+        Me.cb4 = New System.Windows.Forms.CheckBox()
+        Me.cb5 = New System.Windows.Forms.CheckBox()
+        Me.cbb1 = New System.Windows.Forms.CheckBox()
+        Me.Panel1 = New System.Windows.Forms.Panel()
+        Me.BSAll = New System.Windows.Forms.Button()
+        Me.BSInv = New System.Windows.Forms.Button()
+        Me.BSNone = New System.Windows.Forms.Button()
+        Me.Label3 = New System.Windows.Forms.Label()
+        Me.Label4 = New System.Windows.Forms.Label()
+        Me.TBSelect = New System.Windows.Forms.Button()
+        Me.TBClose = New System.Windows.Forms.Button()
+        Me.TBDelete = New System.Windows.Forms.Button()
+        Me.TBrl = New System.Windows.Forms.Button()
+        Me.TBrv = New System.Windows.Forms.Button()
+        Me.Label5 = New System.Windows.Forms.Label()
+        Me.Label6 = New System.Windows.Forms.Label()
+        Me.Label7 = New System.Windows.Forms.Label()
+        Me.Ttv = New System.Windows.Forms.NumericUpDown()
+        Me.Ttl = New System.Windows.Forms.TextBox()
+        Me.Label8 = New System.Windows.Forms.Label()
+        Me.Label9 = New System.Windows.Forms.Label()
+        Me.PictureBox3 = New System.Windows.Forms.PictureBox()
+        Me.PictureBox2 = New System.Windows.Forms.PictureBox()
+        Me.PictureBox1 = New System.Windows.Forms.PictureBox()
+        Me.cbx1 = New System.Windows.Forms.CheckBox()
+        Me.cbx2 = New System.Windows.Forms.CheckBox()
+        Me.cbx3 = New System.Windows.Forms.CheckBox()
+        Me.TBUnselect = New System.Windows.Forms.Button()
+        Me.cbx4 = New System.Windows.Forms.CheckBox()
+        Me.cbx5 = New System.Windows.Forms.CheckBox()
+        Me.cbx6 = New System.Windows.Forms.CheckBox()
+        Me.FNotePrevious = New System.Windows.Forms.Button()
+        Me.FNoteNext = New System.Windows.Forms.Button()
         CType(Me.mr1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.mr2, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.vr2, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -579,7 +581,7 @@ Partial Class diagFind
         '
         Me.TBSelect.Location = New System.Drawing.Point(298, 354)
         Me.TBSelect.Name = "TBSelect"
-        Me.TBSelect.Size = New System.Drawing.Size(85, 23)
+        Me.TBSelect.Size = New System.Drawing.Size(75, 23)
         Me.TBSelect.TabIndex = 28
         Me.TBSelect.Text = "Select"
         Me.TBSelect.UseVisualStyleBackColor = True
@@ -587,18 +589,18 @@ Partial Class diagFind
         'TBClose
         '
         Me.TBClose.DialogResult = System.Windows.Forms.DialogResult.Cancel
-        Me.TBClose.Location = New System.Drawing.Point(389, 383)
+        Me.TBClose.Location = New System.Drawing.Point(379, 412)
         Me.TBClose.Name = "TBClose"
-        Me.TBClose.Size = New System.Drawing.Size(65, 23)
+        Me.TBClose.Size = New System.Drawing.Size(75, 23)
         Me.TBClose.TabIndex = 29
         Me.TBClose.Text = "Close"
         Me.TBClose.UseVisualStyleBackColor = True
         '
         'TBDelete
         '
-        Me.TBDelete.Location = New System.Drawing.Point(389, 354)
+        Me.TBDelete.Location = New System.Drawing.Point(298, 412)
         Me.TBDelete.Name = "TBDelete"
-        Me.TBDelete.Size = New System.Drawing.Size(65, 23)
+        Me.TBDelete.Size = New System.Drawing.Size(75, 23)
         Me.TBDelete.TabIndex = 30
         Me.TBDelete.Text = "Delete"
         Me.TBDelete.UseVisualStyleBackColor = True
@@ -691,7 +693,7 @@ Partial Class diagFind
         Me.PictureBox3.BackColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
         Me.PictureBox3.Location = New System.Drawing.Point(289, 354)
         Me.PictureBox3.Name = "PictureBox3"
-        Me.PictureBox3.Size = New System.Drawing.Size(1, 52)
+        Me.PictureBox3.Size = New System.Drawing.Size(1, 81)
         Me.PictureBox3.TabIndex = 55
         Me.PictureBox3.TabStop = False
         '
@@ -760,9 +762,9 @@ Partial Class diagFind
         '
         'TBUnselect
         '
-        Me.TBUnselect.Location = New System.Drawing.Point(298, 383)
+        Me.TBUnselect.Location = New System.Drawing.Point(379, 354)
         Me.TBUnselect.Name = "TBUnselect"
-        Me.TBUnselect.Size = New System.Drawing.Size(85, 23)
+        Me.TBUnselect.Size = New System.Drawing.Size(75, 23)
         Me.TBUnselect.TabIndex = 31
         Me.TBUnselect.Text = "Unselect"
         Me.TBUnselect.UseVisualStyleBackColor = True
@@ -812,11 +814,32 @@ Partial Class diagFind
         Me.cbx6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         Me.cbx6.UseVisualStyleBackColor = False
         '
+        'FNotePrevious
+        '
+        Me.FNotePrevious.Location = New System.Drawing.Point(298, 383)
+        Me.FNotePrevious.Name = "FNotePrevious"
+        Me.FNotePrevious.Size = New System.Drawing.Size(75, 23)
+        Me.FNotePrevious.TabIndex = 64
+        Me.FNotePrevious.Text = "Previous"
+        Me.FNotePrevious.UseVisualStyleBackColor = True
+        '
+        'FNoteNext
+        '
+        Me.FNoteNext.DialogResult = System.Windows.Forms.DialogResult.Cancel
+        Me.FNoteNext.Location = New System.Drawing.Point(379, 383)
+        Me.FNoteNext.Name = "FNoteNext"
+        Me.FNoteNext.Size = New System.Drawing.Size(75, 23)
+        Me.FNoteNext.TabIndex = 65
+        Me.FNoteNext.Text = "Next"
+        Me.FNoteNext.UseVisualStyleBackColor = True
+        '
         'diagFind
         '
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None
         Me.CancelButton = Me.TBClose
-        Me.ClientSize = New System.Drawing.Size(474, 422)
+        Me.ClientSize = New System.Drawing.Size(474, 451)
+        Me.Controls.Add(Me.FNoteNext)
+        Me.Controls.Add(Me.FNotePrevious)
         Me.Controls.Add(Me.cbx6)
         Me.Controls.Add(Me.cbx5)
         Me.Controls.Add(Me.cbx4)
@@ -933,4 +956,6 @@ Partial Class diagFind
     Friend WithEvents cbx4 As System.Windows.Forms.CheckBox
     Friend WithEvents cbx5 As System.Windows.Forms.CheckBox
     Friend WithEvents cbx6 As System.Windows.Forms.CheckBox
+    Friend WithEvents FNotePrevious As Button
+    Friend WithEvents FNoteNext As Button
 End Class

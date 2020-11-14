@@ -144,10 +144,10 @@ Public Class diagFind
         If cbx5.Checked Then xRange *= 11
         If cbx6.Checked Then xRange *= 13
 
-        MainWindow.fdrSelect(xRange, _
-                        mr1.Value, mr2.Value, _
-                        lr1.Text, lr2.Text, _
-                        vr1.Value * 10000, vr2.Value * 10000, _
+        MainWindow.fdrSelect(xRange,
+                        mr1.Value, mr2.Value,
+                        lr1.Text, lr2.Text,
+                        vr1.Value * 10000, vr2.Value * 10000,
                         xCol)
     End Sub
 
@@ -171,10 +171,10 @@ Public Class diagFind
         If cbx5.Checked Then xRange *= 11
         If cbx6.Checked Then xRange *= 13
 
-        MainWindow.fdrUnselect(xRange, _
-                          mr1.Value, mr2.Value, _
-                          lr1.Text, lr2.Text, _
-                          vr1.Value * 10000, vr2.Value * 10000, _
+        MainWindow.fdrUnselect(xRange,
+                          mr1.Value, mr2.Value,
+                          lr1.Text, lr2.Text,
+                          vr1.Value * 10000, vr2.Value * 10000,
                           xCol)
     End Sub
 
@@ -198,10 +198,10 @@ Public Class diagFind
         If cbx5.Checked Then xRange *= 11
         If cbx6.Checked Then xRange *= 13
 
-        MainWindow.fdrDelete(xRange, _
-                        mr1.Value, mr2.Value, _
-                        lr1.Text, lr2.Text, _
-                        vr1.Value * 10000, vr2.Value * 10000, _
+        MainWindow.fdrDelete(xRange,
+                        mr1.Value, mr2.Value,
+                        lr1.Text, lr2.Text,
+                        vr1.Value * 10000, vr2.Value * 10000,
                         xCol)
     End Sub
 
@@ -226,10 +226,10 @@ Public Class diagFind
         If cbx5.Checked Then xRange *= 11
         If cbx6.Checked Then xRange *= 13
 
-        MainWindow.fdrReplaceL(xRange, _
-                          mr1.Value, mr2.Value, _
-                          lr1.Text, lr2.Text, _
-                          vr1.Value * 10000, vr2.Value * 10000, _
+        MainWindow.fdrReplaceL(xRange,
+                          mr1.Value, mr2.Value,
+                          lr1.Text, lr2.Text,
+                          vr1.Value * 10000, vr2.Value * 10000,
                           xCol, Ttl.Text)
     End Sub
 
@@ -253,10 +253,64 @@ Public Class diagFind
         If cbx5.Checked Then xRange *= 11
         If cbx6.Checked Then xRange *= 13
 
-        MainWindow.fdrReplaceV(xRange, _
-                          mr1.Value, mr2.Value, _
-                          lr1.Text, lr2.Text, _
-                          vr1.Value * 10000, vr2.Value * 10000, _
+        MainWindow.fdrReplaceV(xRange,
+                          mr1.Value, mr2.Value,
+                          lr1.Text, lr2.Text,
+                          vr1.Value * 10000, vr2.Value * 10000,
                           xCol, Ttv.Value * 10000)
+    End Sub
+
+    Private Sub FNotePrevious_Click(sender As Object, e As EventArgs) Handles FNotePrevious.Click
+        If Not ValidateLabel(lr1) Then Exit Sub
+        If Not ValidateLabel(lr2) Then Exit Sub
+
+        Dim xCol() As Integer = {}
+        For Each xCB As CheckBox In Panel1.Controls
+            If xCB.Checked Then
+                ReDim Preserve xCol(UBound(xCol) + 1)
+                xCol(UBound(xCol)) = xCB.Tag
+            End If
+        Next
+
+        Dim xRange As Integer = 1
+        If cbx1.Checked Then xRange *= 2
+        If cbx2.Checked Then xRange *= 3
+        If cbx3.Checked Then xRange *= 5
+        If cbx4.Checked Then xRange *= 7
+        If cbx5.Checked Then xRange *= 11
+        If cbx6.Checked Then xRange *= 13
+
+        MainWindow.fdrPrevious(xRange,
+                        mr1.Value, mr2.Value,
+                        lr1.Text, lr2.Text,
+                        vr1.Value * 10000, vr2.Value * 10000,
+                        xCol)
+    End Sub
+
+    Private Sub FNoteNext_Click(sender As Object, e As EventArgs) Handles FNoteNext.Click
+        If Not ValidateLabel(lr1) Then Exit Sub
+        If Not ValidateLabel(lr2) Then Exit Sub
+
+        Dim xCol() As Integer = {}
+        For Each xCB As CheckBox In Panel1.Controls
+            If xCB.Checked Then
+                ReDim Preserve xCol(UBound(xCol) + 1)
+                xCol(UBound(xCol)) = xCB.Tag
+            End If
+        Next
+
+        Dim xRange As Integer = 1
+        If cbx1.Checked Then xRange *= 2
+        If cbx2.Checked Then xRange *= 3
+        If cbx3.Checked Then xRange *= 5
+        If cbx4.Checked Then xRange *= 7
+        If cbx5.Checked Then xRange *= 11
+        If cbx6.Checked Then xRange *= 13
+
+        MainWindow.fdrNext(xRange,
+                        mr1.Value, mr2.Value,
+                        lr1.Text, lr2.Text,
+                        vr1.Value * 10000, vr2.Value * 10000,
+                        xCol)
     End Sub
 End Class
