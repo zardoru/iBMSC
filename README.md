@@ -23,3 +23,4 @@ Changes in this fork
 * Added custom color for a specified range of notes. XML must be typed out manually for now.
 * Removed restriction for drag and dropping files. Mainly for opening bms template files, not tested thoroughly.
 * Added note search function (goto measure except it's goto note)
+* Added sort function. Selected notes are sorted based on their VPosition and Value.
