@@ -2380,10 +2380,6 @@ StartCount:     If Not NTInput Then
         Return stop_contrib + bpm_contrib
     End Function
 
-    Private Sub POBStorm_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles POBStorm.Click
-
-    End Sub
-
     Private Sub POBMirror_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles POBMirror.Click
         Dim xI1 As Integer
         Dim xI2 As Integer
@@ -2605,6 +2601,194 @@ Skip2:
         Next
 
 DoNothing:
+
+        AddUndo(xUndo, xBaseRedo.Next)
+        UpdatePairing()
+        RefreshPanelAll()
+    End Sub
+
+    Private Sub POBSRandom_Click(sender As Object, e As EventArgs) Handles POBSRandom.Click
+        Dim xI1 As Integer
+        Dim xI2 As Integer
+        Dim xUndo As UndoRedo.LinkedURCmd = Nothing
+        Dim xRedo As UndoRedo.LinkedURCmd = New UndoRedo.Void
+        Dim xBaseRedo As UndoRedo.LinkedURCmd = xRedo
+        'xRedo &= sCmdKM(niA1, .VPosition, .Value, IIf(NTInput, .Length, .LongNote), .Hidden, RealColumnToEnabled(niA7) - RealColumnToEnabled(niA1), 0, True) & vbCrLf
+        'xUndo &= sCmdKM(niA7, .VPosition, .Value, IIf(NTInput, .Length, .LongNote), .Hidden, RealColumnToEnabled(niA1) - RealColumnToEnabled(niA7), 0, True) & vbCrLf
+
+        ' Array 0: Unmodified array
+        ' Array 1: Modified array based on range
+        ' Array R: Array 1 reversed
+        Dim xniArray0 = New Integer() {niA1, niA2, niA3, niA4, niA5, niA6, niA7, niA8, niD1, niD2, niD3, niD4, niD5, niD6, niD7, niD8}
+        ' Dim xniArray1 = Integer() ' xniArray0
+
+        ' New function: Declare an array to see the range of selected notes. B columns ignored.
+
+        Dim xRangeL As Integer = niB ' Big number
+        Dim xRangeR As Integer = 0 ' Smol number
+
+        ' Range finder
+        For xI1 = 1 To UBound(Notes)
+            If Not Notes(xI1).Selected Then Continue For
+            If xRangeL > Notes(xI1).ColumnIndex Then xRangeL = Notes(xI1).ColumnIndex
+            If xRangeR < Notes(xI1).ColumnIndex Then xRangeR = Notes(xI1).ColumnIndex
+        Next
+
+        ' Modify xniArray based on range
+        '  Out of range
+        If xRangeL > niD8 Or xRangeR < niA1 Then GoTo DoNothing
+
+        '  Semi-in Range
+        '   Cut off left side
+        If xRangeL < niA1 Then
+            xRangeL = 0
+            GoTo Skip1
+        End If
+
+        For xI1 = 0 To xniArray0.Length
+            If xniArray0(xI1) = xRangeL Then
+                xRangeL = xI1
+                Exit For
+            End If
+        Next
+
+Skip1:
+        '   Cut off right side
+        If xRangeR > niD8 Then
+            xRangeR = xniArray0.Length
+            GoTo Skip2
+        End If
+
+        For xI1 = 0 To xniArray0.Length
+            If xniArray0(xI1) = xRangeR Then
+                xRangeR = xI1 + 1
+                Exit For
+            End If
+        Next
+
+Skip2:
+
+        Dim xniArray1(xRangeR - xRangeL - 1)
+        For xI1 = 0 To xRangeR - xRangeL - 1
+            xniArray1(xI1) = xniArray0(xI1 + xRangeL)
+        Next
+
+        Dim xniArrayLen = xniArray1.Length
+        ' xniArrayR: Randomized array
+        Dim xniArrayR = xniArray1.Clone()
+
+        Dim xCol As Integer
+        For xI1 = 1 To UBound(Notes)
+            If Not Notes(xI1).Selected Then Continue For
+            Shuffle(xniArrayR, xniArrayLen)
+            xCol = Notes(xI1).ColumnIndex
+            For xI2 = 0 To xniArrayLen - 1
+                If xCol = xniArray1(xI2) Then
+                    xCol = xniArrayR(xI2)
+                    Exit For
+                End If
+
+            Next
+
+            Me.RedoMoveNote(Notes(xI1), xCol, Notes(xI1).VPosition, xUndo, xRedo)
+            Notes(xI1).ColumnIndex = xCol
+        Next
+
+DoNothing:
+
+        AddUndo(xUndo, xBaseRedo.Next)
+        UpdatePairing()
+        RefreshPanelAll()
+    End Sub
+
+    Private Sub POBSort_Click(sender As Object, e As EventArgs) Handles POBSort.Click
+        Dim xI1 As Integer
+        Dim xI2 As Integer
+        Dim xUndo As UndoRedo.LinkedURCmd = Nothing
+        Dim xRedo As UndoRedo.LinkedURCmd = New UndoRedo.Void
+        Dim xBaseRedo As UndoRedo.LinkedURCmd = xRedo
+
+        ' Array 1: Unmodified array
+        Dim xniArray1 = New Integer() {niA1, niA2, niA3, niA4, niA5, niA6, niA7, niA8, niD1, niD2, niD3, niD4, niD5, niD6, niD7, niD8}
+
+        Dim xniArrayLen = xniArray1.Length
+
+        Dim xCol As Integer
+        Dim vPos As Integer = -1
+        Dim xIArray(0) As Integer
+        Dim xValueArray(0) As Integer
+        Dim xI3 As Integer = 0
+        Dim xITemp As Integer
+        Dim xValueTemp As Integer
+        Dim xSorted As Boolean = False
+        For xI1 = 1 To UBound(Notes)
+
+            If Not Notes(xI1).Selected Then Continue For
+            ' If starting a new row or same VPosition
+            If xI3 = 0 Or vPos = Notes(xI1).VPosition Then
+RestartSorting: xSorted = False
+                ReDim Preserve xIArray(xI3)
+                ReDim Preserve xValueArray(xI3)
+                vPos = Notes(xI1).VPosition
+                xIArray(xI3) = xI1
+                xValueArray(xI3) = Notes(xI1).Value
+                xI3 += 1
+            Else
+                ' Start sorting in a row
+                ' xI4: First item in the sort loop, xI2: The nth swap/comparison
+                ' Sorting process (4 items, c for comparison between 2 items):
+                ' cccc
+                ' ccc
+                ' cc
+                ' c
+
+                For xI4 = 0 To xI3 - 2
+                    For xI2 = 0 To xI3 - 2 - xI4
+                        If xValueArray(xI2) > xValueArray(xI2 + 1) Then
+                            xITemp = xIArray(xI2 + 1)
+                            xIArray(xI2 + 1) = xIArray(xI2)
+                            xIArray(xI2) = xITemp
+
+                            xValueTemp = xValueArray(xI2 + 1)
+                            xValueArray(xI2 + 1) = xValueArray(xI2)
+                            xValueArray(xI2) = xValueTemp
+                        End If
+                    Next
+                Next
+
+                For xI4 = 0 To xI3 - 1
+                    Me.RedoMoveNote(Notes(xIArray(xI4)), xniArray1(xI4), Notes(xIArray(xI4)).VPosition, xUndo, xRedo)
+                    Notes(xIArray(xI4)).ColumnIndex = xniArray1(xI4)
+                    ' Me.RedoMoveNote(Notes(xI1), xCol, Notes(xI1).VPosition, xUndo, xRedo)
+                    ' Notes(xI1).ColumnIndex = xCol
+                Next
+                xI3 = 0
+                xSorted = True
+                GoTo RestartSorting
+            End If
+
+        Next
+
+        If Not xSorted Then
+            For xI4 = 0 To xI3 - 2
+                For xI2 = xI4 To xI3 - 2
+                    If xValueArray(xI2) > xValueArray(xI2 + 1) Then
+                        xITemp = xIArray(xI2 + 1)
+                        xIArray(xI2 + 1) = xIArray(xI2)
+                        xIArray(xI2) = xITemp
+
+                        xValueTemp = xValueArray(xI2 + 1)
+                        xValueArray(xI2 + 1) = xValueArray(xI2)
+                        xValueArray(xI2) = xValueTemp
+                    End If
+                Next
+            Next
+
+            For xI4 = 0 To xI3 - 1
+                Me.RedoMoveNote(Notes(xIArray(xI4)), xniArray1(xI4), Notes(xIArray(xI4)).VPosition, xUndo, xRedo)
+                Notes(xIArray(xI4)).ColumnIndex = xniArray1(xI4)
+            Next
+        End If
 
         AddUndo(xUndo, xBaseRedo.Next)
         UpdatePairing()
@@ -3547,22 +3731,14 @@ Jump2:
             Notes(xI1).Selected = False
         Next
 
-
-        Dim i = 0
-        For xI1 = 1 To UBound(Notes)
-            ' If fdriLblL <= Notes(xI1).Value And Notes(xI1).Value <= fdriLblU Then ' Core condition
+        For xI1 = UBound(Notes) To 1 Step -1
             If ((xbSel And xSel(xI1)) Or (xbUnsel And Not xSel(xI1))) AndAlso
                     nEnabled(Notes(xI1).ColumnIndex) AndAlso fdrRangeS(xbShort, xbLong, IIf(NTInput, Notes(xI1).Length, Notes(xI1).LongNote)) And fdrRangeS(xbVisible, xbHidden, Notes(xI1).Hidden) AndAlso
-                    fdrCheck(Notes(xI1)) Then
-                If Notes(xI1).VPosition >= -PanelVScroll(PanelFocus) Then
-                    If i = 0 Then Exit For
-                    PanelVScroll(PanelFocus) = -Notes(i).VPosition
-                    Notes(i).Selected = True
-                    Exit For
-                Else
-                    i = xI1
-                End If
-
+                    fdrCheck(Notes(xI1)) AndAlso
+                    Notes(xI1).VPosition < -PanelVScroll(PanelFocus) Then
+                PanelVScroll(PanelFocus) = -Notes(xI1).VPosition
+                Notes(xI1).Selected = True
+                Exit For
             End If
         Next
 
@@ -4767,99 +4943,5 @@ case2:              Dim xI0 As Integer
         Next i
         Return items
     End Function
-
-    Private Sub POBSRandom_Click(sender As Object, e As EventArgs) Handles POBSRandom.Click
-        Dim xI1 As Integer
-        Dim xI2 As Integer
-        Dim xUndo As UndoRedo.LinkedURCmd = Nothing
-        Dim xRedo As UndoRedo.LinkedURCmd = New UndoRedo.Void
-        Dim xBaseRedo As UndoRedo.LinkedURCmd = xRedo
-        'xRedo &= sCmdKM(niA1, .VPosition, .Value, IIf(NTInput, .Length, .LongNote), .Hidden, RealColumnToEnabled(niA7) - RealColumnToEnabled(niA1), 0, True) & vbCrLf
-        'xUndo &= sCmdKM(niA7, .VPosition, .Value, IIf(NTInput, .Length, .LongNote), .Hidden, RealColumnToEnabled(niA1) - RealColumnToEnabled(niA7), 0, True) & vbCrLf
-
-        ' Array 0: Unmodified array
-        ' Array 1: Modified array based on range
-        ' Array R: Array 1 reversed
-        Dim xniArray0 = New Integer() {niA1, niA2, niA3, niA4, niA5, niA6, niA7, niA8, niD1, niD2, niD3, niD4, niD5, niD6, niD7, niD8}
-        ' Dim xniArray1 = Integer() ' xniArray0
-
-        ' New function: Declare an array to see the range of selected notes. B columns ignored.
-
-        Dim xRangeL As Integer = niB ' Big number
-        Dim xRangeR As Integer = 0 ' Smol number
-
-        ' Range finder
-        For xI1 = 1 To UBound(Notes)
-            If Not Notes(xI1).Selected Then Continue For
-            If xRangeL > Notes(xI1).ColumnIndex Then xRangeL = Notes(xI1).ColumnIndex
-            If xRangeR < Notes(xI1).ColumnIndex Then xRangeR = Notes(xI1).ColumnIndex
-        Next
-
-        ' Modify xniArray based on range
-        '  Out of range
-        If xRangeL > niD8 Or xRangeR < niA1 Then GoTo DoNothing
-
-        '  Semi-in Range
-        '   Cut off left side
-        If xRangeL < niA1 Then
-            xRangeL = 0
-            GoTo Skip1
-        End If
-
-        For xI1 = 0 To xniArray0.Length
-            If xniArray0(xI1) = xRangeL Then
-                xRangeL = xI1
-                Exit For
-            End If
-        Next
-
-Skip1:
-        '   Cut off right side
-        If xRangeR > niD8 Then
-            xRangeR = xniArray0.Length
-            GoTo Skip2
-        End If
-
-        For xI1 = 0 To xniArray0.Length
-            If xniArray0(xI1) = xRangeR Then
-                xRangeR = xI1 + 1
-                Exit For
-            End If
-        Next
-
-Skip2:
-
-        Dim xniArray1(xRangeR - xRangeL - 1)
-        For xI1 = 0 To xRangeR - xRangeL - 1
-            xniArray1(xI1) = xniArray0(xI1 + xRangeL)
-        Next
-
-        Dim xniArrayLen = xniArray1.Length
-        ' xniArrayR: Randomized array
-        Dim xniArrayR = xniArray1.Clone()
-
-        Dim xCol As Integer
-        For xI1 = 1 To UBound(Notes)
-            If Not Notes(xI1).Selected Then Continue For
-            Shuffle(xniArrayR, xniArrayLen)
-            xCol = Notes(xI1).ColumnIndex
-            For xI2 = 0 To xniArrayLen - 1
-                If xCol = xniArray1(xI2) Then
-                    xCol = xniArrayR(xI2)
-                    Exit For
-                End If
-
-            Next
-
-            Me.RedoMoveNote(Notes(xI1), xCol, Notes(xI1).VPosition, xUndo, xRedo)
-            Notes(xI1).ColumnIndex = xCol
-        Next
-
-DoNothing:
-
-        AddUndo(xUndo, xBaseRedo.Next)
-        UpdatePairing()
-        RefreshPanelAll()
-    End Sub
 
 End Class
