@@ -17,10 +17,11 @@ Changes in this fork
 * Added a display for recommended #TOTAL.
 * The application now saves the option "Disable Vertical Moves".
 * Changed the temporary bms file extension from .bms to .bmsc.
-* Allows selecting all file types when opening files
-* Fixed the total note count on the toolbar
-* Added advanced statistics (Ctrl+Shift+T)
+* Allows selecting all file types when opening files.
+* Fixed the total note count on the toolbar.
+* Added advanced statistics (Ctrl+Shift+T).
 * Added custom color for a specified range of notes. XML must be typed out manually for now.
 * Removed restriction for drag and dropping files. Mainly for opening bms template files, not tested thoroughly.
-* Added note search function (goto measure except it's goto note)
+* Added note search function (goto measure except it's goto note).
 * Added sort function. Selected notes are sorted based on their VPosition and Value.
+* Added keyboard shortcuts for previewing and replacing keysounds in the Sounds List (Spacebar to preview, enter to replace).
