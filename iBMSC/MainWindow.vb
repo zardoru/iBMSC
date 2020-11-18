@@ -1889,6 +1889,10 @@ EndSearch:
 
     Private Sub LWAV_KeyDown(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyEventArgs) Handles LWAV.KeyDown
         Select Case e.KeyCode
+            Case Keys.Space
+                LWAV_Click(sender, e)
+            Case Keys.Enter
+                LWAV_DoubleClick(sender, e)
             Case Keys.Delete
                 hWAV(LWAV.SelectedIndex + 1) = ""
                 LWAV.Items.Item(LWAV.SelectedIndex) = C10to36(LWAV.SelectedIndex + 1) & ": "
