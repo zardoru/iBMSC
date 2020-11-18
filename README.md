@@ -1,7 +1,7 @@
 pBMSC
 =====
 pBMSC is a modified version of uBMSC (which is a modified version of iBMSC) with a primary focus on quality of life functionalities such as keyboard shortcuts.
-See README.md.old for original iBMSC README file.
+See README.md.iBMSC for the original iBMSC README file and REAME.md.uBMSC for the last uBMSC README file.
 
 # Changes
 Listed in the order added.
