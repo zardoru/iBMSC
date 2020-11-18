@@ -1,9 +1,9 @@
-µBMSC
+pBMSC
 =====
-µBMSC is a modified version of iBMSC to add features and clean up the iBMSC code, fix bugs and so on.
+pBMSC is a modified version of uBMSC (which is a modified version of iBMSC) with a primary focus on quality of life functionalities such as keyboard shortcuts.
 See README.md.old for original iBMSC README file.
 
-# Changes in this fork
+# Changes
 Listed in the order added.
 ## Bugfixes
 * Added keybindings for lane D1-D8. See **Keyboard Shortcuts** for more information.
