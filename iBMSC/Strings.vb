@@ -68,16 +68,6 @@ Public Class Strings
         Public Shared MID As String = "MIDI (*.mid)"
 
         Public Shared _image As String = "Supported Image Format (*.png, *.bmp, *.jpg, *.gif)"
-        Public Shared _movie As String = "Supported Movie Format (*.mpg, *.avi, *.mp4, *.wmv, *.webm)"
-        Public Shared BMP As String = "Windows bitmap image (*.bmp)"
-        Public Shared PNG As String = "Portable Network Graphic (*.png)"
-        Public Shared JPG As String = "Joint Photographic Experts Group (*.jpg)"
-        Public Shared GIF As String = "Graphics Interchange Format (*.gif)"
-        Public Shared MPG As String = "Moving Picture Experts Group (*.mpg)"
-        Public Shared AVI As String = "Audio Video Interleave (*.avi)"
-        Public Shared MP4 As String = "MPEG phase 4 (*.mp4)"
-        Public Shared WMV As String = "Windows Media Video (*.wmv)"
-        Public Shared WEBM As String = "WebM (*.webm)"
 
         Public Shared EXE As String = "Executable file (*.exe)"
     End Class
@@ -88,14 +78,37 @@ Public Class Strings
         Public Shared lSTOP As String = "STOP"
         Public Shared lSCROLL As String = "SCROLL"
         Public Shared lA As String = "A1-A8"
+        Public Shared lA1 As String = "A1"
+        Public Shared lA2 As String = "A2"
+        Public Shared lA3 As String = "A3"
+        Public Shared lA4 As String = "A4"
+        Public Shared lA5 As String = "A5"
+        Public Shared lA6 As String = "A6"
+        Public Shared lA7 As String = "A7"
+        Public Shared lA8 As String = "A8"
         Public Shared lD As String = "D1-D8"
+        Public Shared lD1 As String = "D1"
+        Public Shared lD2 As String = "D2"
+        Public Shared lD3 As String = "D3"
+        Public Shared lD4 As String = "D4"
+        Public Shared lD5 As String = "D5"
+        Public Shared lD6 As String = "D6"
+        Public Shared lD7 As String = "D7"
+        Public Shared lD8 As String = "D8"
+        Public Shared lBGA As String = "BGA"
         Public Shared lBGM As String = "BGM"
+        Public Shared lNotes As String = "Notes"
         Public Shared lTotal As String = "Total"
         Public Shared lShort As String = "Short"
         Public Shared lLong As String = "Long"
         Public Shared lLnObj As String = "LnObj"
         Public Shared lHidden As String = "Hidden"
+        Public Shared lLandmines As String = "Landmines"
         Public Shared lErrors As String = "Errors"
+        Public Shared recTotal As String = ""
+        ' Public Shared recTotal As String = "Recommended #Total:"
+        Public Shared recTotalValue As String = ""
+        ' Public Shared recTotalValue As String = "500"
     End Class
 
     Public Class fopPlayer
@@ -175,6 +188,7 @@ Public Class Strings
         Public Shared AutoSave As String = "AutoSave"
         Public Shared minutes As String = "minutes"
         Public Shared StopPreviewOnClick As String = "Stop preview if clicked on the editing panel"
+        Public Shared ModeDP As String = "DP Mode keybinding"
     End Class
 
     Public Class fFind

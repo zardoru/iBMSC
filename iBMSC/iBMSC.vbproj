@@ -8,10 +8,10 @@
     <OutputType>WinExe</OutputType>
     <StartupObject>iBMSC.My.MyApplication</StartupObject>
     <RootNamespace>iBMSC</RootNamespace>
-    <AssemblyName>μBMSC</AssemblyName>
+    <AssemblyName>pBMSC</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>WindowsForms</MyType>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <TargetFrameworkProfile />
     <PublishUrl>publish\</PublishUrl>
@@ -30,14 +30,15 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
     <OutputPath>bin\Debug\</OutputPath>
-    <DocumentationFile>μBMSC.xml</DocumentationFile>
+    <DocumentationFile>pBMSC.xml</DocumentationFile>
     <NoWarn>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</NoWarn>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -46,8 +47,9 @@
     <DefineTrace>true</DefineTrace>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DocumentationFile>μBMSC.xml</DocumentationFile>
+    <DocumentationFile>pBMSC.xml</DocumentationFile>
     <NoWarn>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</NoWarn>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <OptionExplicit>On</OptionExplicit>
@@ -102,6 +104,17 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Column.vb" />
+    <Compile Include="Component1.Designer.vb">
+      <DependentUpon>Component1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Component1.vb">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Option Windows\COverride.vb" />
+    <Compile Include="Dialogs\dgStatisticsLegacy.Designer.vb" />
+    <Compile Include="Dialogs\dgStatisticsLegacy.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Dialogs\AboutBox1.designer.vb">
       <DependentUpon>AboutBox1.vb</DependentUpon>
     </Compile>
@@ -190,6 +203,7 @@
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
       <DependentUpon>Application.myapp</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="My Project\Resources.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -217,6 +231,12 @@
       <DependentUpon>OpVisual.vb</DependentUpon>
     </Compile>
     <Compile Include="Option Windows\OpVisual.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Option Windows\OpVisualCO.designer.vb">
+      <DependentUpon>OpVisual.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Option Windows\OpVisualCO.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="UndoRedo.vb" />
@@ -272,6 +292,9 @@
     <EmbeddedResource Include="Option Windows\OpVisual.resx">
       <DependentUpon>OpVisual.vb</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Option Windows\OpVisualCO.resx">
+      <DependentUpon>OpVisualCO.vb</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -301,6 +324,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Icon.ico" />
+    <None Include="ImageButtons\ImageErrorG.gif" />
+    <None Include="ImageButtons\ImageError1.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -198,14 +198,66 @@ Partial Public Class MainWindow
             Case Keys.NumPad0, Keys.D0
                 MoveToBGM(xUndo, xRedo)
 
-            Case Keys.Oem1, Keys.NumPad1, Keys.D1 : MoveToColumn(niA1, xUndo, xRedo)
-            Case Keys.Oem2, Keys.NumPad2, Keys.D2 : MoveToColumn(niA2, xUndo, xRedo)
-            Case Keys.Oem3, Keys.NumPad3, Keys.D3 : MoveToColumn(niA3, xUndo, xRedo)
-            Case Keys.Oem4, Keys.NumPad4, Keys.D4 : MoveToColumn(niA4, xUndo, xRedo)
-            Case Keys.Oem5, Keys.NumPad5, Keys.D5 : MoveToColumn(niA5, xUndo, xRedo)
-            Case Keys.Oem6, Keys.NumPad6, Keys.D6 : MoveToColumn(niA6, xUndo, xRedo)
-            Case Keys.Oem7, Keys.NumPad7, Keys.D7 : MoveToColumn(niA7, xUndo, xRedo)
-            Case Keys.Oem8, Keys.NumPad8, Keys.D8 : MoveToColumn(niA8, xUndo, xRedo)
+            ' Ctrl + Keys → 2P lanes
+            Case Keys.Oem8, Keys.D8
+                If My.Computer.Keyboard.CtrlKeyDown Then
+                    MoveToColumn(niD8, xUndo, xRedo)
+                Else
+                    MoveToColumn(niA1, xUndo, xRedo)
+                End If
+            Case Keys.Oem1, Keys.D1
+                If My.Computer.Keyboard.CtrlKeyDown Then
+                    MoveToColumn(niD1, xUndo, xRedo)
+                Else
+                    MoveToColumn(niA2, xUndo, xRedo)
+                End If
+            Case Keys.Oem2, Keys.D2
+                If My.Computer.Keyboard.CtrlKeyDown Then
+                    MoveToColumn(niD2, xUndo, xRedo)
+                Else
+                    MoveToColumn(niA3, xUndo, xRedo)
+                End If
+            Case Keys.Oem3, Keys.D3
+                If My.Computer.Keyboard.CtrlKeyDown Then
+                    MoveToColumn(niD3, xUndo, xRedo)
+                Else
+                    MoveToColumn(niA4, xUndo, xRedo)
+                End If
+            Case Keys.Oem4, Keys.D4
+                If My.Computer.Keyboard.CtrlKeyDown Then
+                    MoveToColumn(niD4, xUndo, xRedo)
+                Else
+                    MoveToColumn(niA5, xUndo, xRedo)
+                End If
+            Case Keys.Oem5, Keys.D5
+                If My.Computer.Keyboard.CtrlKeyDown Then
+                    MoveToColumn(niD5, xUndo, xRedo)
+                Else
+                    MoveToColumn(niA6, xUndo, xRedo)
+                End If
+            Case Keys.Oem6, Keys.D6
+                If My.Computer.Keyboard.CtrlKeyDown Then
+                    MoveToColumn(niD6, xUndo, xRedo)
+                Else
+                    MoveToColumn(niA7, xUndo, xRedo)
+                End If
+            Case Keys.Oem7, Keys.D7
+                If My.Computer.Keyboard.CtrlKeyDown Then
+                    MoveToColumn(niD7, xUndo, xRedo)
+                Else
+                    MoveToColumn(niA8, xUndo, xRedo)
+                End If
+
+            Case Keys.Q, Keys.NumPad1 : If Not My.Computer.Keyboard.CtrlKeyDown Then MoveToColumn(niD1, xUndo, xRedo)
+            Case Keys.W, Keys.NumPad2 : If Not My.Computer.Keyboard.CtrlKeyDown Then MoveToColumn(niD2, xUndo, xRedo)
+            Case Keys.E, Keys.NumPad3 : If Not My.Computer.Keyboard.CtrlKeyDown Then MoveToColumn(niD3, xUndo, xRedo)
+            Case Keys.R, Keys.NumPad4 : If Not My.Computer.Keyboard.CtrlKeyDown Then MoveToColumn(niD4, xUndo, xRedo)
+            Case Keys.T, Keys.NumPad5 : If Not My.Computer.Keyboard.CtrlKeyDown Then MoveToColumn(niD5, xUndo, xRedo)
+            Case Keys.Y, Keys.NumPad6 : If Not My.Computer.Keyboard.CtrlKeyDown Then MoveToColumn(niD6, xUndo, xRedo)
+            Case Keys.U, Keys.NumPad7 : If Not My.Computer.Keyboard.CtrlKeyDown Then MoveToColumn(niD7, xUndo, xRedo)
+            Case Keys.I, Keys.NumPad8 : If Not My.Computer.Keyboard.CtrlKeyDown Then MoveToColumn(niD8, xUndo, xRedo)
+
+
 
         End Select
 
@@ -217,8 +269,6 @@ Partial Public Class MainWindow
                 Case Keys.C : TBCopy_Click(TBCopy, New EventArgs)
                 Case Keys.V : TBPaste_Click(TBPaste, New EventArgs)
                 Case Keys.A : mnSelectAll_Click(mnSelectAll, New EventArgs)
-                Case Keys.F : TBFind_Click(TBFind, New EventArgs)
-                Case Keys.T : TBStatistics_Click(TBStatistics, New EventArgs)
             End Select
         End If
 
@@ -499,7 +549,7 @@ Partial Public Class MainWindow
         'Play wav
         If ClickStopPreview Then PreviewNote("", True)
         'My.Computer.Audio.Stop()
-        If NoteIndex > 0 And PreviewOnClick AndAlso IsColumnSound(Notes(NoteIndex).ColumnIndex) Then
+        If NoteIndex > 0 And PreviewOnClick AndAlso Not IsColumnNumeric(Notes(NoteIndex).ColumnIndex) Then
             Dim xI2 As Integer = Notes(NoteIndex).Value \ 10000
             If xI2 <= 0 Then xI2 = 1
             If xI2 >= 1296 Then xI2 = 1295
@@ -1549,7 +1599,8 @@ Partial Public Class MainWindow
         Dim e1 As BufferedGraphics = BufferedGraphicsManager.Current.Allocate(spMain(iI).CreateGraphics, New Rectangle(xDispX, xDispY, xDispW, xDispH))
         e1.Graphics.FillRectangle(vo.Bg, New Rectangle(xDispX, xDispY, xDispW, xDispH))
 
-        If NTInput Then DrawNoteNT(Notes(foundNoteIndex), e1, xHS, xVS, xHeight) Else DrawNote(Notes(foundNoteIndex), e1, xHS, xVS, xHeight)
+        Dim CO As New COverride(0, 0, 0, 0, 0, 0)
+        If NTInput Then DrawNoteNT(Notes(foundNoteIndex), e1, xHS, xVS, xHeight, CO) Else DrawNote(Notes(foundNoteIndex), e1, xHS, xVS, xHeight)
 
         e1.Graphics.DrawRectangle(IIf(bAdjustLength, vo.kMouseOverE, vo.kMouseOver), xDispX, xDispY, xDispW - 1, xDispH - 1)
 
