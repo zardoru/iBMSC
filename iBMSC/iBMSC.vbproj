@@ -233,6 +233,12 @@
     <Compile Include="Option Windows\OpVisual.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Option Windows\OpVisualCO.designer.vb">
+      <DependentUpon>OpVisual.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Option Windows\OpVisualCO.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="UndoRedo.vb" />
     <Compile Include="VisualSettings.vb" />
     <Compile Include="Waveform.vb">
@@ -285,6 +291,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Option Windows\OpVisual.resx">
       <DependentUpon>OpVisual.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Option Windows\OpVisualCO.resx">
+      <DependentUpon>OpVisualCO.vb</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

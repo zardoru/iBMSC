@@ -492,6 +492,10 @@ Public Class MainWindow
         If bStop Then
             Audio.StopPlaying()
         End If
+        If xFileLocation <> "" AndAlso FileLen(xFileLocation) = 0 Then
+            MsgBox("0kb File")
+            Exit Sub
+        End If
         Audio.Play(xFileLocation)
     End Sub
 
